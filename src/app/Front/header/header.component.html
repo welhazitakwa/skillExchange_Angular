@@ -1,0 +1,81 @@
+<header class="default-header">
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">
+        <img src="img/logo.png" alt="" />
+      </a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="lnr lnr-menu"></span>
+      </button>
+
+      <div
+        class="collapse navbar-collapse justify-content-end align-items-center"
+        id="navbarSupportedContent"
+      >
+        <ul class="navbar-nav">
+          <li><a routerLink="/">Home</a></li>
+          <li><a routerLink="/about">About</a></li>
+          <li><a routerLink="/courses">Courses</a></li>
+          <!-- Dropdown -->
+          <li class="dropdown">
+            <a
+              class="dropdown-toggle"
+              data-toggle="dropdown"
+              style="color: white"
+            >
+              Pages
+            </a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" routerLink="/elements">Elements</a>
+              <a class="dropdown-item" routerLink="/courseDetails"
+                >Course Details</a
+              >
+            </div>
+          </li>
+          <li class="dropdown">
+            <a
+              class="dropdown-toggle"
+              style="color: white"
+              data-toggle="dropdown"
+            >
+              Blog
+            </a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" routerLink="/blogHome">Blog Home</a>
+              <a class="dropdown-item" routerLink="/blogDetails"
+                >Blog Details</a
+              >
+            </div>
+          </li>
+          <li><a routerLink="/contacts">Contacts</a></li>
+
+          <li class="dropdown">
+            <a
+              class="dropdown-toggle"
+              style="color: white"
+              data-toggle="dropdown"
+            >
+              <img
+                src="assets/assetsFront/img/elements/g1.jpg"
+                alt="Profil"
+                class="profile-img me-2"
+              />rftgyhujikolp
+            </a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" routerLink="/">Edit Profile</a>
+              <a class="dropdown-item" routerLink="/">Deconnexion</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>
