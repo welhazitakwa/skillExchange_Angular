@@ -20,6 +20,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { AuthRegisterComponent } from './Auth/auth-register/auth-register.component';
 import { AuthLoginComponent } from './Auth/auth-login/auth-login.component';
+import { AffichertoutComponent } from './Front/GestionUser/affichertout/affichertout.component';
+import { AddComponent } from './Front/GestionUser/add/add.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +41,8 @@ import { AuthLoginComponent } from './Auth/auth-login/auth-login.component';
     ContactComponent,
     AuthRegisterComponent,
     AuthLoginComponent,
+    AffichertoutComponent,
+    AddComponent,
   ],
   imports: [
     BrowserModule,

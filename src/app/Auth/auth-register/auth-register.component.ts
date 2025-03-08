@@ -41,15 +41,11 @@ export class AuthRegisterComponent {
     let signUp: SignUp = { ...this.registerForm.value };
     signUp.role = 'USER';
     console.log(signUp);
-    // Show alert with form values
-    alert(
-      `Registration Submitted!\n\nName: ${signUp.email}\nEmail: ${signUp.name}`
-    );
 
     this.authService.signup(signUp).subscribe(
       () => {
         console.log('User signed up successfully');
-        this.router.navigate(['/']);
+        this.router.navigate(['/login']);
       },
       (error: any) => console.log('Error signing up:', error)
     );
