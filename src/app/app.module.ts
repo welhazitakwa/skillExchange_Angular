@@ -15,7 +15,13 @@ import { BlogDetailsComponent } from './Front/blog-details/blog-details.componen
 import { CoursesComponent } from './Front/courses/courses.component';
 import { TeachersComponent } from './Front/teachers/teachers.component';
 import { ContactComponent } from './Front/contact/contact.component';
-
+import { ErrorComponent } from './error/error.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { AuthRegisterComponent } from './Auth/auth-register/auth-register.component';
+import { AuthLoginComponent } from './Auth/auth-login/auth-login.component';
+import { AffichertoutComponent } from './Front/GestionUser/affichertout/affichertout.component';
+import { AddComponent } from './Front/GestionUser/add/add.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +29,7 @@ import { ContactComponent } from './Front/contact/contact.component';
     SideBarComponent,
     NavComponent,
     MainBackComponent,
+    ErrorComponent,
     MainFrontComponent,
     FooterFrontComponent,
     HeaderFrontComponent,
@@ -32,11 +39,17 @@ import { ContactComponent } from './Front/contact/contact.component';
     CoursesComponent,
     TeachersComponent,
     ContactComponent,
-  
+    AuthRegisterComponent,
+    AuthLoginComponent,
+    AffichertoutComponent,
+    AddComponent,
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    FormsModule,
+    ReactiveFormsModule,
+    HttpClientModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
