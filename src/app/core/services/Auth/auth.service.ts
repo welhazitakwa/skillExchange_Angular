@@ -60,6 +60,21 @@ export class AuthService {
       return null;
     }
   }
+
+  
+  getCurrentUserID(): number | null {
+    const token = localStorage.getItem('token');
+    if (!token) return null;
+  
+    try {
+      const decodedToken: any = jwtDecode(token);
+      console.log(decodedToken)
+      return decodedToken.id || null;
+    } catch (error) {
+      console.error('Error decoding token:', error);
+      return null;
+    }
+  }
   
 
   isAdmin(): boolean {
