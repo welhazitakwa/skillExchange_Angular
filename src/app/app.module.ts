@@ -20,8 +20,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { AuthRegisterComponent } from './Auth/auth-register/auth-register.component';
 import { AuthLoginComponent } from './Auth/auth-login/auth-login.component';
-import { AffichertoutComponent } from './Front/GestionUser/affichertout/affichertout.component';
-import { AddComponent } from './Front/GestionUser/add/add.component';
+import { ProfileComponent } from './Front/GestionUser/profile/profile.component';
+import { BalanceComponent } from './Front/GestionUser/balance/balance.component';
+import { SettingsComponent } from './Front/GestionUser/settings/settings.component';
 
 @NgModule({
   declarations: [
@@ -41,8 +42,9 @@ import { AddComponent } from './Front/GestionUser/add/add.component';
     ContactComponent,
     AuthRegisterComponent,
     AuthLoginComponent,
-    AffichertoutComponent,
-    AddComponent,
+    ProfileComponent,
+    BalanceComponent,
+    SettingsComponent,
   ],
   imports: [
     BrowserModule,

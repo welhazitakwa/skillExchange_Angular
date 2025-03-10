@@ -12,6 +12,9 @@ import { AuthRegisterComponent } from './Auth/auth-register/auth-register.compon
 import { AuthLoginComponent } from './Auth/auth-login/auth-login.component';
 import { AdminGuard } from './core/services/Auth/admin-guard.service';
 import { UserGuard } from './core/services/Auth/user-guard.service';
+import { ProfileComponent } from './Front/GestionUser/profile/profile.component';
+import { SettingsComponent } from './Front/GestionUser/settings/settings.component';
+import { BalanceComponent } from './Front/GestionUser/balance/balance.component';
 
 
 const routes: Routes = [
@@ -19,19 +22,24 @@ const routes: Routes = [
   { path: 'back', component: MainBackComponent },
   
   // Front Office
-  { path: '', component: MainFrontComponent },
+  { path: '', component: MainFrontComponent  },
   { path: 'bloglist', component: BlogListComponent},
-  { path: 'blogdetails', component: BlogDetailsComponent},
-  { path: 'about', component: AboutComponent},
-  { path: 'courses', component: CoursesComponent},
-  { path: 'teachers', component: TeachersComponent},
-  { path: 'contact', component: ContactComponent},
+  { path: 'blogdetails', component: BlogDetailsComponent },
+  { path: 'about', component: AboutComponent },
+  { path: 'courses', component: CoursesComponent },
+  { path: 'teachers', component: TeachersComponent },
+  { path: 'contact', component: ContactComponent },
   // { path: 'residenceD/:param', component: ResidenceDetailsComponent },
   //{ path: '', redirectTo: '/front', pathMatch: 'full' },
 
   // Auth
   { path: 'register' ,component: AuthRegisterComponent },
   { path: 'login' ,component: AuthLoginComponent },
+  { path: 'profile' ,component: ProfileComponent },
+  { path: 'settings' ,component: SettingsComponent },
+  { path: 'balance' ,component: BalanceComponent },
+
+  
 
   { path: '**', redirectTo: '' },
 ];
