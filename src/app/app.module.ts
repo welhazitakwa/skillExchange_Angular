@@ -23,6 +23,7 @@ import { AuthLoginComponent } from './Auth/auth-login/auth-login.component';
 import { ProfileComponent } from './Front/GestionUser/profile/profile.component';
 import { BalanceComponent } from './Front/GestionUser/balance/balance.component';
 import { SettingsComponent } from './Front/GestionUser/settings/settings.component';
+import { AllUsersComponent } from './Back/GestionUser/User/all-users/all-users.component';
 
 @NgModule({
   declarations: [
@@ -45,6 +46,7 @@ import { SettingsComponent } from './Front/GestionUser/settings/settings.compone
     ProfileComponent,
     BalanceComponent,
     SettingsComponent,
+    AllUsersComponent,
   ],
   imports: [
     BrowserModule,
