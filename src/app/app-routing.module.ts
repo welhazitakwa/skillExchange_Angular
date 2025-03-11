@@ -15,20 +15,22 @@ import { UserGuard } from './core/services/Auth/user-guard.service';
 import { ProfileComponent } from './Front/GestionUser/profile/profile.component';
 import { SettingsComponent } from './Front/GestionUser/settings/settings.component';
 import { BalanceComponent } from './Front/GestionUser/balance/balance.component';
+import { AllUsersComponent } from './Back/GestionUser/User/all-users/all-users.component';
 
 
 const routes: Routes = [
   // Back Office
-  { path: 'back', component: MainBackComponent },
+  { path: 'back', component: MainBackComponent, canActivate: [AdminGuard] },
+  { path: 'backusers', component: AllUsersComponent, canActivate: [AdminGuard] },
   
   // Front Office
-  { path: '', component: MainFrontComponent  },
-  { path: 'bloglist', component: BlogListComponent},
-  { path: 'blogdetails', component: BlogDetailsComponent },
-  { path: 'about', component: AboutComponent },
-  { path: 'courses', component: CoursesComponent },
-  { path: 'teachers', component: TeachersComponent },
-  { path: 'contact', component: ContactComponent },
+  { path: '', component: MainFrontComponent, canActivate: [UserGuard]  },
+  { path: 'bloglist', component: BlogListComponent, canActivate: [UserGuard] },
+  { path: 'blogdetails', component: BlogDetailsComponent, canActivate: [UserGuard] },
+  { path: 'about', component: AboutComponent, canActivate: [UserGuard] },
+  { path: 'courses', component: CoursesComponent, canActivate: [UserGuard] },
+  { path: 'teachers', component: TeachersComponent, canActivate: [UserGuard] },
+  { path: 'contact', component: ContactComponent, canActivate: [UserGuard] },
   // { path: 'residenceD/:param', component: ResidenceDetailsComponent },
   //{ path: '', redirectTo: '/front', pathMatch: 'full' },
 
