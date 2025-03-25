@@ -22,6 +22,22 @@ import { AuthRegisterComponent } from './Auth/auth-register/auth-register.compon
 import { AuthLoginComponent } from './Auth/auth-login/auth-login.component';
 import { AffichertoutComponent } from './Front/GestionUser/affichertout/affichertout.component';
 import { AddComponent } from './Front/GestionUser/add/add.component';
+import { AddcartComponent } from './Front/GestionProduit/Cart/addcart/addcart.component';
+import { ShowcartComponent } from './Front/GestionProduit/Cart/showcart/showcart.component';
+import { UpdatecartComponent } from './Front/GestionProduit/Cart/updatecart/updatecart.component';
+import { CartDetailsComponent } from './Front/GestionProduit/Cart/cart-details/cart-details.component';
+import { AddproductComponent } from './Front/GestionProduit/Product/addproduct/addproduct.component';
+import { ProductDetailsComponent } from './Front/GestionProduit/Product/product-details/product-details.component';
+import { UpdateproductComponent } from './Front/GestionProduit/Product/updateproduct/updateproduct.component';
+import { ShowproductComponent } from './Front/GestionProduit/Product/showproduct/showproduct.component';
+import { BalanceComponent } from './Front/GestionUser/balance/balance.component';
+import { ProfileComponent } from './Front/GestionUser/profile/profile.component';
+import { SettingsComponent } from './Front/GestionUser/settings/settings.component';
+import { AllUsersComponent } from './Back/GestionUser/User/all-users/all-users.component';
+import { AllProductsComponent } from './Back/GestionProduit/Product/all-products/all-products.component';
+import { AllCartsComponent } from './Back/GestionProduit/Cart/all-carts/all-carts.component';
+import { AllReviewsComponent } from './Back/GestionProduit/ReviewP/all-reviews/all-reviews.component';
+import { AllImagesComponent } from './Back/GestionProduit/ImageP/all-images/all-images.component';
 
 @NgModule({
   declarations: [
@@ -41,8 +57,27 @@ import { AddComponent } from './Front/GestionUser/add/add.component';
     ContactComponent,
     AuthRegisterComponent,
     AuthLoginComponent,
-    AffichertoutComponent,
-    AddComponent,
+
+    ProfileComponent,
+    BalanceComponent,
+    SettingsComponent,
+    AllUsersComponent,
+    
+    AddcartComponent,
+    ShowcartComponent,
+    UpdatecartComponent,
+    CartDetailsComponent,
+    AddproductComponent,
+    ProductDetailsComponent,
+    UpdateproductComponent,
+    ShowproductComponent,
+    BalanceComponent,
+    ProfileComponent,
+    SettingsComponent,
+    AllProductsComponent,
+    AllCartsComponent,
+    AllReviewsComponent,
+    AllImagesComponent,
   ],
   imports: [
     BrowserModule,
