@@ -20,6 +20,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { AuthRegisterComponent } from './Auth/auth-register/auth-register.component';
 import { AuthLoginComponent } from './Auth/auth-login/auth-login.component';
+
 import { AffichertoutComponent } from './Front/GestionUser/affichertout/affichertout.component';
 import { AddComponent } from './Front/GestionUser/add/add.component';
 import { AddcartComponent } from './Front/GestionProduit/Cart/addcart/addcart.component';
@@ -30,14 +31,17 @@ import { AddproductComponent } from './Front/GestionProduit/Product/addproduct/a
 import { ProductDetailsComponent } from './Front/GestionProduit/Product/product-details/product-details.component';
 import { UpdateproductComponent } from './Front/GestionProduit/Product/updateproduct/updateproduct.component';
 import { ShowproductComponent } from './Front/GestionProduit/Product/showproduct/showproduct.component';
-import { BalanceComponent } from './Front/GestionUser/balance/balance.component';
-import { ProfileComponent } from './Front/GestionUser/profile/profile.component';
-import { SettingsComponent } from './Front/GestionUser/settings/settings.component';
-import { AllUsersComponent } from './Back/GestionUser/User/all-users/all-users.component';
+
 import { AllProductsComponent } from './Back/GestionProduit/Product/all-products/all-products.component';
 import { AllCartsComponent } from './Back/GestionProduit/Cart/all-carts/all-carts.component';
 import { AllReviewsComponent } from './Back/GestionProduit/ReviewP/all-reviews/all-reviews.component';
 import { AllImagesComponent } from './Back/GestionProduit/ImageP/all-images/all-images.component';
+
+import { ProfileComponent } from './Front/GestionUser/profile/profile.component';
+import { BalanceComponent } from './Front/GestionUser/balance/balance.component';
+import { SettingsComponent } from './Front/GestionUser/settings/settings.component';
+import { AllUsersComponent } from './Back/GestionUser/User/all-users/all-users.component';
+
 
 @NgModule({
   declarations: [
@@ -62,6 +66,7 @@ import { AllImagesComponent } from './Back/GestionProduit/ImageP/all-images/all-
     BalanceComponent,
     SettingsComponent,
     AllUsersComponent,
+
     
     AddcartComponent,
     ShowcartComponent,
@@ -71,13 +76,11 @@ import { AllImagesComponent } from './Back/GestionProduit/ImageP/all-images/all-
     ProductDetailsComponent,
     UpdateproductComponent,
     ShowproductComponent,
-    BalanceComponent,
-    ProfileComponent,
-    SettingsComponent,
     AllProductsComponent,
     AllCartsComponent,
     AllReviewsComponent,
     AllImagesComponent,
+
   ],
   imports: [
     BrowserModule,
