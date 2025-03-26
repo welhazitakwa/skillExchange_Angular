@@ -1,6 +1,6 @@
 /* Settings Component CSS */
 .account-header {
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  background: linear-gradient(135deg, #d95700 0%, #FF6600 100%);
   padding: 4rem 0;
   margin-bottom: 2rem;
 }
@@ -13,13 +13,14 @@
 }
 
 .settings-nav .nav-link.active {
-  background: #e0e7ff;
-  color: #4f46e5;
+  background: #FF6600;
+  color: white;
   font-weight: 500;
 }
 
 .settings-nav .nav-link:hover:not(.active) {
-  background: #f1f5f9;
+  background: #FF6600;
+  color: white;
 }
 
 .avatar-upload {
@@ -42,8 +43,8 @@
   position: absolute;
   right: 0;
   bottom: 0;
-  background: white;
   width: 36px;
+  background-color: gray;
   height: 36px;
   border-radius: 50%;
   display: flex;
@@ -51,6 +52,15 @@
   justify-content: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   cursor: pointer;
+}
+
+.avatar-edit:hover {
+  background-color: #d95700; /* Change background color on hover */
+}
+
+.avatar-edit i {
+  font-size: 24px; /* Adjust icon size */
+  color: #555; /* Icon color */
 }
 
 .avatar-edit input {
