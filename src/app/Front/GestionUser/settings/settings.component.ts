@@ -1,54 +1,93 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { Role } from 'src/app/core/models/GestionUser/Role';
+import { User } from 'src/app/core/models/GestionUser/User';
+import { AuthService } from 'src/app/core/services/Auth/auth.service';
+import { UserService } from 'src/app/core/services/GestionUser/user.service';
 
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.css']
+  styleUrls: ['./settings.component.css'],
 })
 export class SettingsComponent {
+  currentUser: User = {
+    name: '',
+    email: '',
+    id: 0,
+    role: Role.USER,
+    verified: false,
+    image: '',
+    balance: 0,
+    signature: '',
+    banned: false
+  };
+  
   activeTab: string = 'profile';
   twoFactorEnabled: boolean = false;
-
-  user = {
-    avatar: 'assets/default-avatar.jpg',
-    firstName: 'John',
-    lastName: 'Doe',
-    email: 'john.doe@example.com',
-    phone: '+1 234 567 890',
-    bio: 'Digital enthusiast passionate about web development and user experience design.'
-  };
 
   password = {
     current: '',
     new: '',
-    confirm: ''
+    confirm: '',
   };
 
   notifications = {
     email: true,
     push: false,
-    sms: true
+    sms: true,
   };
 
   socialLinks = {
     twitter: '',
-    facebook: ''
+    facebook: '',
   };
+
+  constructor(
+    private authService: AuthService,
+    private userService: UserService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    const currentUserEmail = this.authService.getCurrentUserEmail();
+    if (!currentUserEmail) {
+      this.router.navigate(['/login']);
+      return;
+    }
+    console.log(currentUserEmail);
+    this.userService.getUserByEmail(currentUserEmail).subscribe(
+      (user) => {
+        this.currentUser = user;
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  }
 
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = (e: any) => {
-        this.user.avatar = e.target.result;
+        // this.user.avatar = e.target.result;
       };
       reader.readAsDataURL(file);
     }
   }
 
   saveProfile() {
-    // Implement profile save logic
-    console.log('Profile saved:', this.user);
+    this.userService.updateUser(this.currentUser).subscribe(
+      (response) => {
+        console.log('Profile updated successfully:', response);
+        alert('Profile updated successfully!');
+      },
+      (error) => {
+        console.error('Error updating profile:', error);
+        alert('Failed to update profile. Please try again.');
+      }
+    );
   }
 
   changePassword() {
@@ -59,7 +98,10 @@ export class SettingsComponent {
 
   toggleTwoFactor() {
     this.twoFactorEnabled = !this.twoFactorEnabled;
-    console.log('Two-factor authentication:', this.twoFactorEnabled ? 'Enabled' : 'Disabled');
+    console.log(
+      'Two-factor authentication:',
+      this.twoFactorEnabled ? 'Enabled' : 'Disabled'
+    );
   }
 
   saveSocialLinks() {

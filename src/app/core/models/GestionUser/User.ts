@@ -10,5 +10,6 @@ export class User {
     image!: string;
     balance!: number;
     signature!: string;
+    banned!: boolean;
   
 }

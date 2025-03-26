@@ -25,4 +25,14 @@ export class UserService {
       headers: this.headers,
     });
   }
+
+  updateUser(user: User): Observable<any> {
+    if (!user.id) {
+      throw new Error('User ID is required for updating.');
+    }
+    console.log(user);
+    return this.http.patch<User>(`${this.url}/${user.id}`, user, {
+      headers: this.headers,
+    });
+  }
 }

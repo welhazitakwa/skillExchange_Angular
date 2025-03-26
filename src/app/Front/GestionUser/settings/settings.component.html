@@ -8,11 +8,11 @@
       class="d-flex flex-column justify-content-center"
       style="min-height: 300px"
     >
-      <h3 class="display-4 text-white text-uppercase">Contact</h3>
+      <h3 class="display-4 text-white text-uppercase">Settings</h3>
       <div class="d-inline-flex text-white">
         <p class="m-0 text-uppercase"><a class="text-white" href="">Home</a></p>
         <i class="fa fa-angle-double-right pt-1 px-3"></i>
-        <p class="m-0 text-uppercase">Contact</p>
+        <p class="m-0 text-uppercase">Settings</p>
       </div>
     </div>
   </div>
@@ -29,18 +29,39 @@
           <div class="card-body">
             <div class="user-profile text-center mb-4">
               <div class="avatar-upload">
-                <img [src]="user.avatar" class="avatar" alt="Profile picture" />
+                <img
+                  [src]="
+                    currentUser.image ||
+                    'assets/asssetsBack/assets/images/users/profile-pic.jpg'
+                  "
+                  class="avatar"
+                  alt="Profile picture"
+                />
                 <label class="avatar-edit">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                  </svg>
                   <input
                     type="file"
                     (change)="onFileSelected($event)"
                     accept="image/*"
                   />
-                  <i class="fas fa-camera"></i>
                 </label>
               </div>
-              <h5 class="mt-3 mb-0">name</h5>
-              <small class="text-muted">{{ user.email }}</small>
+              <h5 class="mt-3 mb-0">{{ currentUser.name }}</h5>
+              <small class="text-muted">{{ currentUser.email }}</small>
             </div>
 
             <div class="nav flex-column nav-pills">
@@ -76,21 +97,12 @@
             <form (submit)="saveProfile()">
               <div class="row g-3">
                 <div class="col-md-6">
-                  <label class="form-label">First Name</label>
+                  <label class="form-label">Name</label>
                   <input
                     type="text"
                     class="form-control"
-                    [(ngModel)]="user.firstName"
+                    [(ngModel)]="currentUser.name"
                     name="firstName"
-                  />
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label">Last Name</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    [(ngModel)]="user.lastName"
-                    name="lastName"
                   />
                 </div>
                 <div class="col-md-6">
@@ -98,27 +110,14 @@
                   <input
                     type="email"
                     class="form-control"
-                    [(ngModel)]="user.email"
+                    [(ngModel)]="currentUser.email"
                     name="email"
-                  />
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label">Phone Number</label>
-                  <input
-                    type="tel"
-                    class="form-control"
-                    [(ngModel)]="user.phone"
-                    name="phone"
+                    disabled
                   />
                 </div>
                 <div class="col-12">
                   <label class="form-label">Bio</label>
-                  <textarea
-                    class="form-control"
-                    rows="4"
-                    [(ngModel)]="user.bio"
-                    name="bio"
-                  ></textarea>
+                  <textarea class="form-control" rows="4" name="bio"></textarea>
                 </div>
                 <div class="col-12 text-end">
                   <button type="submit" class="btn btn-primary">

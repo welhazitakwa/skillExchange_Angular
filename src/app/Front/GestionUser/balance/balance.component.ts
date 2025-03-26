@@ -1,4 +1,8 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { User } from 'src/app/core/models/GestionUser/User';
+import { AuthService } from 'src/app/core/services/Auth/auth.service';
+import { UserService } from 'src/app/core/services/GestionUser/user.service';
 
 @Component({
   selector: 'app-balance',
@@ -6,10 +10,36 @@ import { Component } from '@angular/core';
   styleUrls: ['./balance.component.css']
 })
 export class BalanceComponent {
+  currentUser: User | null = null;
   activeSection: string | null = null;
   transactionAmount: number = 0;
   recipientEmail: string = '';
   transactionDescription: string = '';
+
+
+  constructor(
+    private authService: AuthService,
+    private userService: UserService,
+    private router: Router
+  ) {}
+
+  
+  ngOnInit(): void {
+    const currentUserEmail = this.authService.getCurrentUserEmail();
+    if (!currentUserEmail) {
+      this.router.navigate(['/login']);
+      return;
+    }
+    console.log(currentUserEmail);
+    this.userService.getUserByEmail(currentUserEmail).subscribe(
+      (user) => {
+        this.currentUser = user;
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  }
 
   transactions = [
     { 
