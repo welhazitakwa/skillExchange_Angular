@@ -31,7 +31,7 @@
               <div class="avatar-upload">
                 <img
                   [src]="
-                    currentUser.image ||
+                    ('data:image/*;base64,' + currentUser.image) ||
                     'assets/asssetsBack/assets/images/users/profile-pic.jpg'
                   "
                   class="avatar"
@@ -313,6 +313,28 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="showCropperModal" class="modal-overlay">
+  <div class="cropper-modal">
+    <div class="modal-header">
+      <h3>Crop your image</h3>
+    </div>
+    <div class="modal-body">
+      <image-cropper
+        [imageChangedEvent]="imageChangedEvent"
+        [maintainAspectRatio]="true"
+        [aspectRatio]="1"
+        format="png"
+        (imageCropped)="imageCropped($event)"
+        (loadImageFailed)="loadImageFailed()"
+      ></image-cropper>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="cancelCrop()">Cancel</button>
+      <button class="btn btn-primary" (click)="saveCrop()">Save</button>
     </div>
   </div>
 </div>

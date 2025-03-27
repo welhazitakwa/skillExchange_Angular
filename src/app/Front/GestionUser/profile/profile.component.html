@@ -18,7 +18,7 @@
           <div class="avatar-container">
             <img
               [src]="
-                currentUser!.image ||
+                ('data:image/*;base64,' + currentUser!.image) ||
                 'assets/asssetsBack/assets/images/users/profile-pic.jpg'
               "
               class="profile-avatar"

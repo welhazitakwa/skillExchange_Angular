@@ -35,4 +35,13 @@ export class UserService {
       headers: this.headers,
     });
   }
+
+  updateUserImage(user: User, formData: FormData): Observable<any> {
+    if (!user.id) {
+      throw new Error('User ID is required for updating.');
+    }
+    return this.http.post<User>(`${this.url}/${user.id}/image`, formData, {
+      headers: this.headers,
+    });
+  }
 }

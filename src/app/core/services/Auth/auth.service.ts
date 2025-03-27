@@ -11,10 +11,7 @@ import { Router } from '@angular/router';
 })
 export class AuthService {
   url = 'http://localhost:8084/skillExchange/auth';
-  constructor(
-    private http: HttpClient,
-    private router: Router
-  ) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   signup(signUpData: SignUp): Observable<any> {
     return this.http.post<SignUp>(this.url + '/signup', signUpData);
@@ -33,11 +30,22 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
-  
+  private isTokenExpired(token: string): boolean {
+    try {
+      const decodedToken: any = jwtDecode(token);
+      const currentTime = Date.now() / 1000;
+      return decodedToken.exp ? decodedToken.exp < currentTime : true;
+    } catch (error) {
+      return true;
+    }
+  }
+
   getCurrentUserEmail(): string | null {
     const token = localStorage.getItem('token');
-    if (!token) return null;
-
+    if (!token || this.isTokenExpired(token)) {
+      this.logout();
+      return null;
+    }
     try {
       const decodedToken: any = jwtDecode(token);
       return decodedToken.sub || null;
@@ -49,11 +57,13 @@ export class AuthService {
 
   getCurrentUserRole(): string | null {
     const token = localStorage.getItem('token');
-    if (!token) return null;
-  
+    if (!token || this.isTokenExpired(token)) {
+      this.logout();
+      return null;
+    }
+
     try {
       const decodedToken: any = jwtDecode(token);
-      console.log(decodedToken)
       return decodedToken.role || null;
     } catch (error) {
       console.error('Error decoding token:', error);
@@ -61,21 +71,20 @@ export class AuthService {
     }
   }
 
-  
   getCurrentUserID(): number | null {
     const token = localStorage.getItem('token');
-    if (!token) return null;
-  
+    if (!token || this.isTokenExpired(token)) {
+      this.logout();
+      return null;
+    }
     try {
       const decodedToken: any = jwtDecode(token);
-      console.log(decodedToken)
       return decodedToken.id || null;
     } catch (error) {
       console.error('Error decoding token:', error);
       return null;
     }
   }
-  
 
   isAdmin(): boolean {
     return this.getCurrentUserRole() === 'ADMIN';
