@@ -21,8 +21,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { AuthRegisterComponent } from './Auth/auth-register/auth-register.component';
 import { AuthLoginComponent } from './Auth/auth-login/auth-login.component';
 
-import { AffichertoutComponent } from './Front/GestionUser/affichertout/affichertout.component';
-import { AddComponent } from './Front/GestionUser/add/add.component';
 import { AddcartComponent } from './Front/GestionProduit/Cart/addcart/addcart.component';
 import { ShowcartComponent } from './Front/GestionProduit/Cart/showcart/showcart.component';
 import { UpdatecartComponent } from './Front/GestionProduit/Cart/updatecart/updatecart.component';
@@ -42,6 +40,7 @@ import { BalanceComponent } from './Front/GestionUser/balance/balance.component'
 import { SettingsComponent } from './Front/GestionUser/settings/settings.component';
 import { AllUsersComponent } from './Back/GestionUser/User/all-users/all-users.component';
 
+import { ImageCropperComponent } from 'ngx-image-cropper'
 
 @NgModule({
   declarations: [
@@ -88,6 +87,7 @@ import { AllUsersComponent } from './Back/GestionUser/User/all-users/all-users.c
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    ImageCropperComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

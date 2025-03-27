@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { Role } from 'src/app/core/models/GestionUser/Role';
 import { User } from 'src/app/core/models/GestionUser/User';
 import { AuthService } from 'src/app/core/services/Auth/auth.service';
@@ -20,9 +21,9 @@ export class SettingsComponent {
     image: '',
     balance: 0,
     signature: '',
-    banned: false
+    banned: false,
   };
-  
+
   activeTab: string = 'profile';
   twoFactorEnabled: boolean = false;
 
@@ -42,6 +43,10 @@ export class SettingsComponent {
     twitter: '',
     facebook: '',
   };
+
+  showCropperModal = false;
+  imageChangedEvent: any = '';
+  croppedImage: any = '';
 
   constructor(
     private authService: AuthService,
@@ -67,14 +72,47 @@ export class SettingsComponent {
   }
 
   onFileSelected(event: any) {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        // this.user.avatar = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
+    this.imageChangedEvent = event;
+    this.showCropperModal = true;
+  }
+
+  imageCropped(event: ImageCroppedEvent) {
+    this.croppedImage = event.blob;
+  }
+
+  loadImageFailed() {
+    alert('Image load failed');
+    this.showCropperModal = false;
+  }
+
+  cancelCrop() {
+    this.showCropperModal = false;
+    this.imageChangedEvent = null;
+    this.croppedImage = null;
+  }
+
+  async saveCrop() {
+    if (!this.croppedImage) return;
+
+    // Convert blob to File
+    const file = new File([this.croppedImage], 'profile-image.png', {
+      type: 'image/png',
+      lastModified: Date.now(),
+    });
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    this.userService.updateUserImage(this.currentUser, formData).subscribe(
+      (updatedUser: User) => {
+        this.currentUser = updatedUser;
+        this.showCropperModal = false;
+      },
+      (error) => {
+        console.error('Error uploading image:', error);
+        this.showCropperModal = false;
+      }
+    );
   }
 
   saveProfile() {
