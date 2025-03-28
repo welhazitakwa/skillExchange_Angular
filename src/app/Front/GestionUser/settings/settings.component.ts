@@ -129,9 +129,22 @@ export class SettingsComponent {
   }
 
   changePassword() {
-    // Implement password change logic
-    console.log('Password changed:', this.password);
-    this.password = { current: '', new: '', confirm: '' };
+    if (this.password.new !== this.password.confirm) {
+      alert('New password and confirmation do not match');
+      return;
+    }
+
+    this.userService
+      .changeUserPassword(this.password.current, this.password.new)
+      .subscribe({
+        next: () => {
+          alert('Password changed successfully');
+          this.authService.logout();
+        },
+        error: (err) => {
+          alert(err.error.message || 'Failed to change password');
+        },
+      });
   }
 
   toggleTwoFactor() {

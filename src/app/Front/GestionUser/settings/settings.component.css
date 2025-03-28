@@ -10,6 +10,7 @@
   margin-bottom: 0.5rem;
   color: #64748b;
   transition: all 0.2s ease;
+  cursor: pointer;
 }
 
 .settings-nav .nav-link.active {
