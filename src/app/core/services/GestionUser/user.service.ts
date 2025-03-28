@@ -44,4 +44,15 @@ export class UserService {
       headers: this.headers,
     });
   }
+
+  changeUserPassword(
+    currentPassword: String,
+    newPassword: String
+  ): Observable<any> {
+    return this.http.put(
+      `${this.url}/change-password`,
+      { currentPassword: currentPassword, newPassword: newPassword },
+      { headers: this.headers }
+    );
+  }
 }
