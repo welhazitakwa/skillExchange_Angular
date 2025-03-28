@@ -40,7 +40,8 @@ import { BalanceComponent } from './Front/GestionUser/balance/balance.component'
 import { SettingsComponent } from './Front/GestionUser/settings/settings.component';
 import { AllUsersComponent } from './Back/GestionUser/User/all-users/all-users.component';
 
-import { ImageCropperComponent } from 'ngx-image-cropper'
+import { ImageCropperComponent } from 'ngx-image-cropper';
+import { UserBackDetailsComponent } from './Back/GestionUser/User/user-back-details/user-back-details.component'
 
 @NgModule({
   declarations: [
@@ -79,6 +80,7 @@ import { ImageCropperComponent } from 'ngx-image-cropper'
     AllCartsComponent,
     AllReviewsComponent,
     AllImagesComponent,
+    UserBackDetailsComponent,
 
   ],
   imports: [

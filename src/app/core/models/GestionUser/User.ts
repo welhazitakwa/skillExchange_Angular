@@ -1,3 +1,4 @@
+import { Banned } from "./Banned";
 import { Role } from "./Role";
 
 export class User {
@@ -10,6 +11,10 @@ export class User {
     image!: string;
     balance!: number;
     signature!: string;
-    banned!: boolean;
+    banned!: Banned | null;
+    bio!: string;
+    facebook!: string;
+    github!: string;
+    linkedin!: string;
   
 }

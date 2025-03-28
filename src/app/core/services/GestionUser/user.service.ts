@@ -20,6 +20,10 @@ export class UserService {
     return this.http.get<User[]>(this.url, { headers: this.headers });
   }
 
+  getUserById(id: number): Observable<User> {
+    return this.http.get<User>(`${this.url}/${id}`, { headers: this.headers });
+  }
+
   getUserByEmail(email: string): Observable<any> {
     return this.http.get<User>(`${this.url}/email/${email}`, {
       headers: this.headers,

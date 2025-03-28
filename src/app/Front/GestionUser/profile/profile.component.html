@@ -41,13 +41,13 @@
             </div>
             <br/>
             <div class="social-links">
-              <a href="https://facebook.com" target="_blank">
+              <a *ngIf="currentUser?.facebook" href="https://facebook.com/{{currentUser?.facebook}}" target="_blank">
                 <i class="fab fa-facebook"></i>
               </a>
-              <a href="https://github.com" target="_blank">
+              <a *ngIf="currentUser?.github" href="https://github.com/{{currentUser?.github}}" target="_blank">
                 <i class="fab fa-github"></i>
               </a>
-              <a href="https://linkedin.com" target="_blank">
+              <a *ngIf="currentUser?.linkedin" href="https://linkedin.com/{{currentUser?.linkedin}}" target="_blank">
                 <i class="fab fa-linkedin"></i>
               </a>
             </div>
@@ -101,7 +101,8 @@
         </div>
       </div>
 
-      <p class="bio">No bio available</p>
+      <p class="bio" *ngIf="currentUser?.bio">{{currentUser?.bio}}</p>
+      <p class="bio" *ngIf="!currentUser?.bio">No bio available</p>
       <div class="user-stats">
         <div class="stat-item">
           <i class="fas fa-pencil-alt text-primary"></i>

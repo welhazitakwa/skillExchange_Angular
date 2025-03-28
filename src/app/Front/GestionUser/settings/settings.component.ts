@@ -21,7 +21,11 @@ export class SettingsComponent {
     image: '',
     balance: 0,
     signature: '',
-    banned: false,
+    banned: null,
+    bio: '',
+    facebook: '',
+    github: '',
+    linkedin: ''
   };
 
   activeTab: string = 'profile';
@@ -37,11 +41,6 @@ export class SettingsComponent {
     email: true,
     push: false,
     sms: true,
-  };
-
-  socialLinks = {
-    twitter: '',
-    facebook: '',
   };
 
   showCropperModal = false;
@@ -155,8 +154,4 @@ export class SettingsComponent {
     );
   }
 
-  saveSocialLinks() {
-    // Implement social links save logic
-    console.log('Social links saved:', this.socialLinks);
-  }
 }
