@@ -1,0 +1,76 @@
+.nav-link {
+  color: rgb(255, 102, 0);
+}
+
+.nav-link.active{
+  background-color: rgb(255, 102, 0) !important;
+  color: white !important;
+}
+
+
+  
+.transaction-history {
+  height: 600px;
+  display: flex;
+  flex-direction: column;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.history-controls {
+  display: flex;
+  gap: 1rem;
+}
+
+.transaction-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.transaction-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  background: #f8fafc;
+  transition: all 0.2s ease;
+}
+
+.transaction-item:hover {
+  transform: translateX(4px);
+  background: #f1f5f9;
+}
+
+.transaction-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: #e0e7ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+}
+
+.transaction-icon i {
+  color: rgb(255, 102, 0);
+}
+
+.transaction-details {
+  flex: 1;
+}
+
+.transaction-amount {
+  font-weight: 600;
+  color: #ef4444;
+}
+
+.transaction-amount.income {
+  color: #10b981;
+}

@@ -1,0 +1,304 @@
+<!-- ============================================================== -->
+<!-- Main wrapper - style you can find in pages.scss -->
+<!-- ============================================================== -->
+<div
+  id="main-wrapper"
+  data-theme="light"
+  data-layout="vertical"
+  data-navbarbg="skin6"
+  data-sidebartype="full"
+  data-sidebar-position="fixed"
+  data-header-position="fixed"
+  data-boxed-layout="full"
+>
+  <!-- ============================================================== -->
+  <!-- Topbar header - style you can find in pages.scss -->
+  <!-- ============================================================== -->
+  <app-nav></app-nav>
+  <!-- ============================================================== -->
+  <!-- End Topbar header -->
+  <!-- ============================================================== -->
+  <!-- ============================================================== -->
+  <!-- Left Sidebar - style you can find in sidebar.scss  -->
+  <!-- ============================================================== -->
+  <app-side-bar></app-side-bar>
+  <div class="page-wrapper" style="display: block">
+    <!-- ============================================================== -->
+    <!-- Bread crumb and right sidebar toggle -->
+    <!-- ============================================================== -->
+
+    <!-- ============================================================== -->
+    <!-- End Bread crumb and right sidebar toggle -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- Container fluid  -->
+    <!-- ============================================================== -->
+    <div class="container-fluid">
+      <!-- Page Header -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="fw-bold mb-0">User Management</h2>
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <a routerLink="/back">Dashboard</a>
+              </li>
+              <li class="breadcrumb-item">
+                <a routerLink="/backusers">Users</a>
+              </li>
+              <li class="breadcrumb-item active" aria-current="page">
+                {{ user?.name }}
+              </li>
+            </ol>
+          </nav>
+        </div>
+        <div class="d-flex gap-2">
+          <button
+            class="btn btn-danger"
+            (click)="banUser()"
+            *ngIf="!user?.banned"
+          >
+            <i class="fas fa-ban fa-fw me-2 fa-sm"></i>
+            Ban User
+          </button>
+          <button
+            class="btn btn-warning"
+            (click)="unbanUser()"
+            *ngIf="user?.banned"
+          >
+            <i class="fas fa-lock-open fa-fw me-2 fa-sm"></i>
+            Unban User
+          </button>
+          <button class="btn btn-secondary" routerLink="edit">
+            <i class="fas fa-shield-alt fa-fw me-2 fa-sm"></i>
+            Asign Badge
+          </button>
+          <button class="btn btn-primary" routerLink="edit">
+            <i class="fas fa-user-tie fa-fw me-2 fa-sm"></i>
+            Promote Admin
+          </button>
+          <button class="btn btn-success" routerLink="edit">
+            <i class="fas fa-coins fa-fw me-2 fa-sm"></i>
+            Gift Tokens
+          </button>
+        </div>
+      </div>
+
+      <!-- Profile Section -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <!-- Avatar Column -->
+            <div class="col-md-3 text-center border-end">
+              <div class="position-relative d-inline-block">
+                <img
+                  [src]="
+                    'data:image/*;base64,' + user?.image ||
+                    'assets/images/avatar-placeholder.png'
+                  "
+                  class="rounded-circle mb-3"
+                  width="150"
+                  height="150"
+                  alt="User avatar"
+                />
+                <div
+                  class="badge bg-{{
+                    user?.verified ? 'success' : 'secondary'
+                  }} rounded-pill position-absolute top-0 end-0"
+                >
+                  <i
+                    class="fas fa-{{ user?.verified ? 'check' : 'clock' }}"
+                  ></i>
+                </div>
+              </div>
+              <h4 class="fw-bold mb-1">{{ user?.name }}</h4>
+              <div class="text-muted mb-3">ID: {{ user?.id }}</div>
+              <span class="badge bg-primary bg-opacity-10 py-2 px-3">
+                {{ user?.role }}
+              </span>
+            </div>
+
+            <!-- Details Column -->
+            <div class="col-md-9">
+              <div class="row">
+                <!-- Personal Info -->
+                <div class="col-md-6">
+                  <h5 class="fw-bold mb-3">
+                    <i class="fas fa-user-circle me-2"></i>Personal Information
+                  </h5>
+                  <dl class="row">
+                    <dt class="col-sm-4">Email</dt>
+                    <dd class="col-sm-8">{{ user?.email }}</dd>
+                  </dl>
+                </div>
+
+                <!-- Account Info -->
+                <div class="col-md-6">
+                  <h5 class="fw-bold mb-3">
+                    <i class="fas fa-shield-alt me-2"></i>Account Details
+                  </h5>
+                  <dl class="row">
+                    <dt class="col-sm-4">Status</dt>
+                    <dd class="col-sm-8">
+                      <span
+                        class="badge bg-{{
+                          user?.banned ? 'danger' : 'success'
+                        }}"
+                      >
+                        {{ user?.banned ? "Banned" : "Active" }}
+                      </span>
+                    </dd>
+
+                    <dt class="col-sm-4">Balance</dt>
+                    <dd class="col-sm-8">
+                      🪙 {{ user?.balance | number : "1.2-2" }}
+                    </dd>
+                  </dl>
+                </div>
+              </div>
+
+              <!-- Additional Sections -->
+              <div class="row mt-3">
+                <div class="col-12">
+                  <h5 class="fw-bold mb-3">
+                    <i class="fas fa-network-wired me-2"></i>Activity
+                  </h5>
+                  <div class="row">
+                    <div class="col-md-3">
+                      <div class="card border-0 bg-light">
+                        <div class="card-body text-center">
+                          <div class="h4 mb-0">24</div>
+                          <small class="text-muted">Total Logins</small>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="card border-0 bg-light">
+                        <div class="card-body text-center">
+                          <div class="h4 mb-0">8</div>
+                          <small class="text-muted">Active Sessions</small>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="card border-0 bg-light">
+                        <div class="card-body text-center">
+                          <div class="h4 mb-0">142</div>
+                          <small class="text-muted">Total Actions</small>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="card border-0 bg-light">
+                        <div class="card-body text-center">
+                          <div class="h4 mb-0">3</div>
+                          <small class="text-muted">Reports</small>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs Section -->
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <ul class="nav nav-tabs mb-4">
+            <li class="nav-item">
+              <a class="nav-link active" href="#activity" data-bs-toggle="tab"
+                >Transaction History</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#achievements" data-bs-toggle="tab"
+                >Achievements</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#sociallinks" data-bs-toggle="tab"
+                >Social Media Links</a
+              >
+            </li>
+          </ul>
+
+          <div class="tab-content">
+            <!-- Activity Log -->
+            <div class="tab-pane active" id="activity">
+              <div class="transaction-list">
+                <div
+                  *ngFor="let transaction of transactions"
+                  class="transaction-item"
+                >
+                  <div class="transaction-icon">
+                    <i [class]="getTransactionIcon(transaction.type)"></i>
+                  </div>
+                  <div class="transaction-details">
+                    <h5>{{ transaction.description }}</h5>
+                    <small class="text-muted">{{
+                      transaction.date | date : "medium"
+                    }}</small>
+                  </div>
+                  <div
+                    class="transaction-amount"
+                    [class.income]="transaction.amount > 0"
+                  >
+                    {{ transaction.amount > 0 ? "+" : "" }}🪙{{
+                      transaction.amount
+                    }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- sociallinks -->
+            <div class="tab-pane" id="sociallinks">
+              <div class="row">
+                <div *ngFor="let perm of permissions" class="col-md-4 mb-3">
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      [checked]="perm.allowed"
+                    />
+                    <label class="form-check-label">{{ perm.name }}</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Achievements -->
+            <div class="tab-pane" id="achievements">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Device</th>
+                      <th>OS</th>
+                      <th>Browser</th>
+                      <th>IP Address</th>
+                      <th>Last Active</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let device of devices">
+                      <td>{{ device.type }}</td>
+                      <td>{{ device.os }}</td>
+                      <td>{{ device.browser }}</td>
+                      <td>{{ device.ip }}</td>
+                      <td>{{ device.lastActive | date : "short" }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -12,7 +12,7 @@
       <!-- ============================================================== -->
       <div class="navbar-brand">
         <!-- Logo icon -->
-        <a routerLink="/back" class="text-decoration-none" >
+        <a routerLink="/back" class="text-decoration-none">
           <h3 class="m-0"><span class="text-primary">Skill</span>Exchange</h3>
         </a>
       </div>
@@ -224,13 +224,16 @@
             aria-expanded="false"
           >
             <img
-              src="assets/asssetsBack/assets/images/users/profile-pic.jpg"
+              [src]="
+                'data:image/*;base64,' + currentUser!.image ||
+                'assets/asssetsBack/assets/images/users/profile-pic.jpg'
+              "
               alt="user"
               class="rounded-circle"
               width="40"
             />
             <span class="ms-2 d-none d-lg-inline-block"
-              ><span>Hello,</span> <span class="text-dark">Jason Doe</span>
+              ><span>Hello,</span> <span class="text-dark">{{ currentUser?.name }}</span>
               <i data-feather="chevron-down" class="svg-icon"></i
             ></span>
           </a>
@@ -254,15 +257,9 @@
               Account Setting</a
             >
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="javascript:void(0)"
+            <a class="dropdown-item" (click)="logout()" style="cursor: pointer;"
               ><i data-feather="power" class="svg-icon me-2 ms-1"></i> Logout</a
             >
-            <div class="dropdown-divider"></div>
-            <div class="pl-4 p-3">
-              <a href="javascript:void(0)" class="btn btn-sm btn-info"
-                >View Profile</a
-              >
-            </div>
           </div>
         </li>
         <!-- ============================================================== -->

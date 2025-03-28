@@ -22,6 +22,7 @@ import { ProfileComponent } from './Front/GestionUser/profile/profile.component'
 import { SettingsComponent } from './Front/GestionUser/settings/settings.component';
 import { BalanceComponent } from './Front/GestionUser/balance/balance.component';
 import { AllUsersComponent } from './Back/GestionUser/User/all-users/all-users.component';
+import { UserBackDetailsComponent } from './Back/GestionUser/User/user-back-details/user-back-details.component';
 
 const routes: Routes = [
   // Back Office
@@ -31,7 +32,10 @@ const routes: Routes = [
   {
     path: 'backusers',
     component: AllUsersComponent,
-    canActivate: [AdminGuard],
+  },
+  {
+    path: 'backuserdetail/:id',
+    component: UserBackDetailsComponent,
   },
   /////Back Gestion Produit////////////////////
   { path: 'backproducts', component: AllProductsComponent },

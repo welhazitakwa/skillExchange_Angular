@@ -132,7 +132,12 @@
                 </div>
                 <div class="col-12">
                   <label class="form-label">Bio</label>
-                  <textarea class="form-control" rows="4" name="bio"></textarea>
+                  <textarea
+                    class="form-control"
+                    rows="4"
+                    name="bio"
+                    [(ngModel)]="currentUser.bio"
+                  ></textarea>
                 </div>
                 <div class="col-12 text-end">
                   <button type="submit" class="btn btn-primary">
@@ -235,15 +240,15 @@
 
             <div class="notification-item">
               <div class="form-check form-switch">
+                <label class="form-check-label" for="emailNotifications"
+                  >Email Notifications</label
+                >
                 <input
                   class="form-check-input"
                   type="checkbox"
                   id="emailNotifications"
                   [(ngModel)]="notifications.email"
                 />
-                <label class="form-check-label" for="emailNotifications"
-                  >Email Notifications</label
-                >
               </div>
               <small class="text-muted"
                 >Receive important updates via email</small
@@ -252,15 +257,15 @@
 
             <div class="notification-item">
               <div class="form-check form-switch">
+                <label class="form-check-label" for="pushNotifications"
+                  >Push Notifications</label
+                >
                 <input
                   class="form-check-input"
                   type="checkbox"
                   id="pushNotifications"
                   [(ngModel)]="notifications.push"
                 />
-                <label class="form-check-label" for="pushNotifications"
-                  >Push Notifications</label
-                >
               </div>
               <small class="text-muted"
                 >Get real-time updates on your device</small
@@ -269,15 +274,15 @@
 
             <div class="notification-item">
               <div class="form-check form-switch">
+                <label class="form-check-label" for="smsNotifications"
+                  >SMS Alerts</label
+                >
                 <input
                   class="form-check-input"
                   type="checkbox"
                   id="smsNotifications"
                   [(ngModel)]="notifications.sms"
                 />
-                <label class="form-check-label" for="smsNotifications"
-                  >SMS Alerts</label
-                >
               </div>
               <small class="text-muted"
                 >Receive text message notifications</small
@@ -296,23 +301,41 @@
               <i class="fas fa-link me-2"></i>Social Media Links
             </h4>
 
-            <form (submit)="saveSocialLinks()">
+            <form (submit)="saveProfile()">
               <div class="row g-3">
                 <div class="col-12">
-                  <label class="form-label">Twitter Profile</label>
+                  <label class="form-label">Github Profile</label>
                   <div class="input-group">
                     <span class="input-group-text"
-                      ><i class="fab fa-twitter"></i>
+                      ><i class="fab fa-github"></i>
                       <span style="padding-left: 5px"
-                        >https://twitter.com/</span
+                        >https://github.com/</span
                       ></span
                     >
                     <input
-                      type="url"
+                      type="text"
                       class="form-control"
                       placeholder="username"
-                      [(ngModel)]="socialLinks.twitter"
-                      name="twitter"
+                      [(ngModel)]="currentUser.github"
+                      name="github"
+                    />
+                  </div>
+                </div>
+                <div class="col-12">
+                  <label class="form-label">Linkedin Profile</label>
+                  <div class="input-group">
+                    <span class="input-group-text"
+                      ><i class="fab fa-linkedin"></i>
+                      <span style="padding-left: 5px"
+                        >https://linkedin.com/</span
+                      ></span
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="username"
+                      [(ngModel)]="currentUser.linkedin"
+                      name="linkedin"
                     />
                   </div>
                 </div>
@@ -326,10 +349,10 @@
                       ></span
                     >
                     <input
-                      type="url"
+                      type="text"
                       class="form-control"
                       placeholder="username"
-                      [(ngModel)]="socialLinks.facebook"
+                      [(ngModel)]="currentUser.facebook"
                       name="facebook"
                     />
                   </div>
