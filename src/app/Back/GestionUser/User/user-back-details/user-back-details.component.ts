@@ -14,26 +14,41 @@ export class UserBackDetailsComponent {
   permissions: any[] = [];
   devices: any[] = [];
 
-  
+  showBanModal = false;
+  showBadgeModal = false;
+  showPromoteModal = false;
+  showGiftModal = false;
+
+  banReason = '';
+  banEndDate: Date | null = null;
+  selectedBadge = '';
+  tokenAmount = 0.00;
+  availableBadges = [
+    // Example data - replace with your actual badges
+    { id: 'gold', name: 'Gold Badge' },
+    { id: 'silver', name: 'Silver Badge' },
+    { id: 'bronze', name: 'Bronze Badge' },
+  ];
+
   transactions: any[] = [
-    { 
+    {
       type: 'transfer',
       description: 'Sent to John Doe',
       date: new Date('2024-03-15'),
-      amount: -500.00
+      amount: -500.0,
     },
     {
       type: 'deposit',
       description: 'Salary Deposit',
       date: new Date('2024-03-10'),
-      amount: 4500.00
+      amount: 4500.0,
     },
     {
       type: 'withdraw',
       description: 'ATM Withdrawal',
       date: new Date('2024-03-05'),
-      amount: -300.00
-    }
+      amount: -300.0,
+    },
   ];
 
   constructor(
@@ -56,7 +71,7 @@ export class UserBackDetailsComponent {
       (err: any) => {
         console.error('Error loading user:', err);
         this.router.navigate(['/users']);
-      },
+      }
     );
   }
 
@@ -112,13 +127,35 @@ export class UserBackDetailsComponent {
     }
   }
 
-  
   getTransactionIcon(type: string) {
-    switch(type) {
-      case 'transfer': return 'fas fa-exchange-alt';
-      case 'withdraw': return 'fas fa-wallet';
-      case 'deposit': return 'fas fa-piggy-bank';
-      default: return 'fas fa-question-circle';
+    switch (type) {
+      case 'transfer':
+        return 'fas fa-exchange-alt';
+      case 'withdraw':
+        return 'fas fa-wallet';
+      case 'deposit':
+        return 'fas fa-piggy-bank';
+      default:
+        return 'fas fa-question-circle';
+    }
+  }
+
+
+  assignBadge() {
+    if (this.selectedBadge) {
+      // Call your badge assignment service here
+      console.log('Assigning badge:', this.selectedBadge);
+    }
+  }
+  promoteToAdmin() {
+    // Call your admin promotion service here
+    console.log('Promoting user to admin');
+  }
+
+  giftTokens() {
+    if (this.tokenAmount > 0) {
+      // Call your token gifting service here
+      console.log('Gifting tokens:', this.tokenAmount);
     }
   }
 }

@@ -55,7 +55,7 @@
         <div class="d-flex gap-2">
           <button
             class="btn btn-danger"
-            (click)="banUser()"
+            (click)="showBanModal = true"
             *ngIf="!user?.banned"
           >
             <i class="fas fa-ban fa-fw me-2 fa-sm"></i>
@@ -69,15 +69,15 @@
             <i class="fas fa-lock-open fa-fw me-2 fa-sm"></i>
             Unban User
           </button>
-          <button class="btn btn-secondary" routerLink="edit">
+          <button class="btn btn-secondary" (click)="showBadgeModal = true">
             <i class="fas fa-shield-alt fa-fw me-2 fa-sm"></i>
             Asign Badge
           </button>
-          <button class="btn btn-primary" routerLink="edit">
+          <button class="btn btn-primary" (click)="showPromoteModal = true">
             <i class="fas fa-user-tie fa-fw me-2 fa-sm"></i>
             Promote Admin
           </button>
-          <button class="btn btn-success" routerLink="edit">
+          <button class="btn btn-success" (click)="showGiftModal = true">
             <i class="fas fa-coins fa-fw me-2 fa-sm"></i>
             Gift Tokens
           </button>
@@ -295,7 +295,199 @@
                 </table>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
 
+      <!-- Ban User Modal -->
+      <div
+        class="modal fade"
+        [class.show]="showBanModal"
+        style="display: block"
+        *ngIf="showBanModal"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Ban User</h5>
+              <button
+                type="button"
+                class="btn-close"
+                (click)="showBanModal = false"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label class="form-label">Reason</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="banReason"
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">End Date</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  [(ngModel)]="banEndDate"
+                />
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                (click)="showBanModal = false"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                class="btn btn-danger"
+                (click)="banUser(); showBanModal = false"
+              >
+                Ban
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Assign Badge Modal -->
+      <div
+        class="modal fade"
+        [class.show]="showBadgeModal"
+        style="display: block"
+        *ngIf="showBadgeModal"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Assign Badge</h5>
+              <button
+                type="button"
+                class="btn-close"
+                (click)="showBadgeModal = false"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <select class="form-select" [(ngModel)]="selectedBadge">
+                <option
+                  *ngFor="let badge of availableBadges"
+                  [value]="badge.id"
+                >
+                  {{ badge.name }}
+                </option>
+              </select>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                (click)="showBadgeModal = false"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                (click)="assignBadge(); showBadgeModal = false"
+              >
+                Assign
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Promote Admin Modal -->
+      <div
+        class="modal fade"
+        [class.show]="showPromoteModal"
+        style="display: block"
+        *ngIf="showPromoteModal"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Promote to Admin</h5>
+              <button
+                type="button"
+                class="btn-close"
+                (click)="showPromoteModal = false"
+              ></button>
+            </div>
+            <div class="modal-body">
+              Are you sure you want to promote this user to admin?
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                (click)="showPromoteModal = false"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                (click)="promoteToAdmin(); showPromoteModal = false"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gift Tokens Modal -->
+      <div
+        class="modal fade"
+        [class.show]="showGiftModal"
+        style="display: block"
+        *ngIf="showGiftModal"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Gift Tokens</h5>
+              <button
+                type="button"
+                class="btn-close"
+                (click)="showGiftModal = false"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <div class="input-group">
+                <span class="input-group-text">🪙</span>
+                <input
+                  type="number"
+                  class="form-control"
+                  [(ngModel)]="tokenAmount"
+                  name="amount"
+                  placeholder="0.00"
+                  step="0.01"
+                  required
+                />
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                (click)="showGiftModal = false"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                class="btn btn-success"
+                (click)="giftTokens(); showGiftModal = false"
+              >
+                Gift
+              </button>
+            </div>
           </div>
         </div>
       </div>
