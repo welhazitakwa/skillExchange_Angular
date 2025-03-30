@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
+import { ToastService, AngularToastifyModule } from 'angular-toastify'; 
+
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SideBarComponent } from './Back/side-bar/side-bar.component';
@@ -41,7 +43,8 @@ import { SettingsComponent } from './Front/GestionUser/settings/settings.compone
 import { AllUsersComponent } from './Back/GestionUser/User/all-users/all-users.component';
 
 import { ImageCropperComponent } from 'ngx-image-cropper';
-import { UserBackDetailsComponent } from './Back/GestionUser/User/user-back-details/user-back-details.component'
+import { UserBackDetailsComponent } from './Back/GestionUser/User/user-back-details/user-back-details.component';
+import { AuthBanComponent } from './Auth/auth-ban/auth-ban.component'
 
 @NgModule({
   declarations: [
@@ -81,6 +84,7 @@ import { UserBackDetailsComponent } from './Back/GestionUser/User/user-back-deta
     AllReviewsComponent,
     AllImagesComponent,
     UserBackDetailsComponent,
+    AuthBanComponent,
 
   ],
   imports: [
@@ -89,9 +93,10 @@ import { UserBackDetailsComponent } from './Back/GestionUser/User/user-back-deta
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    ImageCropperComponent
+    ImageCropperComponent,
+    AngularToastifyModule,
   ],
-  providers: [],
+  providers: [ToastService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

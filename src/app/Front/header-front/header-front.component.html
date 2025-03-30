@@ -106,13 +106,15 @@
             >
               <img
                 [src]="
-                  'data:image/*;base64,' + currentUser!.image ||
-                  'assets/asssetsBack/assets/images/users/profile-pic.jpg'
+                  currentUser.image
+                    ? 'data:image/*;base64,' + currentUser.image
+                    : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
                 "
                 alt="user"
                 class="rounded-circle"
                 width="40"
               />
+
               <span class="ms-2 d-none d-lg-inline-block"
                 ><span>Hello,</span>
                 <span class="text-dark">{{ currentUser.email }}</span>
@@ -149,10 +151,7 @@
               >
             </div>
           </div>
-          <div
-            *ngIf="!currentUser"
-            class="col-log-3 navbar-nav py-0 ms-auto"
-          >
+          <div *ngIf="!currentUser" class="col-log-3 navbar-nav py-0 ms-auto">
             <a
               routerLink="/login"
               routerLinkActive="active"

@@ -1,0 +1,28 @@
+/* banned.component.scss */
+.card {
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+  }
+  
+  .card-header {
+    border-radius: 15px 15px 0 0 !important;
+    padding: 1.5rem;
+  }
+  
+  .alert {
+    border-radius: 10px;
+  }
+  
+  .text-muted {
+    color: #6c757d !important;
+  }
+  
+  .alert-link {
+    color: #dc3545;
+    text-decoration: underline;
+  }
+  
+  .shadow-lg {
+    box-shadow: 0 1rem 3rem rgba(0,0,0,.175) !important;
+  }

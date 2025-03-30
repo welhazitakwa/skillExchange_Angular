@@ -47,7 +47,7 @@
                 <a routerLink="/backusers">Users</a>
               </li>
               <li class="breadcrumb-item active" aria-current="page">
-                {{ user?.name }}
+                {{ user.name }}
               </li>
             </ol>
           </nav>
@@ -56,7 +56,7 @@
           <button
             class="btn btn-danger"
             (click)="showBanModal = true"
-            *ngIf="!user?.banned"
+            *ngIf="!user.ban"
           >
             <i class="fas fa-ban fa-fw me-2 fa-sm"></i>
             Ban User
@@ -64,7 +64,7 @@
           <button
             class="btn btn-warning"
             (click)="unbanUser()"
-            *ngIf="user?.banned"
+            *ngIf="user.ban"
           >
             <i class="fas fa-lock-open fa-fw me-2 fa-sm"></i>
             Unban User
@@ -73,9 +73,21 @@
             <i class="fas fa-shield-alt fa-fw me-2 fa-sm"></i>
             Asign Badge
           </button>
-          <button class="btn btn-primary" (click)="showPromoteModal = true">
+          <button
+            class="btn btn-primary"
+            *ngIf="user.role == 'USER'"
+            (click)="showPromoteModal = true"
+          >
             <i class="fas fa-user-tie fa-fw me-2 fa-sm"></i>
             Promote Admin
+          </button>
+          <button
+            class="btn btn-primary"
+            *ngIf="user.role == 'ADMIN'"
+            (click)="showPromoteModal = true"
+          >
+            <i class="fas fa-user-tie fa-fw me-2 fa-sm"></i>
+            Demote Admin
           </button>
           <button class="btn btn-success" (click)="showGiftModal = true">
             <i class="fas fa-coins fa-fw me-2 fa-sm"></i>
@@ -93,8 +105,9 @@
               <div class="position-relative d-inline-block">
                 <img
                   [src]="
-                    'data:image/*;base64,' + user?.image ||
-                    'assets/images/avatar-placeholder.png'
+                    user.image
+                      ? 'data:image/*;base64,' + user.image
+                      : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
                   "
                   class="rounded-circle mb-3"
                   width="150"
@@ -103,18 +116,16 @@
                 />
                 <div
                   class="badge bg-{{
-                    user?.verified ? 'success' : 'secondary'
+                    user.verified ? 'success' : 'secondary'
                   }} rounded-pill position-absolute top-0 end-0"
                 >
-                  <i
-                    class="fas fa-{{ user?.verified ? 'check' : 'clock' }}"
-                  ></i>
+                  <i class="fas fa-{{ user.verified ? 'check' : 'clock' }}"></i>
                 </div>
               </div>
-              <h4 class="fw-bold mb-1">{{ user?.name }}</h4>
-              <div class="text-muted mb-3">ID: {{ user?.id }}</div>
+              <h4 class="fw-bold mb-1">{{ user.name }}</h4>
+              <div class="text-muted mb-3">ID: {{ user.id }}</div>
               <span class="badge bg-primary bg-opacity-10 py-2 px-3">
-                {{ user?.role }}
+                {{ user.role }}
               </span>
             </div>
 
@@ -128,7 +139,7 @@
                   </h5>
                   <dl class="row">
                     <dt class="col-sm-4">Email</dt>
-                    <dd class="col-sm-8">{{ user?.email }}</dd>
+                    <dd class="col-sm-8">{{ user.email }}</dd>
                   </dl>
                 </div>
 
@@ -141,17 +152,15 @@
                     <dt class="col-sm-4">Status</dt>
                     <dd class="col-sm-8">
                       <span
-                        class="badge bg-{{
-                          user?.banned ? 'danger' : 'success'
-                        }}"
+                        class="badge bg-{{ user.ban ? 'danger' : 'success' }}"
                       >
-                        {{ user?.banned ? "Banned" : "Active" }}
+                        {{ user.ban ? "Banned" : "Active" }}
                       </span>
                     </dd>
 
                     <dt class="col-sm-4">Balance</dt>
                     <dd class="col-sm-8">
-                      🪙 {{ user?.balance | number : "1.2-2" }}
+                      🪙 {{ user.balance | number : "1.2-2" }}
                     </dd>
                   </dl>
                 </div>
@@ -223,6 +232,11 @@
                 >Social Media Links</a
               >
             </li>
+            <li class="nav-item" *ngIf="user.ban">
+              <a class="nav-link" href="#baninfo" data-bs-toggle="tab"
+                >Ban Info</a
+              >
+            </li>
           </ul>
 
           <div class="tab-content">
@@ -265,6 +279,64 @@
                       [checked]="perm.allowed"
                     />
                     <label class="form-check-label">{{ perm.name }}</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- baninfo -->
+            <div class="tab-pane" id="baninfo">
+              <div class="card shadow-lg">
+                <div
+                  class="card-header bg-danger text-white d-flex flex-row align-items-center justify-content-between"
+                >
+                  <div class="d-flex align-items-center gap-3">
+                    <i class="fas fa-ban fs-4"></i>
+                    <h3 class="mb-0" style="color: white">
+                      Account Restricted
+                    </h3>
+                  </div>
+                  <img
+                    src="https://media0.giphy.com/media/ZqoseUzUZKQbOlHoga/200w.gif?cid=6c09b952qubbbafx49lzys7tppaqoog4j4o2yi0e58ydyvnz&ep=v1_stickers_search&rid=200w.gif"
+                    class="ban-header-image flex-shrink-0"
+                    style="height: 100px; width: 100px; object-fit: cover"
+                  />
+                </div>
+                <div class="card-body">
+                  <div class="alert alert-danger" role="alert">
+                    <h4 class="alert-heading">
+                      This account was restricted
+                    </h4>
+                    <p>
+                      Due to violations of our terms of service, this account
+                      access has been limited.
+                    </p>
+                    <hr />
+                    <div class="row">
+                      <div class="col-md-6">
+                        <p class="mb-1"><strong>Reason:</strong></p>
+                        <p class="text-muted">{{ user.ban?.reason }}</p>
+                      </div>
+                      <div class="col-md-6">
+                        <p class="mb-1"><strong>Restriction By:</strong></p>
+                        <p class="text-muted">{{ user.ban?.bannedBy }}</p>
+                      </div>
+                    </div>
+
+                    <div class="row mt-3">
+                      <div class="col-md-6">
+                        <p class="mb-1">
+                          <strong>Restriction End Date:</strong>
+                        </p>
+                        <p class="text-muted">
+                          {{ user.ban?.endDate | date : "longDate" }}
+                        </p>
+                      </div>
+                      <div class="col-md-6">
+                        <p class="mb-1"><strong>Time Remaining:</strong></p>
+                        <p class="text-muted">{{ 10 }}</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -322,7 +394,7 @@
                 <input
                   type="text"
                   class="form-control"
-                  [(ngModel)]="banReason"
+                  [(ngModel)]="banInfo.reason"
                 />
               </div>
               <div class="mb-3">
@@ -330,7 +402,7 @@
                 <input
                   type="date"
                   class="form-control"
-                  [(ngModel)]="banEndDate"
+                  [(ngModel)]="banInfo.endDate"
                 />
               </div>
             </div>
@@ -411,15 +483,23 @@
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title">Promote to Admin</h5>
+              <h5 class="modal-title" *ngIf="user.role == 'USER'">
+                Promote to Admin
+              </h5>
+              <h5 class="modal-title" *ngIf="user.role == 'ADMIN'">
+                Demote Admin
+              </h5>
               <button
                 type="button"
                 class="btn-close"
                 (click)="showPromoteModal = false"
               ></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" *ngIf="user.role == 'USER'">
               Are you sure you want to promote this user to admin?
+            </div>
+            <div class="modal-body" *ngIf="user.role == 'ADMIN'">
+              Are you sure you want to promote this admin to user?
             </div>
             <div class="modal-footer">
               <button
@@ -432,7 +512,16 @@
               <button
                 type="button"
                 class="btn btn-primary"
+                *ngIf="user.role == 'USER'"
                 (click)="promoteToAdmin(); showPromoteModal = false"
+              >
+                Confirm
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                *ngIf="user.role == 'ADMIN'"
+                (click)="demoteToUser(); showPromoteModal = false"
               >
                 Confirm
               </button>

@@ -1,6 +1,10 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ToastService } from 'angular-toastify';
+import { Banned } from 'src/app/core/models/GestionUser/Banned';
+import { Role } from 'src/app/core/models/GestionUser/Role';
 import { User } from 'src/app/core/models/GestionUser/User';
+import { AuthService } from 'src/app/core/services/Auth/auth.service';
 import { UserService } from 'src/app/core/services/GestionUser/user.service';
 
 @Component({
@@ -9,20 +13,20 @@ import { UserService } from 'src/app/core/services/GestionUser/user.service';
   styleUrls: ['./user-back-details.component.css'],
 })
 export class UserBackDetailsComponent {
-  user: User | null = null;
+  currentUser: User = new User();
+  user: User = new User();
   activityLogs: any[] = [];
   permissions: any[] = [];
   devices: any[] = [];
+  banInfo: Banned = new Banned();
 
   showBanModal = false;
   showBadgeModal = false;
   showPromoteModal = false;
   showGiftModal = false;
 
-  banReason = '';
-  banEndDate: Date | null = null;
   selectedBadge = '';
-  tokenAmount = 0.00;
+  tokenAmount = 0.0;
   availableBadges = [
     // Example data - replace with your actual badges
     { id: 'gold', name: 'Gold Badge' },
@@ -54,8 +58,27 @@ export class UserBackDetailsComponent {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
+    private authService: AuthService,
+    private _toastService: ToastService
   ) {}
+
+  fetchCurrentUser() {
+    const currentUserEmail = this.authService.getCurrentUserEmail();
+    if (!currentUserEmail) {
+      this.router.navigate(['/login']);
+      return;
+    }
+    console.log(currentUserEmail);
+    this.userService.getUserByEmail(currentUserEmail).subscribe(
+      (user) => {
+        this.currentUser = user;
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  }
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
@@ -63,11 +86,15 @@ export class UserBackDetailsComponent {
       this.loadUserDetails(userId);
       this.loadMockData();
     });
+
+    this.fetchCurrentUser();
   }
 
   private loadUserDetails(userId: number): void {
     this.userService.getUserById(userId).subscribe(
-      (user: User) => (this.user = user),
+      (user: User) => {
+        this.user = user;
+      },
       (err: any) => {
         console.error('Error loading user:', err);
         this.router.navigate(['/users']);
@@ -110,20 +137,36 @@ export class UserBackDetailsComponent {
   }
 
   banUser(): void {
-    if (this.user) {
-      // this.userService.banUser(this.user.id).subscribe({
-      //   next: () => (this.user!.banned = true),
-      //   error: (err) => console.error('Ban failed:', err),
-      // });
+    if (this.user && this.banInfo.reason && this.banInfo.endDate) {
+      this.banInfo.bannedBy = this.currentUser.id;
+      console.log(this.banInfo);
+      this.userService.banUser(this.user.id, this.banInfo).subscribe(
+        (result: any) => {
+          this._toastService.success('User banned successfully!');
+        },
+        (err: any) => {
+          this._toastService.error('Failed to ban user. Please try again.');
+          console.error('Error banning user:', err);
+        }
+      );
+      this.router.navigate(['/backusers']);
+    } else {
+      this._toastService.warn('Please fill all required ban information!');
     }
   }
 
   unbanUser(): void {
     if (this.user) {
-      // this.userService.unbanUser(this.user.id).subscribe({
-      //   next: () => (this.user!.banned = false),
-      //   error: (err) => console.error('Unban failed:', err),
-      // });
+      this.userService.unBanUser(this.user.id).subscribe(
+        (result: any) => {
+          this._toastService.success('User unbanned successfully!');
+          this.user.ban = null;
+        },
+        (err: any) => {
+          this._toastService.error('Failed to unban user. Please try again.');
+          console.error('Error banning user:', err);
+        }
+      );
     }
   }
 
@@ -140,7 +183,6 @@ export class UserBackDetailsComponent {
     }
   }
 
-
   assignBadge() {
     if (this.selectedBadge) {
       // Call your badge assignment service here
@@ -148,14 +190,33 @@ export class UserBackDetailsComponent {
     }
   }
   promoteToAdmin() {
-    // Call your admin promotion service here
     console.log('Promoting user to admin');
+    this.user.role = Role.ADMIN;
+    this.userService.updateUser(this.user).subscribe(
+      (res) => alert('User updated successfully'),
+      (err) => console.error('Error updating user:', err)
+    );
+  }
+
+  demoteToUser() {
+    console.log('Demoting user to user');
+    this.user.role = Role.USER;
+    this.userService.updateUser(this.user).subscribe(
+      (res) => alert('User updated successfully'),
+      (err) => console.error('Error updating user:', err)
+    );
   }
 
   giftTokens() {
     if (this.tokenAmount > 0) {
       // Call your token gifting service here
       console.log('Gifting tokens:', this.tokenAmount);
+      this.user.balance += this.tokenAmount;
+      this.userService.updateUser(this.user).subscribe(
+        (res) => alert('User updated successfully'),
+        (err) => console.error('Error updating user:', err)
+      );
     }
+    this.tokenAmount = 0.0;
   }
 }

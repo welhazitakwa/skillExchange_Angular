@@ -18,36 +18,50 @@
           <div class="avatar-container">
             <img
               [src]="
-                ('data:image/*;base64,' + currentUser!.image) ||
-                'assets/asssetsBack/assets/images/users/profile-pic.jpg'
+                currentUser?.image
+                  ? 'data:image/*;base64,' + currentUser?.image
+                  : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
               "
               class="profile-avatar"
               alt="Avatar"
             />
+
             <div class="online-status" [class.online]="true"></div>
           </div>
           <div class="profile-meta">
             <h1 style="color: black">{{ currentUser!.name | uppercase }}</h1>
             <div class="status-badges">
-              <span class="badge bg-warning" >
-                <i class="fas fa-shield-alt me-2"></i>{{currentUser?.role}}
+              <span class="badge bg-warning">
+                <i class="fas fa-shield-alt me-2"></i>{{ currentUser?.role }}
               </span>
               <span class="badge bg-success" *ngIf="currentUser?.verified">
                 <i class="fas fa-check-circle me-2"></i>Verified
               </span>
-              <span class="badge bg-danger" *ngIf="currentUser?.banned">
+              <span class="badge bg-danger" *ngIf="currentUser?.ban">
                 <i class="fas fa-ban me-2"></i>Banned
               </span>
             </div>
-            <br/>
+            <br />
             <div class="social-links">
-              <a *ngIf="currentUser?.facebook" href="https://facebook.com/{{currentUser?.facebook}}" target="_blank">
+              <a
+                *ngIf="currentUser?.facebook"
+                href="https://facebook.com/{{ currentUser?.facebook }}"
+                target="_blank"
+              >
                 <i class="fab fa-facebook"></i>
               </a>
-              <a *ngIf="currentUser?.github" href="https://github.com/{{currentUser?.github}}" target="_blank">
+              <a
+                *ngIf="currentUser?.github"
+                href="https://github.com/{{ currentUser?.github }}"
+                target="_blank"
+              >
                 <i class="fab fa-github"></i>
               </a>
-              <a *ngIf="currentUser?.linkedin" href="https://linkedin.com/{{currentUser?.linkedin}}" target="_blank">
+              <a
+                *ngIf="currentUser?.linkedin"
+                href="https://linkedin.com/{{ currentUser?.linkedin }}"
+                target="_blank"
+              >
                 <i class="fab fa-linkedin"></i>
               </a>
             </div>
@@ -101,7 +115,7 @@
         </div>
       </div>
 
-      <p class="bio" *ngIf="currentUser?.bio">{{currentUser?.bio}}</p>
+      <p class="bio" *ngIf="currentUser?.bio">{{ currentUser?.bio }}</p>
       <p class="bio" *ngIf="!currentUser?.bio">No bio available</p>
       <div class="user-stats">
         <div class="stat-item">
@@ -126,18 +140,32 @@
     <div class="profile-card">
       <h4 class="section-title text-primary">Achievements</h4>
       <div class="badges-grid">
-        <div *ngFor="let badge of badges" class="badge-item" [class.earned]="badge.earned">
+        <div
+          *ngFor="let badge of badges"
+          class="badge-item"
+          [class.earned]="badge.earned"
+        >
           <div class="badge-icon-container">
-            <div class="badge-icon" [style.background]="badge.earned ? badge.color : '#f5f5f5'">
-              <i [class]="badge.icon" [style.color]="badge.earned ? 'white' : '#9e9e9e'"></i>
+            <div
+              class="badge-icon"
+              [style.background]="badge.earned ? badge.color : '#f5f5f5'"
+            >
+              <i
+                [class]="badge.icon"
+                [style.color]="badge.earned ? 'white' : '#9e9e9e'"
+              ></i>
             </div>
             <div *ngIf="!badge.earned" class="lock-icon">
               <i class="fas fa-lock"></i>
             </div>
           </div>
           <div class="badge-content">
-            <h5 [class]="badge.earned ? 'text-primary' : 'text-muted'">{{ badge.name }}</h5>
-            <p [class]="badge.earned ? 'text-dark' : 'text-muted'">{{ badge.description }}</p>
+            <h5 [class]="badge.earned ? 'text-primary' : 'text-muted'">
+              {{ badge.name }}
+            </h5>
+            <p [class]="badge.earned ? 'text-dark' : 'text-muted'">
+              {{ badge.description }}
+            </p>
             <div *ngIf="!badge.earned" class="progress-container">
               <span class="progress-label">Locked</span>
             </div>
@@ -173,7 +201,6 @@
             <span><i class="fas fa-heart"></i> likes</span>
           </div>
         </div>
-        
       </div>
 
       <!-- Events -->
