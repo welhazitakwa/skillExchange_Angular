@@ -213,22 +213,32 @@
                   <tbody>
                     <tr
                       *ngFor="let user of filteredUsers"
-                      style="cursor:pointer"
-                      [routerLink]="['/backuserdetail', user.id]">
-                      
+                      style="cursor: pointer"
+                      [routerLink]="['/backuserdetail', user.id]"
+                    >
                       <td class="ps-4">
                         <div class="d-flex align-items-center">
                           <img
                             [src]="
-                              'data:image/*;base64,' + user.image ||
-                              'assets/images/avatar-placeholder.png'
+                              user.image
+                                ? 'data:image/*;base64,' + user.image
+                                : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
                             "
                             class="rounded-circle me-3"
                             width="40"
                             height="40"
                             alt="User avatar"
                           />
-                          <span class="fw-medium">{{ user.name }}</span>
+                          <span class="fw-medium">
+                            {{ user.name }}
+                            <span
+                              class="badge bg-danger bg-opacity-10"
+                              style="padding: 5px;"
+                              *ngIf="user.ban"
+                            >
+                              Banned
+                            </span>
+                          </span>
                         </div>
                       </td>
                       <td>
@@ -259,7 +269,10 @@
                     </tr>
                     <tr *ngIf="filteredUsers.length === 0">
                       <td colspan="6" class="text-center py-4">
-                        <img src="https://i.pinimg.com/originals/5d/35/e3/5d35e39988e3a183bdc3a9d2570d20a9.gif" height="400px">
+                        <img
+                          src="https://i.pinimg.com/originals/5d/35/e3/5d35e39988e3a183bdc3a9d2570d20a9.gif"
+                          height="400px"
+                        />
                       </td>
                     </tr>
                   </tbody>

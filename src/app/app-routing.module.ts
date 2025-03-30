@@ -23,11 +23,12 @@ import { SettingsComponent } from './Front/GestionUser/settings/settings.compone
 import { BalanceComponent } from './Front/GestionUser/balance/balance.component';
 import { AllUsersComponent } from './Back/GestionUser/User/all-users/all-users.component';
 import { UserBackDetailsComponent } from './Back/GestionUser/User/user-back-details/user-back-details.component';
+import { AuthBanComponent } from './Auth/auth-ban/auth-ban.component';
 
 const routes: Routes = [
   // Back Office
 
-  { path: 'back', component: MainBackComponent, canActivate: [AdminGuard] },
+  { path: 'back', component: MainBackComponent, /*canActivate: [AdminGuard]*/ },
   /////Back Gestion Users////////////////////
   {
     path: 'backusers',
@@ -57,10 +58,9 @@ const routes: Routes = [
   { path: 'contact', component: ContactComponent, canActivate: [UserGuard] },
 
   // Auth
-  /*{ path: 'register' ,component: AuthRegisterComponent },
-  { path: 'login' ,component: AuthLoginComponent },*/
   { path: 'register', component: AuthRegisterComponent },
   { path: 'login', component: AuthLoginComponent },
+  { path: 'banned/:email', component: AuthBanComponent },
   { path: 'profile', component: ProfileComponent },
   { path: 'settings', component: SettingsComponent },
   { path: 'balance', component: BalanceComponent },

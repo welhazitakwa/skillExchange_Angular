@@ -225,15 +225,17 @@
           >
             <img
               [src]="
-                'data:image/*;base64,' + currentUser!.image ||
-                'assets/asssetsBack/assets/images/users/profile-pic.jpg'
+                currentUser?.image
+                  ? 'data:image/*;base64,' + currentUser?.image
+                  : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
               "
               alt="user"
               class="rounded-circle"
               width="40"
             />
             <span class="ms-2 d-none d-lg-inline-block"
-              ><span>Hello,</span> <span class="text-dark">{{ currentUser?.name }}</span>
+              ><span>Hello,</span>
+              <span class="text-dark">{{ currentUser?.name }}</span>
               <i data-feather="chevron-down" class="svg-icon"></i
             ></span>
           </a>
@@ -257,7 +259,7 @@
               Account Setting</a
             >
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" (click)="logout()" style="cursor: pointer;"
+            <a class="dropdown-item" (click)="logout()" style="cursor: pointer"
               ><i data-feather="power" class="svg-icon me-2 ms-1"></i> Logout</a
             >
           </div>

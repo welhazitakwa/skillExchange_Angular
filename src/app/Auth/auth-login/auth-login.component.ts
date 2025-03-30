@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ToastService } from 'angular-toastify';
 import { jwtDecode } from 'jwt-decode';
 import { SignIn } from 'src/app/core/models/Auth/SignIn';
 import { Role } from 'src/app/core/models/GestionUser/Role';
@@ -17,6 +18,7 @@ export class AuthLoginComponent {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
+    private _toastService: ToastService,
     private router: Router
   ) {
     this.loginForm = this.fb.group({
@@ -46,11 +48,19 @@ export class AuthLoginComponent {
         console.log(decodedToken)
         const userRole: Role = decodedToken.role;
         console.log(userRole)
+        
         if (userRole === Role.ADMIN) {
           this.router.navigate(['/back']);
         } else this.router.navigate(['/']);
       },
-      (error: any) => console.log('Error signing up:', error)
+      (err: any) => {
+        console.log('Error signing up:', err)
+        if(err.error.message==="Account is banned"){
+          this.router.navigate(['/banned/'+signIn.email]);
+        }else{
+          this._toastService.error(err.error.message)
+        }
+      }
     );
 
     //this.registerForm.reset();

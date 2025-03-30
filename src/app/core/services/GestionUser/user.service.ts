@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { User } from '../../models/GestionUser/User';
 import { Observable } from 'rxjs';
 import { AuthService } from '../Auth/auth.service';
+import { Banned } from '../../models/GestionUser/Banned';
 
 @Injectable({
   providedIn: 'root',
@@ -28,6 +29,10 @@ export class UserService {
     return this.http.get<User>(`${this.url}/email/${email}`, {
       headers: this.headers,
     });
+  }
+
+  getBannedUserByEmail(email: string): Observable<any> {
+    return this.http.get<User>(`${this.url}/email/${email}`);
   }
 
   updateUser(user: User): Observable<any> {
@@ -58,5 +63,23 @@ export class UserService {
       { currentPassword: currentPassword, newPassword: newPassword },
       { headers: this.headers }
     );
+  }
+
+  banUser(userId: number, banInfo: Banned): Observable<any> {
+    return this.http.post(
+      `${this.url}/${userId}/ban`,
+      {
+        "reason": banInfo.reason,
+        "endDate": banInfo.endDate,
+        "bannedBy": banInfo.bannedBy,
+      },
+      { headers: this.headers }
+    );
+  }
+
+  unBanUser(userId: number) {
+    return this.http.post(`${this.url}/${userId}/unban`, {
+      headers: this.headers,
+    });
   }
 }

@@ -11,7 +11,7 @@ export class User {
     image!: string;
     balance!: number;
     signature!: string;
-    banned!: Banned | null;
+    ban!: Banned | null;
     bio!: string;
     facebook!: string;
     github!: string;

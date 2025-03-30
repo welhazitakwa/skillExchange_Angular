@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
+import { Role } from 'src/app/core/models/GestionUser/Role';
 import { User } from 'src/app/core/models/GestionUser/User';
 import { AuthService } from 'src/app/core/services/Auth/auth.service';
 import { UserService } from 'src/app/core/services/GestionUser/user.service';
@@ -21,23 +22,24 @@ export class HeaderFrontComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    let currentUserEmail: string | null = this.authService.getCurrentUserEmail();
-    
+    let currentUserEmail: string | null =
+      this.authService.getCurrentUserEmail();
+
     if (!currentUserEmail) {
       this.router.navigate(['/login']);
       return;
     }
 
     this.userService.getUserByEmail(currentUserEmail).subscribe(
-      (user) => {
+      (user: User) => {
         this.currentUser = user;
+        if (user.role === Role.ADMIN) this.isAdmin = true;
+        else this.isAdmin = false;
       },
       (error) => {
         console.error(error);
       }
     );
-
-    this.isAdmin = this.authService.isAdmin();
   }
 
   logout(): void {

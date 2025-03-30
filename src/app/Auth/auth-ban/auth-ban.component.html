@@ -1,0 +1,65 @@
+<!-- banned.component.html -->
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow-lg">
+        <div
+          class="card-header bg-danger text-white d-flex flex-row align-items-center justify-content-between"
+        >
+          <div class="d-flex align-items-center gap-3">
+            <i class="fas fa-ban fs-4"></i>
+            <h3 class="mb-0" style="color: white">Account Restricted</h3>
+          </div>
+          <img
+            src="https://media0.giphy.com/media/ZqoseUzUZKQbOlHoga/200w.gif?cid=6c09b952qubbbafx49lzys7tppaqoog4j4o2yi0e58ydyvnz&ep=v1_stickers_search&rid=200w.gif"
+            class="ban-header-image flex-shrink-0"
+            style="height: 100px; width: 100px; object-fit: cover"
+          />
+        </div>
+        <div class="card-body">
+          <div class="alert alert-danger" role="alert">
+            <h4 class="alert-heading">Your account has been restricted</h4>
+            <p>
+              Due to violations of our terms of service, your account access has
+              been limited.
+            </p>
+            <hr />
+            <div class="row">
+              <div class="col-md-6">
+                <p class="mb-1"><strong>Reason:</strong></p>
+                <p class="text-muted">{{ user.ban?.reason }}</p>
+              </div>
+              <div class="col-md-6">
+                <p class="mb-1"><strong>Restriction Type:</strong></p>
+                <p class="text-muted">Temporary Ban</p>
+              </div>
+            </div>
+
+            <div class="row mt-3">
+              <div class="col-md-6">
+                <p class="mb-1"><strong>Restriction End Date:</strong></p>
+                <p class="text-muted">
+                  {{ user.ban?.endDate | date : "longDate" }}
+                </p>
+              </div>
+              <div class="col-md-6">
+                <p class="mb-1"><strong>Time Remaining:</strong></p>
+                <p class="text-muted">{{ timeRemaining }}</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <p class="mb-0 small text-muted">
+                If you believe this is a mistake, please contact our support
+                team.
+                <a href="mailto:support@example.com" class="alert-link"
+                  >Contact Support</a
+                >
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

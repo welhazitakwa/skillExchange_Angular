@@ -21,7 +21,7 @@ export class SettingsComponent {
     image: '',
     balance: 0,
     signature: '',
-    banned: null,
+    ban: null,
     bio: '',
     facebook: '',
     github: '',
