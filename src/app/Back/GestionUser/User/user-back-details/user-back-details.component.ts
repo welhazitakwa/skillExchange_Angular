@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from 'angular-toastify';
+import { Badge } from 'src/app/core/models/GestionUser/Badge';
 import { Banned } from 'src/app/core/models/GestionUser/Banned';
 import { Role } from 'src/app/core/models/GestionUser/Role';
 import { User } from 'src/app/core/models/GestionUser/User';
 import { AuthService } from 'src/app/core/services/Auth/auth.service';
+import { BadgeService } from 'src/app/core/services/GestionUser/badge.service';
 import { UserService } from 'src/app/core/services/GestionUser/user.service';
 
 @Component({
@@ -25,14 +27,9 @@ export class UserBackDetailsComponent {
   showPromoteModal = false;
   showGiftModal = false;
 
-  selectedBadge = '';
+  selectedBadgeId!: number;
   tokenAmount = 0.0;
-  availableBadges = [
-    // Example data - replace with your actual badges
-    { id: 'gold', name: 'Gold Badge' },
-    { id: 'silver', name: 'Silver Badge' },
-    { id: 'bronze', name: 'Bronze Badge' },
-  ];
+  availableBadges: Badge[] = [];
 
   transactions: any[] = [
     {
@@ -58,6 +55,7 @@ export class UserBackDetailsComponent {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private badgeService: BadgeService,
     private userService: UserService,
     private authService: AuthService,
     private _toastService: ToastService
@@ -80,6 +78,17 @@ export class UserBackDetailsComponent {
     );
   }
 
+  private loadBadges(): void {
+    this.badgeService.getAllBadges().subscribe(
+      (response: Badge[]) => {
+        this.availableBadges = response;
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
       const userId = params['id'];
@@ -88,6 +97,7 @@ export class UserBackDetailsComponent {
     });
 
     this.fetchCurrentUser();
+    this.loadBadges();
   }
 
   private loadUserDetails(userId: number): void {
@@ -183,10 +193,39 @@ export class UserBackDetailsComponent {
     }
   }
 
+  removeBadgeFromUser(badge: Badge) {
+    this.userService.removeBadgeFromUser(this.user.id, badge.id).subscribe(
+      (result: any) => {
+        this._toastService.success('Badge removed from user successfully!');
+        this.user.badges = this.user.badges.filter(
+          (b: Badge) => b.id !== badge.id
+        );
+      },
+      (err: any) => {
+        this._toastService.error(
+          'Failed to remove badge from user. Please try again.'
+        );
+        console.error('Error removing badge from user:', err);
+      }
+    );
+  }
+
   assignBadge() {
-    if (this.selectedBadge) {
-      // Call your badge assignment service here
-      console.log('Assigning badge:', this.selectedBadge);
+    if (this.selectedBadgeId) {
+      this.userService
+        .assignBadgeToUser(this.user.id, this.selectedBadgeId)
+        .subscribe(
+          (result: any) => {
+            this.router.navigate(['/backusers']);
+            this._toastService.success('Badge assigned successfully!');
+          },
+          (err: any) => {
+            this._toastService.error(
+              'Failed to assign badge. Please try again.'
+            );
+            console.error('Error assigning badge:', err);
+          }
+        );
     }
   }
   promoteToAdmin() {

@@ -102,6 +102,7 @@ export class AllbadgesComponent {
   openDeleteModal(badgeId: number): void {
     this.selectedBadgeId = badgeId;
     this.isDeleteModalOpen = true;
+    this.isEditModalOpen = false;
   }
 
   closeDeleteModal(): void {
@@ -128,7 +129,7 @@ export class AllbadgesComponent {
 
   openEditModal(badge: Badge): void {
     this.selectedBadge = { ...badge };
-    this.isEditModalOpen = true;
+    if (!this.isDeleteModalOpen) this.isEditModalOpen = true;
   }
 
   closeEditModal(): void {

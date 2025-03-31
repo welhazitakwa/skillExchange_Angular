@@ -1,3 +1,4 @@
+import { Badge } from "./Badge";
 import { Banned } from "./Banned";
 import { Role } from "./Role";
 
@@ -16,5 +17,6 @@ export class User {
     facebook!: string;
     github!: string;
     linkedin!: string;
+    badges!: Badge[];
   
 }

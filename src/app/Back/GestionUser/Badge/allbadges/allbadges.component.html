@@ -89,6 +89,7 @@
                   *ngFor="let badge of badges"
                   class="col-12 col-md-6 col-lg-4 col-xl-3"
                   (click)="openEditModal(badge)"
+                  style="cursor: pointer;"
                 >
                   <div class="card badge-card shadow-sm h-100">
                     <div class="card-body">
@@ -121,6 +122,7 @@
                           <button
                             class="btn btn-sm btn-link text-danger"
                             (click)="openDeleteModal(badge.id)"
+                            style="z-index: 999px;"
                           >
                             <i class="fas fa-trash"></i>
                           </button>
