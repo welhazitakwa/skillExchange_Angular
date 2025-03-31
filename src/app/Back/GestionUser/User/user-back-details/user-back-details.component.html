@@ -268,17 +268,89 @@
               </div>
             </div>
 
-            <!-- sociallinks -->
+            <!-- Social Links -->
             <div class="tab-pane" id="sociallinks">
-              <div class="row">
-                <div *ngFor="let perm of permissions" class="col-md-4 mb-3">
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      [checked]="perm.allowed"
-                    />
-                    <label class="form-check-label">{{ perm.name }}</label>
+              <div class="card shadow-sm border-0">
+                <div class="card-body">
+                  <h5 class="card-title mb-4">Social Profiles</h5>
+
+                  <div class="row g-3">
+                    <!-- Facebook -->
+                    <div class="col-md-4" *ngIf="user.facebook">
+                      <div class="social-card bg-facebook p-3 rounded-3 h-100">
+                        <div class="d-flex align-items-center">
+                          <div class="social-icon me-3">
+                            <i class="fab fa-facebook-f fs-4 text-white"></i>
+                          </div>
+                          <div>
+                            <h6 class="mb-0 text-white">Facebook</h6>
+                            <a
+                              [href]="'https://facebook.com/' + user.facebook"
+                              target="_blank"
+                              class="text-white-50 small text-truncate d-block"
+                            >
+                              {{ user.facebook }}
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- GitHub -->
+                    <div class="col-md-4" *ngIf="user.github">
+                      <div class="social-card bg-dark p-3 rounded-3 h-100">
+                        <div class="d-flex align-items-center">
+                          <div class="social-icon me-3">
+                            <i class="fab fa-github fs-4 text-white"></i>
+                          </div>
+                          <div>
+                            <h6 class="mb-0 text-white">GitHub</h6>
+                            <a
+                              [href]="'https://github.com/' + user.github"
+                              target="_blank"
+                              class="text-white-50 small text-truncate d-block"
+                            >
+                              {{ user.github }}
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- LinkedIn -->
+                    <div class="col-md-4" *ngIf="user.linkedin">
+                      <div class="social-card bg-linkedin p-3 rounded-3 h-100">
+                        <div class="d-flex align-items-center">
+                          <div class="social-icon me-3">
+                            <i class="fab fa-linkedin-in fs-4 text-white"></i>
+                          </div>
+                          <div>
+                            <h6 class="mb-0 text-white">LinkedIn</h6>
+                            <a
+                              [href]="
+                                'https://linkedin.com/in/' + user.linkedin
+                              "
+                              target="_blank"
+                              class="text-white-50 small text-truncate d-block"
+                            >
+                              {{ user.linkedin }}
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Empty State -->
+                  <div
+                    class="text-center py-5"
+                    *ngIf="!user.facebook && !user.github && !user.linkedin"
+                  >
+                    <i class="fas fa-share-alt fs-1 text-muted mb-3"></i>
+                    <h5 class="text-muted">No social profiles added</h5>
+                    <p class="text-muted small">
+                      This user hasn't added any social links yet
+                    </p>
                   </div>
                 </div>
               </div>
@@ -342,27 +414,64 @@
 
             <!-- Achievements -->
             <div class="tab-pane" id="achievements">
-              <div class="table-responsive">
-                <table class="table table-hover">
-                  <thead>
-                    <tr>
-                      <th>Device</th>
-                      <th>OS</th>
-                      <th>Browser</th>
-                      <th>IP Address</th>
-                      <th>Last Active</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let device of devices">
-                      <td>{{ device.type }}</td>
-                      <td>{{ device.os }}</td>
-                      <td>{{ device.browser }}</td>
-                      <td>{{ device.ip }}</td>
-                      <td>{{ device.lastActive | date : "short" }}</td>
-                    </tr>
-                  </tbody>
-                </table>
+              <div
+                class="text-center"
+                *ngIf="!user?.badges || user.badges.length === 0"
+              >
+                <img
+                  src="https://i.pinimg.com/originals/5d/35/e3/5d35e39988e3a183bdc3a9d2570d20a9.gif"
+                  height="400px"
+                />
+              </div>
+              <div class="row g-4">
+                <div
+                  *ngFor="let badge of user.badges"
+                  class="col-12 col-md-6 col-lg-4 col-xl-3"
+                >
+                  <div class="card badge-card shadow-sm h-100">
+                    <div class="card-body">
+                      <div class="d-flex align-items-start">
+                        <!-- Badge Image -->
+                        <div class="badge-image-container me-3">
+                          <div
+                            *ngIf="badge.image"
+                            class="badge-icon-placeholder bg-primary"
+                            style="width: 48px; height: 48px"
+                          >
+                            <i
+                              class="text-white fs-4"
+                              [ngClass]="badge.image"
+                            ></i>
+                          </div>
+                          <div
+                            *ngIf="!badge.image"
+                            class="badge-icon-placeholder bg-primary"
+                            style="width: 48px; height: 48px"
+                          >
+                            <i class="fas fa-award text-white fs-4"></i>
+                          </div>
+                        </div>
+
+                        <!-- Badge Content -->
+                        <div class="flex-grow-1">
+                          <h5 class="fw-semibold mb-1">{{ badge.title }}</h5>
+                          <p class="text-muted mb-0 small">
+                            {{ badge.description }}
+                          </p>
+                        </div>
+
+                        <div class="ms-auto">
+                          <button
+                            class="btn btn-sm btn-link text-danger"
+                            (click)="removeBadgeFromUser(badge)"
+                          >
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -371,7 +480,9 @@
 
       <!-- modal focus-->
       <div
-        *ngIf="showBanModal || showGiftModal || showBadgeModal || showPromoteModal"
+        *ngIf="
+          showBanModal || showGiftModal || showBadgeModal || showPromoteModal
+        "
         class="modal-backdrop fade show"
         (click)="closeModals()"
       ></div>
@@ -449,12 +560,12 @@
               ></button>
             </div>
             <div class="modal-body">
-              <select class="form-select" [(ngModel)]="selectedBadge">
+              <select class="form-select" [(ngModel)]="selectedBadgeId">
                 <option
                   *ngFor="let badge of availableBadges"
                   [value]="badge.id"
                 >
-                  {{ badge.name }}
+                  {{ badge.title }} ({{ badge.description }})
                 </option>
               </select>
             </div>

@@ -25,7 +25,8 @@ export class SettingsComponent {
     bio: '',
     facebook: '',
     github: '',
-    linkedin: ''
+    linkedin: '',
+    badges: []
   };
 
   activeTab: string = 'profile';

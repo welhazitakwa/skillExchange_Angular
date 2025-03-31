@@ -68,9 +68,9 @@ export class UserService {
     return this.http.post(
       `${this.url}/${userId}/ban`,
       {
-        "reason": banInfo.reason,
-        "endDate": banInfo.endDate,
-        "bannedBy": banInfo.bannedBy,
+        reason: banInfo.reason,
+        endDate: banInfo.endDate,
+        bannedBy: banInfo.bannedBy,
       },
       { headers: this.headers }
     );
@@ -80,5 +80,20 @@ export class UserService {
     return this.http.post(`${this.url}/${userId}/unban`, {
       headers: this.headers,
     });
+  }
+
+  assignBadgeToUser(userId: number, badgeId: number): Observable<any> {
+    return this.http.post(`${this.url}/${userId}/badges/${badgeId}`, {
+      headers: this.headers,
+    });
+  }
+
+  removeBadgeFromUser(userId: number, badgeId: number): Observable<any> {
+    return this.http.delete(`${this.url}/${userId}/badges/${badgeId}`, {
+      headers: this.headers,
+    });}
+
+  getUserBadges(userId: number): Observable<any> {
+    return this.http.get<User[]>(`${this.url}/${userId}/badges`, { headers: this.headers });
   }
 }
