@@ -219,4 +219,10 @@ export class UserBackDetailsComponent {
     }
     this.tokenAmount = 0.0;
   }
+  closeModals(): void {
+    this.showBanModal = false;
+    this.showBadgeModal = false;
+    this.showPromoteModal = false;
+    this.showGiftModal = false;
+  }
 }

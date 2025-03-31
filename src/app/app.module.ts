@@ -44,7 +44,8 @@ import { AllUsersComponent } from './Back/GestionUser/User/all-users/all-users.c
 
 import { ImageCropperComponent } from 'ngx-image-cropper';
 import { UserBackDetailsComponent } from './Back/GestionUser/User/user-back-details/user-back-details.component';
-import { AuthBanComponent } from './Auth/auth-ban/auth-ban.component'
+import { AuthBanComponent } from './Auth/auth-ban/auth-ban.component';
+import { AllbadgesComponent } from './Back/GestionUser/Badge/allbadges/allbadges.component';
 
 @NgModule({
   declarations: [
@@ -85,6 +86,7 @@ import { AuthBanComponent } from './Auth/auth-ban/auth-ban.component'
     AllImagesComponent,
     UserBackDetailsComponent,
     AuthBanComponent,
+    AllbadgesComponent,
 
   ],
   imports: [
