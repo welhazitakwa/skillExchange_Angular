@@ -24,12 +24,15 @@ import { BalanceComponent } from './Front/GestionUser/balance/balance.component'
 import { AllUsersComponent } from './Back/GestionUser/User/all-users/all-users.component';
 import { UserBackDetailsComponent } from './Back/GestionUser/User/user-back-details/user-back-details.component';
 import { AuthBanComponent } from './Auth/auth-ban/auth-ban.component';
+import { AllbadgesComponent } from './Back/GestionUser/Badge/allbadges/allbadges.component';
 
 const routes: Routes = [
+  //canActivate: [AdminGuard] to lock for admin
+  //canActivate: [UserGuard] to lock for user
   // Back Office
+  { path: 'back', component: MainBackComponent /*canActivate: [AdminGuard]*/ },
 
-  { path: 'back', component: MainBackComponent, /*canActivate: [AdminGuard]*/ },
-  /////Back Gestion Users////////////////////
+  //**************Back Gestion Users********************************
   {
     path: 'backusers',
     component: AllUsersComponent,
@@ -38,11 +41,18 @@ const routes: Routes = [
     path: 'backuserdetail/:id',
     component: UserBackDetailsComponent,
   },
-  /////Back Gestion Produit////////////////////
+  {
+    path: 'backbadges',
+    component: AllbadgesComponent,
+  },
+  /***************************************************************/
+
+  //**************Back Gestion Produit********************************
   { path: 'backproducts', component: AllProductsComponent },
   { path: 'backcarts', component: AllCartsComponent },
   { path: 'backreviews', component: AllReviewsComponent },
   { path: 'backimagesP', component: AllImagesComponent },
+  /***************************************************************/
 
   // Front Office
   { path: '', component: MainFrontComponent, canActivate: [UserGuard] },

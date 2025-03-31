@@ -304,9 +304,7 @@
                 </div>
                 <div class="card-body">
                   <div class="alert alert-danger" role="alert">
-                    <h4 class="alert-heading">
-                      This account was restricted
-                    </h4>
+                    <h4 class="alert-heading">This account was restricted</h4>
                     <p>
                       Due to violations of our terms of service, this account
                       access has been limited.
@@ -371,6 +369,13 @@
         </div>
       </div>
 
+      <!-- modal focus-->
+      <div
+        *ngIf="showBanModal || showGiftModal || showBadgeModal || showPromoteModal"
+        class="modal-backdrop fade show"
+        (click)="closeModals()"
+      ></div>
+
       <!-- Ban User Modal -->
       <div
         class="modal fade"
@@ -378,7 +383,7 @@
         style="display: block"
         *ngIf="showBanModal"
       >
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title">Ban User</h5>
@@ -433,7 +438,7 @@
         style="display: block"
         *ngIf="showBadgeModal"
       >
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title">Assign Badge</h5>
@@ -480,7 +485,7 @@
         style="display: block"
         *ngIf="showPromoteModal"
       >
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" *ngIf="user.role == 'USER'">
@@ -537,7 +542,7 @@
         style="display: block"
         *ngIf="showGiftModal"
       >
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title">Gift Tokens</h5>

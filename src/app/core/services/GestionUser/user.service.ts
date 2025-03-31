@@ -9,7 +9,6 @@ import { Banned } from '../../models/GestionUser/Banned';
   providedIn: 'root',
 })
 export class UserService {
-  listAnnoncement: User[] = [];
   url = 'http://localhost:8084/skillExchange/users';
   private headers = new HttpHeaders({
     Authorization: 'Bearer ' + localStorage.getItem('token'),
