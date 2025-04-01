@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
-import { ToastService, AngularToastifyModule } from 'angular-toastify'; 
+import { ToastService, AngularToastifyModule } from 'angular-toastify';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -47,6 +47,7 @@ import { UserBackDetailsComponent } from './Back/GestionUser/User/user-back-deta
 import { AuthBanComponent } from './Auth/auth-ban/auth-ban.component';
 import { AllbadgesComponent } from './Back/GestionUser/Badge/allbadges/allbadges.component';
 import { SignaturePadComponent } from './components/signature-pad/signature-pad.component';
+import { CategoriesComponent } from './Back/GestionFormation/Category/categories/categories.component';
 
 @NgModule({
   declarations: [
@@ -66,13 +67,10 @@ import { SignaturePadComponent } from './components/signature-pad/signature-pad.
     ContactComponent,
     AuthRegisterComponent,
     AuthLoginComponent,
-
     ProfileComponent,
     BalanceComponent,
     SettingsComponent,
     AllUsersComponent,
-
-    
     AddcartComponent,
     ShowcartComponent,
     UpdatecartComponent,
@@ -89,7 +87,7 @@ import { SignaturePadComponent } from './components/signature-pad/signature-pad.
     AuthBanComponent,
     AllbadgesComponent,
     SignaturePadComponent,
-
+    CategoriesComponent,
   ],
   imports: [
     BrowserModule,
@@ -101,6 +99,6 @@ import { SignaturePadComponent } from './components/signature-pad/signature-pad.
     AngularToastifyModule,
   ],
   providers: [ToastService],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

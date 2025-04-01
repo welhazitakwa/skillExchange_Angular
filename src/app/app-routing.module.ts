@@ -25,6 +25,7 @@ import { AllUsersComponent } from './Back/GestionUser/User/all-users/all-users.c
 import { UserBackDetailsComponent } from './Back/GestionUser/User/user-back-details/user-back-details.component';
 import { AuthBanComponent } from './Auth/auth-ban/auth-ban.component';
 import { AllbadgesComponent } from './Back/GestionUser/Badge/allbadges/allbadges.component';
+import { CategoriesComponent } from './Back/GestionFormation/Category/categories/categories.component';
 
 const routes: Routes = [
   //canActivate: [AdminGuard] to lock for admin
@@ -52,6 +53,9 @@ const routes: Routes = [
   { path: 'backcarts', component: AllCartsComponent },
   { path: 'backreviews', component: AllReviewsComponent },
   { path: 'backimagesP', component: AllImagesComponent },
+  /********************Back Gestion Formations****************************************/
+  { path: 'categories', component: CategoriesComponent },
+
   /***************************************************************/
 
   // Front Office
