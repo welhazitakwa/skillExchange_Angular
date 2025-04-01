@@ -64,6 +64,13 @@ export class UserService {
     );
   }
 
+  resetUserPassword(email: String, newPassword: String): Observable<any> {
+    return this.http.put(`${this.url}/reset-password`, {
+      email: email,
+      newPassword: newPassword,
+    });
+  }
+
   banUser(userId: number, banInfo: Banned): Observable<any> {
     return this.http.post(
       `${this.url}/${userId}/ban`,
@@ -91,9 +98,12 @@ export class UserService {
   removeBadgeFromUser(userId: number, badgeId: number): Observable<any> {
     return this.http.delete(`${this.url}/${userId}/badges/${badgeId}`, {
       headers: this.headers,
-    });}
+    });
+  }
 
   getUserBadges(userId: number): Observable<any> {
-    return this.http.get<User[]>(`${this.url}/${userId}/badges`, { headers: this.headers });
+    return this.http.get<User[]>(`${this.url}/${userId}/badges`, {
+      headers: this.headers,
+    });
   }
 }
