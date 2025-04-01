@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { ToastService } from 'angular-toastify';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { Role } from 'src/app/core/models/GestionUser/Role';
 import { User } from 'src/app/core/models/GestionUser/User';
 import { AuthService } from 'src/app/core/services/Auth/auth.service';
 import { UserService } from 'src/app/core/services/GestionUser/user.service';
+import { MailService } from 'src/app/core/services/Mailing/mail.service';
 
 @Component({
   selector: 'app-settings',
@@ -26,7 +28,7 @@ export class SettingsComponent {
     facebook: '',
     github: '',
     linkedin: '',
-    badges: []
+    badges: [],
   };
 
   activeTab: string = 'profile';
@@ -48,9 +50,20 @@ export class SettingsComponent {
   imageChangedEvent: any = '';
   croppedImage: any = '';
 
+  verificationCode: string = '';
+  userEnteredCode: string = '';
+  showVerificationModal: boolean = false;
+  resendCooldown: number = 30;
+  canResend: boolean = true;
+
+  showSignatureModal = false;
+
+
   constructor(
     private authService: AuthService,
     private userService: UserService,
+    private mailService: MailService,
+    private _toastService: ToastService,
     private router: Router
   ) {}
 
@@ -155,4 +168,80 @@ export class SettingsComponent {
     );
   }
 
+  verifyEmail() {
+    this.verificationCode = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString();
+    this.showVerificationModal = true;
+    this.sendVerificationCode();
+  }
+
+  private sendVerificationCode() {
+    this.mailService
+      .sendVerificationCode(this.currentUser.email, this.verificationCode)
+      .subscribe(
+        () => {
+          this.startResendCooldown();
+        },
+        (err) => {
+          console.error('Failed to send verification email:', err);
+          this._toastService.error(
+            'Failed to send verification code. Please try again.'
+          );
+        }
+      );
+  }
+
+  private startResendCooldown() {
+    this.canResend = false;
+    const interval = setInterval(() => {
+      this.resendCooldown--;
+      if (this.resendCooldown <= 0) {
+        clearInterval(interval);
+        this.canResend = true;
+        this.resendCooldown = 30;
+      }
+    }, 1000);
+  }
+
+  handleVerification() {
+    if (this.userEnteredCode === this.verificationCode) {
+      this.currentUser.verified = true;
+      this.userService.updateUser(this.currentUser).subscribe(
+        (updatedUser: User) => {
+          this.currentUser = updatedUser;
+          this.showVerificationModal = false;
+        },
+        (err) => {
+          this._toastService.error('Verification failed. Please try again.');
+        }
+      );
+    } else {
+      this._toastService.error('Invalid verification code. Please try again.');
+    }
+  }
+
+  resendVerificationCode() {
+    if (this.canResend) {
+      this.verificationCode = Math.floor(
+        100000 + Math.random() * 900000
+      ).toString();
+      this.sendVerificationCode();
+    }
+  }
+
+  handleSignatureSave(signatureData: string) {
+    this.currentUser.signature = signatureData;
+    this.userService.updateUser(this.currentUser).subscribe({
+      next: (updatedUser) => {
+        this.currentUser = updatedUser;
+        this.showSignatureModal = false;
+        this._toastService.success('Signature saved successfully');
+      },
+      error: (err) => {
+        console.error('Error saving signature:', err);
+        this._toastService.error('Failed to save signature');
+      }
+    });
+  }
 }

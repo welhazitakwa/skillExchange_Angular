@@ -29,13 +29,25 @@
             <div class="online-status" [class.online]="true"></div>
           </div>
           <div class="profile-meta">
-            <h1 style="color: black">{{ currentUser!.name | uppercase }}</h1>
+            <h1 style="color: black">
+              {{ currentUser!.name | uppercase }}
+              <svg
+                *ngIf="currentUser?.verified"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-patch-check-fill text-primary ml-2"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708"
+                />
+              </svg>
+            </h1>
             <div class="status-badges">
               <span class="badge bg-warning">
                 <i class="fas fa-shield-alt me-2"></i>{{ currentUser?.role }}
-              </span>
-              <span class="badge bg-success" *ngIf="currentUser?.verified">
-                <i class="fas fa-check-circle me-2"></i>Verified
               </span>
               <span class="badge bg-danger" *ngIf="currentUser?.ban">
                 <i class="fas fa-ban me-2"></i>Banned
@@ -103,7 +115,13 @@
           </h5>
           <p class="signature text-muted">
             <i class="fas fa-quote-left me-2"></i>
-            {{ currentUser!.signature || "No signature yet" }}
+            {{ currentUser!.signature ? "Signature" : "No signature yet" }}
+            <img
+              *ngIf="currentUser?.signature"
+              [src]="currentUser?.signature"
+              alt="Signature"
+              class="signature-preview img-fluid"
+            />
           </p>
         </div>
       </div>
