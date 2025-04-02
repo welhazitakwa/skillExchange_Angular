@@ -1,0 +1,47 @@
+<div class="container">
+  <h2>Manage Questions</h2>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+  <div class="form-group">
+    <label for="question">Question:</label>
+    <input id="question" [(ngModel)]="newQuestion.question" class="form-control" />
+  </div>
+
+  <div class="form-group">
+    <label>Option 1:</label>
+    <input [(ngModel)]="newQuestion.option1" class="form-control" />
+  </div>
+
+  <div class="form-group">
+    <label>Option 2:</label>
+    <input [(ngModel)]="newQuestion.option2" class="form-control" />
+  </div>
+
+  <div class="form-group">
+    <label>Option 3:</label>
+    <input [(ngModel)]="newQuestion.option3" class="form-control" />
+  </div>
+
+  <div class="form-group">
+    <label>Option 4:</label>
+    <input [(ngModel)]="newQuestion.option4" class="form-control" />
+  </div>
+
+  <div class="form-group">
+    <label>Correct Answer:</label>
+    <input [(ngModel)]="newQuestion.reponse" class="form-control" />
+  </div>
+
+  <button *ngIf="!newQuestion.id" (click)="addQuestion()" class="btn btn-primary mt-2">Add Question</button>
+  <button *ngIf="newQuestion.id" (click)="updateQuestion()" class="btn btn-success mt-2">Update Question</button>
+
+  <h3 class="mt-4">Questions List</h3>
+  <ul class="list-group">
+    <li *ngFor="let q of questions" class="list-group-item">
+      <strong>{{ q.question }}</strong>
+      <button (click)="editQuestion(q)" class="btn btn-warning btn-sm float-right ml-2">Edit</button>
+      <button (click)="deleteQuestion(q.id!)" class="btn btn-danger btn-sm float-right">Delete</button>
+    </li>
+  </ul>
+</div>
