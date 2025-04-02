@@ -4,6 +4,7 @@ import { CategoryService } from 'src/app/core/services/GestionFormation/category
 import { ActivatedRoute, Router } from '@angular/router';
 import { Category } from 'src/app/core/models/GestionFormation/category';
 import Swal from 'sweetalert2';
+import { MatDialogRef } from '@angular/material/dialog';
 
 
 @Component({
@@ -24,7 +25,11 @@ export class AddEditCategoryComponent {
     status: new FormControl(''),
   });
 
-  constructor(private catServ: CategoryService, private Rout: Router) {}
+  constructor(
+    private catServ: CategoryService,
+    private Rout: Router,
+    private diagRef: MatDialogRef<AddEditCategoryComponent>
+  ) {}
   // get name() {
   //   return this.addForm.get('name');
   // }
@@ -37,9 +42,45 @@ export class AddEditCategoryComponent {
   SaveResidence(F: FormGroup) {
     this.C = { ...F.value };
     console.log(this.C);
-    this.catServ.addCategory(this.C).subscribe(() => {
-      console.log('Category added successfully');
-      this.Rout.navigate(['/categories']);
+    this.catServ.addCategory(this.C).subscribe({
+  next: (val: any) => {
+    Swal.fire({
+      icon: 'success',
+      title: 'Succès',
+      text: 'La catégorie a été modifiée avec succès !',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.diagRef.close(true); // Vérifie que diagRef est bien défini
+      }
     });
+  },
+
+  error: (err: any) => {
+    Swal.fire(
+      'Erreur!',
+      "Une erreur est survenue lors de la d'ajout.",
+      'error'
+    );
+  },
+
+  complete: () => {
+    console.log('Category added successfully');
+    this.Rout.navigate(['/categories']);
   }
+});
+
+  }
+  // SaveResidence(F: FormGroup) {
+  //   this.C = { ...F.value };
+  //   console.log(this.C);
+  //   this.catServ.addCategory(this.C).subscribe(() => {
+  //     // ***************************-------------*******************************
+      
+  //     // ***************************-------------*******************************
+
+
+  //     console.log('Category added successfully');
+  //     this.Rout.navigate(['/categories']);
+  //   });
+  // }
 }
