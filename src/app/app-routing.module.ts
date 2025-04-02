@@ -25,6 +25,9 @@ import { AllUsersComponent } from './Back/GestionUser/User/all-users/all-users.c
 import { UserBackDetailsComponent } from './Back/GestionUser/User/user-back-details/user-back-details.component';
 import { AuthBanComponent } from './Auth/auth-ban/auth-ban.component';
 import { AllbadgesComponent } from './Back/GestionUser/Badge/allbadges/allbadges.component';
+import { CertificatComponent } from './Back/GestionQUIZZ/certificat/certificat.component';
+import { QuizComponent } from './Back/GestionQUIZZ/quiz/quiz.component';
+import { QuestionComponent } from './Back/GestionQUIZZ/question/question.component';
 
 const routes: Routes = [
   //canActivate: [AdminGuard] to lock for admin
@@ -74,6 +77,13 @@ const routes: Routes = [
   { path: 'profile', component: ProfileComponent },
   { path: 'settings', component: SettingsComponent },
   { path: 'balance', component: BalanceComponent },
+  { path: 'certificats', component: CertificatComponent },
+
+  // Quiz Routes
+  { path: 'quizzes', component: QuizComponent },
+
+  // Question Routes
+  { path: 'questions/:quizId', component: QuestionComponent },
 
   { path: '**', redirectTo: '' },
 ];

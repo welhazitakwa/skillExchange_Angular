@@ -47,6 +47,9 @@ import { UserBackDetailsComponent } from './Back/GestionUser/User/user-back-deta
 import { AuthBanComponent } from './Auth/auth-ban/auth-ban.component';
 import { AllbadgesComponent } from './Back/GestionUser/Badge/allbadges/allbadges.component';
 import { SignaturePadComponent } from './components/signature-pad/signature-pad.component';
+import { CertificatComponent } from './Back/GestionQUIZZ/certificat/certificat.component';
+import { QuizComponent } from './Back/GestionQUIZZ/quiz/quiz.component';
+import { QuestionComponent } from './Back/GestionQUIZZ/question/question.component';
 
 @NgModule({
   declarations: [
@@ -89,6 +92,9 @@ import { SignaturePadComponent } from './components/signature-pad/signature-pad.
     AuthBanComponent,
     AllbadgesComponent,
     SignaturePadComponent,
+    CertificatComponent,
+    QuizComponent,
+    QuestionComponent
 
   ],
   imports: [
