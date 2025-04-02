@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Category } from 'src/app/core/models/GestionFormation/category';
-import { User } from 'src/app/core/models/GestionUser/User';
 import { CategoryService } from 'src/app/core/services/GestionFormation/category.service';
 import Swal from 'sweetalert2';
 

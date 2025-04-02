@@ -48,6 +48,7 @@ import { AuthBanComponent } from './Auth/auth-ban/auth-ban.component';
 import { AllbadgesComponent } from './Back/GestionUser/Badge/allbadges/allbadges.component';
 import { SignaturePadComponent } from './components/signature-pad/signature-pad.component';
 import { CategoriesComponent } from './Back/GestionFormation/Category/categories/categories.component';
+import { AddEditCategoryComponent } from './Back/GestionFormation/Category/add-edit-category/add-edit-category.component';
 
 @NgModule({
   declarations: [
@@ -88,6 +89,7 @@ import { CategoriesComponent } from './Back/GestionFormation/Category/categories
     AllbadgesComponent,
     SignaturePadComponent,
     CategoriesComponent,
+    AddEditCategoryComponent,
   ],
   imports: [
     BrowserModule,
