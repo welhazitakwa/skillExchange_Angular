@@ -4,5 +4,6 @@ export class Category {
   name!: number;
   status!: number;
   description!: number;
+  date_ajout!: Date ;
   
 }

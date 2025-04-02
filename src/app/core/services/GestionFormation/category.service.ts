@@ -12,20 +12,21 @@ export class CategoryService {
 
   url = 'http://localhost:8084/skillExchange/category';
   getCategory(): Observable<Category[]> {
-    return this.http.get<Category[]>(this.url);
+    return this.http.get<Category[]>(this.url + '/retrieve-all-categories');
   }
   addCategory(category: Category): Observable<Category> {
-    return this.http.post<Category>(this.url, category);
+    return this.http.post<Category>(this.url + '/add-category', category);
   }
 
   deleteCategory(id: number) {
-    return this.http.delete(this.url + '/' + id);
+    return this.http.delete(this.url + '/remove-category/' + id);
   }
 
   getCategoryById(id: number) {
-    return this.http.get<Category>(this.url + '/' + id);
+    return this.http.get<Category>(this.url + '/retrieve-category/' + id);
   }
   updateCategory(category: Category) {
-    return this.http.put(this.url + '/' + category.id, category);
+    return this.http.put(
+      this.url + '/modify-category/' + category.id, category );
   }
 }

@@ -78,15 +78,16 @@
                   <thead class="table-light">
                     <tr>
                       <th class="ps-4 fw-medium text-muted cursor-pointer"> Name
-                        <i class="fas fa-sort ms-1"></i>
                       </th>
                       
-                      <th class="fw-medium text-muted cursor-pointer"> Status
-                         <i class="fas fa-sort ms-1"></i>
+                      <th class="fw-medium text-muted cursor-pointer"> Description
                       </th>
                       
                       <th class="fw-medium text-muted cursor-pointer" >
-                        Description <i class="fas fa-sort ms-1"></i>
+                        Status <i class="fas fa-sort ms-1"></i>
+                      </th>
+                      <th class="fw-medium text-muted cursor-pointer" >
+                        Added at  <i class="fas fa-sort ms-1"></i>
                       </th>
                       <th class="fw-medium text-muted cursor-pointer" >
                         Operations <i class="fas fa-sort ms-1"></i>
@@ -94,22 +95,38 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
+                    <tr *ngFor="let c of listCategories" >
                       <td class="ps-4">
                         <div class="d-flex align-items-center">
                           <img
                             class="rounded-circle me-3"
                             width="40"
                             height="40"
-                            alt="User avatar"
-                          />
-                          
-                        </div>
-                      </td>
-                      <td>.... </td>
-                      <td class="text-muted">.....</td>
-                      <td class="fw-medium">...   </td>
+                            alt="Category"
+                          />   {{c.name}}
+                        </div> 
                       
+                      </td>
+                      <td>{{c.description}}</td>
+                       <td>
+<span  [ngStyle]="{ color: c.status === 0 ? 'red' : 'green' }" >
+  {{ c.status === 0 ? 'Unpublished' : 'published' }}
+</span>
+
+                                    </td>
+                      <td class="text-muted">{{ c.date_ajout | date }}</td>
+ <td  style="text-align: center;"  >
+                                         <button type="button" class="btn btn-sm btn-square btn-neutral text-danger-hover"> 
+                                            <i class="text-info fa fa-eye"></i> 
+                                        </button>
+                                         <button type="button" class="btn btn-sm btn-square btn-neutral text-danger-hover"  >
+                                              <i class="text-warning fa fa-edit"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-square btn-neutral text-danger-hover" (click)="deleteCategorie(c.id)">
+                                            <i class="text-danger fa fa-trash"></i>
+                                        </button>
+                                
+                                    </td>                      
                     </tr>
                 
                     
