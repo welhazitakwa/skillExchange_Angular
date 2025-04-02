@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
 import { MainBackComponent } from './Back/main-back/main-back.component';
 import { MainFrontComponent } from './Front/main-front/main-front.component';
 import { AboutComponent } from './Front/about/about.component';
@@ -28,6 +27,8 @@ import { AllbadgesComponent } from './Back/GestionUser/Badge/allbadges/allbadges
 import { CertificatComponent } from './Back/GestionQUIZZ/certificat/certificat.component';
 import { QuizComponent } from './Back/GestionQUIZZ/quiz/quiz.component';
 import { QuestionComponent } from './Back/GestionQUIZZ/question/question.component';
+import { RouterModule, Routes } from '@angular/router';
+import { AllEventsComponent } from './Back/GestionEvents/Events/all-events/all-events.component';
 
 const routes: Routes = [
   //canActivate: [AdminGuard] to lock for admin
@@ -48,6 +49,16 @@ const routes: Routes = [
     path: 'backbadges',
     component: AllbadgesComponent,
   },
+  /***************************************************************/
+
+
+
+//**************Back Gestion Events********************************
+
+  { path: 'backEvents', component: AllEventsComponent },
+
+
+
   /***************************************************************/
 
   //**************Back Gestion Produit********************************
