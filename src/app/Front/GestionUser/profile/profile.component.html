@@ -157,16 +157,23 @@
     <!-- Achievements -->
     <div class="profile-card">
       <h4 class="section-title text-primary">Achievements</h4>
-      <div class="badges-grid">
+
+      <div *ngIf="isLoadingBadges" class="text-center py-4">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="text-muted mt-2">Loading achievements...</p>
+      </div>
+      <div class="badges-grid" *ngIf="!isLoadingBadges">
         <div
-          *ngFor="let badge of badges"
+          *ngFor="let badge of paginatedBadges"
           class="badge-item"
           [class.earned]="badge.earned"
         >
           <div class="badge-icon-container">
             <div
               class="badge-icon"
-              [style.background]="badge.earned ? badge.color : '#f5f5f5'"
+              [style.background]="badge.earned ? '#FF6600' : '#f5f5f5'"
             >
               <i
                 [class]="badge.icon"
@@ -188,6 +195,32 @@
               <span class="progress-label">Locked</span>
             </div>
           </div>
+        </div>
+      </div>
+      <div
+        *ngIf="!isLoadingBadges && badges.length > 0"
+        class="pagination-controls mt-4"
+      >
+        <div class="d-flex justify-content-between align-items-center">
+          <button
+            class="btn btn-outline-primary"
+            (click)="previousPage()"
+            [disabled]="currentPage === 1"
+          >
+            Previous
+          </button>
+
+          <span class="text-muted">
+            Page {{ currentPage }} of {{ totalPages }}
+          </span>
+
+          <button
+            class="btn btn-outline-primary"
+            (click)="nextPage()"
+            [disabled]="currentPage === totalPages"
+          >
+            Next
+          </button>
         </div>
       </div>
     </div>

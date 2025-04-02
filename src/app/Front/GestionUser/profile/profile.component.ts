@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { Badge } from 'src/app/core/models/GestionUser/Badge';
 import { Role } from 'src/app/core/models/GestionUser/Role';
 import { User } from 'src/app/core/models/GestionUser/User';
 import { AuthService } from 'src/app/core/services/Auth/auth.service';
+import { BadgeService } from 'src/app/core/services/GestionUser/badge.service';
 import { UserService } from 'src/app/core/services/GestionUser/user.service';
 
 @Component({
@@ -14,29 +16,39 @@ export class ProfileComponent {
   currentUser: User | null = null;
   Role = Role;
 
+  isLoadingBadges: boolean = true;
   badges = [
     {
-      name: 'Early Adopter',
-      icon: 'fas fa-rocket',
-      color: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-      description: 'Joined in first month',
+      name: '',
+      icon: '',
+      description: '',
       earned: true,
-    },
-    {
-      name: 'Scholar',
-      icon: 'fas fa-graduation-cap',
-      color: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-      description: 'Completed 10 courses',
-      earned: true,
-    },
-    {
-      name: 'Helper',
-      icon: 'fas fa-hands-helping',
-      color: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-      description: 'Helped 5 community members',
-      earned: false,
     },
   ];
+  currentPage: number = 1;
+  itemsPerPage: number = 4;
+
+  get paginatedBadges(): any[] {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    return this.badges.slice(startIndex, endIndex);
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.badges.length / this.itemsPerPage);
+  }
+
+  previousPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+    }
+  }
 
   tabs = [
     { id: 'posts', label: 'Posts' },
@@ -48,10 +60,36 @@ export class ProfileComponent {
   constructor(
     private authService: AuthService,
     private userService: UserService,
+    private badgeService: BadgeService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
+    this.LoadCurrentUser();
+  }
+
+  private LoadBadges() {
+    this.isLoadingBadges = true;
+    this.badgeService.getAllBadges().subscribe(
+      (badges) => {
+        this.badges = badges.map((badge: Badge) => ({
+          name: badge.title,
+          icon: badge.image,
+          description: badge.description,
+          earned: this.currentUser?.badges.find((userBadge: Badge) => {
+            return userBadge.id == badge.id;
+          }),
+        }));
+        this.isLoadingBadges = false;
+      },
+      (error) => {
+        console.error(error);
+        this.isLoadingBadges = true;
+      }
+    );
+  }
+
+  private LoadCurrentUser() {
     const currentUserEmail = this.authService.getCurrentUserEmail();
     if (!currentUserEmail) {
       this.router.navigate(['/login']);
@@ -61,6 +99,7 @@ export class ProfileComponent {
     this.userService.getUserByEmail(currentUserEmail).subscribe(
       (user) => {
         this.currentUser = user;
+        this.LoadBadges();
       },
       (error) => {
         console.error(error);

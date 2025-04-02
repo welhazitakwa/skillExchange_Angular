@@ -58,6 +58,7 @@ export class SettingsComponent {
 
   showSignatureModal = false;
 
+  showdeleteConfirmation = false;
 
   constructor(
     private authService: AuthService,
@@ -241,7 +242,20 @@ export class SettingsComponent {
       error: (err) => {
         console.error('Error saving signature:', err);
         this._toastService.error('Failed to save signature');
-      }
+      },
     });
+  }
+
+  confirmDeleteAccount() {
+    this.userService.deleteUser(this.currentUser.id).subscribe(
+      () => {
+        this.authService.logout();
+        this.showdeleteConfirmation = false;
+      },
+      (error) => {
+        console.error('Error deleting user:', error);
+        this._toastService.error('Failed to delete account');
+      }
+    );
   }
 }
