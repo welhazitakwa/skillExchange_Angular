@@ -27,6 +27,10 @@ export class CategoryService {
   }
   updateCategory(category: Category) {
     return this.http.put(
-      this.url + '/modify-category/' + category.id, category );
+      this.url + '/modify-category/' + category.id, category);
   }
+
+  // editCategorie(id: number, data: any): Observable<any> {
+  //   return this.http.put(`http://localhost:8081/categorie/${id}`, data);
+  // }
 }

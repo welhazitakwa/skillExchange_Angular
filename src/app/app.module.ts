@@ -49,6 +49,14 @@ import { AllbadgesComponent } from './Back/GestionUser/Badge/allbadges/allbadges
 import { SignaturePadComponent } from './components/signature-pad/signature-pad.component';
 import { CategoriesComponent } from './Back/GestionFormation/Category/categories/categories.component';
 import { AddEditCategoryComponent } from './Back/GestionFormation/Category/add-edit-category/add-edit-category.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+//
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { EditCategoryComponent } from './Back/GestionFormation/Category/edit-category/edit-category.component';
 
 @NgModule({
   declarations: [
@@ -90,6 +98,7 @@ import { AddEditCategoryComponent } from './Back/GestionFormation/Category/add-e
     SignaturePadComponent,
     CategoriesComponent,
     AddEditCategoryComponent,
+    EditCategoryComponent,
   ],
   imports: [
     BrowserModule,
@@ -99,6 +108,13 @@ import { AddEditCategoryComponent } from './Back/GestionFormation/Category/add-e
     HttpClientModule,
     ImageCropperComponent,
     AngularToastifyModule,
+    BrowserAnimationsModule,
+    //
+    MatDialogModule,
+    // MatButtonModule,
+    // MatFormFieldModule,
+    // MatInputModule,
+    // MatSelectModule,
   ],
   providers: [ToastService],
   bootstrap: [AppComponent],

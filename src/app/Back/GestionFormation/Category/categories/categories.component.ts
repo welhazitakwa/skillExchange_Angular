@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { Category } from 'src/app/core/models/GestionFormation/category';
 import { CategoryService } from 'src/app/core/services/GestionFormation/category.service';
 import Swal from 'sweetalert2';
+import { MatDialog } from '@angular/material/dialog';
+import { AddEditCategoryComponent } from '../add-edit-category/add-edit-category.component';
 
 @Component({
   selector: 'app-categories',
@@ -9,18 +11,18 @@ import Swal from 'sweetalert2';
   styleUrls: ['./categories.component.css'],
 })
 export class CategoriesComponent {
-  constructor(private catServ: CategoryService) {}
+  constructor(private dialog: MatDialog, private catServ: CategoryService) {}
   listCategories: Category[] = [];
 
   ngOnInit() {
     this.getCategoriesList();
-   }
-     getCategoriesList() {
-  this.catServ.getCategory().subscribe(
-    (data) => (this.listCategories = data),
-    (erreur) => console.log('erreur'),
-    () => console.log(this.listCategories)
-  );
+  }
+  getCategoriesList() {
+    this.catServ.getCategory().subscribe(
+      (data) => (this.listCategories = data),
+      (erreur) => console.log('erreur'),
+      () => console.log(this.listCategories)
+    );
   }
 
   deleteCategorie(id: number) {
@@ -42,7 +44,7 @@ export class CategoriesComponent {
               'Votre Catégorie a été supprimé.',
               'success'
             );
-                this.getCategoriesList();
+            this.getCategoriesList();
           },
           error: (err) => {
             Swal.fire(
@@ -55,4 +57,31 @@ export class CategoriesComponent {
       }
     });
   }
+  openAddEditCatForm() {
+    const dialogRef = this.dialog.open(AddEditCategoryComponent, {
+      width: '550px',
+    });
+    dialogRef.afterClosed().subscribe({
+      next: (val) => {
+        if (val) {
+          this.getCategoriesList();
+        }
+      },
+      error: console.log,
+    });
+  }
+  // openEditCatForm(data: any) {
+  //   const dialogRef = this.dialog.open(AddEditCategoryComponent, {
+  //     data,
+  //     width: '550px',
+  //   });
+  //   dialogRef.afterClosed().subscribe({
+  //     next: (val) => {
+  //       if (val) {
+  //         this.getCategoriesList();
+  //       }
+  //     },
+  //     error: console.log,
+  //   });
+  // }
 }
