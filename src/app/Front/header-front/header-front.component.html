@@ -96,59 +96,98 @@
               >Contact</a
             >
           </div>
-
-          <div *ngIf="currentUser" class="col-log-3">
+          <div *ngIf="currentUser" class="col-lg-3 user-menu-wrapper">
             <a
+              class="d-flex align-items-center text-decoration-none profile-toggle"
               href="javascript:void(0)"
               data-bs-toggle="dropdown"
               aria-haspopup="true"
               aria-expanded="false"
             >
-              <img
-                [src]="
-                  currentUser.image
-                    ? 'data:image/*;base64,' + currentUser.image
-                    : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
-                "
-                alt="user"
-                class="rounded-circle"
-                width="40"
-              />
-
+              <div class="position-relative">
+                <img
+                  [src]="
+                    currentUser.image
+                      ? 'data:image/*;base64,' + currentUser.image
+                      : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
+                  "
+                  alt="user profile"
+                  class="rounded-circle border border-white shadow-sm"
+                  width="48"
+                  height="48"
+                />
+                <span
+                  *ngIf="currentUser?.balance !== undefined"
+                  class="position-absolute bottom-0 end-0 badge bg-primary rounded-pill balance-badge"
+                >
+                  🪙 {{ currentUser.balance | number : "1.2-2" }}
+                </span>
+              </div>
               <span class="ms-2 d-none d-lg-inline-block"
                 ><span>Hello,</span>
-                <span class="text-dark">{{ currentUser.email }}</span>
-                <i data-feather="chevron-down" class="svg-icon"></i
-              ></span>
+                <span class="text-dark">{{ currentUser.name }}</span>
+                <i class="fas fa-chevron-down ms-1 fa-sm"></i>
+              </span>
             </a>
+
             <div
-              class="dropdown-menu dropdown-menu-end dropdown-menu-right user-dd animated flipInY"
+              class="dropdown-menu dropdown-menu-end shadow-lg rounded-2 border-0"
             >
-              <a class="dropdown-item" routerLink="/profile"
-                ><i data-feather="user" class="svg-icon me-2 ms-1"></i> My
-                Profile</a
-              >
-              <a class="dropdown-item" routerLink="/balance"
-                ><i data-feather="credit-card" class="svg-icon me-2 ms-1"></i>
-                My Balance</a
-              >
-              <a class="dropdown-item" routerLink="/back" *ngIf="this.isAdmin"
-                ><i data-feather="mail" class="svg-icon me-2 ms-1"></i>
-                Dashboard</a
-              >
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" routerLink="/settings"
-                ><i data-feather="settings" class="svg-icon me-2 ms-1"></i>
-                Account Setting</a
-              >
-              <div class="dropdown-divider"></div>
+              <div class="dropdown-header px-3 py-2">
+                <div class="fw-medium">
+                  {{ currentUser.email }}
+                </div>
+                <div class="text-muted small">
+                  Balance: 🪙 {{ currentUser.balance | number : "1.2-2" }}
+                </div>
+              </div>
+
+              <div class="dropdown-divider mx-3 my-2"></div>
+
               <a
-                class="dropdown-item"
-                style="cursor: pointer"
-                (click)="logout()"
-                ><i data-feather="power" class="svg-icon me-2 ms-1"></i>
-                Logout</a
+                class="dropdown-item d-flex align-items-center py-2 px-3 hover-bg-neutral"
+                routerLink="/profile"
               >
+                <i class="fas fa-user-circle me-3 text-primary"></i>
+                <span>My Profile</span>
+              </a>
+
+              <a
+                class="dropdown-item d-flex align-items-center py-2 px-3 hover-bg-neutral"
+                routerLink="/balance"
+              >
+                <i class="fas fa-wallet me-3 text-success"></i>
+                <span>My Balance</span>
+              </a>
+
+              <div class="dropdown-divider mx-3 my-2"></div>
+
+              <a
+                class="dropdown-item d-flex align-items-center py-2 px-3 hover-bg-neutral"
+                routerLink="/settings"
+              >
+                <i class="fas fa-cog me-3 text-secondary"></i>
+                <span>Account Settings</span>
+              </a>
+
+              <a
+                *ngIf="isAdmin"
+                class="dropdown-item d-flex align-items-center py-2 px-3 hover-bg-neutral"
+                routerLink="/back"
+              >
+                <i class="fas fa-tachometer-alt me-3 text-warning"></i>
+                <span>Dashboard</span>
+              </a>
+
+              <div class="dropdown-divider mx-3 my-2"></div>
+
+              <a
+                class="dropdown-item d-flex align-items-center py-2 px-3 hover-bg-neutral text-danger"
+                (click)="logout()"
+              >
+                <i class="fas fa-sign-out-alt me-3"></i>
+                <span>Logout</span>
+              </a>
             </div>
           </div>
           <div *ngIf="!currentUser" class="col-log-3 navbar-nav py-0 ms-auto">
