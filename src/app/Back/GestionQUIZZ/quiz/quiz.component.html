@@ -1,0 +1,37 @@
+<div class="page-wrapper">
+  <h2>{{ quizId ? 'Edit Quiz' : 'Create Quiz' }}</h2>
+
+  <form [formGroup]="quizForm" (ngSubmit)="onSubmit()">
+    <!-- Title Field -->
+    <div class="form-group">
+      <label for="title">Title</label>
+      <input id="title" formControlName="title" class="form-control" required placeholder="Enter quiz title" />
+      <div *ngIf="quizForm.get('title')?.invalid && quizForm.get('title')?.touched" class="text-danger">
+        Title is required.
+      </div>
+    </div>
+
+    <!-- Image URL Field -->
+    <div class="form-group">
+      <label for="image">Image URL</label>
+      <input id="image" formControlName="image" class="form-control" required placeholder="Enter image URL" />
+      <div *ngIf="quizForm.get('image')?.invalid && quizForm.get('image')?.touched" class="text-danger">
+        Image URL is required.
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit" class="btn btn-primary" [disabled]="quizForm.invalid">
+      {{ quizId ? 'Update' : 'Create' }} Quiz
+    </button>
+  </form>
+
+  <!-- Display All Quizzes -->
+  <h3>All Quizzes</h3>
+  <div *ngFor="let quiz of quizzes" (click)="navigateToQuestions(quiz.id)" class="quiz-item">
+    <h4>{{ quiz.title }}</h4>
+    <p>{{ quiz.image }}</p>
+    <button class="btn btn-secondary">Edit</button>
+    <button *ngIf="quiz.id !== undefined" (click)="deleteQuiz(quiz.id)">Delete</button>
+  </div>
+</div>
