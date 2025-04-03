@@ -14,22 +14,7 @@ import { MailService } from 'src/app/core/services/Mailing/mail.service';
   styleUrls: ['./settings.component.css'],
 })
 export class SettingsComponent {
-  currentUser: User = {
-    name: '',
-    email: '',
-    id: 0,
-    role: Role.USER,
-    verified: false,
-    image: '',
-    balance: 0,
-    signature: '',
-    ban: null,
-    bio: '',
-    facebook: '',
-    github: '',
-    linkedin: '',
-    badges: [],
-  };
+  currentUser: User = new User();
 
   activeTab: string = 'profile';
   twoFactorEnabled: boolean = false;

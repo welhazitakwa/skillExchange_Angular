@@ -272,6 +272,19 @@
             <div class="tab-pane active" id="activity">
               <div class="transaction-list">
                 <div
+                  *ngIf="transactions.length === 0"
+                  class="no-transactions-message"
+                >
+                  <img
+                    src="https://i.pinimg.com/originals/f8/c4/22/f8c422a0a0e6793b3f9113d419c5143a.gif"
+                    width="200"
+                    height="200"
+                  /><br />
+                  <i class="fas fa-exchange-alt fa-2x"></i>
+                  <h5>No transactions yet</h5>
+                  <p>Your transaction history will appear here</p>
+                </div>
+                <div
                   *ngFor="let transaction of transactions"
                   class="transaction-item"
                 >
