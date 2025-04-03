@@ -39,15 +39,15 @@ export class AddEditCategoryComponent {
   // }
 
   C!: Category;
-  SaveResidence(F: FormGroup) {
+  SaveCategory(F: FormGroup) {
     this.C = { ...F.value };
     console.log(this.C);
     this.catServ.addCategory(this.C).subscribe({
   next: (val: any) => {
     Swal.fire({
       icon: 'success',
-      title: 'Succès',
-      text: 'La catégorie a été modifiée avec succès !',
+      title: 'Success',
+      text: 'Category added successfully !',
     }).then((result) => {
       if (result.isConfirmed) {
         this.diagRef.close(true); // Vérifie que diagRef est bien défini

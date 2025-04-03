@@ -1,9 +1,9 @@
 export class Formation {
   id!: number;
-  image!: String;
-  title!: String;
-  description!: number;
+  image!: string;
+  title!: string;
+  description!: string;
   duration!: Float32Array;
-  requiredSkills!: String;
+  requiredSkills!: string;
   state!: Number;
 }

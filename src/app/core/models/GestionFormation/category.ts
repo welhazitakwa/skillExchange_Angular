@@ -1,9 +1,9 @@
 export class Category {
   id!: number;
-  image!: number;
-  name!: number;
+  image!: string;
+  name!: string;
   status!: number;
-  description!: number;
+  description!: string;
   date_ajout!: Date ;
   
 }
