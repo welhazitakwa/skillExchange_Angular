@@ -5,5 +5,6 @@ export class Formation {
   description!: string;
   duration!: Float32Array;
   requiredSkills!: string;
-  state!: Number;
+  state!: number;
+  category_id!:number
 }
