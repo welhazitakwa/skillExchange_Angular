@@ -158,3 +158,24 @@
 .bg-dark {
   background-color: #333;
 }
+
+.no-transactions-message {
+  text-align: center;
+  padding: 2rem;
+  color: #6c757d;
+}
+
+.no-transactions-message i {
+  margin-bottom: 1rem;
+  color: #dee2e6;
+}
+
+.no-transactions-message h5 {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.no-transactions-message p {
+  margin: 0;
+  font-size: 0.9rem;
+}
