@@ -57,6 +57,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { EditCategoryComponent } from './Back/GestionFormation/Category/edit-category/edit-category.component';
+import { FormationsComponent } from './Back/GestionFormation/Formation/formations/formations.component';
+import { AddFormationComponent } from './Back/GestionFormation/Formation/add-formation/add-formation.component';
+import { EditFormationComponent } from './Back/GestionFormation/Formation/edit-formation/edit-formation.component';
 
 @NgModule({
   declarations: [
@@ -99,6 +102,9 @@ import { EditCategoryComponent } from './Back/GestionFormation/Category/edit-cat
     CategoriesComponent,
     AddEditCategoryComponent,
     EditCategoryComponent,
+    FormationsComponent,
+    AddFormationComponent,
+    EditFormationComponent,
   ],
   imports: [
     BrowserModule,

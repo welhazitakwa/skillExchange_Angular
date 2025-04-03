@@ -26,6 +26,7 @@ import { UserBackDetailsComponent } from './Back/GestionUser/User/user-back-deta
 import { AuthBanComponent } from './Auth/auth-ban/auth-ban.component';
 import { AllbadgesComponent } from './Back/GestionUser/Badge/allbadges/allbadges.component';
 import { CategoriesComponent } from './Back/GestionFormation/Category/categories/categories.component';
+import { FormationsComponent } from './Back/GestionFormation/Formation/formations/formations.component';
 
 const routes: Routes = [
   //canActivate: [AdminGuard] to lock for admin
@@ -55,6 +56,7 @@ const routes: Routes = [
   { path: 'backimagesP', component: AllImagesComponent },
   /********************Back Gestion Formations****************************************/
   { path: 'categories', component: CategoriesComponent },
+  { path: 'formations', component: FormationsComponent },
 
   /***************************************************************/
 
