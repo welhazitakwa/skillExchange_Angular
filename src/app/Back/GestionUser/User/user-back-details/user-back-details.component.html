@@ -127,12 +127,10 @@
                   height="150"
                   alt="User avatar"
                 />
-                <div
-                  class="badge bg-{{
-                    user.verified ? 'success' : 'secondary'
-                  }} rounded-pill position-absolute top-0 end-0"
-                >
-                  <i class="fas fa-{{ user.verified ? 'check' : 'clock' }}"></i>
+                <div class="online-status"
+                     [class.online]="user.status === UserStatus.ONLINE"
+                     [class.away]="user.status === UserStatus.AWAY"
+                     [class.offline]="user.status === UserStatus.OFFLINE">
                 </div>
               </div>
               <h4 class="fw-bold mb-1">

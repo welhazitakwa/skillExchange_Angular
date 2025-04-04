@@ -2,6 +2,7 @@ import { Badge } from './Badge';
 import { Banned } from './Banned';
 import { HistoricTransactions } from './HistoricTransactions';
 import { Role } from './Role';
+import { UserStatus } from './UserStatus';
 
 export class User {
   id!: number;
@@ -19,4 +20,5 @@ export class User {
   linkedin!: string;
   badges!: Badge[];
   historicTransactions!: HistoricTransactions[];
+  status!: UserStatus;
 }

@@ -26,7 +26,12 @@
               alt="Avatar"
             />
 
-            <div class="online-status" [class.online]="true"></div>
+            <div
+              class="online-status"
+              [class.online]="currentUser?.status == UserStatus.ONLINE"
+              [class.away]="currentUser?.status == UserStatus.AWAY"
+              [class.offline]="currentUser?.status == UserStatus.OFFLINE"
+            ></div>
           </div>
           <div class="profile-meta">
             <h1 style="color: black">
@@ -126,6 +131,7 @@
         </div>
       </div>
     </div>
+
     <div class="profile-card">
       <div class="d-flex flex-column">
         <div class="balance-display mb-4">
