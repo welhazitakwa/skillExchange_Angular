@@ -1,0 +1,23 @@
+<div class="cart-item" *ngFor="let cartProduct of cartProducts">
+  <div class="cart-item-info">
+    <h5>{{ cartProduct.product.productName }}</h5>
+    <p>{{ cartProduct.product.price | currency: 'TND' }}</p>
+  </div>
+
+  <div class="cart-item-controls">
+    <div class="cart-quantity">
+      <button (click)="decreaseQuantity(cartProduct)" [disabled]="cartProduct.quantity <= 1">-</button>
+      <span>{{ cartProduct.quantity }}</span>
+      <button (click)="increaseQuantity(cartProduct)">+</button>
+    </div>
+    
+    <button (click)="removeProduct(cartProduct)" class="btn-delete">
+      <i class="fas fa-trash"></i>
+    </button>
+  </div>
+</div>
+<!-- Boutons supplémentaires -->
+<div class="cart-actions">
+  <button (click)="clearCart()" class="clear-cart">Clear cart</button>
+  <button (click)="validateCart()" class="validate-cart">Validate cart</button>
+</div>

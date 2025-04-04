@@ -1,0 +1,36 @@
+.user-menu-wrapper {
+    .profile-toggle {
+      transition: all 0.3s ease;
+      
+      &:hover {
+        transform: translateY(-1px);
+      }
+    }
+  
+    .balance-badge {
+      font-size: 0.75rem;
+      padding: 4px 8px;
+      transform: translate(25%, 25%);
+    }
+  
+    .dropdown-menu {
+      min-width: 240px;
+      margin-top: 8px;
+    }
+  
+    .hover-bg-neutral {
+      transition: all 0.2s ease;
+      border-radius: 6px;
+      margin: 2px 4px;
+  
+      &:hover {
+        background-color: #f8f9fa;
+        transform: translateX(4px);
+      }
+    }
+  
+    .dropdown-header {
+      background-color: #f8f9fa;
+      border-radius: 6px 6px 0 0;
+    }
+  }

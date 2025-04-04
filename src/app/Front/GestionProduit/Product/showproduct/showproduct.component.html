@@ -1,0 +1,88 @@
+<app-header-front></app-header-front>    
+    <!-- Header Start -->
+    <div class="container-fluid page-header" style="margin-bottom: 90px;">
+        <div class="container">
+            <div class="d-flex flex-column justify-content-center" style="min-height: 300px">
+                <h3 class="display-4 text-white text-uppercase">Products</h3>
+                <div class="d-inline-flex text-white">
+                    <p class="m-0 text-uppercase"><a class="text-white" href="">Home</a></p>
+                    <i class="fa fa-angle-double-right pt-1 px-3"></i>
+                    <p class="m-0 text-uppercase">Products</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Header End -->
+
+<!-- Bouton Panier flottant (à droite) -->
+<button class="cart-float-btn" (click)="toggleCart()">
+    <i class="fa fa-shopping-cart"></i>
+    <span class="cart-badge">{{ localStorage.getItem('cartCount') || 0 }}</span>
+</button>
+
+<!-- Sidebar du panier -->
+<div class="cart-sidebar" [class.open]="isCartOpen">
+    <div class="cart-header">
+        <h4>🛍️ Mon Panier</h4>
+        <button class="close-btn" (click)="toggleCart()">✖</button>
+    </div>
+    <div class="cart-content">
+      <app-showcart   [cartProducts]="cartProducts"></app-showcart> 
+        
+    </div>
+</div>
+  
+
+
+ <!-- Products Start -->
+<div class="container-fluid py-5">
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <h5 class="text-primary text-uppercase mb-3" style="letter-spacing: 5px;">Shop</h5>
+            <h1>Our Products</h1>
+        </div>
+        <div class="row">
+            <div class="col-lg-4 col-md-6 mb-4" *ngFor="let product of products">
+                <div class="rounded overflow-hidden mb-2">
+                    <!-- On garde les images existantes -->
+                    <img class="img-fluid" src="assets/assetsFront/img/course-1.jpg" alt="Product Image">
+                    <div class="bg-secondary p-4">
+                        <div class="d-flex justify-content-between mb-3">
+                            <!-- Stock restant avec couleur conditionnelle -->
+                            <small class="m-0" 
+                                [ngClass]="{'text-success': product.stock > 0, 'text-danger': product.stock === 0}">
+                                <i class="fa fa-box text-primary mr-2"></i>
+                                {{ product.stock > 0 ? product.stock + ' in stock' : 'Stock épuisé' }}
+                            </small>
+
+                            <!-- Affichage du nom du vendeur -->
+                            <small class="m-0"><i class="fa fa-user text-primary mr-2"></i> {{ product.postedBy.name }}</small>
+                        </div>
+
+                        <a class="h5" [routerLink]="['/productD', product.idProduct]">{{ product.productName }}</a>
+
+                        <p class="m-0 ">{{ product.type }}</p>
+
+                        <!-- Affichage du rating -->
+                        
+
+                        <div class="border-top mt-4 pt-4">
+                            <div class="d-flex justify-content-between">
+                                <h5 class="m-0 ">{{ product.price | currency:'TND' }}</h5>
+                                <button class="btn btn-primary btn-sm" 
+                                      (click)="addToCart(product)"
+                                        [disabled]="product.stock === 0">
+                                    🛒 Add to Cart
+                                </button>
+                                
+                            </div>
+                        </div> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<app-footer-front></app-footer-front>

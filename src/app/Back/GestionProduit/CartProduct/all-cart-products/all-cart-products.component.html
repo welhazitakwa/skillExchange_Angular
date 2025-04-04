@@ -1,0 +1,318 @@
+<!-- ============================================================== -->
+<!-- Main wrapper - style you can find in pages.scss -->
+<!-- ============================================================== -->
+<div
+  id="main-wrapper"
+  data-theme="light"
+  data-layout="vertical"
+  data-navbarbg="skin6"
+  data-sidebartype="full"
+  data-sidebar-position="fixed"
+  data-header-position="fixed"
+  data-boxed-layout="full"
+>
+  <!-- ============================================================== -->
+  <!-- Topbar header - style you can find in pages.scss -->
+  <!-- ============================================================== -->
+  <app-nav></app-nav>
+  <!-- ============================================================== -->
+  <!-- End Topbar header -->
+  <!-- ============================================================== -->
+  <!-- ============================================================== -->
+  <!-- Left Sidebar - style you can find in sidebar.scss  -->
+  <!-- ============================================================== -->
+  <app-side-bar></app-side-bar>
+  <!-- ============================================================== -->
+  <!-- End Left Sidebar - style you can find in sidebar.scss  -->
+  <!-- ============================================================== -->
+  <!-- ============================================================== -->
+  <!-- Page wrapper  -->
+  <!-- ============================================================== -->
+  <div class="page-wrapper" style="display: block">
+    <!-- ============================================================== -->
+    <!-- Bread crumb and right sidebar toggle -->
+    <!-- ============================================================== -->
+    <div class="page-breadcrumb">
+      <div class="row">
+        <div class="col-8 align-self-center">
+          <h4
+            class="page-title text-truncate text-dark font-weight-medium mb-1"
+          >
+            Gestion Cart Products
+          </h4>
+          <div class="d-flex align-items-center">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb m-0 p-0">
+                <li class="breadcrumb-item">
+                  <a routerLink="/back" class="text-muted">Dashboard</a>
+                </li>
+                <li
+                  class="breadcrumb-item text-muted active"
+                  aria-current="page"
+                >
+                   Cart Products
+                </li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Bread crumb and right sidebar toggle -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- Container fluid  -->
+    <!-- ============================================================== -->
+    <div class="container-fluid">
+      <!-- ============================================================== -->
+      <!-- Start Page Content -->
+      <!-- ============================================================== -->
+      <!-- basic table -->
+      <div class="row">
+        <div class="col-12">
+          <div class="card shadow-sm border-0">
+            <div class="card-body">
+              <div
+                class="d-flex justify-content-between align-items-center mb-4"
+              >
+                <h4 class="card-title mb-0 text-primary fw-semibold">
+                 Cart Products Management
+                </h4>
+                <button class="btn btn-sm btn-outline-primary">
+                  <i class="fas fa-download me-2"></i>Export CSV
+                </button>
+              </div>
+
+              <!-- Search and Filter Row -->
+<!-- Search and Filter Row -->
+<div class="row mb-4">
+  <!-- Search bar -->
+  <div class="col-md-6">
+    <div class="input-group">
+      <span class="input-group-text">
+        <i class="fas fa-search"></i>
+      </span>
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Rechercher par nom ou type"
+        [(ngModel)]="searchText"
+        (input)="applyFilters()"
+      />
+    </div>
+  </div>
+
+  <!-- Quantity Range -->
+  <div class="col-md-3">
+    <div class="d-flex">
+      <input
+        type="number"
+        class="form-control me-2"
+        placeholder="Min"
+        [(ngModel)]="minQuantity"
+        (input)="applyFilters()"
+      />
+      <input
+        type="number"
+        class="form-control"
+        placeholder="Max"
+        [(ngModel)]="maxQuantity"
+        (input)="applyFilters()"
+      />
+    </div>
+  </div>
+
+  
+</div>
+
+
+              <div class="table-responsive rounded-3">
+                <table class="table table-hover align-middle mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th
+                        class="ps-4 fw-medium text-muted cursor-pointer"
+                        (click)="sort('name')"
+                      >
+                      Cart ID
+                        <i
+                          class="fas fa-sort ms-1"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortColumn === 'name' && sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortColumn === 'name' && sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th
+                        class="fw-medium text-muted cursor-pointer"
+                        (click)="sort('role')"
+                      >
+                      User Name
+                        <i
+                          class="fas fa-sort ms-1"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortColumn === 'role' && sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortColumn === 'role' && sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th
+                        class="fw-medium text-muted cursor-pointer"
+                        (click)="sort('email')"
+                      >
+                      Product Name
+                        <i
+                          class="fas fa-sort ms-1"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortColumn === 'email' && sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortColumn === 'email' && sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th
+                        class="fw-medium text-muted cursor-pointer"
+                        (click)="sort('balance')"
+                      >
+                        Type
+                        <i
+                          class="fas fa-sort ms-1"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortColumn === 'balance' &&
+                              sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortColumn === 'balance' &&
+                              sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th
+                        class="fw-medium text-muted cursor-pointer"
+                        (click)="sort('verified')"
+                      >
+                        Price
+                        <i
+                          class="fas fa-sort ms-1"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortColumn === 'verified' &&
+                              sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortColumn === 'verified' &&
+                              sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th
+                        class="fw-medium text-muted cursor-pointer"
+                        (click)="sort('verified')"
+                      >
+                        Quantity
+                        <i
+                          class="fas fa-sort ms-1"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortColumn === 'verified' &&
+                              sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortColumn === 'verified' &&
+                              sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                   <tr
+                      *ngFor="let cp of filteredcartP"
+                      style="cursor: pointer"
+                       [routerLink]="['/backuserdetail', cp.id]"
+                       >
+                    
+                      <!--- <td class="ps-4">
+                        <div class="d-flex align-items-center">
+                          <img
+                            [src]="
+                              user.image
+                                ? 'data:image/*;base64,' + user.image
+                                : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
+                            "
+                            class="rounded-circle me-3"
+                            width="40"
+                            height="40"
+                            alt="User avatar"
+                          />
+                          <span class="fw-medium">
+                            {{ user.name }}
+                            <svg
+                              *ngIf="user.verified"
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              fill="currentColor"
+                              class="bi bi-patch-check-fill text-primary ml-2"
+                              viewBox="0 0 16 16"
+                            >  
+                              <path
+                                d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708"
+                              />
+                            </svg>
+                            <span
+                              class="badge bg-danger bg-opacity-10"
+                              style="padding: 5px"
+                              *ngIf="user.ban"
+                            >
+                              Banned
+                            </span>
+                          </span>
+                        </div>
+                      </td> -->
+                      <td class="text-muted">{{ cp.cart.id }}</td>
+                      <td class="text-muted">{{ cp.cart.user.name  }}</td>
+                      <td class="text-muted">{{ cp.product.productName  }}</td>
+                      <td class="text-muted">{{ cp.product.type  }}</td>
+                      <td class="text-muted">{{cp.product.price  }}</td>
+                      <td class="text-muted">{{cp.quantity }}</td>
+                      
+                    </tr>
+                    <tr *ngIf="filteredcartP.length === 0">
+                      <td colspan="6" class="text-center py-4">
+                        <img
+                          src="https://i.pinimg.com/originals/5d/35/e3/5d35e39988e3a183bdc3a9d2570d20a9.gif"
+                          height="400px"
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Container fluid  -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- footer -->
+    <!-- ============================================================== -->
+    <footer class="footer text-center text-muted">
+      All Rights Reserved by Freedash. Designed and Developed by
+      <a href="https://adminmart.com/">Adminmart</a>.
+    </footer>
+    <!-- ============================================================== -->
+    <!-- End footer -->
+    <!-- ============================================================== -->
+  </div>
+  <!-- ============================================================== -->
+  <!-- End Page wrapper  -->
+  <!-- ============================================================== -->
+</div>
