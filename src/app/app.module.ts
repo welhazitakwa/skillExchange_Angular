@@ -14,7 +14,7 @@ import { AboutComponent } from './Front/about/about.component';
 import { BlogListComponent } from './Front/blog-list/blog-list.component';
 import { BlogDetailsComponent } from './Front/blog-details/blog-details.component';
 import { CoursesComponent } from './Front/courses/courses.component';
-import { TeachersComponent } from './Front/teachers/teachers.component';
+
 import { ContactComponent } from './Front/contact/contact.component';
 import { ErrorComponent } from './error/error.component';
 
@@ -41,6 +41,7 @@ import { BalanceComponent } from './Front/GestionUser/balance/balance.component'
 import { SettingsComponent } from './Front/GestionUser/settings/settings.component';
 import { AllUsersComponent } from './Back/GestionUser/User/all-users/all-users.component';
 
+
 import { ImageCropperComponent } from 'ngx-image-cropper';
 import { UserBackDetailsComponent } from './Back/GestionUser/User/user-back-details/user-back-details.component';
 import { AuthBanComponent } from './Auth/auth-ban/auth-ban.component';
@@ -55,17 +56,22 @@ import { AllEventsComponent } from './Back/GestionEvents/Events/all-events/all-e
 import { UpdateEventsComponent } from './Back/GestionEvents/Events/update-events/update-events.component';
 import { DeleteEventsComponent } from './Back/GestionEvents/Events/delete-events/delete-events.component';
 import { AllEventCommentComponent } from './Back/GestionEvents/EventComment/all-event-comment/all-event-comment.component';
-import { UpdateEventCommentComponent } from './Back/GestionEvents/EventComment/update-event-comment/update-event-comment.component';
-import { DeleteEventCommentComponent } from './Back/GestionEvents/EventComment/delete-event-comment/delete-event-comment.component';
-import { AllEventImageComponent } from './Back/GestionEvents/EventImage/all-event-image/all-event-image.component';
-import { UpdateEventImageComponent } from './Back/GestionEvents/EventImage/update-event-image/update-event-image.component';
-import { DeleteEventImageComponent } from './Back/GestionEvents/EventImage/delete-event-image/delete-event-image.component';
+
+//import { DeleteEventImageComponent } from './Back/GestionEvents/EventImage/delete-event-image/delete-event-image.component';
 import { AllRateEventComponent } from './Back/GestionEvents/RateEvent/all-rate-event/all-rate-event.component';
 import { UpdateRateEventComponent } from './Back/GestionEvents/RateEvent/update-rate-event/update-rate-event.component';
 import { DeleteRateEventComponent } from './Back/GestionEvents/RateEvent/delete-rate-event/delete-rate-event.component';
 import { AllParticipationEventsComponent } from './Back/GestionEvents/ParticipationEvents/all-participation-events/all-participation-events.component';
 import { UpdateParticipationEventsComponent } from './Back/GestionEvents/ParticipationEvents/update-participation-events/update-participation-events.component';
 import { DeleteParticipationEventsComponent } from './Back/GestionEvents/ParticipationEvents/delete-participation-events/delete-participation-events.component';
+import { RouterModule } from '@angular/router';
+import { UpdateEventCommentComponent } from './Back/GestionEvents/EventComment/update-event-comment/update-event-comment.component';
+import { DeleteEventCommentComponent } from './Back/GestionEvents/EventComment/delete-event-comment/delete-event-comment.component';
+import { AllEventImageComponent } from './Back/GestionEvents/EventImage/all-event-image/all-event-image.component';
+import { TeachersComponent } from './Front/teachers/teachers.component';
+import { UpdateEventImageComponent } from './Back/GestionEvents/EventImage/update-event-image/update-event-image.component';
+import { AllCartProductsComponent } from './Back/GestionProduit/CartProduct/all-cart-products/all-cart-products.component';
+import { CartProductsComponent } from './Front/GestionProduit/cart-products/cart-products.component';
 
 @NgModule({
   declarations: [
@@ -91,7 +97,6 @@ import { DeleteParticipationEventsComponent } from './Back/GestionEvents/Partici
     SettingsComponent,
     AllUsersComponent,
 
-    
     AddcartComponent,
     ShowcartComponent,
     UpdatecartComponent,
@@ -119,16 +124,18 @@ import { DeleteParticipationEventsComponent } from './Back/GestionEvents/Partici
     DeleteEventCommentComponent,
     AllEventImageComponent,
     UpdateEventImageComponent,
-    DeleteEventImageComponent,
+   // DeleteEventImageComponent,
     AllRateEventComponent,
     UpdateRateEventComponent,
     DeleteRateEventComponent,
     AllParticipationEventsComponent,
     UpdateParticipationEventsComponent,
-    DeleteParticipationEventsComponent
-
+    DeleteParticipationEventsComponent,
+    AllCartProductsComponent,
+    CartProductsComponent,
   ],
   imports: [
+    RouterModule,
     BrowserModule,
     AppRoutingModule,
     FormsModule,
