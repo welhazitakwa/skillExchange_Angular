@@ -1,0 +1,176 @@
+/* Settings Component CSS */
+.account-header {
+  background: linear-gradient(135deg, #d95700 0%, #FF6600 100%);
+  padding: 4rem 0;
+  margin-bottom: 2rem;
+}
+
+.settings-nav .nav-link {
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  color: #64748b;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.settings-nav .nav-link.active {
+  background: #FF6600;
+  color: white;
+  font-weight: 500;
+}
+
+.settings-nav .nav-link:hover:not(.active) {
+  background: #FF6600;
+  color: white;
+}
+
+.avatar-upload {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto;
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.avatar-edit {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 36px;
+  background-color: gray;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.avatar-edit:hover {
+  background-color: #d95700; /* Change background color on hover */
+}
+
+.avatar-edit i {
+  font-size: 24px; /* Adjust icon size */
+  color: #555; /* Icon color */
+}
+
+.avatar-edit input {
+  display: none;
+}
+
+.settings-content {
+  display: none;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+}
+
+.settings-content.show {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.security-item {
+  padding: 1.5rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.notification-item {
+  padding: 1rem 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.form-switch .form-check-input {
+  width: 3em;
+  height: 1.5em;
+  margin-left: 20px;
+}
+.form-switch .form-check-label {
+  margin-left: -20px;
+  margin-top: 5px;
+}
+
+.input-group-text {
+  background: #e0e7ff;
+  border-color: #e0e7ff;
+  color: #4f46e5;
+}
+
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.cropper-modal {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 800px;
+}
+.signature-preview {
+  border: 1px solid #dee2e6;
+  padding: 5px;
+  background: white;
+  max-width: 300px;
+  display: block;
+  margin-top: 10px;
+}
+
+/* Modal Backdrop */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1040;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+}
+
+/* Modal Styling */
+.modal-content {
+  border: none;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  border-radius: 0.5rem 0.5rem 0 0;
+  padding: 1.25rem;
+}
+
+.modal-title {
+  font-size: 1.25rem;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}

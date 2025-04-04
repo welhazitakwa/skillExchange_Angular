@@ -1,0 +1,280 @@
+<!-- ============================================================== -->
+<!-- Main wrapper - style you can find in pages.scss -->
+<!-- ============================================================== -->
+<div
+  id="main-wrapper"
+  data-theme="light"
+  data-layout="vertical"
+  data-navbarbg="skin6"
+  data-sidebartype="full"
+  data-sidebar-position="fixed"
+  data-header-position="fixed"
+  data-boxed-layout="full"
+>
+  <!-- ============================================================== -->
+  <!-- Topbar header - style you can find in pages.scss -->
+  <!-- ============================================================== -->
+  <app-nav></app-nav>
+  <!-- ============================================================== -->
+  <!-- End Topbar header -->
+  <!-- ============================================================== -->
+  <!-- ============================================================== -->
+  <!-- Left Sidebar - style you can find in sidebar.scss  -->
+  <!-- ============================================================== -->
+  <app-side-bar></app-side-bar>
+  <!-- ============================================================== -->
+  <!-- End Left Sidebar - style you can find in sidebar.scss  -->
+  <!-- ============================================================== -->
+  <!-- ============================================================== -->
+  <!-- Page wrapper  -->
+  <!-- ============================================================== -->
+  <div class="page-wrapper" style="display: block">
+    <!-- ============================================================== -->
+    <!-- Bread crumb and right sidebar toggle -->
+    <!-- ============================================================== -->
+    <div class="page-breadcrumb">
+      <div class="row">
+        <div class="col-8 align-self-center">
+          <h4 class="page-title text-truncate text-dark font-weight-medium mb-1">
+            Product Management
+          </h4>
+          <div class="d-flex align-items-center">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb m-0 p-0">
+                <li class="breadcrumb-item">
+                  <a routerLink="/back" class="text-muted">Dashboard</a>
+                </li>
+                <li class="breadcrumb-item text-muted active" aria-current="page">
+                  Products
+                </li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Bread crumb and right sidebar toggle -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- Container fluid  -->
+    <!-- ============================================================== -->
+    <div class="container-fluid">
+      <!-- ============================================================== -->
+      <!-- Start Page Content -->
+      <!-- ============================================================== -->
+      <!-- basic table -->
+      <div class="row">
+        <div class="col-12">
+          <div class="card shadow-sm border-0">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="card-title mb-0 text-primary fw-semibold">
+                  Product Management
+                </h4>
+                <button class="btn btn-sm btn-outline-primary">
+                  <i class="fas fa-download me-2"></i>Export CSV
+                </button>
+              </div>
+
+              <!-- Search and Filter Row -->
+              <div class="row mb-4">
+                <div class="col-md-4">
+                  <div class="input-group">
+                    <span class="input-group-text">
+                      <i class="fas fa-search"></i>
+                    </span>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Search for a product..."
+                      [(ngModel)]="searchText"
+                      (input)="applyFilters()"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <select
+                    class="form-select"
+                    [(ngModel)]="sellerFilter"
+                    (change)="applyFilters()"
+                  >
+                    <option value="">All Sellers</option>
+                    <option *ngFor="let seller of uniqueSellers" [value]="seller">
+                      {{ seller }}
+                    </option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <select
+                    class="form-select"
+                    [(ngModel)]="stockFilter"
+                    (change)="applyFilters()"
+                  >
+                    <option value="">All Stock</option>
+                    <option value="inStock">In Stock</option>
+                    <option value="outOfStock">Out of Stock</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="table-responsive rounded-3">
+                <table class="table table-hover align-middle mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th
+                        class="ps-4 fw-medium text-muted cursor-pointer"
+                        (click)="sort('productName')"
+                      >
+                        Product Name
+                        <i
+                          class="fas fa-sort ms-1"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortColumn === 'productName' && sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortColumn === 'productName' && sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th
+                        class="fw-medium text-muted cursor-pointer"
+                        (click)="sort('postedBy')"
+                      >
+                        Seller
+                        <i
+                          class="fas fa-sort ms-1"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortColumn === 'postedBy' && sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortColumn === 'postedBy' && sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th
+                        class="fw-medium text-muted cursor-pointer"
+                        (click)="sort('price')"
+                      >
+                        Price
+                        <i
+                          class="fas fa-sort ms-1"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortColumn === 'price' && sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortColumn === 'price' && sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th
+                        class="fw-medium text-muted cursor-pointer"
+                        (click)="sort('stock')"
+                      >
+                        Stock
+                        <i
+                          class="fas fa-sort ms-1"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortColumn === 'stock' && sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortColumn === 'stock' && sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th
+                        class="fw-medium text-muted cursor-pointer"
+                        (click)="sort('type')"
+                      >
+                        Type
+                        <i
+                          class="fas fa-sort ms-1"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortColumn === 'type' && sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortColumn === 'type' && sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="let product of filteredproduct"
+                      style="cursor: pointer"
+                      [routerLink]="['/backproductdetail', product.idProduct]"
+                    >
+                      <td>
+                        <!-- Affichage de l'image du produit avec le nom et type -->
+                        <div class="d-flex align-items-center">
+                          <img
+                            [src]="
+                              product.imageProducts && product.imageProducts.length > 0
+                                ? 'data:image/*;base64,' + product.imageProducts[0].image
+                                : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
+                            "
+                            class="rounded-circle me-3"
+                            width="40"
+                            height="40"
+                            alt="{{ product.productName }} image"
+                          />
+                          <div class="d-flex flex-column">
+                            <span>{{ product.productName }}</span>
+                            <span class="text-muted" style="font-size: 0.85em;">{{ product.type }}</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td>{{ product.postedBy.name }}</td>
+                      <td class="text-primary font-weight-bold">
+                        <ng-container *ngIf="product.type === 'tokens'">
+                          {{ product.price }} tokens
+                        </ng-container>
+                        <ng-container *ngIf="product.type !== 'tokens'">
+                          {{ product.price | currency:'TND' }}
+                        </ng-container>
+                      </td>
+                      <td>
+                        <span *ngIf="product.stock > 0" class="badge bg-success text-white py-2 px-3 rounded-pill">
+                          <i class="fas fa-check-circle me-2"></i>In Stock ({{ product.stock }})
+                        </span>
+                        <span *ngIf="product.stock === 0" class="badge bg-danger text-white py-2 px-3 rounded-pill">
+                          <i class="fas fa-times-circle me-2"></i>Out of Stock
+                        </span>
+                      </td>
+                      <td>{{ product.type }}</td>
+                    </tr>
+                    <tr *ngIf="filteredproduct.length === 0">
+                      <td colspan="5" class="text-center py-4">
+                        <img
+                          src="https://i.pinimg.com/originals/5d/35/e3/5d35e39988e3a183bdc3a9d2570d20a9.gif"
+                          height="400px"
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Container fluid  -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- footer -->
+    <!-- ============================================================== -->
+    <footer class="footer text-center text-muted">
+      All Rights Reserved by Freedash. Designed and Developed by
+      <a href="https://adminmart.com/">Adminmart</a>.
+    </footer>
+    <!-- ============================================================== -->
+    <!-- End footer -->
+    <!-- ============================================================== -->
+  </div>
+  <!-- ============================================================== -->
+  <!-- End Page wrapper  -->
+  <!-- ============================================================== -->
+</div>

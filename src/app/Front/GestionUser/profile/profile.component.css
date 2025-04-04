@@ -1,0 +1,387 @@
+/* Profile Header */
+.profile-header {
+  position: relative;
+  margin-bottom: 100px;
+
+  .cover-photo {
+    height: 300px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 0 0 15px 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .profile-info {
+    position: absolute;
+    bottom: -70px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    width: 100%;
+
+    .avatar-container {
+      position: relative;
+      display: inline-block;
+
+      .profile-avatar {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        border: 4px solid white;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      .online-status {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        border: 2px solid white;
+        background: #ccc;
+
+        &.online {
+          background: #4caf50;
+        }
+        &.away {
+          background: #ffc107;
+        }
+        &.offline {
+          background: #9e9e9e;
+        }
+      }
+    }
+
+    .profile-meta {
+      margin-top: 20px;
+
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        color: #2c3e50;
+      }
+
+      .social-links {
+        a {
+          color: lighten(#2c3e50, 20%);
+          margin: 0 8px;
+          font-size: 1.4rem;
+          transition: color 0.3s ease;
+
+          &:hover {
+            color: #2196f3;
+          }
+        }
+      }
+    }
+  }
+}
+
+/* Main Layout */
+.profile-container {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Profile Cards */
+.profile-card {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  h3,
+  h4 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+  }
+}
+
+/* User Stats */
+.user-stats {
+  .stat-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    i {
+      width: 30px;
+      color: #2196f3;
+    }
+
+    span {
+      font-weight: 500;
+      color: lighten(#2c3e50, 10%);
+    }
+  }
+}
+
+/* Badges Grid */
+.badges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.badge-item {
+  display: flex;
+  align-items: center;
+  padding: 1.25rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.badge-item:hover {
+  transform: translateY(-2px);
+}
+
+.badge-icon-container {
+  position: relative;
+  margin-right: 1.25rem;
+}
+
+.badge-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  transition: all 0.2s ease;
+}
+
+.lock-icon {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  background: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.lock-icon i {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.badge-content {
+  flex: 1;
+}
+
+.badge-content h5 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.badge-content p {
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.progress-container {
+  display: flex;
+  align-items: center;
+}
+
+.progress-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Earned state effects */
+.badge-item.earned .badge-icon {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Activity List */
+.activity-list {
+  .activity-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+
+    i {
+      width: 30px;
+      font-size: 1.2rem;
+      color: #2196f3;
+    }
+
+    .activity-title {
+      font-weight: 500;
+    }
+
+    small {
+      color: #888;
+    }
+  }
+}
+
+/* Content Tabs */
+.content-tabs {
+  display: flex;
+  gap: 15px;
+  margin: 25px 0;
+
+  button {
+    border: none;
+    background: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    color: #666;
+    transition: all 0.3s ease;
+
+    &.active {
+      background: rgb(255, 102, 0);
+      color: white;
+    }
+
+    &:hover:not(.active) {
+      background: #f0f0f0;
+    }
+  }
+}
+
+/* Posts Grid */
+.posts-grid {
+  display: grid;
+  gap: 20px;
+
+  .post-card {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+    .post-meta {
+      display: flex;
+      justify-content: space-between;
+      color: #888;
+      font-size: 0.9rem;
+      margin-bottom: 15px;
+    }
+
+    .post-title {
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+
+    .post-stats {
+      display: flex;
+      gap: 15px;
+      margin-top: 15px;
+      color: #888;
+
+      i {
+        margin-right: 5px;
+      }
+    }
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .profile-header {
+    margin-bottom: 80px;
+
+    .cover-photo {
+      height: 200px;
+    }
+
+    .profile-info {
+      bottom: -50px;
+
+      .profile-avatar {
+        width: 100px;
+        height: 100px;
+      }
+    }
+  }
+
+  .content-tabs {
+    flex-wrap: wrap;
+
+    button {
+      flex: 1;
+      text-align: center;
+    }
+  }
+}
+
+/* Friends List Styles */
+.friends-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.friend-item {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.friend-item:hover {
+  background-color: #f8f9fa;
+}
+
+.friend-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 1rem;
+  object-fit: cover;
+}
+
+.friend-info {
+  flex-grow: 1;
+}
+
+.friend-info h6 {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.friend-info span {
+  font-size: 0.8rem;
+}
+
+.avatar-container.small .online-status {
+  width: 10px;
+  height: 10px;
+  bottom: 2px;
+  right: 2px;
+}
