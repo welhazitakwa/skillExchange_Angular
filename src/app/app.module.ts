@@ -22,6 +22,8 @@ import { AuthRegisterComponent } from './Auth/auth-register/auth-register.compon
 import { AuthLoginComponent } from './Auth/auth-login/auth-login.component';
 import { AffichertoutComponent } from './Front/GestionUser/affichertout/affichertout.component';
 import { AddComponent } from './Front/GestionUser/add/add.component';
+import { ListpostComponent } from './Back/GestionForumPost/Post/listpost/listpost.component';
+import { ListaddComponent } from './Back/GestionForumPost/Post/listadd/listadd.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +45,8 @@ import { AddComponent } from './Front/GestionUser/add/add.component';
     AuthLoginComponent,
     AffichertoutComponent,
     AddComponent,
+    ListpostComponent,
+    ListaddComponent,
   ],
   imports: [
     BrowserModule,

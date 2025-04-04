@@ -12,11 +12,13 @@ import { AuthRegisterComponent } from './Auth/auth-register/auth-register.compon
 import { AuthLoginComponent } from './Auth/auth-login/auth-login.component';
 import { AdminGuard } from './core/services/Auth/admin-guard.service';
 import { UserGuard } from './core/services/Auth/user-guard.service';
+import { ListpostComponent } from './Back/GestionForumPost/Post/listpost/listpost.component';
 
 
 const routes: Routes = [
   // Back Office
   { path: 'back', component: MainBackComponent },
+  { path:"backpost", component: ListpostComponent},
   
   // Front Office
   { path: '', component: MainFrontComponent },
