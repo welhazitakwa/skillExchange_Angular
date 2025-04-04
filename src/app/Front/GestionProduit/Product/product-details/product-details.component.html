@@ -14,7 +14,8 @@
     </div>
 </div>
 <!-- Header End -->
- <!-- Bouton Panier flottant (à droite) -->
+
+<!-- Bouton Panier flottant (à droite) -->
 <button class="cart-float-btn" (click)="toggleCart()">
     <i class="fa fa-shopping-cart"></i>
     <span class="cart-badge">{{ cartCount }}</span>
@@ -27,8 +28,7 @@
         <button class="close-btn" (click)="toggleCart()">✖</button>
     </div>
     <div class="cart-content">
-      <app-showcart></app-showcart> 
-        
+        <app-showcart></app-showcart> 
     </div>
 </div>
 
@@ -51,80 +51,86 @@
                     <p><strong>Stock:</strong> {{ product?.stock }}</p>
 
                     <!-- Posted By -->
-                    <p><strong>Posted By:</strong> {{ product?.postedBy?.name || 'Unknown' }}</p> <!-- Nom du vendeur -->
-
-                    <!-- Add to Cart Button -->
-                   <!-- <button class="btn btn-primary btn-sm" 
-                    (click)="addToCart(product)"
-                      [disabled]="product?.stock === 0">
-                  🛒 Add to Cart
-              </button>
-              -->
+                    <p><strong>Posted By:</strong> {{ product?.postedBy?.name || 'Unknown' }}</p>
                 </div>
 
                 <!-- Product Reviews Section -->
                 <div class="mb-5">
-                    <h3 class="text-uppercase mb-4" style="letter-spacing: 5px;">Reviews</h3>
+                    <h2 class="text-uppercase mb-4 fw-bold" style="letter-spacing: 3px;">REVIEWS</h2>
 
                     <!-- Display Product Reviews -->
-                    <div *ngFor="let review of reviews" class="media mb-4">
-                        <div class="media-body">
-                            <h6>
-                                {{  review.email || 'annonyme' }}
-                                <small class="text-muted">
-                                    <i>
-                                        Posted At {{ review.createdAt | date: 'dd/MM/yyyy à HH:mm' }}
-                                    </i>
-                                </small>
-                            </h6>
-                            <p>{{ review.content }}</p>
-                            <div class="d-flex align-items-center">
-                                <span class="me-2"><strong>Note :</strong></span>
-                                <div class="rating-stars">
-                                    <i *ngFor="let star of [1, 2, 3, 4, 5]"
-                                       [class]="star <= review.rating ? 'fas fa-star text-warning' : 'far fa-star text-muted'"></i>
+                    <div *ngFor="let review of reviews" class="review-card mb-4 p-3 bg-light rounded">
+                        <div class="d-flex align-items-start">
+                            <!-- User Avatar -->
+                            <div class="me-3">
+                                <img [src]="usersMap[review.email]?.image || 'assets/img/default-avatar.jpg'" 
+                                     class="rounded-circle" 
+                                     width="60" 
+                                     height="60" 
+                                     alt="User avatar">
+                            </div>
+
+                            <!-- Review Content -->
+                            <div class="flex-grow-1">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h5 class="mb-0 fw-bold">
+                                        {{ usersMap[review.email]?.name || 'Anonymous' }}
+                                    </h5>
+                                    <small class="text-muted">
+                                        <i>Posted At {{ review.createdAt | date: 'dd/MM/yyyy à HH:mm' }}</i>
+                                    </small>
                                 </div>
-                                <span class="ms-2">{{ review.rating }}/5</span>
+
+                                <p class="mb-2">{{ review.content }}</p>
+
+                                <div class="rating-container">
+                                    <span class="me-2 fw-bold">Note:</span>
+                                    <div class="rating-stars d-inline-block">
+                                        <i *ngFor="let star of [1, 2, 3, 4, 5]"
+                                           [class]="star <= review.rating ? 'fas fa-star text-warning' : 'far fa-star text-muted'"></i>
+                                    </div>
+                                    <span class="ms-2">{{ review.rating }}/5</span>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- If no reviews -->
                     <div *ngIf="reviews.length === 0" class="alert alert-info mt-3">
-                        Aucun avis pour ce produit.
+                        No reviews for this product yet.
                     </div>
 
                     <!-- Button to open the modal for adding a new review -->
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#reviewModal">
                         Leave a Review
                     </button>
+                </div>
 
-                    <!-- Modal for adding a review -->
-                    <div class="modal fade" id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="reviewModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="reviewModalLabel">Leave a Review</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <form (ngSubmit)="addReview()">
-                                        <div class="form-group">
-                                            <label for="content">Content *</label>
-                                            <textarea id="content" class="form-control" [(ngModel)]="newReview.content" name="content" required></textarea>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="rating">Rating (1-5) *</label>
-                                            <input type="number" class="form-control" id="rating" [(ngModel)]="newReview.rating" name="rating" min="1" max="5" required>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary" (click)="addReview()">Submit Review</button>
-                                </div>
+                <!-- Modal for adding a review -->
+                <div class="modal fade" id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="reviewModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="reviewModalLabel">Leave a Review</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form (ngSubmit)="addReview()">
+                                    <div class="form-group">
+                                        <label for="content">Content *</label>
+                                        <textarea id="content" class="form-control" [(ngModel)]="newReview.content" name="content" required></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="rating">Rating (1-5) *</label>
+                                        <input type="number" class="form-control" id="rating" [(ngModel)]="newReview.rating" name="rating" min="1" max="5" required>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" (click)="addReview()">Submit Review</button>
                             </div>
                         </div>
                     </div>

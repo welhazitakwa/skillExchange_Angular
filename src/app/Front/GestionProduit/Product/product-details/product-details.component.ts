@@ -28,7 +28,7 @@ export class ProductDetailsComponent {
   newReview: ReviewProduct =new ReviewProduct();
   isReviewModalOpen = false; 
   currentUser: User | null = null;
-  usersMap: { [key: number]: User } = {};
+  usersMap: { [key: string]: User } = {};
   cartProducts: CartProducts[] = [];
   cartId: number = 1;
   constructor(
@@ -63,6 +63,20 @@ export class ProductDetailsComponent {
       }
     );
   }
+  loadUserDetails(): void {
+    this.reviews.forEach(review => {
+      if (review.email && !this.usersMap[review.email]) { // Éviter les requêtes multiples
+        this.userService.getUserByEmail(review.email).subscribe(
+          (user: User) => {
+            this.usersMap[review.email] = user;
+          },
+          (error) => {
+            console.error(`Error fetching user details for ${review.email}`, error);
+          }
+        );
+      }
+    });
+  }
   // Function to get product details
   getProductDetails(): void {
     this.productService.getProductByID(this.productId).subscribe(
@@ -79,8 +93,7 @@ export class ProductDetailsComponent {
     this.reviewService.getReviewByProductID(this.productId).subscribe(
       (reviews) => {
         this.reviews = reviews;
-
-        
+        this.loadUserDetails();
         
       },
       (error) => {
@@ -88,37 +101,9 @@ export class ProductDetailsComponent {
       }
     );
   }
-   /* getReviews(): void {
-      this.reviewService.getReviewByProductID(this.productId).subscribe(
-          (reviews) => {
-              this.reviews = reviews;
-              // Récupérer les infos des utilisateurs pour chaque review
-              reviews.forEach(review => {
-                  const userId = (review as any).userId; // Accès dynamique
-                  if (userId) {
-                      this.getUserInfo(userId);
-                  }
-              });
-          },
-          (error) => {
-              console.error('Error fetching reviews', error);
-          }
-      );
-  } */
+   
 
-  // Fonction pour récupérer les informations de l'utilisateur par userId
-  getUserInfo(userId: number): void {
-    if (!this.usersMap[userId]) {
-      this.userService.getUserById(userId).subscribe(
-        (user: User) => {
-          this.usersMap[userId] = user;
-        },
-        (error) => {
-          console.error('Error fetching user info', error);
-        }
-      );
-    }
-  }
+  
 
   // Function to open the review modal
   openReviewModal() {
@@ -134,14 +119,23 @@ export class ProductDetailsComponent {
   addReview(): void {
     if (this.currentUser && this.product) {
       
-      this.newReview.createdAt = new Date();
-      this.newReview.updatedAt = new Date();
-      this.newReview.email=this.currentUser.email;
-      this.newReview.product = this.product;
+      // this.newReview.createdAt = new Date();
+      // this.newReview.updatedAt = new Date();
+      // this.newReview.email=this.currentUser.email;
+      // this.newReview.product = this.product;
+      const reviewToSend: ReviewProduct = {
+        idReview:this.newReview.idReview,
+        content: this.newReview.content,
+        rating: this.newReview.rating,
+        email: this.currentUser.email,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        product: this.product // Envoyez l'objet complet
+    };
       
       console.log(this.currentUser);
       
-      this.reviewService.addReview(this.newReview).subscribe(
+      this.reviewService.addReview(/*this.newReview*/ reviewToSend).subscribe(
         (response) => {
           console.log('Review added successfully!', response);
           this.isReviewModalOpen = false;  // Fermer le modal après la soumission
