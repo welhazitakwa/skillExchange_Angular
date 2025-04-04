@@ -1,6 +1,8 @@
 import { User } from "../GestionUser/User";
 import { Cart } from "./cart";
+import { CartProducts } from "./cart-products";
 import { ImageProduct } from "./image-product";
+import { ReviewProduct } from "./review-product";
 
 export class Product {
     idProduct!: number;
@@ -9,7 +11,7 @@ export class Product {
   price!: number;
   stock!: number;
  postedBy!: User; 
-  carts!: Cart[]; 
- /* reviewProducts!: ReviewProduct[];*/
+ cartProducts!: CartProducts[]; 
+  reviewProducts!: ReviewProduct[];
   imageProducts!: ImageProduct[]; 
 }

@@ -103,16 +103,17 @@
                   <thead>
                     <tr>
                       <th>User</th>
-                      <th>Quantity</th>
-                      <th>Products</th>
+                  
+                    
                       <th>Tools</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr *ngFor="let c of carts">
-                      <td>{{c.idUser}}</td>
-                      <th>{{c.quantity}}</th>
-                      <th>{{c.products}}</th>
+                      <td>{{c.user.name}}</td>
+                      
+                     
+                     
                       <th>Delete</th>
                     </tr>
                 </table>
