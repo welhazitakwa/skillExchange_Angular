@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subscription, timer } from 'rxjs';
 import { Badge } from 'src/app/core/models/GestionUser/Badge';
 import { Role } from 'src/app/core/models/GestionUser/Role';
 import { User } from 'src/app/core/models/GestionUser/User';
@@ -16,20 +17,6 @@ import { UserService } from 'src/app/core/services/GestionUser/user.service';
 export class ProfileComponent {
   currentUser: User | null = null;
   Role = Role;
-  friends: any = [
-    {
-      name: 'John Doe',
-      email: 'john@example.com',
-      image: null,
-      isOnline: true,
-    },
-    {
-      name: 'Jane Smith',
-      email: 'jane@example.com',
-      image: 'data:image/*;base64,...',
-      isOnline: false,
-    },
-  ];
   isLoadingBadges: boolean = true;
   badges = [
     {
@@ -41,7 +28,7 @@ export class ProfileComponent {
   ];
   currentPage: number = 1;
   itemsPerPage: number = 4;
-  UserStatus= UserStatus;
+  UserStatus = UserStatus;
 
   get paginatedBadges(): any[] {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
@@ -79,8 +66,21 @@ export class ProfileComponent {
     private router: Router
   ) {}
 
+  private userRefreshSubscription!: Subscription;
+  
+
   ngOnInit(): void {
     this.LoadCurrentUser();
+
+    this.userRefreshSubscription = timer(0, 3000).subscribe(() => {
+      this.LoadCurrentUser();
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.userRefreshSubscription) {
+      this.userRefreshSubscription.unsubscribe();
+    }
   }
 
   private LoadBadges() {
@@ -113,7 +113,7 @@ export class ProfileComponent {
     console.log(currentUserEmail);
     this.userService.getUserByEmail(currentUserEmail).subscribe(
       (user) => {
-        console.log(user)
+        console.log(user);
         this.currentUser = user;
         this.LoadBadges();
       },
