@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from 'angular-toastify';
-import { Observable } from 'rxjs';
+import { Observable, Subscription, timer } from 'rxjs';
 import { Badge } from 'src/app/core/models/GestionUser/Badge';
 import { Banned } from 'src/app/core/models/GestionUser/Banned';
 import {
@@ -36,6 +36,7 @@ export class UserBackDetailsComponent {
 
   transactions: HistoricTransactions[] = [];
   UserStatus = UserStatus;
+  private userRefreshSubscription!: Subscription;
 
   constructor(
     private route: ActivatedRoute,
@@ -78,10 +79,20 @@ export class UserBackDetailsComponent {
     this.route.params.subscribe((params) => {
       const userId = params['id'];
       this.loadUserDetails(userId);
+
+      this.userRefreshSubscription = timer(0, 3000).subscribe(() => {
+        this.loadUserDetails(userId);
+      });
     });
 
     this.fetchCurrentUser();
     this.loadBadges();
+  }
+
+  ngOnDestroy(): void {
+    if (this.userRefreshSubscription) {
+      this.userRefreshSubscription.unsubscribe();
+    }
   }
 
   private loadUserDetails(userId: number): void {
