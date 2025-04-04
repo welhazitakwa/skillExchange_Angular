@@ -118,14 +118,14 @@
                       <td>{{c.description}}</td>
                        <td>
 <span  [ngStyle]="{ color: c.status === 0 ? 'red' : 'green' }" >
-  {{ c.status === 0 ? 'Unpublished' : 'published' }}
+  {{ c.status === 0 ? 'private' : 'public' }}
 </span>
 
                                     </td>
                       <td class="text-muted">{{ c.date_ajout | date }}</td>
  <td  style="text-align: center;"  >
                                          <button type="button" class="btn btn-sm btn-square btn-neutral text-danger-hover"> 
-                                            <i class="text-info fa fa-eye"></i> 
+                                            <i class="text-info fa fa-list"></i> 
                                         </button>
                                  <!-- <a   class="btn btn-sm btn-square btn-neutral text-danger-hover"  [routerLink]="['/updateCategory',c.id]">
                                   <i class="text-warning fa fa-edit"></i></a> -->
