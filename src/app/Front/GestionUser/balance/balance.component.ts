@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { loadStripe } from '@stripe/stripe-js';
 import { Observable } from 'rxjs';
 import {
   HistoricTransactions,
@@ -22,7 +23,13 @@ export class BalanceComponent {
   recipientEmail: string = '';
   transactionDescription: string = '';
   transactions: HistoricTransactions[] = [];
+  showModalDeposit: boolean = false;
   public TransactionType = TransactionType;
+  stripe: any;
+  cardElement: any;
+  stripeLoaded = false;
+
+  @ViewChild('cardElement') cardElementRef!: ElementRef;
 
   constructor(
     private authService: AuthService,
@@ -30,7 +37,7 @@ export class BalanceComponent {
     private router: Router
   ) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.loadCurrentUser();
   }
 

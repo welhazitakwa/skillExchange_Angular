@@ -10,6 +10,7 @@ import {
 } from 'src/app/core/models/GestionUser/HistoricTransactions';
 import { Role } from 'src/app/core/models/GestionUser/Role';
 import { User } from 'src/app/core/models/GestionUser/User';
+import { UserStatus } from 'src/app/core/models/GestionUser/UserStatus';
 import { AuthService } from 'src/app/core/services/Auth/auth.service';
 import { BadgeService } from 'src/app/core/services/GestionUser/badge.service';
 import { UserService } from 'src/app/core/services/GestionUser/user.service';
@@ -34,6 +35,7 @@ export class UserBackDetailsComponent {
   availableBadges: Badge[] = [];
 
   transactions: HistoricTransactions[] = [];
+  UserStatus = UserStatus;
 
   constructor(
     private route: ActivatedRoute,
@@ -216,7 +218,7 @@ export class UserBackDetailsComponent {
         () => {
           alert(`${this.tokenAmount} tokens gifted successfully!`);
           this.tokenAmount = 0.0;
-          this.loadUserDetails(this.user.id)
+          this.loadUserDetails(this.user.id);
         },
         (err) => {
           console.error('Transaction failed:', err);
