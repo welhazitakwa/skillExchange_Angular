@@ -29,12 +29,15 @@ import { QuizComponent } from './Back/GestionQUIZZ/quiz/quiz.component';
 import { QuestionComponent } from './Back/GestionQUIZZ/question/question.component';
 import { RouterModule, Routes } from '@angular/router';
 import { AllEventsComponent } from './Back/GestionEvents/Events/all-events/all-events.component';
+import { ShowproductComponent } from './Front/GestionProduit/Product/showproduct/showproduct.component';
+import { ProductDetailsComponent } from './Front/GestionProduit/Product/product-details/product-details.component';
+import { AllCartProductsComponent } from './Back/GestionProduit/CartProduct/all-cart-products/all-cart-products.component';
 
 const routes: Routes = [
   //canActivate: [AdminGuard] to lock for admin
   //canActivate: [UserGuard] to lock for user
   // Back Office
-  { path: 'back', component: MainBackComponent /*canActivate: [AdminGuard]*/ },
+  { path: 'back', component: MainBackComponent /*,canActivate: [AdminGuard]*/ },
 
   //**************Back Gestion Users********************************
   {
@@ -66,20 +69,25 @@ const routes: Routes = [
   { path: 'backcarts', component: AllCartsComponent },
   { path: 'backreviews', component: AllReviewsComponent },
   { path: 'backimagesP', component: AllImagesComponent },
+  { path: 'backcartProducts', component: AllCartProductsComponent },
   /***************************************************************/
 
   // Front Office
-  { path: '', component: MainFrontComponent, canActivate: [UserGuard] },
-  { path: 'bloglist', component: BlogListComponent, canActivate: [UserGuard] },
+  { path: '', component: MainFrontComponent/*, canActivate: [UserGuard] */},
+  { path: 'bloglist', component: BlogListComponent/*, canActivate: [UserGuard] */},
   {
     path: 'blogdetails',
-    component: BlogDetailsComponent,
-    canActivate: [UserGuard],
+    component: BlogDetailsComponent/*,
+    canActivate: [UserGuard],*/
   },
-  { path: 'about', component: AboutComponent, canActivate: [UserGuard] },
-  { path: 'courses', component: CoursesComponent, canActivate: [UserGuard] },
-  { path: 'teachers', component: TeachersComponent, canActivate: [UserGuard] },
-  { path: 'contact', component: ContactComponent, canActivate: [UserGuard] },
+    /// Gestion Produit 
+    { path: 'products', component: ShowproductComponent/*, canActivate: [UserGuard]*/ },
+
+   { path: 'productD/:idProduct', component: ProductDetailsComponent/*, canActivate: [UserGuard]*/ },
+  { path: 'about', component: AboutComponent/*, canActivate: [UserGuard] */},
+  { path: 'courses', component: CoursesComponent/*, canActivate: [UserGuard] */},
+  { path: 'teachers', component: TeachersComponent/*, canActivate: [UserGuard]*/ },
+  { path: 'contact', component: ContactComponent/*, canActivate: [UserGuard]*/ },
 
   // Auth
   { path: 'register', component: AuthRegisterComponent },
