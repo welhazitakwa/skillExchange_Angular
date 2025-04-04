@@ -22,6 +22,10 @@ import { HttpClientModule } from '@angular/common/http';
 import { AuthRegisterComponent } from './Auth/auth-register/auth-register.component';
 import { AuthLoginComponent } from './Auth/auth-login/auth-login.component';
 
+import { ListpostComponent } from './Back/GestionForumPost/Post/listpost/listpost.component';
+import { ListaddComponent } from './Back/GestionForumPost/Post/listadd/listadd.component';
+
+
 import { AddcartComponent } from './Front/GestionProduit/Cart/addcart/addcart.component';
 import { ShowcartComponent } from './Front/GestionProduit/Cart/showcart/showcart.component';
 import { UpdatecartComponent } from './Front/GestionProduit/Cart/updatecart/updatecart.component';
@@ -73,6 +77,7 @@ import { UpdateEventImageComponent } from './Back/GestionEvents/EventImage/updat
 import { AllCartProductsComponent } from './Back/GestionProduit/CartProduct/all-cart-products/all-cart-products.component';
 import { CartProductsComponent } from './Front/GestionProduit/cart-products/cart-products.component';
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -91,6 +96,10 @@ import { CartProductsComponent } from './Front/GestionProduit/cart-products/cart
     ContactComponent,
     AuthRegisterComponent,
     AuthLoginComponent,
+
+    ListpostComponent,
+    ListaddComponent,
+
 
     ProfileComponent,
     BalanceComponent,
@@ -133,6 +142,7 @@ import { CartProductsComponent } from './Front/GestionProduit/cart-products/cart
     DeleteParticipationEventsComponent,
     AllCartProductsComponent,
     CartProductsComponent,
+
   ],
   imports: [
     RouterModule,

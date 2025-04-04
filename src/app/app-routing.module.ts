@@ -11,6 +11,7 @@ import { AuthRegisterComponent } from './Auth/auth-register/auth-register.compon
 import { AuthLoginComponent } from './Auth/auth-login/auth-login.component';
 import { AdminGuard } from './core/services/Auth/admin-guard.service';
 import { UserGuard } from './core/services/Auth/user-guard.service';
+import { ListpostComponent } from './Back/GestionForumPost/Post/listpost/listpost.component';
 
 import { AllProductsComponent } from './Back/GestionProduit/Product/all-products/all-products.component';
 import { AllCartsComponent } from './Back/GestionProduit/Cart/all-carts/all-carts.component';
@@ -37,6 +38,11 @@ const routes: Routes = [
   //canActivate: [AdminGuard] to lock for admin
   //canActivate: [UserGuard] to lock for user
   // Back Office
+
+
+  { path:"backpost", component: ListpostComponent},
+  
+
   { path: 'back', component: MainBackComponent /*,canActivate: [AdminGuard]*/ },
 
   //**************Back Gestion Users********************************
@@ -71,6 +77,7 @@ const routes: Routes = [
   { path: 'backimagesP', component: AllImagesComponent },
   { path: 'backcartProducts', component: AllCartProductsComponent },
   /***************************************************************/
+
 
   // Front Office
   { path: '', component: MainFrontComponent/*, canActivate: [UserGuard] */},
