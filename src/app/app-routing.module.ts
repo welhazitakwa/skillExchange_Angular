@@ -39,7 +39,7 @@ const routes: Routes = [
   //canActivate: [UserGuard] to lock for user
   // Back Office
 
-  
+
   { path:"backpost", component: ListpostComponent},
   
 
