@@ -7,7 +7,7 @@ import { ParticipationEvents } from '../../models/GestionEvents/participation-ev
   providedIn: 'root'
 })
 export class ParticipationEventsService {
-  private url = 'http://localhost:8084/skillExchange/participations';
+  private url = 'http://localhost:8084/skillExchange/participationEvents';
 
   constructor(private http: HttpClient) { }
 
@@ -16,7 +16,7 @@ export class ParticipationEventsService {
   }
 
   addParticipation(participation: ParticipationEvents): Observable<ParticipationEvents> {
-    return this.http.post<ParticipationEvents>(this.url, participation);
+    return this.http.post<ParticipationEvents>(`${this.url}/add-ParticipationEvents`, participation);
   }
 
   deleteParticipation(id: number): Observable<void> {

@@ -66,6 +66,9 @@ import { DeleteRateEventComponent } from './Back/GestionEvents/RateEvent/delete-
 import { AllParticipationEventsComponent } from './Back/GestionEvents/ParticipationEvents/all-participation-events/all-participation-events.component';
 import { UpdateParticipationEventsComponent } from './Back/GestionEvents/ParticipationEvents/update-participation-events/update-participation-events.component';
 import { DeleteParticipationEventsComponent } from './Back/GestionEvents/ParticipationEvents/delete-participation-events/delete-participation-events.component';
+import { ShowEventsComponent } from './Front/GestionEvents/Events/show-events/show-events.component';
+import { AddEventModalComponent } from './Back/GestionEvents/Events/add-event-modal/add-event-modal.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -125,7 +128,11 @@ import { DeleteParticipationEventsComponent } from './Back/GestionEvents/Partici
     DeleteRateEventComponent,
     AllParticipationEventsComponent,
     UpdateParticipationEventsComponent,
-    DeleteParticipationEventsComponent
+    DeleteParticipationEventsComponent,
+    ShowEventsComponent,
+    AddEventModalComponent,
+
+    
 
   ],
   imports: [
@@ -136,6 +143,10 @@ import { DeleteParticipationEventsComponent } from './Back/GestionEvents/Partici
     HttpClientModule,
     ImageCropperComponent,
     AngularToastifyModule,
+    MatDialogModule
+
+    
+
   ],
   providers: [ToastService],
   bootstrap: [AppComponent]

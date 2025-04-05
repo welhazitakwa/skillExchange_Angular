@@ -23,18 +23,21 @@ export class EventsService {
   
 
   addEvent(event: Events): Observable<Events> {
-    return this.http.post<Events>(this.url, event);
+    return this.http.post<Events>(`${this.url}/add-Event`, event);  
   }
 
-  deleteEvent(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.url}/${id}`);
+   // Pour supprimer un événement (corrigé)
+   deleteEvent(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.url}/removeEvent/${id}`); // Utilise la route /removeEvent/{Event-id}
   }
 
+  // Pour obtenir un événement par son ID
   getEventByID(id: number): Observable<Events> {
-    return this.http.get<Events>(`${this.url}/${id}`);
+    return this.http.get<Events>(`${this.url}/retrieveEvents/${id}`); // Utilise la route /retrieveEvents/{Event-id}
   }
 
+  // Pour mettre à jour un événement (corrigé)
   updateEvent(event: Events): Observable<Events> {
-    return this.http.put<Events>(`${this.url}/${event.idEvent}`, event);
+    return this.http.patch<Events>(`${this.url}/modify-Event`, event); // Utilise la route /modify-Event
   }
 }

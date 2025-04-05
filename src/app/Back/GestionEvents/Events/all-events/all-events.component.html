@@ -8,33 +8,14 @@
   data-header-position="fixed"
   data-boxed-layout="full"
 >
-  <!-- ============================================================== -->
-  <!-- Topbar header - style you can find in pages.scss -->
-  <!-- ============================================================== -->
   <app-nav></app-nav>
-  <!-- ============================================================== -->
-  <!-- End Topbar header -->
-  <!-- ============================================================== -->
-  <!-- ============================================================== -->
-  <!-- Left Sidebar - style you can find in sidebar.scss  -->
-  <!-- ============================================================== -->
   <app-side-bar></app-side-bar>
-  <!-- ============================================================== -->
-  <!-- End Left Sidebar - style you can find in sidebar.scss  -->
-  <!-- ============================================================== -->
-  <!-- ============================================================== -->
-  <!-- Page wrapper  -->
-  <!-- ============================================================== -->
+
   <div class="page-wrapper" style="display: block">
-    <!-- ============================================================== -->
-    <!-- Bread crumb and right sidebar toggle -->
-    <!-- ============================================================== -->
     <div class="page-breadcrumb">
       <div class="row">
         <div class="col-8 align-self-center">
-          <h4
-            class="page-title text-truncate text-dark font-weight-medium mb-1"
-          >
+          <h4 class="page-title text-truncate text-dark font-weight-medium mb-1">
             Event Management
           </h4>
           <div class="d-flex align-items-center">
@@ -43,10 +24,7 @@
                 <li class="breadcrumb-item">
                   <a routerLink="/back" class="text-muted">Dashboard</a>
                 </li>
-                <li
-                  class="breadcrumb-item text-muted active"
-                  aria-current="page"
-                >
+                <li class="breadcrumb-item text-muted active" aria-current="page">
                   Events
                 </li>
               </ol>
@@ -55,16 +33,8 @@
         </div>
       </div>
     </div>
-    <!-- ============================================================== -->
-    <!-- End Bread crumb and right sidebar toggle -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- Container fluid  -->
-    <!-- ============================================================== -->
+
     <div class="container-fluid">
-      <!-- ============================================================== -->
-      <!-- Start Page Content -->
-      <!-- ============================================================== -->
       <div class="row">
         <div class="col-12">
           <div class="card shadow-sm border-0">
@@ -73,9 +43,14 @@
                 <h4 class="card-title mb-0 text-primary fw-semibold">
                   Event Management
                 </h4>
-                <button class="btn btn-sm btn-outline-primary">
-                  <i class="fas fa-download me-2"></i>Export to CSV
-                </button>
+                <div>
+                  <button class="btn btn-sm btn-outline-primary me-2">
+                    <i class="fas fa-download me-2"></i>Export to CSV
+                  </button>
+                  <button class="btn btn-sm btn-primary" (click)="openAddEventModal()">
+                    <i class="fas fa-plus me-2"></i>Add Event
+                  </button>
+                </div>
               </div>
 
               <!-- Search and Filter Row -->
@@ -94,17 +69,7 @@
                     />
                   </div>
                 </div>
-                <div class="col-md-3">
-                  <select
-                    class="form-select"
-                    [(ngModel)]="statusFilter"
-                    (change)="applyFilters()"
-                  >
-                    <option value="">All Statuses</option>
-                    <option value="GOING">Going</option>
-                    <option value="INTRESTED">Interested</option>
-                  </select>
-                </div>
+                
               </div>
 
               <!-- Table -->
@@ -112,90 +77,53 @@
                 <table class="table table-hover align-middle mb-0">
                   <thead class="table-light">
                     <tr>
-                      <th
-                        class="fw-medium text-muted cursor-pointer"
-                        (click)="sort('eventName')"
-                      >
+                      <th class="fw-medium text-muted cursor-pointer" (click)="sort('eventName')">
                         Event Name
-                        <i
-                          class="fas fa-sort ms-1"
+                        <i class="fas fa-sort ms-1"
                           [ngClass]="{
-                            'fa-sort-up':
-                              sortColumn === 'eventName' && sortDirection === 'asc',
-                            'fa-sort-down':
-                              sortColumn === 'eventName' && sortDirection === 'desc'
-                          }"
-                        ></i>
+                            'fa-sort-up': sortColumn === 'eventName' && sortDirection === 'asc',
+                            'fa-sort-down': sortColumn === 'eventName' && sortDirection === 'desc'
+                          }"></i>
                       </th>
-                      <th
-                        class="fw-medium text-muted cursor-pointer"
-                        (click)="sort('startDate')"
-                      >
+                      <th class="fw-medium text-muted cursor-pointer" (click)="sort('startDate')">
                         Start Date
-                        <i
-                          class="fas fa-sort ms-1"
+                        <i class="fas fa-sort ms-1"
                           [ngClass]="{
-                            'fa-sort-up':
-                              sortColumn === 'startDate' && sortDirection === 'asc',
-                            'fa-sort-down':
-                              sortColumn === 'startDate' && sortDirection === 'desc'
-                          }"
-                        ></i>
+                            'fa-sort-up': sortColumn === 'startDate' && sortDirection === 'asc',
+                            'fa-sort-down': sortColumn === 'startDate' && sortDirection === 'desc'
+                          }"></i>
                       </th>
-                      <th
-                        class="fw-medium text-muted cursor-pointer"
-                        (click)="sort('endDate')"
-                      >
+                      <th class="fw-medium text-muted cursor-pointer" (click)="sort('endDate')">
                         End Date
                       </th>
-                      <th
-                        class="fw-medium text-muted cursor-pointer"
-                        (click)="sort('place')"
-                      >
+                      <th class="fw-medium text-muted cursor-pointer" (click)="sort('place')">
                         Place
                       </th>
-                      <th
-                        class="fw-medium text-muted cursor-pointer"
-                        (click)="sort('nbr_max')"
-                      >
+                      <th class="fw-medium text-muted cursor-pointer" (click)="sort('nbr_max')">
                         Max Participants
                       </th>
-                      <th
-                        class="fw-medium text-muted cursor-pointer"
-                        (click)="sort('description')"
-                      >
+                      <th class="fw-medium text-muted cursor-pointer" (click)="sort('description')">
                         Description
                       </th>
-                      <th
-                        class="fw-medium text-muted cursor-pointer"
-                        (click)="sort('status')"
-                      >
-                        Status
-                      </th>
+                      
                     </tr>
                   </thead>
                   <tbody>
-                    <tr
-                      *ngFor="let event of events"
-                      style="cursor: pointer"
-                    >
+                    <tr *ngFor="let event of events" style="cursor: pointer">
                       <td>{{ event.eventName }}</td>
                       <td>{{ event.startDate | date: 'dd/MM/yyyy' }}</td>
                       <td>{{ event.endDate | date: 'dd/MM/yyyy' }}</td>
                       <td>{{ event.place }}</td>
                       <td>{{ event.nbr_max }}</td>
                       <td>{{ event.description }}</td>
+                     
                       <td>
-                        <span
-                          class="badge rounded-pill"
-                          [ngClass]="
-                            event.status === 'GOING'
-                              ? 'bg-success'
-                              : 'bg-info'
-                          "
-                        >
-                          {{ event.status === 'GOING' ? 'Going' : 'Interested' }}
-                        </span>
+                        <button class="btn btn-sm btn-warning me-2" (click)="openEditEventModal(event)">
+                          <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" (click)="openDeleteEventModal(event)">
+                          <i class="fas fa-trash-alt"></i>
+                        </button>
                       </td>
                     </tr>
                     <tr *ngIf="events.length === 0">
@@ -214,11 +142,64 @@
         </div>
       </div>
     </div>
-    <!-- ============================================================== -->
-    <!-- End Container fluid  -->
-    <!-- ============================================================== -->
+
+   <!-- Modale "Add Event" -->
+<div *ngIf="isAddEventModalOpen" class="modal fade show" style="display: block;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add New Event</h5>
+        <button type="button" class="btn-close" (click)="closeAddEventModal()"></button>
+      </div>
+      <div class="modal-body">
+        <app-add-event-modal
+          (onCancel)="closeAddEventModal()"
+          (onSubmit)="handleAddEvent($event)">
+        </app-add-event-modal>
+      </div>
+    </div>
   </div>
-  <!-- ============================================================== -->
-  <!-- End Page wrapper  -->
-  <!-- ============================================================== -->
 </div>
+
+
+
+
+<!-- Edit Event Modal -->
+<div *ngIf="eventToEdit" class="modal fade show" style="display: block;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Event</h5>
+        <button type="button" class="btn-close" (click)="closeEditModal()"></button>
+      </div>
+      <div class="modal-body">
+        <app-update-event
+          [eventData]="eventToEdit"
+          (onCancel)="closeEditModal()"
+          (onUpdate)="handleEventUpdate($event)">
+        </app-update-event>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Event Modal -->
+<div *ngIf="eventToDelete" class="modal fade show" style="display: block;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        <app-delete-event
+          [eventToDelete]="eventToDelete"
+          (onCancel)="closeDeleteModal()"
+          (onDelete)="handleEventDelete()">
+        </app-delete-event>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Backdrops -->
+<div *ngIf="eventToEdit || eventToDelete || isAddEventModalOpen" class="modal-backdrop fade show"></div>
+
+<!-- Fond sombre -->
+<div *ngIf="isAddEventModalOpen" class="modal-backdrop fade show" (click)="closeAddEventModal()"></div>

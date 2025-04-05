@@ -9,10 +9,14 @@ import { EventsService } from 'src/app/core/services/GestionEvents/events.servic
 })
 export class AllEventsComponent implements OnInit {
   events: Events[] = [];
-  searchText: string = '';  // Pour la recherche
-  statusFilter: string = '';  // Pour le filtrage par statut (GOING, INTRESTED)
-  sortColumn: keyof Events = 'eventName';  // Colonne à trier (ici une clé de l'objet Events)
-  sortDirection: string = 'asc';  // Direction du tri (ascendant ou descendant)
+  searchText: string = '';
+  statusFilter: string = '';
+  sortColumn: keyof Events = 'eventName';
+  sortDirection: string = 'asc';
+  isAddEventModalOpen: boolean = false;
+  eventToEdit: Events | null = null;
+  eventToDelete: Events | null = null;
+  isEditEventModalOpen: boolean = false;
 
   constructor(private eventsService: EventsService) {}
 
@@ -23,22 +27,18 @@ export class AllEventsComponent implements OnInit {
   loadEvents(): void {
     this.eventsService.getEvents().subscribe(
       (data) => {
+        console.log('Données des événements:', data);
         this.events = data;
       },
       (error) => {
         console.error('Erreur de chargement des événements', error);
-      },
-      () => {
-        console.log('Chargement des événements terminé');
       }
     );
   }
 
-  // Méthode de filtrage selon le texte et statut
   applyFilters(): void {
-    let filteredEvents = this.events;
+    let filteredEvents = [...this.events]; // Copie du tableau original
 
-    // Filtrage par texte
     if (this.searchText) {
       filteredEvents = filteredEvents.filter(event =>
         event.eventName.toLowerCase().includes(this.searchText.toLowerCase()) ||
@@ -46,12 +46,7 @@ export class AllEventsComponent implements OnInit {
       );
     }
 
-    // Filtrage par statut
-    if (this.statusFilter) {
-      filteredEvents = filteredEvents.filter(event => event.status === this.statusFilter);
-    }
-
-    // Appliquer le tri si une colonne est spécifiée
+    
     if (this.sortColumn) {
       filteredEvents.sort((a, b) => {
         const valA = a[this.sortColumn];
@@ -68,17 +63,76 @@ export class AllEventsComponent implements OnInit {
     this.events = filteredEvents;
   }
 
-  // Méthode pour trier les événements par colonne
   sort(column: keyof Events): void {
     if (this.sortColumn === column) {
-      // Inverser la direction si on clique sur la même colonne
       this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
     } else {
-      // Sinon, trier par la nouvelle colonne en ordre croissant
       this.sortColumn = column;
       this.sortDirection = 'asc';
     }
 
-    this.applyFilters(); // Appliquer les filtres après le tri
+    this.applyFilters();
+  }
+
+  // Ouvre la modale d'ajout d'événement
+  openAddEventModal(): void {
+    this.isAddEventModalOpen = true;
+  }
+
+  // Ferme la modale d'ajout d'événement
+  closeAddEventModal(): void {
+    this.isAddEventModalOpen = false;
+  }
+
+  // Fonction appelée quand le formulaire est soumis pour ajouter un événement
+  handleAddEvent(eventData: any): void {
+    console.log("Nouveau événement à ajouter :", eventData);
+    this.eventsService.addEvent(eventData).subscribe({
+      next: (newEvent) => {
+        console.log("Événement ajouté :", newEvent);
+        this.events.push(newEvent);        // Ajoute l'événement à la liste
+        this.applyFilters();               // Réapplique les filtres si nécessaire
+        this.closeAddEventModal();         // Ferme la modale
+      },
+      error: (err) => {
+        console.error("Erreur lors de l'ajout de l'événement :", err);
+      }
+    });
+  }
+
+  // Ouvre le modal d'édition d'un événement
+  openEditEventModal(event: Events): void {
+    this.eventToEdit = event;
+  }
+
+  // Ouvre le modal de suppression d'un événement
+  openDeleteEventModal(event: Events): void {
+    this.eventToDelete = event;
+  }
+
+  
+
+  // Fonction appelée lors de la mise à jour d'un événement
+  handleEventUpdate(updatedEvent: Events): void {
+    this.loadEvents(); // Recharger la liste des événements après la mise à jour
+    this.eventToEdit = null; // Fermer le modal
+  }
+
+  // Fonction appelée lors de la suppression d'un événement
+  handleEventDelete(): void {
+    this.loadEvents(); // Recharger la liste après la suppression
+    this.eventToDelete = null; // Fermer le modal
+  }
+
+  // Ferme le modal d'édition
+  closeEditModal(): void {
+    this.eventToEdit = null;
+  }
+
+  // Ferme le modal de suppression
+  closeDeleteModal(): void {
+    this.eventToDelete = null;
   }
 }
+
+

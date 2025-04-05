@@ -1,0 +1,34 @@
+/* AddEventModalComponent CSS */
+mat-dialog-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+  
+
+  form {
+    width: 100%;
+  }
+  
+  form .form-label {
+    margin-bottom: 0.5rem;
+  }
+  
+  .form-control {
+    margin-bottom: 1rem;
+  }
+  
+  .text-danger {
+    font-size: 0.875rem;
+    color: #dc3545;
+  }
+  
+  .d-flex {
+    margin-top: 20px;
+  }
+  
+  button {
+    min-width: 100px;
+  }
+  

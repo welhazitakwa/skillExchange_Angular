@@ -29,6 +29,7 @@ import { QuizComponent } from './Back/GestionQUIZZ/quiz/quiz.component';
 import { QuestionComponent } from './Back/GestionQUIZZ/question/question.component';
 import { RouterModule, Routes } from '@angular/router';
 import { AllEventsComponent } from './Back/GestionEvents/Events/all-events/all-events.component';
+import { ShowEventsComponent } from './Front/GestionEvents/Events/show-events/show-events.component';
 
 const routes: Routes = [
   //canActivate: [AdminGuard] to lock for admin
@@ -81,6 +82,9 @@ const routes: Routes = [
   { path: 'teachers', component: TeachersComponent, canActivate: [UserGuard] },
   { path: 'contact', component: ContactComponent, canActivate: [UserGuard] },
 
+  // Gestion des événements Front
+  { path: 'events', component: ShowEventsComponent, canActivate: [UserGuard] }, 
+  
   // Auth
   { path: 'register', component: AuthRegisterComponent },
   { path: 'login', component: AuthLoginComponent },
