@@ -62,32 +62,34 @@
                   <thead class="table-light">
                     <tr>
                       <th class="fw-medium text-muted">Content</th>
-                      <th class="fw-medium text-muted">Title</th>
-                      <th class="fw-medium text-muted">User name</th>
-                      <th class="fw-medium text-muted">Upvotes</th>
+                      <th class="fw-medium text-muted">Created At</th>
+                      <th class="fw-medium text-muted">Updated At</th>
+                      <th class="fw-medium text-muted">Post Title</th>
+                    
+                    
                     </tr>
                   </thead>
                   <tbody>
                     <tr
-                      *ngFor="let post of listPosts"
+                      *ngFor="let c of  listComment"
                       
                     > 
                       <td class="text-dark">
-                        {{ post.content   }}...
+                        {{ c.content   }}...
                       </td>
                       <td>
                         <span class="fw-semibold text-primary">
-                          {{ post.title }}
+                          {{c.created_at | date : 'short'}}
                         </span>
                       </td>
                       <td class="fw-medium text-success">
-                         {{ post.user.name}}
+                         {{ c.updated_at | date : 'short'}}
                       </td>
                       <td class="fw-medium text-success">
-                        👍 {{ post.upVote }}
+                        {{ c.post_id_post.title }}
                       </td>
                     </tr> 
-                    <tr *ngIf="listPosts.length === 0">
+                    <tr *ngIf="listComment.length === 0">
                       <td colspan="3" class="text-center py-4">
                         <img
                           src="https://i.pinimg.com/originals/5d/35/e3/5d35e39988e3a183bdc3a9d2570d20a9.gif"

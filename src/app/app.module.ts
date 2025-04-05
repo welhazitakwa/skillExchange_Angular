@@ -76,6 +76,9 @@ import { TeachersComponent } from './Front/teachers/teachers.component';
 import { UpdateEventImageComponent } from './Back/GestionEvents/EventImage/update-event-image/update-event-image.component';
 import { AllCartProductsComponent } from './Back/GestionProduit/CartProduct/all-cart-products/all-cart-products.component';
 import { CartProductsComponent } from './Front/GestionProduit/cart-products/cart-products.component';
+import { AllCommentsComponent } from './Back/GestionForumPost/CommentPost/all-comments/all-comments.component';
+import { ShowPostsComponent } from './Front/GestionForumPost/Posts/show-posts/show-posts.component';
+import { PostDetailsComponent } from './Front/GestionForumPost/Posts/post-details/post-details.component';
 
 
 @NgModule({
@@ -142,6 +145,9 @@ import { CartProductsComponent } from './Front/GestionProduit/cart-products/cart
     DeleteParticipationEventsComponent,
     AllCartProductsComponent,
     CartProductsComponent,
+    AllCommentsComponent,
+    ShowPostsComponent,
+    PostDetailsComponent,
 
   ],
   imports: [
