@@ -8,8 +8,12 @@ import { Observable } from 'rxjs';
 })
 export class ReviewProductService {
 
+   getReviewByProductID(productId: number): Observable<ReviewProduct[]> {
+    return this.http.get<ReviewProduct[]>(`${this.url}/retrieve-reviews-by-product/${productId}`);
+  }
+
  reviews: ReviewProduct[] = [];
-  url = 'http://localhost:8084/skillExchange/reviwProduct';
+  url = 'http://localhost:8084/skillExchange/reviewProduct';
    constructor(private http: HttpClient) { }
    getReview() : Observable<ReviewProduct[]> 
    {
@@ -17,7 +21,7 @@ export class ReviewProductService {
     return this.http.get<ReviewProduct[]>(this.url);
  }
  addReview(prod: ReviewProduct): Observable<ReviewProduct> {
-  return this.http.post<ReviewProduct>(this.url, prod);
+  return this.http.post<ReviewProduct>(this.url+"/add-ReviewProduct", prod);
  }
  
  deleteReview(id:number){

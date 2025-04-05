@@ -307,6 +307,21 @@
                 </button>
               </div>
             </div>
+
+            <div class="security-item mt-4">
+              <h6 class="text-danger">Delete Account</h6>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="text-muted"
+                  >Permanently delete your account and all associated data</span
+                >
+                <button
+                  class="btn btn-sm btn-danger"
+                  (click)="showdeleteConfirmation = true"
+                >
+                  Delete Account
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -479,9 +494,8 @@
 
 <!-- modal focus-->
 <div
-  *ngIf="showVerificationModal"
+  *ngIf="showVerificationModal || showdeleteConfirmation"
   class="modal-backdrop fade show"
-  (click)="showVerificationModal = false"
 ></div>
 <div
   class="modal fade"
@@ -543,6 +557,54 @@
           (click)="handleVerification()"
         >
           Verify
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="modal fade"
+  [class.show]="showdeleteConfirmation"
+  style="display: block"
+  *ngIf="showdeleteConfirmation"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-danger">
+          <i class="fas fa-exclamation-triangle me-2"></i>Delete Account
+        </h5>
+        <button
+          type="button"
+          class="close"
+          (click)="showdeleteConfirmation = false"
+        >
+          <span>&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete your account? This action:</p>
+        <ul>
+          <li>Will permanently remove all your data</li>
+          <li>Cannot be undone</li>
+          <li>Will log you out immediately</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="showdeleteConfirmation = false"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger"
+          (click)="confirmDeleteAccount()"
+        >
+          Delete Account Permanently
         </button>
       </div>
     </div>

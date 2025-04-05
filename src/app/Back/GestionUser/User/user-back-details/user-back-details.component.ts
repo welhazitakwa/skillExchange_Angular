@@ -1,10 +1,16 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from 'angular-toastify';
+import { Observable, Subscription, timer } from 'rxjs';
 import { Badge } from 'src/app/core/models/GestionUser/Badge';
 import { Banned } from 'src/app/core/models/GestionUser/Banned';
+import {
+  HistoricTransactions,
+  TransactionType,
+} from 'src/app/core/models/GestionUser/HistoricTransactions';
 import { Role } from 'src/app/core/models/GestionUser/Role';
 import { User } from 'src/app/core/models/GestionUser/User';
+import { UserStatus } from 'src/app/core/models/GestionUser/UserStatus';
 import { AuthService } from 'src/app/core/services/Auth/auth.service';
 import { BadgeService } from 'src/app/core/services/GestionUser/badge.service';
 import { UserService } from 'src/app/core/services/GestionUser/user.service';
@@ -17,9 +23,6 @@ import { UserService } from 'src/app/core/services/GestionUser/user.service';
 export class UserBackDetailsComponent {
   currentUser: User = new User();
   user: User = new User();
-  activityLogs: any[] = [];
-  permissions: any[] = [];
-  devices: any[] = [];
   banInfo: Banned = new Banned();
 
   showBanModal = false;
@@ -31,26 +34,9 @@ export class UserBackDetailsComponent {
   tokenAmount = 0.0;
   availableBadges: Badge[] = [];
 
-  transactions: any[] = [
-    {
-      type: 'transfer',
-      description: 'Sent to John Doe',
-      date: new Date('2024-03-15'),
-      amount: -500.0,
-    },
-    {
-      type: 'deposit',
-      description: 'Salary Deposit',
-      date: new Date('2024-03-10'),
-      amount: 4500.0,
-    },
-    {
-      type: 'withdraw',
-      description: 'ATM Withdrawal',
-      date: new Date('2024-03-05'),
-      amount: -300.0,
-    },
-  ];
+  transactions: HistoricTransactions[] = [];
+  UserStatus = UserStatus;
+  private userRefreshSubscription!: Subscription;
 
   constructor(
     private route: ActivatedRoute,
@@ -69,7 +55,7 @@ export class UserBackDetailsComponent {
     }
     console.log(currentUserEmail);
     this.userService.getUserByEmail(currentUserEmail).subscribe(
-      (user) => {
+      (user: User) => {
         this.currentUser = user;
       },
       (error) => {
@@ -93,57 +79,37 @@ export class UserBackDetailsComponent {
     this.route.params.subscribe((params) => {
       const userId = params['id'];
       this.loadUserDetails(userId);
-      this.loadMockData();
+
+      this.userRefreshSubscription = timer(0, 3000).subscribe(() => {
+        this.loadUserDetails(userId);
+      });
     });
 
     this.fetchCurrentUser();
     this.loadBadges();
   }
 
+  ngOnDestroy(): void {
+    if (this.userRefreshSubscription) {
+      this.userRefreshSubscription.unsubscribe();
+    }
+  }
+
   private loadUserDetails(userId: number): void {
     this.userService.getUserById(userId).subscribe(
       (user: User) => {
         this.user = user;
+
+        if (user.historicTransactions)
+          this.transactions = user.historicTransactions.sort((a, b) => {
+            return new Date(b.date).getTime() - new Date(a.date).getTime();
+          });
       },
       (err: any) => {
         console.error('Error loading user:', err);
         this.router.navigate(['/users']);
       }
     );
-  }
-
-  private loadMockData(): void {
-    // Example mock data - replace with actual API calls
-    this.activityLogs = [
-      {
-        icon: 'sign-in-alt',
-        color: 'success',
-        description: 'User logged in',
-        timestamp: new Date(),
-      },
-      {
-        icon: 'lock',
-        color: 'danger',
-        description: 'Failed login attempt',
-        timestamp: new Date(Date.now() - 3600000),
-      },
-    ];
-
-    this.permissions = [
-      { name: 'Create Content', allowed: true },
-      { name: 'Moderate Comments', allowed: false },
-      { name: 'Access Analytics', allowed: true },
-    ];
-
-    this.devices = [
-      {
-        type: 'Desktop',
-        os: 'Windows 10',
-        browser: 'Chrome 98',
-        ip: '192.168.1.1',
-        lastActive: new Date(),
-      },
-    ];
   }
 
   banUser(): void {
@@ -182,12 +148,14 @@ export class UserBackDetailsComponent {
 
   getTransactionIcon(type: string) {
     switch (type) {
-      case 'transfer':
+      case TransactionType.TRANSFER:
         return 'fas fa-exchange-alt';
-      case 'withdraw':
+      case TransactionType.WITHDRAWAL:
         return 'fas fa-wallet';
-      case 'deposit':
+      case TransactionType.DEPOSIT:
         return 'fas fa-piggy-bank';
+      case TransactionType.PAYMENT:
+        return 'fas fa-money-bill-wave';
       default:
         return 'fas fa-question-circle';
     }
@@ -251,17 +219,46 @@ export class UserBackDetailsComponent {
       // Call your token gifting service here
       console.log('Gifting tokens:', this.tokenAmount);
       this.user.balance += this.tokenAmount;
-      this.userService.updateUser(this.user).subscribe(
-        (res) => alert('User updated successfully'),
-        (err) => console.error('Error updating user:', err)
+
+      this.createTransaction(
+        this.user,
+        this.tokenAmount,
+        TransactionType.DEPOSIT,
+        `Admin gift from ${this.currentUser.email}`
+      ).subscribe(
+        () => {
+          alert(`${this.tokenAmount} tokens gifted successfully!`);
+          this.tokenAmount = 0.0;
+          this.loadUserDetails(this.user.id);
+        },
+        (err) => {
+          console.error('Transaction failed:', err);
+          alert('Token gift failed. Please try again.');
+        }
       );
     }
-    this.tokenAmount = 0.0;
   }
   closeModals(): void {
     this.showBanModal = false;
     this.showBadgeModal = false;
     this.showPromoteModal = false;
     this.showGiftModal = false;
+  }
+
+  private createTransaction(
+    recipient: User,
+    amount: number,
+    transactionType: TransactionType,
+    description: string
+  ): Observable<any> {
+    const transaction: HistoricTransactions = {
+      id: null,
+      type: transactionType,
+      amount: amount,
+      description: description,
+      date: new Date(),
+    };
+
+    return this.userService.addTransaction(recipient.id, transaction);
   }
 }

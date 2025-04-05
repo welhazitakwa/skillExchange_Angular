@@ -4,6 +4,7 @@ import { User } from '../../models/GestionUser/User';
 import { Observable } from 'rxjs';
 import { AuthService } from '../Auth/auth.service';
 import { Banned } from '../../models/GestionUser/Banned';
+import { HistoricTransactions } from '../../models/GestionUser/HistoricTransactions';
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +19,10 @@ export class UserService {
 
   getAllUsers(): Observable<any> {
     return this.http.get<User[]>(this.url, { headers: this.headers });
+  }
+
+  deleteUser(id: number): Observable<any> {
+    return this.http.delete(`${this.url}/${id}`, { headers: this.headers });
   }
 
   getUserById(id: number): Observable<User> {
@@ -103,6 +108,25 @@ export class UserService {
 
   getUserBadges(userId: number): Observable<any> {
     return this.http.get<User[]>(`${this.url}/${userId}/badges`, {
+      headers: this.headers,
+    });
+  }
+
+  addTransaction(
+    userId: number,
+    historicTransaction: HistoricTransactions
+  ): Observable<any> {
+    return this.http.post(
+      `${this.url}/${userId}/transactions`,
+      historicTransaction,
+      {
+        headers: this.headers,
+      }
+    );
+  }
+
+  getUserTransactions(userId: number): Observable<any> {
+    return this.http.get<User[]>(`${this.url}/${userId}/transactions`, {
       headers: this.headers,
     });
   }
