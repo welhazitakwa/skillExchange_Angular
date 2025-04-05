@@ -7,7 +7,7 @@ import { Quiz } from 'src/app/core/models/QuestionQuizz/quiz';
   providedIn: 'root'
 })
 export class QuizService {
-  private apiUrl = 'http://localhost:8084/skillExchange/api/quizzes';  // Adjust if needed
+  private apiUrl = 'http://localhost:8084/skillExchange/api/quizzes';
 
   constructor(private http: HttpClient) {}
 
@@ -19,14 +19,16 @@ export class QuizService {
     return this.http.get<Quiz>(`${this.apiUrl}/${id}`);
   }
 
-  createQuiz(quiz: Quiz): Observable<Quiz> {
+  // Use FormData here
+  createQuiz(quiz: FormData): Observable<Quiz> {
     return this.http.post<Quiz>(this.apiUrl, quiz);
   }
-
-  updateQuiz(id: number, quiz: Quiz): Observable<Quiz> {
+  
+  // Use FormData here
+  updateQuiz(id: number, quiz: FormData): Observable<Quiz> {
     return this.http.put<Quiz>(`${this.apiUrl}/${id}`, quiz);
   }
-
+  
   deleteQuiz(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }

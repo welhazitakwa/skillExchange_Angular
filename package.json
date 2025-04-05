@@ -23,6 +23,7 @@
     "ngx-image-cropper": "^8.1.1",
     "rxjs": "~7.8.0",
     "signature_pad": "^5.0.7",
+    "skill-xchange": "file:",
     "tslib": "^2.3.0",
     "zone.js": "~0.13.0"
   },
