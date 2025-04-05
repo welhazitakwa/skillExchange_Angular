@@ -33,6 +33,9 @@ import { AllEventsComponent } from './Back/GestionEvents/Events/all-events/all-e
 import { ShowproductComponent } from './Front/GestionProduit/Product/showproduct/showproduct.component';
 import { ProductDetailsComponent } from './Front/GestionProduit/Product/product-details/product-details.component';
 import { AllCartProductsComponent } from './Back/GestionProduit/CartProduct/all-cart-products/all-cart-products.component';
+import { AllCommentsComponent } from './Back/GestionForumPost/CommentPost/all-comments/all-comments.component';
+import { ShowPostsComponent } from './Front/GestionForumPost/Posts/show-posts/show-posts.component';
+import { PostDetailsComponent } from './Front/GestionForumPost/Posts/post-details/post-details.component';
 
 const routes: Routes = [
   //canActivate: [AdminGuard] to lock for admin
@@ -41,6 +44,7 @@ const routes: Routes = [
 
 
   { path:"backpost", component: ListpostComponent},
+  { path:"backCommentpost", component: AllCommentsComponent},
   
 
   { path: 'back', component: MainBackComponent /*,canActivate: [AdminGuard]*/ },
@@ -110,8 +114,12 @@ const routes: Routes = [
 
   // Question Routes
   { path: 'questions/:quizId', component: QuestionComponent },
-
+   //Gestion ForumPosts
+   { path: 'posts', component: ShowPostsComponent },
+   { path: 'posts/:id', component: PostDetailsComponent/*, canActivate: [UserGuard]*/ },
   { path: '**', redirectTo: '' },
+ 
+
 ];
 
 @NgModule({

@@ -14,5 +14,7 @@ export class PostService {
   getAllPosts(): Observable<any> {
     return this.http.get<Posts[]>(this.url+"/retrievePostss");
   }
-  
+  getPostByID(id:number){
+    return this.http.get<Posts>(`${this.url}/retrievePostsById/${id}`);
+  }
 }
