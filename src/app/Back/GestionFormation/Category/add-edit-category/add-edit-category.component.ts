@@ -21,7 +21,8 @@ export class AddEditCategoryComponent {
       Validators.minLength(20),
       Validators.maxLength(50),
     ]),
-    image: new FormControl(''), // Champ 'image' (aucune validation)
+    image: new FormControl(''), // image en base64
+    imageType: new FormControl(''), // Champ 'image' (aucune validation)
     status: new FormControl(''),
   });
 
@@ -43,41 +44,55 @@ export class AddEditCategoryComponent {
     this.C = { ...F.value };
     console.log(this.C);
     this.catServ.addCategory(this.C).subscribe({
-  next: (val: any) => {
-    Swal.fire({
-      icon: 'success',
-      title: 'Success',
-      text: 'Category added successfully !',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.diagRef.close(true); // Vérifie que diagRef est bien défini
-      }
+      next: (val: any) => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: 'Category added successfully !',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.diagRef.close(true); // Vérifie que diagRef est bien défini
+          }
+        });
+      },
+
+      error: (err: any) => {
+        Swal.fire(
+          'Erreur!',
+          "Une erreur est survenue lors de la d'ajout.",
+          'error'
+        );
+      },
+
+      complete: () => {
+        console.log('Category added successfully');
+        this.Rout.navigate(['/categories']);
+      },
     });
-  },
-
-  error: (err: any) => {
-    Swal.fire(
-      'Erreur!',
-      "Une erreur est survenue lors de la d'ajout.",
-      'error'
-    );
-  },
-
-  complete: () => {
-    console.log('Category added successfully');
-    this.Rout.navigate(['/categories']);
   }
-});
 
+  onFileChange(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64 = (reader.result as string).split(',')[1];
+        this.addForm.patchValue({
+          image: base64,
+          imageType: file.type,
+        });
+      };
+      reader.readAsDataURL(file);
+    }
   }
+
   // SaveResidence(F: FormGroup) {
   //   this.C = { ...F.value };
   //   console.log(this.C);
   //   this.catServ.addCategory(this.C).subscribe(() => {
   //     // ***************************-------------*******************************
-      
-  //     // ***************************-------------*******************************
 
+  //     // ***************************-------------*******************************
 
   //     console.log('Category added successfully');
   //     this.Rout.navigate(['/categories']);
