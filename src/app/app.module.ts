@@ -14,7 +14,7 @@ import { HeaderFrontComponent } from './Front/header-front/header-front.componen
 import { AboutComponent } from './Front/about/about.component';
 import { BlogListComponent } from './Front/blog-list/blog-list.component';
 import { BlogDetailsComponent } from './Front/blog-details/blog-details.component';
-import { CoursesComponent } from './Front/courses/courses.component';
+import { CoursesComponent } from './Front/GestionFormations/Formation/courses/courses.component';
 import { TeachersComponent } from './Front/teachers/teachers.component';
 import { ContactComponent } from './Front/contact/contact.component';
 import { ErrorComponent } from './error/error.component';
@@ -60,6 +60,7 @@ import { EditCategoryComponent } from './Back/GestionFormation/Category/edit-cat
 import { FormationsComponent } from './Back/GestionFormation/Formation/formations/formations.component';
 import { AddFormationComponent } from './Back/GestionFormation/Formation/add-formation/add-formation.component';
 import { EditFormationComponent } from './Back/GestionFormation/Formation/edit-formation/edit-formation.component';
+import { AddCoursesFrontComponent } from './Front/GestionFormations/Formation/add-courses-front/add-courses-front.component';
 
 @NgModule({
   declarations: [
@@ -105,6 +106,7 @@ import { EditFormationComponent } from './Back/GestionFormation/Formation/edit-f
     FormationsComponent,
     AddFormationComponent,
     EditFormationComponent,
+    AddCoursesFrontComponent,
   ],
   imports: [
     BrowserModule,

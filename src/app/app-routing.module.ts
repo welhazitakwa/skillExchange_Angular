@@ -5,7 +5,7 @@ import { MainFrontComponent } from './Front/main-front/main-front.component';
 import { AboutComponent } from './Front/about/about.component';
 import { BlogListComponent } from './Front/blog-list/blog-list.component';
 import { BlogDetailsComponent } from './Front/blog-details/blog-details.component';
-import { CoursesComponent } from './Front/courses/courses.component';
+import { CoursesComponent } from './Front/GestionFormations/Formation/courses/courses.component';
 import { TeachersComponent } from './Front/teachers/teachers.component';
 import { ContactComponent } from './Front/contact/contact.component';
 import { AuthRegisterComponent } from './Auth/auth-register/auth-register.component';
