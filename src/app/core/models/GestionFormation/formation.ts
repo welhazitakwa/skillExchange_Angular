@@ -8,4 +8,5 @@ export class Formation {
   state!: number;
   date_ajout!: Date;
   category_id!:number;
+  author_id!:number;
 }
