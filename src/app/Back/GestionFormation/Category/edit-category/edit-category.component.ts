@@ -75,8 +75,8 @@ export class EditCategoryComponent {
       next: (val: any) => {
         Swal.fire({
           icon: 'success',
-          title: 'Succès',
-          text: 'La catégorie a été modifiée avec succès !',
+          title: 'Success',
+          text: 'The Category was modified successfully !',
         }).then((result) => {
           if (result.isConfirmed) {
             this.dialogRef.close(true); // Vérifie que diagRef est bien défini
@@ -85,15 +85,11 @@ export class EditCategoryComponent {
       },
 
       error: (err: any) => {
-        Swal.fire(
-          'Erreur!',
-          "Une erreur est survenue lors de la d'edit.",
-          'error'
-        );
+        Swal.fire('Error!', 'An error occurred while Editing the Category', 'error');
       },
 
       complete: () => {
-        console.log('Category added successfully');
+        console.log('The Category was modified successfully');
         this.Rout.navigate(['/categories']);
       },
     });

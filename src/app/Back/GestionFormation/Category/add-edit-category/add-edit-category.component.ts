@@ -57,11 +57,7 @@ export class AddEditCategoryComponent {
       },
 
       error: (err: any) => {
-        Swal.fire(
-          'Erreur!',
-          "Une erreur est survenue lors de la d'ajout.",
-          'error'
-        );
+        Swal.fire('Erreur!', 'An error occurred while Adding the Category', 'error');
       },
 
       complete: () => {
@@ -86,16 +82,5 @@ export class AddEditCategoryComponent {
     }
   }
 
-  // SaveResidence(F: FormGroup) {
-  //   this.C = { ...F.value };
-  //   console.log(this.C);
-  //   this.catServ.addCategory(this.C).subscribe(() => {
-  //     // ***************************-------------*******************************
-
-  //     // ***************************-------------*******************************
-
-  //     console.log('Category added successfully');
-  //     this.Rout.navigate(['/categories']);
-  //   });
-  // }
+  
 }

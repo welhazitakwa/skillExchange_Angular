@@ -56,7 +56,7 @@ const routes: Routes = [
   { path: 'backimagesP', component: AllImagesComponent },
   /********************Back Gestion Formations****************************************/
   { path: 'categories', component: CategoriesComponent },
-  { path: 'courses', component: FormationsComponent },
+  { path: 'backcourses', component: FormationsComponent },
 
   /***************************************************************/
 
