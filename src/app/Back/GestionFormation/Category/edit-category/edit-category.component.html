@@ -28,7 +28,7 @@
 
 
  <div class="custom-file">
-  <input type="file" class="custom-file-input" id="customFile" formControlName="image">
+  <input type="file"  accept="image/*"  (change)="onFileChange($event)" class="custom-file-input" id="customFile"  >
   <label class="custom-file-label" for="customFile" >Choose your image</label>
 </div>
    <div class="form-group">

@@ -25,13 +25,14 @@ export class EditCategoryComponent {
 
   updateForm = new FormGroup({
     id: new FormControl(0),
-   name: new FormControl('', Validators.required),
-      description: new FormControl('', [
-        Validators.required,
-        Validators.minLength(20),
-        Validators.maxLength(50),
-      ]),
+    name: new FormControl('', Validators.required),
+    description: new FormControl('', [
+      Validators.required,
+      Validators.minLength(20),
+      Validators.maxLength(50),
+    ]),
     image: new FormControl(''),
+    imageType: new FormControl(''), // Ajouté
     status: new FormControl<number | null>(null),
   });
   ngOnInit() {
@@ -48,41 +49,53 @@ export class EditCategoryComponent {
     });
   }
 
-  updateCategory() {
-console.log(this.updateForm.value);
-
-const updatedResidence: Category = {
-  ...this.updateForm.value,
-  id: this.updateForm.value.id ?? 0, // Ensure id is a number
-} as Category;
-this.catService.updateCategory(updatedResidence).subscribe(
-       {
-    next: (val: any) => {
-      Swal.fire({
-        icon: 'success',
-        title: 'Succès',
-        text: 'La catégorie a été modifiée avec succès !',
-      }).then((result) => {
-        if (result.isConfirmed) {
-          this.dialogRef.close(true); // Vérifie que diagRef est bien défini
-        }
-      });
-    },
-  
-    error: (err: any) => {
-      Swal.fire(
-        'Erreur!',
-        "Une erreur est survenue lors de la d'ajout.",
-        'error'
-      );
-    },
-  
-    complete: () => {
-      console.log('Category added successfully');
-      this.Rout.navigate(['/categories']);
+  onFileChange(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64 = (reader.result as string).split(',')[1]; // Extraire la partie base64
+        this.updateForm.patchValue({
+          image: base64, // Mise à jour du champ image en base64
+          imageType: file.type, // Type de l'image
+        });
+      };
+      reader.readAsDataURL(file); // Lire le fichier comme base64
     }
   }
-);
 
+  updateCategory() {
+    console.log(this.updateForm.value);
+
+    const updatedCategory: Category = {
+      ...this.updateForm.value,
+      id: this.updateForm.value.id ?? 0, // Ensure id is a number
+    } as Category;
+    this.catService.updateCategory(updatedCategory).subscribe({
+      next: (val: any) => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Succès',
+          text: 'La catégorie a été modifiée avec succès !',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.dialogRef.close(true); // Vérifie que diagRef est bien défini
+          }
+        });
+      },
+
+      error: (err: any) => {
+        Swal.fire(
+          'Erreur!',
+          "Une erreur est survenue lors de la d'edit.",
+          'error'
+        );
+      },
+
+      complete: () => {
+        console.log('Category added successfully');
+        this.Rout.navigate(['/categories']);
+      },
+    });
   }
 }
