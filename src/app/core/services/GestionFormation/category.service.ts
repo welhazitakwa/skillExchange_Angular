@@ -30,6 +30,10 @@ export class CategoryService {
       this.url + '/modify-category', category);
   }
 
+   getCoursesOfCategorie(id: number): Observable<any> {
+      return this.http.post(this.url + '/findById/', id);
+    }
+
   // editCategorie(id: number, data: any): Observable<any> {
   //   return this.http.put(`http://localhost:8081/categorie/${id}`, data);
   // }

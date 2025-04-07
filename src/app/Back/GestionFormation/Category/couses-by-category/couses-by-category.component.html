@@ -16,7 +16,7 @@
           <h4
             class="page-title text-truncate text-dark font-weight-medium mb-1"
           >
-            Catgories Management
+            Courses Management
           </h4>
           <div class="d-flex align-items-center">
             <nav aria-label="breadcrumb">
@@ -28,7 +28,7 @@
                   class="breadcrumb-item text-muted active"
                   aria-current="page"
                 >
-                  Categories
+                  Courses
                 </li>
               </ol>
             </nav>
@@ -46,7 +46,7 @@
                 class="d-flex justify-content-between align-items-center mb-4"
               >
                 <h4 class="card-title mb-0 text-primary fw-semibold">
-                  Categories Management
+                  Courses Management
                 </h4>
                 <!-- <button class="btn btn-sm btn-outline-primary">
                   <i class="fas fa-download me-2"></i>Export CSV
@@ -64,19 +64,20 @@
                       #searchInput
                       type="text"
                       class="form-control"
-                      placeholder="Search Categories..."
+                      placeholder="Search Courses..."
                       (keyup)="filterTable(searchInput.value)"                             />
 
+                    <!-- /> -->
                   </div>
                 </div>
-                <div class="col-md-6" >
+                <!-- <div class="col-md-6" >
                   <button mat-raised-button class="btn btn-sm btn-outline-primary" 
-                  (click)="openAddEditCatForm()"
+                  (click)="openAddCourseForm()"
                   style="margin-left: 400px; height: 40px;"
                   >
-                  <i class="fas fa-plus me-2"></i>Add Category
+                  <i class="fas fa-plus me-2"></i>Add Course
                 </button>
-                </div>
+                </div> -->
                 
               </div>
 
@@ -84,14 +85,14 @@
                 <table class="table table-hover align-middle mb-0">
                   <thead class="table-light">
                     <tr>
-                      <th class="ps-4 fw-medium text-muted cursor-pointer"> Name
+                      <th class="ps-4 fw-medium text-muted cursor-pointer"> Title
                       </th>
                       
-                      <th class="fw-medium text-muted cursor-pointer"> Description
+                      <th class="fw-medium text-muted cursor-pointer"> State
                       </th>
                       
                       <th class="fw-medium text-muted cursor-pointer" >
-                        Status <i class="fas fa-sort ms-1"></i>
+                        duration  
                       </th>
                       <th class="fw-medium text-muted cursor-pointer" >
                         Added at  <i class="fas fa-sort ms-1"></i>
@@ -101,40 +102,46 @@
                       </th>
                     </tr>
                   </thead>
-                  <tbody  #categoryTableBody>
-                    <tr *ngFor="let c of listCategories" >
+                  <tbody  #formationTableBody>
+                    <tr *ngFor="let f of listFormations" >
                       <td class="ps-4">
                         <div class="d-flex align-items-center">
                           <img
                             class="rounded-circle me-3"
                             width="40"
                             height="40"
-                              [src]="'data:' + c.imageType + ';base64,' + c.image"
                             alt="Category"
-                          />   {{c.name}}
+                          />   
+                          {{f.title}}
                         </div> 
                       
                       </td>
-                      <td>{{c.description}}</td>
                        <td>
-<span  [ngStyle]="{ color: c.status === 0 ? 'red' : 'green' }" >
-  {{ c.status === 0 ? 'private' : 'public' }}
+<span  [ngStyle]="{ color: f.state === 0 ? 'red' : 'green' }" >
+  {{ f.state === 0 ? 'private' : 'public' }}
 </span>
 
                                     </td>
-                      <td class="text-muted">{{ c.date_ajout | date }}</td>
+                      <td>{{f.duration}}</td>
+                      
+                      <td class="text-muted">
+                       {{ f.date_ajout | date }}
+                      </td>
  <td  style="text-align: center;"  >
-                                         <button type="button" class="btn btn-sm btn-square btn-neutral text-danger-hover"  (click)="getProductsOfCateory(c.id)"> 
-                                            <i class="text-info fa fa-list"></i> 
+                                         <button type="button" class="btn btn-sm btn-square btn-neutral text-danger-hover"> 
+                                            <i class="text-info fa fa-eye"></i> 
                                         </button>
-                               
-                                        
-                                  <button mat-raised-button class="btn btn-sm btn-square btn-neutral text-danger-hover" 
-        (click)="openEditCatForm(c.id)">
-  <i class="text-warning fa fa-edit me-2"></i> 
-</button>
+                                 <!-- <a   class="btn btn-sm btn-square btn-neutral text-danger-hover"  [routerLink]="['/updateCategory',f.id]">
+                                  <i class="text-warning fa fa-edit"></i></a> -->
 
-                                        <button type="button" class="btn btn-sm btn-square btn-neutral text-danger-hover" (click)="deleteCategorie(c.id)">
+
+
+                                  <!-- <button mat-raised-button class="btn btn-sm btn-square btn-neutral text-danger-hover" 
+        (click)="openEditCatForm(f.id)">
+  <i class="text-warning fa fa-edit me-2"></i> 
+</button> -->
+
+                                        <button type="button" class="btn btn-sm btn-square btn-neutral text-danger-hover" (click)="deleteCourse(f.id)">
                                             <i class="text-danger fa fa-trash"></i>
                                         </button>
                                 

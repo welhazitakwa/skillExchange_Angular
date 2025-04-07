@@ -1,10 +1,11 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
 import { Category } from 'src/app/core/models/GestionFormation/category';
 import { CategoryService } from 'src/app/core/services/GestionFormation/category.service';
 import Swal from 'sweetalert2';
 import { MatDialog } from '@angular/material/dialog';
 import { AddEditCategoryComponent } from '../add-edit-category/add-edit-category.component';
 import { EditCategoryComponent } from '../edit-category/edit-category.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-categories',
@@ -12,11 +13,17 @@ import { EditCategoryComponent } from '../edit-category/edit-category.component'
   styleUrls: ['./categories.component.css'],
 })
 export class CategoriesComponent {
-  constructor(private dialog: MatDialog, private catServ: CategoryService) {}
+  constructor(
+    private dialog: MatDialog,
+    private catServ: CategoryService,
+    private router: Router
+  ) {}
   listCategories: Category[] = [];
+  prodByCat: any;
   @ViewChild('categoryTableBody')
   categoryTableBodyRef!: ElementRef<HTMLTableSectionElement>;
-
+  // Créer un EventEmitter pour transmettre l'ID au composant parent ou au composant de destination
+  @Output() categorySelected = new EventEmitter<number>();
   ngOnInit() {
     this.getCategoriesList();
   }
@@ -106,5 +113,11 @@ export class CategoriesComponent {
         rows[i].style.display = showRow ? '' : 'none';
       }
     }
+  }
+
+  getProductsOfCateory(id: number) {
+   // this.categorySelected.emit(id); // Émettre l'ID vers le composant parent
+//this.router.navigate(['/backcoursescat']);
+      this.router.navigate(['/backcoursescat'], { state: { categoryId: id } });
   }
 }

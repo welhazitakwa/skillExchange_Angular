@@ -27,6 +27,7 @@ import { AuthBanComponent } from './Auth/auth-ban/auth-ban.component';
 import { AllbadgesComponent } from './Back/GestionUser/Badge/allbadges/allbadges.component';
 import { CategoriesComponent } from './Back/GestionFormation/Category/categories/categories.component';
 import { FormationsComponent } from './Back/GestionFormation/Formation/formations/formations.component';
+import { CousesByCategoryComponent } from './Back/GestionFormation/Category/couses-by-category/couses-by-category.component';
 
 const routes: Routes = [
   //canActivate: [AdminGuard] to lock for admin
@@ -57,6 +58,8 @@ const routes: Routes = [
   /********************Back Gestion Formations****************************************/
   { path: 'categories', component: CategoriesComponent },
   { path: 'backcourses', component: FormationsComponent },
+  { path: 'backcoursescat', component: CousesByCategoryComponent },
+
 
   /***************************************************************/
 
