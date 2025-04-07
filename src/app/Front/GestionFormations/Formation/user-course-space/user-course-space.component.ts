@@ -43,6 +43,7 @@ this.getFormationsList();
   openAddCourseForm() {
     const dialogRef = this.dialog.open(AddCourseComponent, {
       width: '700px',
+      data: { userId: this.userId },
     });
     dialogRef.afterClosed().subscribe({
       next: (val) => {
