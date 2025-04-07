@@ -28,4 +28,8 @@ export class FormationService {
   updateFormation(course: Formation) {
     return this.http.put(this.url + '/modify-course', course);
   }
+
+  getCoursesByUserId(id: number): Observable<any> {
+    return this.http.post(this.url + '/findById/', id);
+  }
 }

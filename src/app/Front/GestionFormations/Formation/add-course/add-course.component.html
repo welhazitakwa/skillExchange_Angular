@@ -1,0 +1,60 @@
+<h1 mat-dialog-title>Add Course</h1>
+<form style="margin: 40px;" [formGroup]="addForm" (ngSubmit)="SaveCourse(addForm)">
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <input type="text" class="form-control" id="title" placeholder="title" formControlName="name">
+    </div>
+    <div class="form-check form-check-inline"> &nbsp;&nbsp;&nbsp;
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      <input  class="form-check-input" type="radio" name="status" 
+      id="inlineRadio1" value="1" style="border: 1px solid #696969" formControlName="status">
+  <label class="form-check-label" for="inlineRadio1">public</label>
+</div>
+
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="status" id="inlineRadio2" value="0" style="border: 1px solid #696969" formControlName="status" >
+  <label class="form-check-label" for="inlineRadio2">private</label>
+</div>
+
+  </div>
+  
+
+
+
+
+
+
+ <div class="custom-file">
+  <input type="file" class="custom-file-input" id="customFile" formControlName="image">
+  <label class="custom-file-label" for="customFile" >Choose your image</label>
+</div>
+<br><br>
+ <div class="row">
+    <div class="col">
+      <input type="number" class="form-control" placeholder="price">
+    </div>
+    <div class="col">
+      <input type="number" class="form-control" placeholder="duration">
+    </div>
+
+  </div>
+  <br>
+   <div class="form-group">
+    <label for="description" >Description</label>
+    <textarea class="form-control" id="description" rows="5" formControlName="description"></textarea>
+  </div>
+   <div class="form-group">
+    <label for="description" >Required skills</label>
+    <textarea class="form-control" id="description" rows="5" ></textarea>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
