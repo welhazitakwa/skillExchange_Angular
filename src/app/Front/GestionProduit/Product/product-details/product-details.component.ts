@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Cart } from 'src/app/core/models/GestionProduit/cart';
 import { CartProducts } from 'src/app/core/models/GestionProduit/cart-products';
 import { Product } from 'src/app/core/models/GestionProduit/product';
 import { ReviewProduct } from 'src/app/core/models/GestionProduit/review-product';
@@ -12,25 +11,29 @@ import { ProductService } from 'src/app/core/services/GestionProduit/product.ser
 import { ReviewProductService } from 'src/app/core/services/GestionProduit/review-product.service';
 import { UserService } from 'src/app/core/services/GestionUser/user.service';
 
+
 @Component({
   selector: 'app-product-details',
   templateUrl: './product-details.component.html',
   styleUrls: ['./product-details.component.css']
 })
 export class ProductDetailsComponent {
+  
   isCartOpen = false;
   cartCount = 0; // À mettre à jour dynamiquement selon le panier
 
- 
+  editingReview: ReviewProduct | null = null;
   productId!: number; 
   product: Product | undefined;
   reviews: ReviewProduct[] = [];
   newReview: ReviewProduct =new ReviewProduct();
-  isReviewModalOpen = false; 
+ // isReviewModalOpen = false; 
+ showModalReview: boolean = false;
   currentUser: User | null = null;
   usersMap: { [key: string]: User } = {};
   cartProducts: CartProducts[] = [];
   cartId: number = 1;
+  selectedReview: ReviewProduct | null = null;
   constructor(
     private productService: ProductService,
     private reviewService: ReviewProductService,
@@ -65,7 +68,7 @@ export class ProductDetailsComponent {
   }
   loadUserDetails(): void {
     this.reviews.forEach(review => {
-      if (review.email && !this.usersMap[review.email]) { // Éviter les requêtes multiples
+      if (review.email && !this.usersMap[review.email]) { 
         this.userService.getUserByEmail(review.email).subscribe(
           (user: User) => {
             this.usersMap[review.email] = user;
@@ -77,7 +80,7 @@ export class ProductDetailsComponent {
       }
     });
   }
-  // Function to get product details
+ 
   getProductDetails(): void {
     this.productService.getProductByID(this.productId).subscribe(
       (product) => {
@@ -101,28 +104,32 @@ export class ProductDetailsComponent {
       }
     );
   }
-   
+
+toggleReviewOptions(review: ReviewProduct): void {
+  if (this.selectedReview === review) {
+    this.selectedReview = null;
+    this.editingReview = null;
+  } else {
+    this.selectedReview = review;
+    this.editingReview = review;
+  }
+}
+startEditReview(review: ReviewProduct): void {
+  this.editingReview = { ...review }; 
+  this.selectedReview = review;        
+}
+
+
 
   
 
-  // Function to open the review modal
-  openReviewModal() {
-    this.isReviewModalOpen = true;
-  }
 
-  // Function to close the review modal
-  closeReviewModal() {
-    this.isReviewModalOpen = false;
-  }
-
+  
   // Function to add a review using the ProductService
   addReview(): void {
     if (this.currentUser && this.product) {
       
-      // this.newReview.createdAt = new Date();
-      // this.newReview.updatedAt = new Date();
-      // this.newReview.email=this.currentUser.email;
-      // this.newReview.product = this.product;
+      
       const reviewToSend: ReviewProduct = {
         idReview:this.newReview.idReview,
         content: this.newReview.content,
@@ -135,11 +142,13 @@ export class ProductDetailsComponent {
       
       console.log(this.currentUser);
       
-      this.reviewService.addReview(/*this.newReview*/ reviewToSend).subscribe(
+      this.reviewService.addReview( reviewToSend,this.product.idProduct).subscribe(
         (response) => {
           console.log('Review added successfully!', response);
-          this.isReviewModalOpen = false;  // Fermer le modal après la soumission
-          this.getReviews();  // Rafraîchir la liste des avis
+         
+         this.showModalReview = false; 
+         
+          this.getReviews();  
         },
         (error) => {
           console.error('Error adding review', error);
@@ -149,6 +158,38 @@ export class ProductDetailsComponent {
       console.error('No user is logged in');
     }
   }
+  saveEditedReview(): void {
+    if (this.editingReview && this.editingReview.idReview) {
+      this.editingReview.updatedAt = new Date();
+      this.reviewService.updatereview( this.editingReview).subscribe(
+        () => {
+          this.getReviews();
+          this.editingReview = null;
+        },
+        (error) => {
+          console.error('Error updating review', error);
+        }
+      );
+    }
+  }
+  
+  
+  deleteReview(reviewId: number): void {
+    if (confirm('Are you sure you want to delete this review?')) {
+        this.reviewService.deleteReview(reviewId).subscribe(
+            (response) => {
+                console.log('Review deleted successfully', response);
+                this.getReviews(); // Rafraîchir les critiques après la suppression
+            },
+            (error) => {
+                console.error('Error deleting review', error);
+            }
+        );
+    }
+}
+cancelEdit(): void {
+  this.editingReview = null;
+}
 
 
       toggleCart() {

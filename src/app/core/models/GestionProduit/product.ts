@@ -10,8 +10,10 @@ export class Product {
   type!: string;
   price!: number;
   stock!: number;
- postedBy!: User; 
+ postedBy!: User | null; 
  cartProducts!: CartProducts[]; 
   reviewProducts!: ReviewProduct[];
   imageProducts!: ImageProduct[]; 
+  currencyType?: 'TND' | 'Tokens';
+
 }
