@@ -65,6 +65,7 @@ import { CousesByCategoryComponent } from './Back/GestionFormation/Category/cous
 import { CoursesByCatFrontComponent } from './Front/GestionFormations/Formation/courses-by-cat-front/courses-by-cat-front.component';
 import { UserCourseSpaceComponent } from './Front/GestionFormations/Formation/user-course-space/user-course-space.component';
 import { AddCourseComponent } from './Front/GestionFormations/Formation/add-course/add-course.component';
+import { DetailsFormationComponent } from './Front/GestionFormations/Formation/details-formation/details-formation.component';
 
 @NgModule({
   declarations: [
@@ -115,6 +116,7 @@ import { AddCourseComponent } from './Front/GestionFormations/Formation/add-cour
     CoursesByCatFrontComponent,
     UserCourseSpaceComponent,
     AddCourseComponent,
+    DetailsFormationComponent,
   ],
   imports: [
     BrowserModule,

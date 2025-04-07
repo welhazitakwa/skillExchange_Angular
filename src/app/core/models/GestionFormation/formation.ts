@@ -1,16 +1,17 @@
 import { User } from "../GestionUser/User";
+import { Category } from "./category";
 
 export class Formation {
-  id!: number;//
-  image!: string;//
-  imageType!: string;//
-  title!: string;//
-  description!: string;//
-  duration!: Float32Array;//
-  requiredSkills!: string; //
-  state!: number;//
-  price!:number ;//
+  id!: number; 
+  image!: string; 
+  imageType!: string; 
+  title!: string; 
+  description!: string; 
+  duration!: number; 
+  requiredSkills!: string; 
+  state!: number; 
+  price!: number; 
   date_ajout!: Date;
-  category_id!: number;
+  category!: Category;
   author!: User;
 }

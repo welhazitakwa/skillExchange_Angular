@@ -28,16 +28,14 @@ export class UserCourseSpaceComponent {
       this.userId = navigationState.userId;
       console.log('ID dans TestComponent:', this.userId); // Vérification dans la console
     }
-this.getFormationsList();
-  
+    this.getFormationsList();
   }
   getFormationsList() {
-  this.formServ.getCoursesByUserId(this.userId).subscribe(
-    (data) => (this.listFormations = data),
-    (erreur) => console.log('erreur'),
-    () => console.log(this.listFormations)
-  );
-
+    this.formServ.getCoursesByUserId(this.userId).subscribe(
+      (data) => (this.listFormations = data),
+      (erreur) => console.log('erreur'),
+      () => console.log(this.listFormations)
+    );
   }
 
   openAddCourseForm() {
@@ -53,5 +51,11 @@ this.getFormationsList();
       },
       error: console.log,
     });
+  }
+
+  convertDuration(duration: number): string {
+    const hours = Math.floor(duration / 60); // Nombre d'heures
+    const minutes = duration % 60; // Nombre de minutes restantes
+    return `${hours}h ${minutes}min`;
   }
 }
