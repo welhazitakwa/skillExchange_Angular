@@ -115,7 +115,7 @@ export class CategoriesComponent {
     }
   }
 
-  getProductsOfCateory(id: number) {
+  getCoursesOfCateory(id: number) {
    // this.categorySelected.emit(id); // Émettre l'ID vers le composant parent
 //this.router.navigate(['/backcoursescat']);
       this.router.navigate(['/backcoursescat'], { state: { categoryId: id } });

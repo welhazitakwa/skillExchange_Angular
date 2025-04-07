@@ -132,6 +132,11 @@
                 ><i data-feather="credit-card" class="svg-icon me-2 ms-1"></i>
                 My Balance</a
               >
+              <a class="dropdown-item" 
+              (click)="getUserId(currentUser.id)"
+                ><i data-feather="credit-card" class="svg-icon me-2 ms-1"></i>
+                My Space</a
+              >
               <a class="dropdown-item" routerLink="/back" *ngIf="this.isAdmin"
                 ><i data-feather="mail" class="svg-icon me-2 ms-1"></i>
                 Dashboard</a

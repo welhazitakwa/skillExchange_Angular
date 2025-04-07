@@ -28,6 +28,8 @@ import { AllbadgesComponent } from './Back/GestionUser/Badge/allbadges/allbadges
 import { CategoriesComponent } from './Back/GestionFormation/Category/categories/categories.component';
 import { FormationsComponent } from './Back/GestionFormation/Formation/formations/formations.component';
 import { CousesByCategoryComponent } from './Back/GestionFormation/Category/couses-by-category/couses-by-category.component';
+import { CoursesByCatFrontComponent } from './Front/GestionFormations/Formation/courses-by-cat-front/courses-by-cat-front.component';
+import { UserCourseSpaceComponent } from './Front/GestionFormations/Formation/user-course-space/user-course-space.component';
 
 const routes: Routes = [
   //canActivate: [AdminGuard] to lock for admin
@@ -59,7 +61,8 @@ const routes: Routes = [
   { path: 'categories', component: CategoriesComponent },
   { path: 'backcourses', component: FormationsComponent },
   { path: 'backcoursescat', component: CousesByCategoryComponent },
-
+  { path: 'coursescat', component: CoursesByCatFrontComponent },
+  { path: 'userCourseSpace', component: UserCourseSpaceComponent },
 
   /***************************************************************/
 

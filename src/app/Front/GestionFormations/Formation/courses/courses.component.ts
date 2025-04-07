@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { Category } from 'src/app/core/models/GestionFormation/category';
 import { CategoryService } from 'src/app/core/services/GestionFormation/category.service';
 
@@ -8,7 +9,8 @@ import { CategoryService } from 'src/app/core/services/GestionFormation/category
   styleUrls: ['./courses.component.css'],
 })
 export class CoursesComponent {
-  constructor(private catServ: CategoryService) {}
+  constructor(private catServ: CategoryService, private router: Router
+  ) {}
   listCategories: Category[] = [];
 
   ngOnInit() {
@@ -20,5 +22,10 @@ export class CoursesComponent {
       (erreur) => console.log('erreur'),
       () => console.log(this.listCategories)
     );
+  }
+  getCoursesOfCateory(id: number) {
+    // this.categorySelected.emit(id); // Émettre l'ID vers le composant parent
+    //this.router.navigate(['/backcoursescat']);
+    this.router.navigate(['/coursescat'], { state: { categoryId: id } });
   }
 }

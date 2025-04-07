@@ -26,8 +26,8 @@
                 <div  *ngFor="let c of listCategories"  class="col-lg-3 col-md-6 mb-4">
                     <div class="cat-item position-relative overflow-hidden rounded mb-2">
                         <img class="img-fluid"  [src]="'data:' + c.imageType + ';base64,' + c.image" alt="">
-                        <a class="cat-overlay text-white text-decoration-none" href="">
-                            <h4 class="text-white font-weight-medium">Web Design</h4>
+                        <a class="cat-overlay text-white text-decoration-none" (click)="getCoursesOfCateory(c.id)">
+                            <h4 class="text-white font-weight-medium">{{c.name}}</h4>
                             <span>100 Courses</span>
                         </a>
                     </div>
