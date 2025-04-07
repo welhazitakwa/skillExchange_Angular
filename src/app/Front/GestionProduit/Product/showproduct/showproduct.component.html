@@ -41,6 +41,12 @@
             <h5 class="text-primary text-uppercase mb-3" style="letter-spacing: 5px;">Shop</h5>
             <h1>Our Products</h1>
         </div>
+        <div class="text-center mb-4">
+            <button class="btn btn-success" data-toggle="modal" data-target="#addProductModal">
+              ➕ Add New Product
+            </button>
+          </div>
+          
         <div class="row">
             <div class="col-lg-4 col-md-6 mb-4" *ngFor="let product of products">
                 <div class="rounded overflow-hidden mb-2">
@@ -56,12 +62,17 @@
                             </small>
 
                             <!-- Affichage du nom du vendeur -->
-                            <small class="m-0"><i class="fa fa-user text-primary mr-2"></i> {{ product.postedBy.name }}</small>
+                            <small class="m-0"><i class="fa fa-user text-primary mr-2"></i> {{ product.postedBy!.name }}</small>
                         </div>
 
                         <a class="h5" [routerLink]="['/productD', product.idProduct]">{{ product.productName }}</a>
 
                         <p class="m-0 ">{{ product.type }}</p>
+                         <!-- Si c’est l’utilisateur qui a posté ce produit -->
+  <div *ngIf="currentUser?.id === product.postedBy?.id">
+    <button class="btn btn-warning btn-sm me-2" (click)="startEditProduct(product)">Edit</button>
+    <button class="btn btn-danger btn-sm" (click)="deleteProduct(product.idProduct)">Delete</button>
+  </div>
 
                         <!-- Affichage du rating -->
                         
@@ -83,6 +94,94 @@
         </div>
     </div>
 </div>
+<!-- Add Product Modal -->
+<div class="modal fade" id="addProductModal" tabindex="-1" role="dialog" aria-labelledby="addProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content rounded">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="addProductModalLabel">Add New Product</h5>
+          <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form (ngSubmit)="submitNewProduct()">
+            <div class="form-group">
+              <label for="productName">Product Name</label>
+              <input type="text" id="productName" class="form-control" required [(ngModel)]="newProduct.productName" name="productName">
+            </div>
+  
+            <div class="form-group">
+              <label for="type">Type</label>
+              <input type="text" id="type" class="form-control" required [(ngModel)]="newProduct.type" name="type">
+            </div>
+  
+            <div class="form-group">
+              <label>Price</label>
+              <div class="d-flex">
+                <input type="number" class="form-control" required [(ngModel)]="newProduct.price" name="price">
+                <select class="form-control ml-2" [(ngModel)]="newProduct.currencyType" name="currencyType">
+                  <option value="TND">TND</option>
+                  <option value="Tokens">Tokens</option>
+                </select>
+              </div>
+            </div>
+  
+            <div class="form-group">
+              <label for="stock">Stock</label>
+              <input type="number" id="stock" class="form-control" required [(ngModel)]="newProduct.stock" name="stock">
+            </div>
+  
+            <div class="text-right">
+              <button type="submit" class="btn btn-primary">Save Product</button>
+              <button type="button" class="btn btn-secondary ml-2" data-dismiss="modal">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- Modal édition produit -->
+<div *ngIf="showModalProduct" class="modal fade show d-block" tabindex="-1" style="z-index: 1050;">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Product</h5>
+          <button type="button" class="close" (click)="cancelEditProduct()">
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form (ngSubmit)="submitEditProduct()">
+            <div class="form-group mb-2">
+              <label>Name</label>
+              <input [(ngModel)]="editingProduct.productName" name="name" class="form-control" required />
+            </div>
+            <div class="form-group mb-2">
+              <label>Type</label>
+              <input [(ngModel)]="editingProduct.type" name="type" class="form-control" required />
+            </div>
+            <div class="form-group mb-2">
+              <label>Price</label>
+              <input type="number" [(ngModel)]="editingProduct.price" name="price" class="form-control" required />
+            </div>
+            <div class="form-group mb-2">
+              <label>Stock</label>
+              <input type="number" [(ngModel)]="editingProduct.stock" name="stock" class="form-control" required />
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" (click)="cancelEditProduct()">Cancel</button>
+          <button class="btn btn-primary" (click)="submitEditProduct()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Backdrop -->
+  <div class="modal-backdrop fade show" *ngIf="showModalProduct" style="z-index: 1040;"></div>
+    
 
 
 <app-footer-front></app-footer-front>

@@ -20,21 +20,22 @@ getProduct() : Observable<Product[]>
    return this.http.get<Product[]>(`${this.url}/retrieve-products`);}
 
 addProduct(prod: Product): Observable<Product> {
- return this.http.post<Product>(this.url, prod);
+ return this.http.post<Product>(this.url+"/add", prod);
 }
 
 deleteProduct(id:number){
- return this.http.delete(this.url+'/'+id);
+ return this.http.delete(this.url+"/delete/"+id);
 }
 getProductByID(id:number){
   return this.http.get<Product>(`${this.url}/retrieve-products/${id}`);
 }
 updateProduct(prod:Product){
- return this.http.patch(this.url+'/'+prod.idProduct,prod);
+ return this.http.patch(this.url + "/update/" + prod.idProduct, prod);
+ 
 }
 
-addProductReview(productId: number, review: ReviewProduct): Observable<ReviewProduct> {
+/*addProductReview(productId: number, review: ReviewProduct): Observable<ReviewProduct> {
   return this.http.post<ReviewProduct>(`${this.url}/${productId}/reviews`, review);
-}
+}*/
 
 }
