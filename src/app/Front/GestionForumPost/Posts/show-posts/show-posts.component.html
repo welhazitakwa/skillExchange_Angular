@@ -15,7 +15,10 @@
     </div>
     <!-- Header End -->
 
-
+    <div class="container my-4">
+        <div class="mb-4">
+          <button class="btn btn-success" (click)="showPostModalOpen = true">Ajouter un Post</button>
+        </div>
     <!-- Blog Start -->
     <div class="container-fluid py-5">
         <div class="container py-5">
@@ -134,6 +137,38 @@
     </div>
     
     <!-- Blog End -->
+      <!-- Modal Ajouter Post -->
+    <div *ngIf="showPostModalOpen" class="modal fade show d-block" tabindex="-1" role="dialog"
+    style="background-color: rgba(0,0,0,0.5);">
+ <div class="modal-dialog" role="document">
+   <div class="modal-content">
+     <div class="modal-header">
+       <h5 class="modal-title">Créer un Post</h5>
+       <button type="button" class="btn-close" (click)="showPostModalOpen = false"></button>
+     </div>
+     <div class="modal-body">
+       <form>
+         <div class="mb-3">
+           <label class="form-label">Titre</label>
+           <input type="text" class="form-control" [(ngModel)]="newPost.title" name="title">
+         </div>
+         <div class="mb-3">
+           <label class="form-label">Contenu</label>
+           <textarea class="form-control" rows="4" [(ngModel)]="newPost.content" name="content"></textarea>
+         </div>
+         <div class="mb-3">
+           <label class="form-label">Lien de l’image</label>
+           <input type="text" class="form-control" [(ngModel)]="newPost.ImageP" name="imageP">
+         </div>
+       </form>
+     </div>
+     <div class="modal-footer">
+       <button class="btn btn-secondary" (click)="showPostModalOpen = false">Fermer</button>
+       <button class="btn btn-primary" (click)="addPost()">Publier</button>
+     </div>
+   </div>
+ </div>
+</div>
 
 
 <app-footer-front></app-footer-front>
