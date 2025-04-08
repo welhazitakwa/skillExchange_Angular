@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
 import { MainBackComponent } from './Back/main-back/main-back.component';
 import { MainFrontComponent } from './Front/main-front/main-front.component';
 import { AboutComponent } from './Front/about/about.component';
@@ -12,6 +11,7 @@ import { AuthRegisterComponent } from './Auth/auth-register/auth-register.compon
 import { AuthLoginComponent } from './Auth/auth-login/auth-login.component';
 import { AdminGuard } from './core/services/Auth/admin-guard.service';
 import { UserGuard } from './core/services/Auth/user-guard.service';
+import { ListpostComponent } from './Back/GestionForumPost/Post/listpost/listpost.component';
 
 import { AllProductsComponent } from './Back/GestionProduit/Product/all-products/all-products.component';
 import { AllCartsComponent } from './Back/GestionProduit/Cart/all-carts/all-carts.component';
@@ -30,12 +30,31 @@ import { FormationsComponent } from './Back/GestionFormation/Formation/formation
 import { CousesByCategoryComponent } from './Back/GestionFormation/Category/couses-by-category/couses-by-category.component';
 import { CoursesByCatFrontComponent } from './Front/GestionFormations/Formation/courses-by-cat-front/courses-by-cat-front.component';
 import { UserCourseSpaceComponent } from './Front/GestionFormations/Formation/user-course-space/user-course-space.component';
+import { CertificatComponent } from './Back/GestionQUIZZ/certificat/certificat.component';
+import { QuizComponent } from './Back/GestionQUIZZ/quiz/quiz.component';
+import { QuestionComponent } from './Back/GestionQUIZZ/question/question.component';
+import { RouterModule, Routes } from '@angular/router';
+import { AllEventsComponent } from './Back/GestionEvents/Events/all-events/all-events.component';
+import { ShowproductComponent } from './Front/GestionProduit/Product/showproduct/showproduct.component';
+import { ProductDetailsComponent } from './Front/GestionProduit/Product/product-details/product-details.component';
+import { AllCartProductsComponent } from './Back/GestionProduit/CartProduct/all-cart-products/all-cart-products.component';
+import { AllCommentsComponent } from './Back/GestionForumPost/CommentPost/all-comments/all-comments.component';
+import { ShowPostsComponent } from './Front/GestionForumPost/Posts/show-posts/show-posts.component';
+import { PostDetailsComponent } from './Front/GestionForumPost/Posts/post-details/post-details.component';
+
 
 const routes: Routes = [
   //canActivate: [AdminGuard] to lock for admin
   //canActivate: [UserGuard] to lock for user
   // Back Office
-  { path: 'back', component: MainBackComponent /*canActivate: [AdminGuard]*/ },
+
+
+  { path:"backpost", component: ListpostComponent},
+  
+  { path:"backCommentpost", component: AllCommentsComponent},
+  
+
+  { path: 'back', component: MainBackComponent /*,canActivate: [AdminGuard]*/ },
 
   //**************Back Gestion Users********************************
   {
@@ -52,11 +71,22 @@ const routes: Routes = [
   },
   /***************************************************************/
 
+
+
+//**************Back Gestion Events********************************
+
+  { path: 'backEvents', component: AllEventsComponent },
+
+
+
+  /***************************************************************/
+
   //**************Back Gestion Produit********************************
   { path: 'backproducts', component: AllProductsComponent },
   { path: 'backcarts', component: AllCartsComponent },
   { path: 'backreviews', component: AllReviewsComponent },
   { path: 'backimagesP', component: AllImagesComponent },
+
   /********************Back Gestion Formations****************************************/
   { path: 'categories', component: CategoriesComponent },
   { path: 'backcourses', component: FormationsComponent },
@@ -64,20 +94,26 @@ const routes: Routes = [
   { path: 'coursescat', component: CoursesByCatFrontComponent },
   { path: 'userCourseSpace', component: UserCourseSpaceComponent },
 
+  { path: 'backcartProducts', component: AllCartProductsComponent },
   /***************************************************************/
 
+
   // Front Office
-  { path: '', component: MainFrontComponent, canActivate: [UserGuard] },
-  { path: 'bloglist', component: BlogListComponent, canActivate: [UserGuard] },
+  { path: '', component: MainFrontComponent/*, canActivate: [UserGuard] */},
+  { path: 'bloglist', component: BlogListComponent/*, canActivate: [UserGuard] */},
   {
     path: 'blogdetails',
-    component: BlogDetailsComponent,
-    canActivate: [UserGuard],
+    component: BlogDetailsComponent/*,
+    canActivate: [UserGuard],*/
   },
-  { path: 'about', component: AboutComponent, canActivate: [UserGuard] },
-  { path: 'courses', component: CoursesComponent, canActivate: [UserGuard] },
-  { path: 'teachers', component: TeachersComponent, canActivate: [UserGuard] },
-  { path: 'contact', component: ContactComponent, canActivate: [UserGuard] },
+    /// Gestion Produit 
+    { path: 'products', component: ShowproductComponent/*, canActivate: [UserGuard]*/ },
+
+   { path: 'productD/:idProduct', component: ProductDetailsComponent/*, canActivate: [UserGuard]*/ },
+  { path: 'about', component: AboutComponent/*, canActivate: [UserGuard] */},
+  { path: 'courses', component: CoursesComponent/*, canActivate: [UserGuard] */},
+  { path: 'teachers', component: TeachersComponent/*, canActivate: [UserGuard]*/ },
+  { path: 'contact', component: ContactComponent/*, canActivate: [UserGuard]*/ },
 
   // Auth
   { path: 'register', component: AuthRegisterComponent },
@@ -86,8 +122,19 @@ const routes: Routes = [
   { path: 'profile', component: ProfileComponent },
   { path: 'settings', component: SettingsComponent },
   { path: 'balance', component: BalanceComponent },
+  { path: 'certificats', component: CertificatComponent },
 
+  // Quiz Routes
+  { path: 'quizzes', component: QuizComponent },
+
+  // Question Routes
+  { path: 'questions/:quizId', component: QuestionComponent },
+   //Gestion ForumPosts
+   { path: 'posts', component: ShowPostsComponent },
+   { path: 'posts/:id', component: PostDetailsComponent/*, canActivate: [UserGuard]*/ },
   { path: '**', redirectTo: '' },
+ 
+
 ];
 
 @NgModule({

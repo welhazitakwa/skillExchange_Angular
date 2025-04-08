@@ -1,9 +1,14 @@
-export class HistoricTransactions {
+export enum TransactionType {
+  DEPOSIT = 'DEPOSIT',
+  WITHDRAWAL = 'WITHDRAWAL',
+  TRANSFER = 'TRANSFER',
+  PAYMENT = 'PAYMENT',
+}
 
-    id!: number;
-    type!: string;
-    amount!: number;
-    date!: Date;
-    source!: String;
-  
+export class HistoricTransactions {
+  id!: number | null;
+  type!: TransactionType;
+  amount!: number;
+  date!: Date;
+  description!: String;
 }

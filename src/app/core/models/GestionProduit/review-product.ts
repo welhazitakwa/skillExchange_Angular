@@ -1,3 +1,4 @@
+import { User } from "../GestionUser/User";
 import { Product } from "./product";
 
 export class ReviewProduct {
@@ -6,5 +7,6 @@ export class ReviewProduct {
   createdAt!: Date; 
   updatedAt!: Date; 
   rating!: number; 
-  product!: Product; 
+  product!: Product;
+  email!:string;
 }

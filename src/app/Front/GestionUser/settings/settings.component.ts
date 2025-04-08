@@ -14,22 +14,7 @@ import { MailService } from 'src/app/core/services/Mailing/mail.service';
   styleUrls: ['./settings.component.css'],
 })
 export class SettingsComponent {
-  currentUser: User = {
-    name: '',
-    email: '',
-    id: 0,
-    role: Role.USER,
-    verified: false,
-    image: '',
-    balance: 0,
-    signature: '',
-    ban: null,
-    bio: '',
-    facebook: '',
-    github: '',
-    linkedin: '',
-    badges: [],
-  };
+  currentUser: User = new User();
 
   activeTab: string = 'profile';
   twoFactorEnabled: boolean = false;
@@ -58,6 +43,7 @@ export class SettingsComponent {
 
   showSignatureModal = false;
 
+  showdeleteConfirmation = false;
 
   constructor(
     private authService: AuthService,
@@ -241,7 +227,20 @@ export class SettingsComponent {
       error: (err) => {
         console.error('Error saving signature:', err);
         this._toastService.error('Failed to save signature');
-      }
+      },
     });
+  }
+
+  confirmDeleteAccount() {
+    this.userService.deleteUser(this.currentUser.id).subscribe(
+      () => {
+        this.authService.logout();
+        this.showdeleteConfirmation = false;
+      },
+      (error) => {
+        console.error('Error deleting user:', error);
+        this._toastService.error('Failed to delete account');
+      }
+    );
   }
 }

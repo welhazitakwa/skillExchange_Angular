@@ -1,1 +1,147 @@
-<p>product-details works!</p>
+<app-header-front></app-header-front>
+
+<!-- Header Start -->
+<div class="container-fluid page-header" style="margin-bottom: 90px;">
+  <div class="container">
+    <div class="d-flex flex-column justify-content-center" style="min-height: 300px">
+      <h3 class="display-4 text-white text-uppercase">Product Details</h3>
+      <div class="d-inline-flex text-white">
+        <p class="m-0 text-uppercase"><a class="text-white" href="">Home</a></p>
+        <i class="fa fa-angle-double-right pt-1 px-3"></i>
+        <p class="m-0 text-uppercase">Product</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bouton Panier flottant -->
+<button class="cart-float-btn" (click)="toggleCart()">
+  <i class="fa fa-shopping-cart"></i>
+  <span class="cart-badge">{{ cartCount }}</span>
+</button>
+
+<!-- Sidebar panier -->
+<div class="cart-sidebar" [class.open]="isCartOpen">
+  <div class="cart-header">
+    <h4>🛍️ Mon Panier</h4>
+    <button class="close-btn" (click)="toggleCart()">✖</button>
+  </div>
+  <div class="cart-content">
+    <app-showcart></app-showcart>
+  </div>
+</div>
+
+<!-- Product Detail Start -->
+<div class="container-fluid py-5">
+  <div class="container py-5">
+    <div class="row">
+      <div class="col-lg-8">
+        <div class="mb-5">
+          <h1 class="mb-4">{{ product?.productName }}</h1>
+          <h3 class="text-primary mb-4">Price: {{ product?.price }} Dinars</h3>
+          <p><strong>Type:</strong> {{ product?.type }}</p>
+          <p><strong>Stock:</strong> {{ product?.stock }}</p>
+          <p><strong>Posted By:</strong> {{ product?.postedBy?.name || 'Unknown' }}</p>
+        </div>
+
+        <!-- Reviews -->
+        <div class="mb-5">
+          <h2 class="text-uppercase mb-4 fw-bold" style="letter-spacing: 3px;">REVIEWS</h2>
+          <div *ngIf="reviews.length === 0" class="alert alert-info mt-3">
+            No reviews for this product yet.
+          </div>
+
+          <!-- Nouveau bouton -->
+          <button class="btn btn-primary" (click)="showModalReview = true">
+            Leave a Review
+          </button>
+        </div>
+
+        <!-- Liste des reviews -->
+        <div *ngFor="let review of reviews" class="review-card mb-4 p-3 bg-light rounded">
+          <div class="d-flex align-items-start">
+            <div class="me-3">
+              <img [src]="usersMap[review.email].image || 'assets/img/default-avatar.jpg'"
+                   class="rounded-circle" width="60" height="60" alt="User avatar">
+            </div>
+
+            <div class="flex-grow-1">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="mb-0 fw-bold">{{ usersMap[review.email]?.name || 'Anonymous' }}</h5>
+                <small class="text-muted">
+                  <i *ngIf="!editingReview || editingReview.idReview !== review.idReview">
+                    {{ review.updatedAt !== review.createdAt ? ('Updated At ' + (review.updatedAt | date: 'dd/MM/yyyy à HH:mm')) : ('Posted At ' + (review.createdAt | date: 'dd/MM/yyyy à HH:mm')) }}
+                  </i>
+                </small>
+                <button *ngIf="currentUser?.email === review.email" class="btn btn-link" (click)="toggleReviewOptions(review)">
+                  <i class="fas fa-ellipsis-h"></i>
+                </button>
+              </div>
+
+              <!-- Édition -->
+              <div *ngIf="editingReview && editingReview.idReview === review.idReview">
+                <textarea [(ngModel)]="editingReview.content" class="form-control mb-2"></textarea>
+                <input type="number" [(ngModel)]="editingReview.rating" min="1" max="5" class="form-control w-25 mb-2" />
+                <button class="btn btn-success btn-sm me-2" (click)="saveEditedReview()">Save</button>
+                <button class="btn btn-secondary btn-sm" (click)="cancelEdit()">Cancel</button>
+              </div>
+
+              <!-- Lecture -->
+              <div *ngIf="!editingReview || editingReview.idReview !== review.idReview">
+                <p class="mb-2">{{ review.content }}</p>
+                <div class="rating-container">
+                  <span class="me-2 fw-bold">Note:</span>
+                  <div class="rating-stars d-inline-block">
+                    <i *ngFor="let star of [1,2,3,4,5]"
+                       [class]="star <= review.rating ? 'fas fa-star text-warning' : 'far fa-star text-muted'"></i>
+                  </div>
+                  <span class="ms-2">{{ review.rating }}/5</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div *ngIf="selectedReview === review" class="review-options mt-2">
+            <button class="btn btn-warning btn-sm me-2" (click)="startEditReview(review)">Edit</button>
+            <button class="btn btn-danger btn-sm" (click)="deleteReview(review.idReview)">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Angular -->
+<div *ngIf="showModalReview" class="modal fade show d-block" tabindex="-1" style="z-index: 1050;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!-- Backdrop -->
+      <div class="modal-header">
+        <h5 class="modal-title">Leave a Review</h5>
+        <button type="button" class="close" (click)="showModalReview = false"><span>&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="addReview()">
+          <div class="form-group">
+            <label for="content">Content *</label>
+            <textarea id="content" class="form-control" [(ngModel)]="newReview.content" name="content" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="rating">Rating (1-5) *</label>
+            <input type="number" class="form-control" id="rating" [(ngModel)]="newReview.rating" name="rating" min="1" max="5" required>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="showModalReview = false">Close</button>
+        <button type="button" class="btn btn-primary" (click)="addReview()">Submit Review</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Backdrop transparent derrière le modal -->
+<div class="modal-backdrop fade show" *ngIf="showModalReview" style="z-index: 1040;"></div>
+
+<app-footer-front></app-footer-front>
