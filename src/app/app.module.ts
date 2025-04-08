@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 
-import { ToastService, AngularToastifyModule } from 'angular-toastify'; 
+import { ToastService, AngularToastifyModule } from 'angular-toastify';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -13,8 +13,8 @@ import { HeaderFrontComponent } from './Front/header-front/header-front.componen
 import { AboutComponent } from './Front/about/about.component';
 import { BlogListComponent } from './Front/blog-list/blog-list.component';
 import { BlogDetailsComponent } from './Front/blog-details/blog-details.component';
+import { CoursesComponent } from './Front/GestionFormations/Formation/courses/courses.component';
 import { CoursesComponent } from './Front/courses/courses.component';
-
 import { ContactComponent } from './Front/contact/contact.component';
 import { ErrorComponent } from './error/error.component';
 
@@ -51,6 +51,28 @@ import { UserBackDetailsComponent } from './Back/GestionUser/User/user-back-deta
 import { AuthBanComponent } from './Auth/auth-ban/auth-ban.component';
 import { AllbadgesComponent } from './Back/GestionUser/Badge/allbadges/allbadges.component';
 import { SignaturePadComponent } from './components/signature-pad/signature-pad.component';
+
+import { CategoriesComponent } from './Back/GestionFormation/Category/categories/categories.component';
+import { AddEditCategoryComponent } from './Back/GestionFormation/Category/add-edit-category/add-edit-category.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+//
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { EditCategoryComponent } from './Back/GestionFormation/Category/edit-category/edit-category.component';
+import { FormationsComponent } from './Back/GestionFormation/Formation/formations/formations.component';
+import { AddFormationComponent } from './Back/GestionFormation/Formation/add-formation/add-formation.component';
+import { EditFormationComponent } from './Back/GestionFormation/Formation/edit-formation/edit-formation.component';
+import { AddCoursesFrontComponent } from './Front/GestionFormations/Formation/add-courses-front/add-courses-front.component';
+import { CousesByCategoryComponent } from './Back/GestionFormation/Category/couses-by-category/couses-by-category.component';
+import { CoursesByCatFrontComponent } from './Front/GestionFormations/Formation/courses-by-cat-front/courses-by-cat-front.component';
+import { UserCourseSpaceComponent } from './Front/GestionFormations/Formation/user-course-space/user-course-space.component';
+import { AddCourseComponent } from './Front/GestionFormations/Formation/add-course/add-course.component';
+import { DetailsFormationComponent } from './Front/GestionFormations/Formation/details-formation/details-formation.component';
+import { EditCourseComponent } from './Front/GestionFormations/Formation/edit-course/edit-course.component';
+
 import { CertificatComponent } from './Back/GestionQUIZZ/certificat/certificat.component';
 import { QuizComponent } from './Back/GestionQUIZZ/quiz/quiz.component';
 import { QuestionComponent } from './Back/GestionQUIZZ/question/question.component';
@@ -99,16 +121,12 @@ import { PostDetailsComponent } from './Front/GestionForumPost/Posts/post-detail
     ContactComponent,
     AuthRegisterComponent,
     AuthLoginComponent,
-
     ListpostComponent,
     ListaddComponent,
-
-
     ProfileComponent,
     BalanceComponent,
     SettingsComponent,
     AllUsersComponent,
-
     AddcartComponent,
     ShowcartComponent,
     UpdatecartComponent,
@@ -125,6 +143,19 @@ import { PostDetailsComponent } from './Front/GestionForumPost/Posts/post-detail
     AuthBanComponent,
     AllbadgesComponent,
     SignaturePadComponent,
+    CategoriesComponent,
+    AddEditCategoryComponent,
+    EditCategoryComponent,
+    FormationsComponent,
+    AddFormationComponent,
+    EditFormationComponent,
+    AddCoursesFrontComponent,
+    CousesByCategoryComponent,
+    CoursesByCatFrontComponent,
+    UserCourseSpaceComponent,
+    AddCourseComponent,
+    DetailsFormationComponent,
+    EditCourseComponent,
     CertificatComponent,
     QuizComponent,
     QuestionComponent,
@@ -159,8 +190,12 @@ import { PostDetailsComponent } from './Front/GestionForumPost/Posts/post-detail
     HttpClientModule,
     ImageCropperComponent,
     AngularToastifyModule,
+    BrowserAnimationsModule,
+    MatDialogModule,
   ],
   providers: [ToastService],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
+
 export class AppModule { }
+
