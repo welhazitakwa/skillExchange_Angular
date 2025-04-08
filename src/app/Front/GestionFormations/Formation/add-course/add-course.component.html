@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>Add Course</h1>
 <form style="margin: 40px;" [formGroup]="addForm" (ngSubmit)="SaveCourse(addForm)">
-<input type="hidden" id="author_id" formControlName="author_id" [value]="1">
+<input type="hidden" id="author_id" [value]="userId">
 
   <div class="form-row">
     <div class="form-group col-md-6">
@@ -26,9 +26,20 @@
 
 
  <div class="custom-file">
-  <input type="file" (change)="onFileChange($event)" class="custom-file-input" id="customFile" formControlName="image">
+  <input type="file" (change)="onFileChange($event)" class="custom-file-input" id="customFile" >
   <label class="custom-file-label" for="customFile" >Choose your image</label>
 </div>
+<br><br>
+<div>
+    <label for="category">Category</label>
+    <select id="category" formControlName="category_id"
+>
+      <option value="" disabled selected>Select a category</option>
+      <option *ngFor="let category of categories" [value]="category.id | json">
+        {{ category.name }} 
+      </option>
+    </select>
+  </div>
 <br><br>
  <div class="row">
     <div class="col">

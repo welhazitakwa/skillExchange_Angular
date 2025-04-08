@@ -2,7 +2,9 @@ import { Component, Inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { Category } from 'src/app/core/models/GestionFormation/category';
 import { Formation } from 'src/app/core/models/GestionFormation/formation';
+import { CategoryService } from 'src/app/core/services/GestionFormation/category.service';
 import { FormationService } from 'src/app/core/services/GestionFormation/formation.service';
 import Swal from 'sweetalert2';
 
@@ -13,6 +15,7 @@ import Swal from 'sweetalert2';
 })
 export class AddCourseComponent {
   userId!: number;
+  categories: Category[] = [];
 
   addForm = new FormGroup({
     id: new FormControl(0),
@@ -35,10 +38,15 @@ export class AddCourseComponent {
     author: new FormGroup({
       id: new FormControl(0),
     }),
+    category_id: new FormControl(0), // juste l'id de la catégorie
+    category: new FormGroup({
+      id: new FormControl(0),
+    }),
   });
 
   constructor(
     private formServ: FormationService,
+    private catServ: CategoryService,
     private Rout: Router,
     private diagRef: MatDialogRef<AddCourseComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
@@ -48,12 +56,21 @@ export class AddCourseComponent {
     // if (this.data && this.data.id) {
     this.userId = this.data.userId;
     console.log('ID de user connecté:', this.userId);
-    // 
+    //
     this.addForm.patchValue({
       author: {
         id: this.userId,
       },
     });
+    this.getCategoriesList();
+  }
+
+  getCategoriesList() {
+    this.catServ.getCategory().subscribe(
+      (data) => (this.categories = data),
+      (erreur) => console.log('erreur'),
+      () => console.log(this.categories)
+    );
   }
   // get name() {
   //   return this.addForm.get('name');
@@ -65,9 +82,19 @@ export class AddCourseComponent {
 
   F!: Formation;
   SaveCourse(F: FormGroup) {
-    this.F = { ...F.value };
-    console.log(this.F);
-    this.formServ.addFormation(this.F).subscribe({
+       let formData = { ...F.value };
+
+       // S'assurer que la catégorie est envoyée correctement sous forme d'objet
+       formData.category = { id: Number(formData.category_id) };
+
+       // Supprimer category_id car ce champ n'est pas nécessaire dans l'objet envoyé
+       delete formData.category_id;
+
+       console.log('Données à envoyer :', formData);
+    // this.F = { ...F.value };
+
+    console.log(formData);
+    this.formServ.addFormation(formData).subscribe({
       next: (val: any) => {
         Swal.fire({
           icon: 'success',
@@ -105,6 +132,11 @@ export class AddCourseComponent {
       reader.readAsDataURL(file);
     }
   }
-
-  
+  onCategorySelect(event: any) {
+    const selectedId = +event.target.value;
+    if (!selectedId) return; // ignore si vide ou invalide
+    this.addForm.patchValue({
+      category: { id: selectedId },
+    });
+  }
 }

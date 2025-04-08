@@ -7,14 +7,17 @@ import { FormationService } from 'src/app/core/services/GestionFormation/formati
 @Component({
   selector: 'app-courses-by-cat-front',
   templateUrl: './courses-by-cat-front.component.html',
-  styleUrls: ['./courses-by-cat-front.component.css']
+  styleUrls: ['./courses-by-cat-front.component.css'],
 })
 export class CoursesByCatFrontComponent {
-constructor(private catServ: CategoryService,
-  private formServ: FormationService, private router: Router) {}
+  constructor(
+    private catServ: CategoryService,
+    private formServ: FormationService,
+    private router: Router
+  ) {}
   categoryId!: number;
   listFormations: Formation[] = [];
-  
+
   ngOnInit() {
     // Récupérer l'ID depuis l'état de la navigation
     const navigationState = history.state;
@@ -42,32 +45,9 @@ constructor(private catServ: CategoryService,
   // ------------********************************************---------------------------
   // ------------********************************************---------------------------
 
-   
-
-
-  // deleteCourse(id: number) {
-  //   Swal.fire({
-  //     title: 'Are you sure?',
-  //     text: 'This Course will be permanently deleted! ',
-  //     icon: 'warning',
-  //     showCancelButton: true,
-  //     confirmButtonColor: '#3085d6',
-  //     cancelButtonColor: '#d33',
-  //     confirmButtonText: 'Yes, delete it!',
-  //     cancelButtonText: 'Cancel',
-  //   }).then((result) => {
-  //     if (result.isConfirmed) {
-  //       this.formServ.deleteFormation(id).subscribe({
-  //         next: (res) => {
-  //           Swal.fire('Deleted!', 'Your Course has been deleted', 'success');
-  //           this.getCoursesOfCategory();
-  //         },
-  //         error: (err) => {
-  //           Swal.fire('Error!', 'An error occurred while deleting.', 'error');
-  //         },
-  //       });
-  //     }
-  //   });
-  // }
-
+  convertDuration(duration: number): string {
+    const hours = Math.floor(duration / 60); // Nombre d'heures
+    const minutes = duration % 60; // Nombre de minutes restantes
+    return `${hours}h ${minutes}min`;
+  }
 }
