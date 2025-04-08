@@ -44,6 +44,7 @@ const routes: Routes = [
 
 
   { path:"backpost", component: ListpostComponent},
+  
   { path:"backCommentpost", component: AllCommentsComponent},
   
 
