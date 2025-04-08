@@ -157,19 +157,19 @@
                 routerLink="/balance"
               >
 
-              <a class="dropdown-item" 
-              (click)="getUserId(currentUser.id)"
-                ><i data-feather="credit-card" class="svg-icon me-2 ms-1"></i>
-                My Space</a
-              >
+             
               <a class="dropdown-item" routerLink="/back" *ngIf="this.isAdmin"
                 ><i data-feather="mail" class="svg-icon me-2 ms-1"></i>
-                Dashboard</a
+                Dashboard</a>
 
                 <i class="fas fa-wallet me-3 text-success"></i>
                 <span>My Balance</span>
               </a>
 
+               <a class="dropdown-item" 
+              (click)="getUserId(currentUser.id)"
+                ><i data-feather="credit-card" class="svg-icon me-2 ms-1"></i>
+                My Space</a>
               <div class="dropdown-divider mx-3 my-2"></div>
 
               <a
