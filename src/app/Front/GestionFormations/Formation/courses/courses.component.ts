@@ -9,16 +9,19 @@ import { CategoryService } from 'src/app/core/services/GestionFormation/category
   styleUrls: ['./courses.component.css'],
 })
 export class CoursesComponent {
-  constructor(private catServ: CategoryService, private router: Router
-  ) {}
+  constructor(private catServ: CategoryService, private router: Router) {}
   listCategories: Category[] = [];
-
+  searchText: string = '';
+  filteredCategories: Category[] = [];
   ngOnInit() {
     this.getCategoriesList();
   }
   getCategoriesList() {
     this.catServ.getCategory().subscribe(
-      (data) => (this.listCategories = data),
+      (data) => {
+        this.listCategories = data;
+        this.filteredCategories = data;
+      },
       (erreur) => console.log('erreur'),
       () => console.log(this.listCategories)
     );
@@ -27,5 +30,12 @@ export class CoursesComponent {
     // this.categorySelected.emit(id); // Émettre l'ID vers le composant parent
     //this.router.navigate(['/backcoursescat']);
     this.router.navigate(['/coursescat'], { state: { categoryId: id } });
+  }
+
+  filterTable(search: string) {
+    this.searchText = search.toLowerCase().trim();
+    this.filteredCategories = this.listCategories.filter((c) =>
+      c.name.toLowerCase().includes(this.searchText)
+    );
   }
 }

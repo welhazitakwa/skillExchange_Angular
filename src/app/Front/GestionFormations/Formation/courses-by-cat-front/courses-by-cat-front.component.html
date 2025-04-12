@@ -1,9 +1,11 @@
 <app-header-front></app-header-front>    
     <!-- Header Start -->
     <div class="container-fluid page-header" style="margin-bottom: 90px;">
+
         <div class="container">
             <div class="d-flex flex-column justify-content-center" style="min-height: 300px">
                 <h3 class="display-4 text-white text-uppercase">Courses</h3>
+                
                 <div class="d-inline-flex text-white">
                     <p class="m-0 text-uppercase"><a class="text-white" href="">Home</a></p>
                     <i class="fa fa-angle-double-right pt-1 px-3"></i>
@@ -13,7 +15,14 @@
         </div>
     </div>
     <!-- Header End -->
-
+                  <input
+    #searchInput
+    type="text"
+    class="form-control me-2"
+    placeholder="Search Courses..."
+    (keyup)="filterTable(searchInput.value)"
+    style="width: 300px; margin-left: 70%;"
+  />
     <!-- Courses Start -->
     <div class="container-fluid py-5">
         <div class="container py-5">
@@ -22,7 +31,7 @@
                 <h1>Our  Courses</h1>
             </div>
             <div class="row">
-                <div *ngFor="let f of listFormations" class="col-lg-4 col-md-6 mb-4">
+                <div *ngFor="let f of filteredFormations" class="col-lg-4 col-md-6 mb-4">
                     <div class="rounded overflow-hidden mb-2">
                         <img class="img-fluid" 
                           [src]="'data:' + f.imageType + ';base64,' + f.image"

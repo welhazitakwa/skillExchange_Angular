@@ -10,6 +10,8 @@ import { FormationService } from 'src/app/core/services/GestionFormation/formati
   styleUrls: ['./courses-by-cat-front.component.css'],
 })
 export class CoursesByCatFrontComponent {
+  searchText: string = '';
+  filteredFormations: Formation[] = [];
   constructor(
     private catServ: CategoryService,
     private formServ: FormationService,
@@ -27,7 +29,7 @@ export class CoursesByCatFrontComponent {
     }
 
     this.catServ.getCoursesOfCategorie(this.categoryId).subscribe(
-      (data) => (this.listFormations = data),
+      (data) => {this.listFormations = data; this.filteredFormations = data;},
       (erreur) => console.log('erreur'),
       () => console.log(this.listFormations)
     );
@@ -49,5 +51,11 @@ export class CoursesByCatFrontComponent {
     const hours = Math.floor(duration / 60); // Nombre d'heures
     const minutes = duration % 60; // Nombre de minutes restantes
     return `${hours}h ${minutes}min`;
+  }
+  filterTable(search: string) {
+    this.searchText = search.toLowerCase().trim();
+    this.filteredFormations = this.listFormations.filter((f) =>
+      (f.title + f.price + f.duration).toLowerCase().includes(this.searchText)
+    );
   }
 }

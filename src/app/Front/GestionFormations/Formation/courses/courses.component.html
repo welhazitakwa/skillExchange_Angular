@@ -14,6 +14,14 @@
     </div>
     <!-- Header End -->
 
+                  <input
+    #searchInput
+    type="text"
+    class="form-control me-2"
+    placeholder="Search Courses..."
+    (keyup)="filterTable(searchInput.value)"
+    style="width: 300px; margin-left: 70%;"
+  />
 
     <!-- Category Start -->
     <div class="container-fluid py-5">
@@ -23,7 +31,7 @@
                 <h1>Explore Top Subjects</h1>
             </div>
             <div class="row">
-                <div  *ngFor="let c of listCategories"  class="col-lg-3 col-md-6 mb-4">
+                <div  *ngFor="let c of filteredCategories"  class="col-lg-3 col-md-6 mb-4">
                     <div class="cat-item position-relative overflow-hidden rounded mb-2">
                         <img class="img-fluid"  [src]="'data:' + c.imageType + ';base64,' + c.image" alt="">
                         <a class="cat-overlay text-white text-decoration-none" (click)="getCoursesOfCateory(c.id)">
