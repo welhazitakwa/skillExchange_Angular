@@ -18,7 +18,7 @@
     #searchInput
     type="text"
     class="form-control me-2"
-    placeholder="Search Courses..."
+    placeholder="Search Categories..."
     (keyup)="filterTable(searchInput.value)"
     style="width: 300px; margin-left: 70%;"
   />
@@ -36,7 +36,7 @@
                         <img class="img-fluid"  [src]="'data:' + c.imageType + ';base64,' + c.image" alt="">
                         <a class="cat-overlay text-white text-decoration-none" (click)="getCoursesOfCateory(c.id)">
                             <h4 class="text-white font-weight-medium">{{c.name}}</h4>
-                            <span>100 Courses</span>
+                            <span> {{ c.courseCount }} Courses</span>
                         </a>
                     </div>
                 </div>

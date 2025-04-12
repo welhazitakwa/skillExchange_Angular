@@ -6,4 +6,5 @@ export class Category {
   status!: number;
   description!: string;
   date_ajout!: Date;
+  courseCount!: number;
 }
