@@ -54,33 +54,56 @@ export class EditCourseComponent {
     private dialogRef: MatDialogRef<EditCategoryComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
-  ngOnInit() {
-    console.log('cccccccccccccccc');
-    // if (this.data && this.data.id) {
-    this.userId = this.data.userId;
-    console.log('ID de user connecté:', this.userId);
-    //
-    this.updateForm.patchValue({
-      author: {
-        id: this.userId,
-      },
-    });
-    this.updateForm.patchValue({
-      ...this.formation,
-      category_id: this.formation?.category?.id,
-    });
-        this.id = this.data.id;
+  // ngOnInit() {
+  //   // if (this.data && this.data.id) {
+  //   this.userId = this.data.userId;
+  //   console.log('ID de user connecté:', this.userId);
+  //   // id de Formation
+  //   this.id = this.data.id;
 
-    console.log('**********ID de la formation à modifier:************', this.id);
-    // Appelle ici le service pour récupérer la catégorie par ID
-    // }
-    // ****************************---------------------------************************
-    this.formServ.getFormationById(this.id).subscribe((donne) => {
-      this.formation = donne;
-      this.updateForm.patchValue(this.formation);
+  //   console.log('**********ID de la formation à modifier:************', this.id);
+  //   // Appelle ici le service pour récupérer la catégorie par ID
+  //   // }
+  //   // ****************************---------------------------************************
+  //   this.formServ.getFormationById(this.id).subscribe((donne) => {
+  //     this.formation = donne;
+  //     this.updateForm.patchValue(this.formation);
+  //   });
+  //   this.getCategoriesList();
+  //     this.updateForm.patchValue({
+  //       author: {
+  //         id: this.userId,
+  //       },
+  //     });
+  //     this.updateForm.patchValue({
+  //       ...this.formation,
+  //       category_id: this.formation?.category?.id,
+  //     });
+  // }
+  ngOnInit() {
+    this.id = this.data.id;
+    this.userId = this.data.userId;
+
+    this.formServ.getFormationById(this.id).subscribe((formation) => {
+      this.formation = formation;
+
+      // On pré-remplit les autres champs sans toucher à category_id
+      this.updateForm.patchValue({
+        ...formation,
+        author: { id: this.userId },
+      });
+
+      // Maintenant on charge les catégories
+      this.catServ.getCategory().subscribe((categories) => {
+        this.categories = categories;
+
+        // Et là on peut patcher category_id quand on est sûr qu'il existe dans la liste
+        const categoryId = this.formation?.category?.id ?? null;
+        this.updateForm.get('category_id')?.setValue(categoryId);
+      });
     });
-    this.getCategoriesList();
   }
+
   getCategoriesList() {
     this.catServ.getCategory().subscribe(
       (data) => (this.categories = data),
@@ -106,18 +129,23 @@ export class EditCourseComponent {
 
   updateCourse() {
     console.log(this.updateForm.value);
+    // Utilise soit la valeur sélectionnée, soit celle déjà enregistrée
 
-    let formData = this.updateForm.value; ;
-      // S'assurer que la catégorie est envoyée correctement sous forme d'objet
-      formData.category = { id: Number(formData.category_id) };
+    let formData = this.updateForm.value;
+    const categoryId = formData.category_id || this.formation?.category?.id;
+    formData.category = { id: Number(categoryId) };
+    delete formData.category_id;
 
-      // Supprimer category_id car ce champ n'est pas nécessaire dans l'objet envoyé
-      delete formData.category_id;
+    // S'assurer que la catégorie est envoyée correctement sous forme d'objet
+    //   formData.category = { id: Number(formData.category_id) };
 
-      console.log('Données à envoyer :', formData);
-      // this.F = { ...F.value };
+    // Supprimer category_id car ce champ n'est pas nécessaire dans l'objet envoyé
+    delete formData.category_id;
 
-      console.log(formData);
+    console.log('Données à envoyer :', formData);
+    // this.F = { ...F.value };
+
+    console.log(formData);
     const updatedFormation: Formation = {
       ...this.updateForm.value,
       id: this.updateForm.value.id ?? 0, // Ensure id is a number

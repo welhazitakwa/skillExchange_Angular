@@ -7,6 +7,7 @@ import { AddCourseComponent } from '../add-course/add-course.component';
 import { MatDialog } from '@angular/material/dialog';
 import Swal from 'sweetalert2';
 import { EditCourseComponent } from '../edit-course/edit-course.component';
+import { DetailsFormationComponent } from '../details-formation/details-formation.component';
 
 @Component({
   selector: 'app-user-course-space',
@@ -38,7 +39,8 @@ export class UserCourseSpaceComponent {
   }
   getFormationsList() {
     this.formServ.getCoursesByUserId(this.userId).subscribe(
-      (data) => {this.listFormations = data;
+      (data) => {
+        this.listFormations = data;
         this.filteredFormations = data;
       },
       (erreur) => console.log('erreur'),
@@ -90,6 +92,20 @@ export class UserCourseSpaceComponent {
     const dialogRef = this.dialog.open(EditCourseComponent, {
       data: { id: formId, userId: this.userId },
       width: '700px',
+    });
+    dialogRef.afterClosed().subscribe({
+      next: (val) => {
+        if (val) {
+          this.getFormationsList();
+        }
+      },
+      error: console.log,
+    });
+  }
+  openDetailsCourse(formId: number) {
+    const dialogRef = this.dialog.open(DetailsFormationComponent, {
+      data: { id: formId },
+      //width: '1000px', 
     });
     dialogRef.afterClosed().subscribe({
       next: (val) => {
