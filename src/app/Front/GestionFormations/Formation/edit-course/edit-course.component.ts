@@ -36,6 +36,7 @@ export class EditCourseComponent {
     image: new FormControl(''),
     imageType: new FormControl(''),
     price: new FormControl<number | null>(null),
+    date_ajout: new FormControl(),
     duration: new FormControl<number | null>(null),
     state: new FormControl<number | null>(null),
     author: new FormGroup({

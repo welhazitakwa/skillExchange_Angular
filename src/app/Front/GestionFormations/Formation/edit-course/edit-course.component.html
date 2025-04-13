@@ -1,6 +1,7 @@
 <h1 mat-dialog-title>Edit Course</h1>
 <form style="margin-left: 40px; margin-right: 40px; margin-top: 10px; margin-bottom: 10px;" [formGroup]="updateForm" (ngSubmit)="updateCourse()">
 <input type="hidden" id="author_id" [value]="userId">
+<input type="hidden" id="date_ajout" [value]="formation?.date_ajout">
 
   <div class="form-row">
     <div class="form-group col-md-6">
