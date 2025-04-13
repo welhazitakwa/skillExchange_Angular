@@ -95,8 +95,8 @@ export class EditCourseComponent {
       });
 
       // Maintenant on charge les catégories
-      this.catServ.getCategory().subscribe((categories) => {
-        this.categories = categories;
+      this.catServ.getCategory().subscribe((data) => {
+        this.categories = data.filter((c) => c.status === 1);
 
         // Et là on peut patcher category_id quand on est sûr qu'il existe dans la liste
         const categoryId = this.formation?.category?.id ?? null;
@@ -105,13 +105,13 @@ export class EditCourseComponent {
     });
   }
 
-  getCategoriesList() {
-    this.catServ.getCategory().subscribe(
-      (data) => (this.categories = data),
-      (erreur) => console.log('erreur'),
-      () => console.log(this.categories)
-    );
-  }
+  // getCategoriesList() {
+  //   this.catServ.getCategory().subscribe(
+  //     (data) => (this.categories = data.filter((c) => c.status === 1)),
+  //     (erreur) => console.log('erreur'),
+  //     () => console.log(this.categories)
+  //   );
+  // }
 
   onFileChange(event: any) {
     const file = event.target.files[0];
