@@ -4,7 +4,7 @@
 <div class="container-fluid page-header" style="margin-bottom: 90px;">
     <div class="container">
         <div class="d-flex flex-column justify-content-center" style="min-height: 300px">
-            <h3 class="display-4 text-white text-uppercase">Post </h3>
+            <h3 class="display-4 text-white text-uppercase">Post</h3>
             <div class="d-inline-flex text-white">
                 <p class="m-0 text-uppercase"><a class="text-white" href="">Home</a></p>
                 <i class="fa fa-angle-double-right pt-1 px-3"></i>
@@ -30,7 +30,25 @@
                     <!-- Affichage du contenu du post -->
                     <p>{{ post?.content }}</p>
                 </div>
-
+<!-- Emoji Reactions Section -->
+<div class="mb-4">
+    <h5>React to this post:</h5>
+    <div class="d-flex gap-2 flex-wrap">
+     <!--- <button
+        *ngFor="let emoji of emojis"
+        (click)="reactToPost(emoji)"
+        class="btn btn-outline-primary"
+      >
+        {{ emoji }} {{  emojiCount(emoji)}}
+      </button>
+      -->
+      <button *ngFor="let emoji of emojis" (click)="reactToPost(emoji)"
+      class="btn btn-outline-primary">
+        {{ emoji }} 
+      </button>
+      
+    </div>
+</div>
                 <!-- Post Comments Section -->
                 <div class="mb-5">
                     <h2 class="text-uppercase mb-4 fw-bold" style="letter-spacing: 3px;">Comments</h2>
@@ -50,16 +68,16 @@
                                     <h5 class="mb-0 fw-bold">{{ usersMap[comment.email]?.name || 'Anonymous' }}</h5>
                                     <small class="text-muted">
                                         <i>Posted At: {{ comment.created_at | date: 'dd/MM/yyyy à HH:mm'}}</i>
-                                     
+                                        <i>Posted By: {{ comment.email }}</i>
                                     </small>
                                 </div>
- 
+
                                 <p class="mb-2">{{ comment.content }}</p>
 
                                 <!-- Delete Button if the comment was posted by the current user -->
                                 <button *ngIf="currentUser?.email === comment.email"
                                         class="btn btn-sm btn-danger"
-                                        (click)="deleteComment(comment.id_comment)">
+                                        (click)="deleteComment(comment.idComment)">
                                     Delete
                                 </button>
                             </div>
@@ -163,5 +181,7 @@
         </div>
     </div>
 </div>
+
+
 
 <app-footer-front></app-footer-front>

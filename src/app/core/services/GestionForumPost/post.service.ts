@@ -7,27 +7,34 @@ import { Posts } from '../../models/GestionForumPost/Posts';
   providedIn: 'root',
 })
 export class PostService {
-  private url = 'http://localhost:8084/skillExchange/posts';
+  private url = 'http://localhost:8084/skillExchange/posts';  // L'URL de votre API backend
 
   constructor(private http: HttpClient) {}
 
   // Récupérer tous les posts
-  getAllPosts(): Observable<Posts[]> {
-    return this.http.get<Posts[]>(`${this.url}/retrievePostss`);
+  getAllPosts(): Observable<any> {
+    return this.http.get<any>(`${this.url}/retrievePostss`);
   }
+  showPosts(page: number, size: number): Observable<any> {
+    return this.http.get<any>(`${this.url}/retrievePostss?page=${page}&size=${size}`);
+  }
+
 
   // Récupérer un post par son ID
   getPostByID(id: number): Observable<Posts> {
     return this.http.get<Posts>(`${this.url}/retrievePostsById/${id}`);
   }
 
-  // Ajouter un nouveau post
+  // Ajouter un nouveau post avec une image (via FormData)
   addPost(post: Posts): Observable<Posts> {
     return this.http.post<Posts>(`${this.url}/addPosts`, post);
   }
 
-  // Supprimer un post (optionnel)
+  // Supprimer un post
   deletePost(id: number): Observable<void> {
     return this.http.delete<void>(`${this.url}/deletePosts/${id}`);
   }
+
+
+  
 }

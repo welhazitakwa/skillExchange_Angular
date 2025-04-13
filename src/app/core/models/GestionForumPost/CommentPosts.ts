@@ -3,7 +3,7 @@ import { Posts } from "./Posts";
 export class CommentPosts {
 
 	
-id_comment!:number;
+    idComment!:number;
 content!:string;
 created_at!:Date;
 updated_at!:Date;
