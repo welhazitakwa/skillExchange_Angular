@@ -37,7 +37,7 @@ export class ShowPostsComponent implements OnInit {
     console.log('Utilisateur récupéré au ngOnInit :', this.currentUser);
 
   }
-
+  
   loadPosts() {
     this.postService.showPosts(this.page, this.pageSize).subscribe(response => {
       this.posts = response.content;  // Liste des posts
@@ -45,6 +45,52 @@ export class ShowPostsComponent implements OnInit {
     });
   }
   
+  currentImageIndexes: { [key: number]: number } = {}; 
+  // currentImageIndex(post: Posts): number {
+  //   return post.imagePost?.length > 0 ? 0 : -1;
+  // }
+
+  // Fonction pour naviguer à travers les images (précédente ou suivante)
+  // navigateImage(post: Posts, direction: 'prev' | 'next'): void {
+  //   if (post.imagePost?.length) {
+  //     const currentIndex = this.currentImageIndex(post);
+  //     let newIndex = direction === 'prev' ? currentIndex - 1 : currentIndex + 1;
+
+  //     // Limiter l'index entre 0 et la longueur des images - 1
+  //     if (newIndex < 0) {
+  //       newIndex = post.imagePost.length - 1;  // Aller à la dernière image
+  //     } else if (newIndex >= post.imagePost.length) {
+  //       newIndex = 0;  // Revenir à la première image
+  //     }
+
+  //     // Mettre à jour l'image principale avec le nouvel index
+  //     post.imagePost[0] = post.imagePost[newIndex];
+  //   }
+  // }
+  navigateImage(post: Posts, direction: 'prev' | 'next'): void {
+    if (post.imagePost?.length && post.idPost !== undefined) {
+      // Récupérer l'index actuel de l'image du post
+      let currentIndex = this.currentImageIndexes[post.idPost] || 0;
+
+      // Calculer le nouvel index
+      let newIndex = direction === 'prev' ? currentIndex - 1 : currentIndex + 1;
+
+      // Limiter l'index entre 0 et la longueur des images - 1
+      if (newIndex < 0) {
+        newIndex = post.imagePost.length - 1;  // Aller à la dernière image
+      } else if (newIndex >= post.imagePost.length) {
+        newIndex = 0;  // Revenir à la première image
+      }
+
+      // Mettre à jour l'index de l'image actuelle dans l'objet currentImageIndexes
+      this.currentImageIndexes[post.idPost] = newIndex;
+    }
+  }
+  // Fonction pour récupérer l'image actuelle d'un post
+  currentImageIndex(post: Posts): number {
+    // S'assurer que l'index existe avant de l'utiliser
+    return post.idPost !== undefined ? this.currentImageIndexes[post.idPost] || 0 : 0;
+  }
 
   onPageChange(event: PageEvent) {
     this.page = event.pageIndex;  // L'indice de la page sélectionnée
@@ -52,6 +98,14 @@ export class ShowPostsComponent implements OnInit {
     this.loadPosts();  // Recharge les posts en fonction de la nouvelle page et taille
   }
   
+  transformStyle(post: any): string {
+    return `translateX(-${post.currentSlide * 100}%)`;
+  }
+
+  moveSlide(post: any, direction: number): void {
+    const totalSlides = post.imagePosts.length;
+    post.currentSlide = (post.currentSlide + direction + totalSlides) % totalSlides;
+  }
 
   async addPost() {
     if (!this.currentUser) {
@@ -66,7 +120,7 @@ export class ShowPostsComponent implements OnInit {
           }))
         );
   
-        this.newPost.imagePosts = imageProducts.map(imageData => {
+        this.newPost.imagePost = imageProducts.map(imageData => {
           const imagePost = new ImagePosts();
           imagePost.image = imageData.image;
           return imagePost;
@@ -118,7 +172,13 @@ export class ShowPostsComponent implements OnInit {
       reader.readAsDataURL(file);
     });
   }
-
+  switchMainImage(post: Posts, index: number) {
+    if (post.imagePost && post.imagePost.length > index) {
+      // Échange la première image avec celle cliquée
+      [post.imagePost[0], post.imagePost[index]] = 
+      [post.imagePost[index], post.imagePost[0]];
+    }
+  }
   private async getBase64WithoutPrefix(file: File): Promise<string> {
     return new Promise((resolve) => {
       const reader = new FileReader();

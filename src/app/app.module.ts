@@ -85,6 +85,8 @@ import { DeleteParticipationEventsComponent } from './Back/GestionEvents/Partici
 import { ImageCropperComponent } from 'ngx-image-cropper';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { PostDetailsComponent } from './Front/GestionForumPost/Posts/post-details/post-details.component';
+
+
 //import { ImageCropperModule } from 'ngx-image-cropper';
 
 
@@ -165,10 +167,9 @@ import { PostDetailsComponent } from './Front/GestionForumPost/Posts/post-detail
     HttpClientModule,
     AngularToastifyModule,
     MatPaginatorModule,
-    
-    
-    
-//ImageCropperModule,
+    ImageCropperComponent,
+
+    //ImageCropperModule,
   ],
   providers: [ToastService],
   bootstrap: [AppComponent]

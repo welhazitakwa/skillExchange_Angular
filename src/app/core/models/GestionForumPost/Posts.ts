@@ -17,7 +17,7 @@ export class Posts {
     user!: User | null;           
   emojiPosts!: EmojiPosts[];   
   commentPosts!: CommentPosts[];
-  imagePosts!: ImagePosts[];
+  imagePost!: ImagePosts[];
   
   
 }

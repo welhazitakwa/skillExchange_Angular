@@ -26,29 +26,35 @@
                     <!-- Affichage du titre du post -->
                     <h1 class="mb-5">{{ post?.title }}</h1>
                     <!-- Affichage de l'image du post -->
-                    <img class="img-fluid rounded w-100 mb-4" src="assets/assetsFront/img/carousel-1.jpg" alt="Image">
+                    <img *ngIf="post?.ImageP" [src]="'data:image/jpeg;base64,' + post?.ImageP" class="img-fluid rounded w-100 mb-4" alt="Post image">
                     <!-- Affichage du contenu du post -->
                     <p>{{ post?.content }}</p>
                 </div>
 <!-- Emoji Reactions Section -->
 <div class="mb-4">
-    <h5>React to this post:</h5>
+    <h5 class="mb-2">Réagis à ce post :</h5>
     <div class="d-flex gap-2 flex-wrap">
-     <!--- <button
-        *ngFor="let emoji of emojis"
+      <button *ngFor="let emoji of emojis"
         (click)="reactToPost(emoji)"
-        class="btn btn-outline-primary"
-      >
-        {{ emoji }} {{  emojiCount(emoji)}}
+        class="btn d-flex align-items-center gap-2 p-2 rounded-pill shadow-sm"
+        [ngStyle]="{ 
+          'background-color': getEmojiColor(emoji),
+          'color': 'white'
+        }">
+        
+        <!-- Emoji unicode -->
+        <span class="fs-5">{{ emoji }}</span>
+  
+        <!-- Compteur de réactions -->
+        <span class="badge bg-light text-dark">
+          {{ emojiCounts[EmojiTypeMapping[emoji]] || 0 }}
+        </span>
       </button>
-      -->
-      <button *ngFor="let emoji of emojis" (click)="reactToPost(emoji)"
-      class="btn btn-outline-primary">
-        {{ emoji }} 
-      </button>
-      
     </div>
-</div>
+  </div>
+  
+  
+  
                 <!-- Post Comments Section -->
                 <div class="mb-5">
                     <h2 class="text-uppercase mb-4 fw-bold" style="letter-spacing: 3px;">Comments</h2>
@@ -100,8 +106,11 @@
             <div class="col-lg-4 mt-5 mt-lg-0">
                 <!-- Author Bio -->
                 <div class="d-flex flex-column text-center bg-dark rounded mb-5 py-5 px-4">
-                    <img src="assets/assetsFront/img/user.jpg" class="img-fluid rounded-circle mx-auto mb-3" style="width: 100px;">
-                    <h3 class="text-primary mb-3">{{ post?.user?.name }}</h3>
+                    <img [src]="'data:image/jpeg;base64,' + post?.user?.image" 
+                    class="img-fluid rounded-circle mx-auto mb-3" 
+                    style="width: 100px;" 
+                    alt="User Image">
+                                   <h3 class="text-primary mb-3">{{ post?.user?.name }}</h3>
                     <h3 class="text-uppercase mb-4" style="letter-spacing: 5px;">Tag Cloud</h3>
                     <p class="text-white m-0">{{ post?.user?.bio }}</p>
                 </div>

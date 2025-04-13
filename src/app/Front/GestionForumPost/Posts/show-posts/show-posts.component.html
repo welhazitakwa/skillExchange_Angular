@@ -25,20 +25,60 @@
           <div class="row pb-3">
             <div class="col-lg-6 mb-4" *ngFor="let post of posts">
               <div class="blog-item position-relative overflow-hidden rounded mb-2">
-                <img class="img-fluid" src="assets/assetsFront/img/blog-1.jpg" alt="">
-                <a class="blog-overlay text-decoration-none" [routerLink]="['/posts', post.idPost]">
+                
+                <!-- Conteneur pour l'image principale -->
+                <div class="carousel-container">
+                  <!-- Flèche gauche -->
+                  <button class="carousel-control-prev" (click)="navigateImage(post, 'prev')" aria-label="Previous">
+                    <span class="carousel-control-prev-icon"></span>
+                  </button>
+                  
+                  <!-- Image principale avec routerLink pour redirection -->
+                  <a [routerLink]="['/posts', post.idPost]">
+                    <img *ngIf="post.imagePost?.length > 0; else defaultImage"
+                         [src]="'data:image/jpeg;base64,' + post.imagePost[currentImageIndex(post)]?.image"
+                         class="img-fluid main-image"
+                         alt="Image du post {{ post.title }}">
+                  </a>
+          
+                  <!-- Template alternatif si aucune image n'est disponible -->
+                  <ng-template #defaultImage>
+                    <img class="img-fluid main-image" src="assets/assetsFront/img/blog-1.jpg" alt="Image par défaut">
+                  </ng-template>
+          
+                  <!-- Flèche droite -->
+                  <button class="carousel-control-next" (click)="navigateImage(post, 'next')" aria-label="Next">
+                    <span class="carousel-control-next-icon"></span>
+                  </button>
+                </div>
+          
+                <!-- Titre et date du post -->
+                <a [routerLink]="['/posts', post.idPost]" class="blog-overlay text-decoration-none">
                   <h5 class="text-white mb-3">{{ post.title }}</h5>
                   <p class="text-orange m-0">{{ post.createdAt | date:'MMM dd, yyyy' }}</p>
                 </a>
+          
+                <!-- Miniatures des autres images -->
+                <div *ngIf="post.imagePost?.length > 1" class="thumbnail-container">
+                  <div *ngFor="let image of post.imagePost.slice(1); let i = index">
+                    <img [src]="'data:image/jpeg;base64,' + image.image"
+                         class="img-thumbnail thumbnail-image"
+                         (click)="switchMainImage(post, i+1)"
+                         alt="Thumbnail {{i+1}}">
+                  </div>
+                </div>
               </div>
+          
+              <!-- Bouton de suppression si l'utilisateur est l'auteur du post -->
               <div *ngIf="currentUser?.id === post.user?.id">
                 <button class="btn btn-sm btn-danger mt-2" (click)="deletePost(post.idPost)">Supprimer</button>
               </div>
-              
-              
             </div>
           </div>
-
+          
+          
+          
+          
           <mat-paginator 
             [length]="totalItems" 
             [pageSize]="pageSize" 
