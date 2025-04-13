@@ -7,13 +7,13 @@ import { ParticipationEvents } from 'src/app/core/models/GestionEvents/participa
 
 @Component({
   selector: 'app-showevents',
-  templateUrl: 'show-events.component.html', 
+  templateUrl: './show-events.component.html',
   styleUrls: ['./show-events.component.css']
 })
 export class ShowEventsComponent implements OnInit {
-
   events: Events[] = [];
-  Status = Status; // Ajout pour pouvoir utiliser Status dans le template HTML
+  Status = Status;
+  carouselIndices: { [eventId: number]: number } = {};
 
   constructor(
     private eventService: EventsService,
@@ -28,6 +28,9 @@ export class ShowEventsComponent implements OnInit {
     this.eventService.getEvents().subscribe(
       (events) => {
         this.events = events;
+        this.events.forEach(event => {
+          this.carouselIndices[event.idEvent] = 0;
+        });
       },
       (error) => {
         console.error('Erreur lors de la récupération des événements', error);
@@ -40,19 +43,30 @@ export class ShowEventsComponent implements OnInit {
       event: event,
       status: status
     };
-    
 
-   
-  console.log('Participating in event:', event, 'with status:', status);  // Vérification dans la console
+    console.log('Participating in event:', event, 'with status:', status);
 
-  this.participationService.addParticipation(participation).subscribe(
-    (response) => {
-      console.log('Participation ajoutée avec succès:', response);  // Vérification de la réponse
-      // Peut-être ajouter ici du code pour mettre à jour l'interface utilisateur après une participation réussie
-    },
-    (error) => {
-      console.error('Erreur lors de l’ajout de la participation', error);  // Vérification des erreurs
+    this.participationService.addParticipation(participation).subscribe(
+      (response) => {
+        console.log('Participation ajoutée avec succès:', response);
+      },
+      (error) => {
+        console.error('Erreur lors de l’ajout de la participation', error);
+      }
+    );
+  }
+
+  prevImage(eventId: number): void {
+    const event = this.events.find(e => e.idEvent === eventId);
+    if (event && event.images && event.images.length > 0) {
+      this.carouselIndices[eventId] = Math.max(0, this.carouselIndices[eventId] - 1);
     }
-  );
-}
+  }
+
+  nextImage(eventId: number): void {
+    const event = this.events.find(e => e.idEvent === eventId);
+    if (event && event.images && event.images.length > 0) {
+      this.carouselIndices[eventId] = Math.min(event.images.length - 1, this.carouselIndices[eventId] + 1);
+    }
+  }
 }

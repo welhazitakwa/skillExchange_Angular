@@ -2,62 +2,93 @@
 
 <!-- Header Start -->
 <div class="container-fluid page-header" style="margin-bottom: 90px;">
-    <div class="container">
-        <div class="d-flex flex-column justify-content-center" style="min-height: 300px">
-            <h3 class="display-4 text-white text-uppercase">Events</h3>
-            <div class="d-inline-flex text-white">
-                <p class="m-0 text-uppercase"><a class="text-white" href="">Home</a></p>
-                <i class="fa fa-angle-double-right pt-1 px-3"></i>
-                <p class="m-0 text-uppercase">Events</p>
-            </div>
-        </div>
+  <div class="container">
+    <div class="d-flex flex-column justify-content-center" style="min-height: 300px">
+      <h3 class="display-4 text-white text-uppercase">Events</h3>
+      <div class="d-inline-flex text-white">
+        <p class="m-0 text-uppercase"><a class="text-white" href="">Home</a></p>
+        <i class="fa fa-angle-double-right pt-1 px-3"></i>
+        <p class="m-0 text-uppercase">Events</p>
+      </div>
     </div>
+  </div>
 </div>
 <!-- Header End -->
 
 <!-- Events Start -->
 <div class="container-fluid py-5">
-    <div class="container py-5">
-        <div class="text-center mb-5">
-            <h5 class="text-primary text-uppercase mb-3" style="letter-spacing: 5px;">Upcoming Events</h5>
-            <h1>Our Events</h1>
-        </div>
-        <div class="row">
-            <div class="col-lg-4 col-md-6 mb-4" *ngFor="let event of events">
-                <div class="rounded overflow-hidden mb-2">
-                    <img class="img-fluid" src="assets/assetsFront/img/course-1.jpg" alt="Event Image">
-                    <div class="bg-secondary p-4">
-                        <div class="d-flex justify-content-between mb-3">
-                            <small class="m-0"
-                                [ngClass]="{
-                                    'text-success': event.status === 'GOING',
-                                    'text-info': event.status === 'INTERESTED'
-                                }">
-                                <i class="fa fa-calendar text-primary mr-2"></i>
-                                {{ event.status === 'GOING' ? 'Going' : (event.status === 'INTERESTED' ? 'Interested' : 'Not Attending') }}
-                            </small>
-                        </div>
-
-                        <a class="h5" href="">{{ event.eventName }}</a>
-                        <p class="m-0">{{ event.place }}</p>
-                        <p class="m-0">{{ event.startDate | date: 'dd/MM/yyyy' }} - {{ event.endDate | date: 'dd/MM/yyyy' }}</p>
-
-                        <div class="border-top mt-4 pt-4">
-                            <div class="d-flex justify-content-between">
-                                <button (click)="participate(event, Status.GOING)">
-                                    <i class="fa fa-check"></i> Going
-                                  </button>
-                                  
-                                  <button (click)="participate(event, Status.INTERESTED)">
-                                    <i class="fa fa-star"></i> Interested
-                                  </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <div class="container py-5">
+    <div class="text-center mb-5">
+      <h5 class="text-primary text-uppercase mb-3" style="letter-spacing: 5px;">Upcoming Events</h5>
+      <h1>Our Events</h1>
     </div>
+    <div class="row">
+      <div class="col-lg-4 col-md-6 mb-4" *ngFor="let event of events">
+        <div class="card rounded overflow-hidden mb-2 shadow-sm">
+          <!-- Image Carousel -->
+          <div class="carousel-container position-relative">
+            <div class="carousel">
+              <ng-container *ngIf="event.images && event.images.length > 0; else noImage">
+                <img class="img-fluid" 
+                     [src]="event.images[carouselIndices[event.idEvent]].images.startsWith('data:image') ? 
+                             event.images[carouselIndices[event.idEvent]].images : 
+                             'data:image/jpeg;base64,' + event.images[carouselIndices[event.idEvent]].images" 
+                     alt="Event Image">
+              </ng-container>
+              <ng-template #noImage>
+                <img class="img-fluid" src="assets/assetsFront/img/course-1.jpg" alt="Default Event Image">
+              </ng-template>
+            </div>
+            <!-- Carousel Arrows (visible on hover) -->
+            <button class="carousel-arrow left-arrow" 
+                    *ngIf="event.images && event.images.length > 1 && carouselIndices[event.idEvent] > 0" 
+                    (click)="prevImage(event.idEvent)"
+                    aria-label="Previous Image">
+              <i class="fa fa-chevron-left"></i>
+            </button>
+            <button class="carousel-arrow right-arrow" 
+                    *ngIf="event.images && event.images.length > 1 && carouselIndices[event.idEvent] < event.images.length - 1" 
+                    (click)="nextImage(event.idEvent)"
+                    aria-label="Next Image">
+              <i class="fa fa-chevron-right"></i>
+            </button>
+          </div>
+          <!-- Event Details -->
+          <div class="bg-secondary p-4">
+            <div class="d-flex justify-content-between mb-3">
+              <small class="m-0"
+                     [ngClass]="{
+                       'text-success': event.status === Status.GOING,
+                       'text-info': event.status === Status.INTERESTED,
+                       'text-muted': !event.status
+                     }">
+                <i class="fa fa-calendar text-primary mr-2"></i>
+                {{ event.status === Status.GOING ? 'Going' : 
+                   event.status === Status.INTERESTED ? 'Interested' : 
+                   'Not Attending' }}
+              </small>
+            </div>
+            <a class="h5" href="">{{ event.eventName }}</a>
+            <p class="m-0">{{ event.place }}</p>
+            <p class="m-0">{{ event.startDate | date: 'dd/MM/yyyy' }} - {{ event.endDate | date: 'dd/MM/yyyy' }}</p>
+            <!-- Action Buttons -->
+            <div class="border-top mt-4 pt-4">
+              <div class="d-flex justify-content-between">
+                <button class="btn btn-sm btn-primary" 
+                        (click)="participate(event, Status.GOING)">
+                  <i class="fa fa-check mr-2"></i> Going
+                </button>
+                <button class="btn btn-sm btn-info" 
+                        (click)="participate(event, Status.INTERESTED)">
+                  <i class="fa fa-star mr-2"></i> Interested
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 <!-- Events End -->
 
