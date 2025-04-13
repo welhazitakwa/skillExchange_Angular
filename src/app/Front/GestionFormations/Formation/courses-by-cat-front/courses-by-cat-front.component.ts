@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { Formation } from 'src/app/core/models/GestionFormation/formation';
 import { CategoryService } from 'src/app/core/services/GestionFormation/category.service';
 import { FormationService } from 'src/app/core/services/GestionFormation/formation.service';
+import { DetailsFormationComponent } from '../details-formation/details-formation.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-courses-by-cat-front',
@@ -15,7 +17,9 @@ export class CoursesByCatFrontComponent {
   constructor(
     private catServ: CategoryService,
     private formServ: FormationService,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog
+    
   ) {}
   categoryId!: number;
   listFormations: Formation[] = [];
@@ -58,4 +62,19 @@ export class CoursesByCatFrontComponent {
       (f.title + f.price + f.duration).toLowerCase().includes(this.searchText)
     );
   }
+
+   openDetailsCourse(formId: number) {
+      const dialogRef = this.dialog.open(DetailsFormationComponent, {
+        data: { id: formId },
+        //width: '1000px', 
+      });
+      dialogRef.afterClosed().subscribe({
+        next: (val) => {
+          if (val) {
+            this.getCoursesOfCategory();
+          }
+        },
+        error: console.log,
+      });
+    }
 }
