@@ -1,61 +1,74 @@
+<!-- add-event-modal.component.html -->
 <div class="container-fluid">
-    <h2 class="mb-3">Add New Event</h2>
-  
-    <form [formGroup]="eventForm" (ngSubmit)="submit()">
-      <div class="mb-3">
-        <label class="form-label">Event Name</label>
-        <input type="text" class="form-control" formControlName="eventName" />
-        <div *ngIf="eventForm.get('eventName')?.invalid && eventForm.get('eventName')?.touched" class="text-danger">
-          Event name is required (min 3 characters).
+  <h2 class="mb-3">Add New Event</h2>
+
+  <form [formGroup]="eventForm" (ngSubmit)="submit()">
+    <div class="mb-3">
+      <label class="form-label">Event Name</label>
+      <input type="text" class="form-control" formControlName="eventName" />
+      <div *ngIf="eventForm.get('eventName')?.invalid && eventForm.get('eventName')?.touched" class="text-danger">
+        Event name is required (min 3 characters).
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Description</label>
+      <textarea class="form-control" rows="3" formControlName="description"></textarea>
+      <div *ngIf="eventForm.get('description')?.invalid && eventForm.get('description')?.touched" class="text-danger">
+        Description is required (min 10 characters).
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Start Date</label>
+      <input type="date" class="form-control" formControlName="startDate" />
+      <div *ngIf="eventForm.get('startDate')?.invalid && eventForm.get('startDate')?.touched" class="text-danger">
+        Start date is required.
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">End Date</label>
+      <input type="date" class="form-control" formControlName="endDate" />
+      <div *ngIf="eventForm.get('endDate')?.invalid && eventForm.get('endDate')?.touched" class="text-danger">
+        End date is required.
+      </div>
+      <div *ngIf="eventForm.errors?.['dateRange'] && eventForm.get('endDate')?.touched" class="text-danger">
+        End date must be after start date.
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Place</label>
+      <input type="text" class="form-control" formControlName="place" />
+      <div *ngIf="eventForm.get('place')?.invalid && eventForm.get('place')?.touched" class="text-danger">
+        Place is required (min 3 characters).
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Max Participants</label>
+      <input type="number" class="form-control" formControlName="nbr_max" />
+      <div *ngIf="eventForm.get('nbr_max')?.invalid && eventForm.get('nbr_max')?.touched" class="text-danger">
+        Please enter a valid number (minimum 1).
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Event Images</label>
+      <input type="file" class="form-control" multiple accept="image/*" (change)="onFileChange($event)" />
+      <div *ngIf="imageError" class="text-danger">{{ imageError }}</div>
+      <div *ngIf="imagePreviews.length" class="mt-2">
+        <div *ngFor="let preview of imagePreviews" class="d-inline-block me-2">
+          <img [src]="preview" alt="Preview" style="max-width: 100px; max-height: 100px;" />
+          <button type="button" class="btn btn-sm btn-danger" (click)="removeImage(preview)">Remove</button>
         </div>
       </div>
-  
-      <div class="mb-3">
-        <label class="form-label">Description</label>
-        <textarea class="form-control" rows="3" formControlName="description"></textarea>
-        <div *ngIf="eventForm.get('description')?.invalid && eventForm.get('description')?.touched" class="text-danger">
-          Description is required (min 10 characters).
-        </div>
-      </div>
-  
-      <div class="mb-3">
-        <label class="form-label">Start Date</label>
-        <input type="date" class="form-control" formControlName="startDate" />
-        <div *ngIf="eventForm.get('startDate')?.invalid && eventForm.get('startDate')?.touched" class="text-danger">
-          Start date is required.
-        </div>
-      </div>
-  
-      <div class="mb-3">
-        <label class="form-label">End Date</label>
-        <input type="date" class="form-control" formControlName="endDate" />
-        <div *ngIf="eventForm.get('endDate')?.invalid && eventForm.get('endDate')?.touched" class="text-danger">
-          End date is required.
-        </div>
-        <div *ngIf="eventForm.errors?.['dateRange'] && eventForm.get('endDate')?.touched" class="text-danger">
-          End date must be after start date.
-        </div>
-      </div>
-  
-      <div class="mb-3">
-        <label class="form-label">Place</label>
-        <input type="text" class="form-control" formControlName="place" />
-        <div *ngIf="eventForm.get('place')?.invalid && eventForm.get('place')?.touched" class="text-danger">
-          Place is required (min 3 characters).
-        </div>
-      </div>
-  
-      <div class="mb-3">
-        <label class="form-label">Max Participants</label>
-        <input type="number" class="form-control" formControlName="nbr_max" />
-        <div *ngIf="eventForm.get('nbr_max')?.invalid && eventForm.get('nbr_max')?.touched" class="text-danger">
-          Please enter a valid number (minimum 1).
-        </div>
-      </div>
-  
-      <div class="d-flex justify-content-end gap-2">
-        <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
-        <button type="submit" class="btn btn-primary">Add Event</button>
-      </div>
-    </form>
-  </div>
+    </div>
+
+    <div class="d-flex justify-content-end gap-2">
+      <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
+      <button type="submit" class="btn btn-primary">Add Event</button>
+    </div>
+  </form>
+</div>

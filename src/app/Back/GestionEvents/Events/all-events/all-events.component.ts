@@ -41,21 +41,47 @@ export class AllEventsComponent implements OnInit {
 
     if (this.searchText) {
       filteredEvents = filteredEvents.filter(event =>
-        event.eventName.toLowerCase().includes(this.searchText.toLowerCase()) ||
-        event.description.toLowerCase().includes(this.searchText.toLowerCase())
+        (event.eventName?.toLowerCase() || '').includes(this.searchText.toLowerCase()) ||
+        (event.description?.toLowerCase() || '').includes(this.searchText.toLowerCase())
       );
     }
 
-    
     if (this.sortColumn) {
       filteredEvents.sort((a, b) => {
         const valA = a[this.sortColumn];
         const valB = b[this.sortColumn];
 
-        if (this.sortDirection === 'asc') {
-          return valA < valB ? -1 : valA > valB ? 1 : 0;
+        // Handle undefined or null values
+        if (valA == null && valB == null) return 0;
+        if (valA == null) return this.sortDirection === 'asc' ? -1 : 1;
+        if (valB == null) return this.sortDirection === 'asc' ? 1 : -1;
+
+        // Handle different types
+        if (this.sortColumn === 'startDate' || this.sortColumn === 'endDate') {
+          const dateA = new Date(valA as string | Date);
+          const dateB = new Date(valB as string | Date);
+          if (this.sortDirection === 'asc') {
+            return dateA.getTime() - dateB.getTime();
+          } else {
+            return dateB.getTime() - dateA.getTime();
+          }
+        } else if (this.sortColumn === 'nbr_max') {
+          const numA = Number(valA);
+          const numB = Number(valB);
+          if (this.sortDirection === 'asc') {
+            return numA - numB;
+          } else {
+            return numB - numA;
+          }
         } else {
-          return valA > valB ? -1 : valA < valB ? 1 : 0;
+          // Handle strings (eventName, description, place)
+          const strA = String(valA).toLowerCase();
+          const strB = String(valB).toLowerCase();
+          if (this.sortDirection === 'asc') {
+            return strA < strB ? -1 : strA > strB ? 1 : 0;
+          } else {
+            return strB < strA ? -1 : strB > strA ? 1 : 0;
+          }
         }
       });
     }
@@ -90,9 +116,9 @@ export class AllEventsComponent implements OnInit {
     this.eventsService.addEvent(eventData).subscribe({
       next: (newEvent) => {
         console.log("Événement ajouté :", newEvent);
-        this.events.push(newEvent);        // Ajoute l'événement à la liste
-        this.applyFilters();               // Réapplique les filtres si nécessaire
-        this.closeAddEventModal();         // Ferme la modale
+        this.events.push(newEvent); // Ajoute l'événement à la liste
+        this.applyFilters(); // Réapplique les filtres si nécessaire
+        this.closeAddEventModal(); // Ferme la modale
       },
       error: (err) => {
         console.error("Erreur lors de l'ajout de l'événement :", err);
@@ -110,8 +136,6 @@ export class AllEventsComponent implements OnInit {
     this.eventToDelete = event;
   }
 
-  
-
   // Fonction appelée lors de la mise à jour d'un événement
   handleEventUpdate(updatedEvent: Events): void {
     this.loadEvents(); // Recharger la liste des événements après la mise à jour
@@ -120,8 +144,17 @@ export class AllEventsComponent implements OnInit {
 
   // Fonction appelée lors de la suppression d'un événement
   handleEventDelete(): void {
-    this.loadEvents(); // Recharger la liste après la suppression
-    this.eventToDelete = null; // Fermer le modal
+    if (this.eventToDelete && this.eventToDelete.idEvent) {
+      this.eventsService.deleteEvent(this.eventToDelete.idEvent).subscribe({
+        next: () => {
+          this.loadEvents(); // Recharger la liste après la suppression
+          this.eventToDelete = null; // Fermer le modal
+        },
+        error: (err) => {
+          console.error('Erreur lors de la suppression de l\'événement', err);
+        }
+      });
+    }
   }
 
   // Ferme le modal d'édition
@@ -134,5 +167,3 @@ export class AllEventsComponent implements OnInit {
     this.eventToDelete = null;
   }
 }
-
-

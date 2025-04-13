@@ -19,5 +19,5 @@ export class Events {
     participationEvents!: ParticipationEvents[];
     rateEvents!: RateEvent[];
     eventComments!: EventComment[];
-    images!: EventImage[];
+    images?: { idImage?: number; images: string }[];
 }

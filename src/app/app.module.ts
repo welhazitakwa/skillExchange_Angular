@@ -69,6 +69,9 @@ import { DeleteParticipationEventsComponent } from './Back/GestionEvents/Partici
 import { ShowEventsComponent } from './Front/GestionEvents/Events/show-events/show-events.component';
 import { AddEventModalComponent } from './Back/GestionEvents/Events/add-event-modal/add-event-modal.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { EventImagesComponent } from './Back/GestionEvents/event-images/event-images.component';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -131,6 +134,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     DeleteParticipationEventsComponent,
     ShowEventsComponent,
     AddEventModalComponent,
+    EventImagesComponent,
 
     
 
@@ -140,6 +144,8 @@ import { MatDialogModule } from '@angular/material/dialog';
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
+    RouterModule,
+    CommonModule,
     HttpClientModule,
     ImageCropperComponent,
     AngularToastifyModule,

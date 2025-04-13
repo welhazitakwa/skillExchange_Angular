@@ -116,7 +116,14 @@
                       <td>{{ event.place }}</td>
                       <td>{{ event.nbr_max }}</td>
                       <td>{{ event.description }}</td>
-                     
+                      <td>
+                        <div *ngIf="event.images && event.images.length > 0" class="d-flex flex-wrap gap-2">
+                          <img *ngFor="let img of event.images" [src]="img.images.startsWith('data:image') ? img.images : 'data:image/jpeg;base64,' + img.images"
+                               alt="Event Image" style="max-width: 50px; max-height: 50px;" />
+                        </div>
+                        <span *ngIf="!event.images || event.images.length === 0">No images</span>
+                      </td>
+                      
                       <td>
                         <button class="btn btn-sm btn-warning me-2" (click)="openEditEventModal(event)">
                           <i class="fas fa-edit"></i>

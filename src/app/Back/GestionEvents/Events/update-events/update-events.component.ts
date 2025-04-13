@@ -14,6 +14,10 @@ export class UpdateEventsComponent implements OnInit {
   @Output() onUpdate = new EventEmitter<Events>();
 
   eventForm: FormGroup;
+  imagePreviews: string[] = [];
+  imageBase64s: string[] = [];
+  existingImages: any[] = [];
+  imageError: string | null = null;
 
   constructor(private fb: FormBuilder, private eventsService: EventsService) {
     this.eventForm = this.fb.group({
@@ -26,7 +30,6 @@ export class UpdateEventsComponent implements OnInit {
     }, { validator: this.dateRangeValidator });
   }
 
-  // Validateur pour vérifier que endDate est après startDate
   dateRangeValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
     const startDate = control.get('startDate')?.value;
     const endDate = control.get('endDate')?.value;
@@ -34,7 +37,6 @@ export class UpdateEventsComponent implements OnInit {
     if (startDate && endDate) {
       const start = new Date(startDate);
       const end = new Date(endDate);
-      
       return end >= start ? null : { dateRange: true };
     }
     return null;
@@ -47,10 +49,16 @@ export class UpdateEventsComponent implements OnInit {
         startDate: this.formatDate(this.eventData.startDate),
         endDate: this.formatDate(this.eventData.endDate)
       });
+      // Load existing images (assuming images are Base64 strings with data URL prefix)
+      if (this.eventData.images) {
+        this.existingImages = Array.from(this.eventData.images).map(img => ({
+          ...img,
+          images: img.images.startsWith('data:image') ? img.images : `data:image/jpeg;base64,${img.images}`
+        }));
+      }
     }
   }
 
-  // Helper pour formater la date au format YYYY-MM-DD pour les inputs date
   private formatDate(date: any): string {
     const d = new Date(date);
     const year = d.getFullYear();
@@ -59,9 +67,60 @@ export class UpdateEventsComponent implements OnInit {
     return `${year}-${month}-${day}`;
   }
 
+  onFileChange(event: any): void {
+    const files = event.target.files;
+    this.imageError = null;
+    this.imagePreviews = [];
+    this.imageBase64s = [];
+
+    if (files.length > 0) {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (!file.type.startsWith('image/')) {
+          this.imageError = 'Only image files are allowed.';
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          const base64String = e.target.result;
+          this.imagePreviews.push(base64String);
+          const base64Data = base64String.split(',')[1];
+          this.imageBase64s.push(base64Data);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  }
+
+  removeImage(preview: string): void {
+    const index = this.imagePreviews.indexOf(preview);
+    if (index > -1) {
+      this.imagePreviews.splice(index, 1);
+      this.imageBase64s.splice(index, 1);
+    }
+  }
+
+  removeExistingImage(image: any): void {
+    const index = this.existingImages.indexOf(image);
+    if (index > -1) {
+      this.existingImages.splice(index, 1);
+    }
+  }
+
   submit(): void {
     if (this.eventForm.valid) {
-      const updatedEvent = { ...this.eventData, ...this.eventForm.value };
+      const updatedImages = [
+        ...this.existingImages.map(img => ({ idImage: img.idImage, images: img.images.startsWith('data:image') ? img.images.split(',')[1] : img.images })),
+        ...this.imageBase64s.map(base64 => ({ images: base64 }))
+      ];
+
+      const updatedEvent = {
+        ...this.eventData,
+        ...this.eventForm.value,
+        images: updatedImages
+      };
+
       this.eventsService.updateEvent(updatedEvent).subscribe(
         (response) => {
           this.onUpdate.emit(updatedEvent);
