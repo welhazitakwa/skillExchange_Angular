@@ -129,7 +129,8 @@
                        {{ f.date_ajout | date }}
                       </td>
  <td  style="text-align: center;"  >
-                                         <button type="button" class="btn btn-sm btn-square btn-neutral text-danger-hover"> 
+                                         <button mat-raised-button type="button" class="btn btn-sm btn-square btn-neutral text-danger-hover"
+                                          (click)="openDetailsCourse(f.id)"> 
                                             <i class="text-info fa fa-eye"></i> 
                                         </button>
                                  <!-- <a   class="btn btn-sm btn-square btn-neutral text-danger-hover"  [routerLink]="['/updateCategory',f.id]">
