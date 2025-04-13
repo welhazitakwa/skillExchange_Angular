@@ -16,8 +16,6 @@ export class CoursesByCatFrontComponent {
   filteredFormations: Formation[] = [];
   constructor(
     private catServ: CategoryService,
-    private formServ: FormationService,
-    private router: Router,
     private dialog: MatDialog
     
   ) {}
@@ -32,16 +30,20 @@ export class CoursesByCatFrontComponent {
       console.log('ID dans TestComponent:', this.categoryId); // Vérification dans la console
     }
 
-    this.catServ.getCoursesOfCategorie(this.categoryId).subscribe(
-      (data) => {this.listFormations = data; this.filteredFormations = data;},
-      (erreur) => console.log('erreur'),
-      () => console.log(this.listFormations)
-    );
+    this.getCoursesOfCategory();
+    // this.catServ.getCoursesOfCategorie(this.categoryId).subscribe(
+    //   (data) => {this.listFormations = data; this.filteredFormations = data;},
+    //   (erreur) => console.log('erreur'),
+    //   () => console.log(this.listFormations)
+    // );
   }
 
   getCoursesOfCategory() {
     this.catServ.getCoursesOfCategorie(this.categoryId).subscribe(
-      (data) => (this.listFormations = data),
+      (data) =>  {
+        this.listFormations = data.filter((f: Formation) => f.state === 1);
+        this.filteredFormations = this.listFormations;
+      },
       (erreur) => console.log('erreur'),
       () => console.log(this.listFormations)
     );

@@ -1,5 +1,5 @@
-<h1 mat-dialog-title>Add Course</h1>
-<form style="margin: 40px;" [formGroup]="updateForm" (ngSubmit)="updateCourse()">
+<h1 mat-dialog-title>Edit Course</h1>
+<form style="margin-left: 40px; margin-right: 40px; margin-top: 10px; margin-bottom: 10px;" [formGroup]="updateForm" (ngSubmit)="updateCourse()">
 <input type="hidden" id="author_id" [value]="userId">
 
   <div class="form-row">
@@ -30,7 +30,7 @@
   <input type="file" (change)="onFileChange($event)" class="custom-file-input" id="customFile" >
   <label class="custom-file-label" for="customFile" >Choose your image</label>
 </div>
-<br><br>
+<br>
 <div>
     <label for="category">Category</label>
     <select id="category" formControlName="category_id" class="form-select">
@@ -39,7 +39,7 @@
       </option>
     </select>
   </div>
-<br><br>
+<br>
  <div class="row">
     <div class="col">
       <input type="number" formControlName="price" class="form-control" placeholder="price">
@@ -59,5 +59,5 @@
     <textarea class="form-control" id="description" rows="5" formControlName="requiredSkills" ></textarea>
   </div>
 
-  <button type="submit" class="btn btn-primary">Submit</button>
+  <button type="submit" class="btn btn-primary" style="margin-left: 87%;">Submit</button>
 </form>

@@ -91,7 +91,7 @@ export class UserCourseSpaceComponent {
   openEditCourseForm(formId: number) {
     const dialogRef = this.dialog.open(EditCourseComponent, {
       data: { id: formId, userId: this.userId },
-      width: '700px',
+      width: '850px',
     });
     dialogRef.afterClosed().subscribe({
       next: (val) => {

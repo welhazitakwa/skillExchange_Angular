@@ -19,8 +19,8 @@ export class CoursesComponent {
   getCategoriesList() {
     this.catServ.getCategory().subscribe(
       (data) => {
-        this.listCategories = data;
-        this.filteredCategories = data;
+        this.listCategories = data.filter((c) => c.status === 1);
+        this.filteredCategories = this.listCategories;
       },
       (erreur) => console.log('erreur'),
       () => console.log(this.listCategories)
