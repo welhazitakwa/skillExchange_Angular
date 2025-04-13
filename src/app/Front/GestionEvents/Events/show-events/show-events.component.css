@@ -22,7 +22,7 @@
   
   .carousel img {
     width: 100%;
-    height: 250px; /* Taller for a more dramatic effect */
+    height: 250px;
     object-fit: cover;
     border-top-left-radius: 0.5rem;
     border-top-right-radius: 0.5rem;
@@ -46,12 +46,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    opacity: 0; /* Hidden by default */
+    opacity: 0;
     transition: opacity 0.3s ease, background-color 0.3s ease, transform 0.2s ease;
   }
   
   .carousel-container:hover .carousel-arrow {
-    opacity: 1; /* Show on hover */
+    opacity: 1;
   }
   
   .carousel-arrow:hover {

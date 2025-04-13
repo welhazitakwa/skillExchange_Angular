@@ -72,6 +72,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { EventImagesComponent } from './Back/GestionEvents/event-images/event-images.component';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { EventDetailsComponent } from './Front/GestionEvents/event-details/event-details.component';
 
 @NgModule({
   declarations: [
@@ -135,6 +136,7 @@ import { RouterModule } from '@angular/router';
     ShowEventsComponent,
     AddEventModalComponent,
     EventImagesComponent,
+    EventDetailsComponent,
 
     
 

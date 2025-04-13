@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Events } from 'src/app/core/models/GestionEvents/events';
 import { EventsService } from 'src/app/core/services/GestionEvents/events.service';
 import { ParticipationEventsService } from 'src/app/core/services/GestionEvents/participation-events.service';
@@ -17,7 +18,8 @@ export class ShowEventsComponent implements OnInit {
 
   constructor(
     private eventService: EventsService,
-    private participationService: ParticipationEventsService
+    private participationService: ParticipationEventsService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -38,7 +40,8 @@ export class ShowEventsComponent implements OnInit {
     );
   }
 
-  participate(event: Events, status: Status): void {
+  participate(event: Events, status: Status, $event: Event): void {
+    $event.stopPropagation(); // Prevent card click from triggering navigation
     const participation: ParticipationEvents = {
       event: event,
       status: status
@@ -56,17 +59,23 @@ export class ShowEventsComponent implements OnInit {
     );
   }
 
-  prevImage(eventId: number): void {
+  prevImage(eventId: number, $event: Event): void {
+    $event.stopPropagation(); // Prevent card click
     const event = this.events.find(e => e.idEvent === eventId);
     if (event && event.images && event.images.length > 0) {
       this.carouselIndices[eventId] = Math.max(0, this.carouselIndices[eventId] - 1);
     }
   }
 
-  nextImage(eventId: number): void {
+  nextImage(eventId: number, $event: Event): void {
+    $event.stopPropagation(); // Prevent card click
     const event = this.events.find(e => e.idEvent === eventId);
     if (event && event.images && event.images.length > 0) {
       this.carouselIndices[eventId] = Math.min(event.images.length - 1, this.carouselIndices[eventId] + 1);
     }
+  }
+
+  goToEventDetails(eventId: number): void {
+    this.router.navigate(['/events', eventId]);
   }
 }
