@@ -11,6 +11,7 @@ import { AuthService } from 'src/app/core/services/Auth/auth.service';
 import { User } from 'src/app/core/models/GestionUser/User';
 import { ParticipationFormation } from 'src/app/core/models/GestionFormation/participation-formation';
 import { ParticipationFormationService } from 'src/app/core/services/GestionFormation/participation-formation.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-courses-by-cat-front',
@@ -126,9 +127,22 @@ export class CoursesByCatFrontComponent {
     this.participationService.addParticipation(participation).subscribe({
       next: (res) => {
         console.log('Participation ajoutée avec succès', res);
+         Swal.fire({
+           icon: 'success',
+           title: 'Participation Added',
+           text: 'Your participation has been successfully recorded!',
+           confirmButtonText: 'OK',
+         });
       },
       error: (err) => {
         console.error("Erreur lors de l'ajout", err);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to add participation. Please try again.',
+          confirmButtonText: 'Close',
+        });
+
       },
     });
   }
