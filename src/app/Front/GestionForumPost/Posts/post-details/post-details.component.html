@@ -31,27 +31,44 @@
                     <p>{{ post?.content }}</p>
                 </div>
 <!-- Emoji Reactions Section -->
-<div class="mb-4">
-    <h5 class="mb-2">Réagis à ce post :</h5>
-    <div class="d-flex gap-2 flex-wrap">
-      <button *ngFor="let emoji of emojis"
-        (click)="reactToPost(emoji)"
-        class="btn d-flex align-items-center gap-2 p-2 rounded-pill shadow-sm"
-        [ngStyle]="{ 
-          'background-color': getEmojiColor(emoji),
-          'color': 'white'
-        }">
-        
-        <!-- Emoji unicode -->
-        <span class="fs-5">{{ emoji }}</span>
-  
-        <!-- Compteur de réactions -->
-        <span class="badge bg-light text-dark">
-          {{ emojiCounts[EmojiTypeMapping[emoji]] || 0 }}
-        </span>
-      </button>
+<div class="emoji-reactions-container">
+    <h5 class="reaction-title">Réagis à ce post :</h5>
+    <div class="emoji-list">
+        <div *ngFor="let emoji of emojis" class="emoji-container">
+            <button (mouseover)="onEmojiHover(emoji)" (mouseleave)="onEmojiLeave()"
+                (click)="reactToPost(emoji)"
+                class="emoji-button"
+                [ngStyle]="{ 
+                    'background-color': getEmojiColor(emoji)
+                }">
+                <span class="emoji-icon">{{ emoji }}</span>
+                <span class="emoji-count">
+                    {{ emojiCounts[EmojiTypeMapping[emoji]] || 0 }}
+                </span>
+            </button>
+
+            <!-- Tooltip des utilisateurs -->
+            <div *ngIf="hoveredEmoji === emoji && usersByEmoji[emoji]?.length" 
+                 class="user-tooltip">
+                <div class="tooltip-header">
+                    <h6>Utilisateurs ayant réagi :</h6>
+                    <span class="total-count">{{ usersByEmoji[emoji].length }} réactions</span>
+                </div>
+                <ul class="user-list">
+                    <li *ngFor="let user of usersByEmoji[emoji]" class="user-item">
+                        <div class="user-info">
+                            <span class="user-name">{{ user.name }}</span>
+                            <span class="user-email">{{ user.email }}</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
-  </div>
+</div>
+  
+  
+  
   
   
   

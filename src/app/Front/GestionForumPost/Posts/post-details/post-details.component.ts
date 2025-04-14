@@ -210,45 +210,129 @@ emojis: EmojiType[] = [
   }
   
 
+// reactToPost(selectedEmoji: string): void {
+//   if (this.currentUser?.email && this.post?.idPost) {
+//     console.log('Emoji sélectionné:', selectedEmoji);
+
+//     // Valider si c'est un emoji valide
+//     if (!Object.values(EmojiType).includes(selectedEmoji as EmojiType)) {
+//       console.error('Emoji sélectionné non valide');
+//       alert('Emoji sélectionné non valide');
+//       return;
+//     }
+
+//     // Mapper l'emoji sélectionné vers la valeur attendue par le backend
+//     const mappedEmoji = EmojiTypeMapping[selectedEmoji as EmojiType];
+
+//     const reaction = {
+//       postId: this.post.idPost,
+//       email: this.currentUser.email,
+//       emoji: mappedEmoji // On envoie "WOW" ou "LIKE" ou autre, au lieu de "😮"
+//     };
+
+//     this.emojiPostsService.addReaction(reaction).subscribe(
+//       () => {
+//         console.log('Réaction ajoutée avec succès');
+//         this.getPostDetails(); // Recharge le post pour afficher les emojis à jour
+//         this.loadEmojiCounts(); // Met à jour le compteur
+//       },
+//       (error) => {
+//         console.error('Erreur lors de l’ajout de la réaction', error);
+//       }
+//     );
+//   } else {
+//     alert('Vous devez être connecté pour réagir.');
+//   }
+// }
+
+////emoji+User///
+
 reactToPost(selectedEmoji: string): void {
-  if (this.currentUser?.email && this.post?.idPost) {
-    console.log('Emoji sélectionné:', selectedEmoji);
+  const mappedEmoji = EmojiTypeMapping[selectedEmoji as EmojiType];
 
-    // Valider si c'est un emoji valide
-    if (!Object.values(EmojiType).includes(selectedEmoji as EmojiType)) {
-      console.error('Emoji sélectionné non valide');
-      alert('Emoji sélectionné non valide');
-      return;
-    }
-
-    // Mapper l'emoji sélectionné vers la valeur attendue par le backend
-    const mappedEmoji = EmojiTypeMapping[selectedEmoji as EmojiType];
-
-    const reaction = {
-      postId: this.post.idPost,
-      email: this.currentUser.email,
-      emoji: mappedEmoji // On envoie "WOW" ou "LIKE" ou autre, au lieu de "😮"
-    };
-
-    this.emojiPostsService.addReaction(reaction).subscribe(
-      () => {
-        console.log('Réaction ajoutée avec succès');
-        this.getPostDetails(); // Recharge le post pour afficher les emojis à jour
-        this.loadEmojiCounts(); // Met à jour le compteur
-      },
-      (error) => {
-        console.error('Erreur lors de l’ajout de la réaction', error);
-      }
-    );
-  } else {
-    alert('Vous devez être connecté pour réagir.');
+  if (!mappedEmoji) {
+    console.error('Emoji non valide');
+    return;
   }
+
+  const postId = this.post?.idPost;
+  const email = this.currentUser?.email;
+
+  if (!postId || !email) {
+    alert("L'utilisateur ou le post est introuvable.");
+    return;
+  }
+
+  this.emojiPostsService.hasUserReactedWithEmoji(postId, email, mappedEmoji)
+    .subscribe((hasReacted: boolean) => {
+      if (hasReacted) {
+        // ✅ Sécurisé ici aussi
+        this.emojiPostsService.removeReaction(postId, email, mappedEmoji).subscribe(
+          () => {
+            console.log('Réaction supprimée');
+            this.getPostDetails();
+            this.loadEmojiCounts();
+          },
+          (error) => {
+            console.error('Erreur suppression réaction :', error);
+          }
+        );
+      } else {
+        // Ajouter une nouvelle réaction
+        const reaction = {
+          postId,
+          email,
+          emoji: mappedEmoji
+        };
+
+        this.emojiPostsService.addReaction(reaction).subscribe(
+          () => {
+            console.log('Réaction ajoutée');
+            this.getPostDetails();
+            this.loadEmojiCounts();
+          },
+          (error) => {
+            console.error('Erreur ajout réaction :', error);
+          }
+        );
+      }
+    });
+}
+
+
+usersByEmoji: { [emoji: string]: User[] } = {};
+
+getUsersByEmoji(emoji: string): void {
+  const emojiKey = EmojiTypeMapping[emoji as keyof typeof EmojiTypeMapping];
+  if (!emojiKey) return;
+
+  this.emojiPostsService.getUsersByEmojiAndPostId(this.postId, emojiKey)
+    .subscribe({
+      next: (users) => {
+        this.usersByEmoji[emoji] = users;
+      },
+      error: (err) => {
+        console.error('Erreur récupération users emoji:', err);
+      }
+    });
+}
+hoveredEmoji: string | null = null;
+ // Méthode pour afficher ou masquer les utilisateurs au survol
+ onEmojiHover(emoji: string): void {
+  this.hoveredEmoji = emoji;
+  this.getUsersByEmoji(emoji);  // Charger les utilisateurs pour cet emoji
+}
+
+// Méthode pour masquer la liste des utilisateurs
+onEmojiLeave(): void {
+  this.hoveredEmoji = null;
+}
+
+ // Afficher les utilisateurs au survol de l'emoji
+ 
+
 }
 
 
 
 
-
-
-
-}
