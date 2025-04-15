@@ -4,7 +4,7 @@ import { MainFrontComponent } from './Front/main-front/main-front.component';
 import { AboutComponent } from './Front/about/about.component';
 import { BlogListComponent } from './Front/blog-list/blog-list.component';
 import { BlogDetailsComponent } from './Front/blog-details/blog-details.component';
-import { CoursesComponent } from './Front/courses/courses.component';
+import { CoursesComponent } from './Front/GestionFormations/Formation/courses/courses.component';
 import { TeachersComponent } from './Front/teachers/teachers.component';
 import { ContactComponent } from './Front/contact/contact.component';
 import { AuthRegisterComponent } from './Auth/auth-register/auth-register.component';
@@ -25,6 +25,11 @@ import { AllUsersComponent } from './Back/GestionUser/User/all-users/all-users.c
 import { UserBackDetailsComponent } from './Back/GestionUser/User/user-back-details/user-back-details.component';
 import { AuthBanComponent } from './Auth/auth-ban/auth-ban.component';
 import { AllbadgesComponent } from './Back/GestionUser/Badge/allbadges/allbadges.component';
+import { CategoriesComponent } from './Back/GestionFormation/Category/categories/categories.component';
+import { FormationsComponent } from './Back/GestionFormation/Formation/formations/formations.component';
+import { CousesByCategoryComponent } from './Back/GestionFormation/Category/couses-by-category/couses-by-category.component';
+import { CoursesByCatFrontComponent } from './Front/GestionFormations/Formation/courses-by-cat-front/courses-by-cat-front.component';
+import { UserCourseSpaceComponent } from './Front/GestionFormations/Formation/user-course-space/user-course-space.component';
 import { CertificatComponent } from './Back/GestionQUIZZ/certificat/certificat.component';
 import { QuizComponent } from './Back/GestionQUIZZ/quiz/quiz.component';
 import { QuestionComponent } from './Back/GestionQUIZZ/question/question.component';
@@ -34,6 +39,11 @@ import { ShowproductComponent } from './Front/GestionProduit/Product/showproduct
 import { ProductDetailsComponent } from './Front/GestionProduit/Product/product-details/product-details.component';
 import { AllCartProductsComponent } from './Back/GestionProduit/CartProduct/all-cart-products/all-cart-products.component';
 import { FrontQuizComponent } from './Front/GestionQuizz/quiz/quiz.component';
+import { AllCommentsComponent } from './Back/GestionForumPost/CommentPost/all-comments/all-comments.component';
+import { ShowPostsComponent } from './Front/GestionForumPost/Posts/show-posts/show-posts.component';
+import { PostDetailsComponent } from './Front/GestionForumPost/Posts/post-details/post-details.component';
+import { ParticipantsListComponent } from './Back/GestionFormation/Formation/participants-list/participants-list.component';
+
 
 const routes: Routes = [
   //canActivate: [AdminGuard] to lock for admin
@@ -42,6 +52,8 @@ const routes: Routes = [
 
 
   { path:"backpost", component: ListpostComponent},
+  
+  { path:"backCommentpost", component: AllCommentsComponent},
   
 
   { path: 'back', component: MainBackComponent /*,canActivate: [AdminGuard]*/ },
@@ -76,6 +88,15 @@ const routes: Routes = [
   { path: 'backcarts', component: AllCartsComponent },
   { path: 'backreviews', component: AllReviewsComponent },
   { path: 'backimagesP', component: AllImagesComponent },
+
+  /********************Back Gestion Formations****************************************/
+  { path: 'categories', component: CategoriesComponent },
+  { path: 'backcourses', component: FormationsComponent },
+  { path: 'backcoursescat', component: CousesByCategoryComponent },
+  { path: 'coursescat', component: CoursesByCatFrontComponent },
+  { path: 'userCourseSpace', component: UserCourseSpaceComponent },
+  { path: 'participantsList', component: ParticipantsListComponent },
+
   { path: 'backcartProducts', component: AllCartProductsComponent },
   /***************************************************************/
 
@@ -120,8 +141,12 @@ const routes: Routes = [
 
   // Question Routes
   { path: 'questions/:quizId', component: QuestionComponent },
-
+   //Gestion ForumPosts
+   { path: 'posts', component: ShowPostsComponent },
+   { path: 'posts/:id', component: PostDetailsComponent/*, canActivate: [UserGuard]*/ },
   { path: '**', redirectTo: '' },
+ 
+
 ];
 
 @NgModule({

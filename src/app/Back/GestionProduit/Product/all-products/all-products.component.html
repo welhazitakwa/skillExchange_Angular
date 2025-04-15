@@ -225,7 +225,7 @@
                           </div>
                         </div>
                       </td>
-                      <td>{{ product.postedBy.name }}</td>
+                      <td>{{ product.postedBy!.name }}</td>
                       <td class="text-primary font-weight-bold">
                         <ng-container *ngIf="product.type === 'tokens'">
                           {{ product.price }} tokens

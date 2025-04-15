@@ -49,7 +49,7 @@ filteredproduct: Product[] = [];
 // Extraire les vendeurs uniques
 private extractUniqueSellers(): void {
   this.uniqueSellers = Array.from(new Set(
-    this.products.map(product => product.postedBy.name) // Remplacer 'name' par la propriété que vous souhaitez
+    this.products.map(product => product.postedBy!.name) // Remplacer 'name' par la propriété que vous souhaitez
   ));}
   applyFilters(): void {
     this.filteredproduct = this.products.filter((p) => {

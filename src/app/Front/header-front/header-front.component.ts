@@ -45,4 +45,8 @@ export class HeaderFrontComponent implements OnInit {
   logout(): void {
     this.authService.logout();
   }
+
+  getUserId(id: number) {
+    this.router.navigate(['/userCourseSpace'], { state: { userId: id } });
+  }
 }

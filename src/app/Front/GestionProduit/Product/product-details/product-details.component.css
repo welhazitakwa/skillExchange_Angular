@@ -18,3 +18,110 @@
     border-radius: 20px;
     display: inline-block;
 }
+.review-options {
+    margin-top: 10px;
+}
+
+.review-options button {
+    margin-right: 5px;
+}
+/* panier */
+/* 🌟 Bouton Panier flottant (orange) */
+.cart-float-btn {
+    position: fixed;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    background: #ff6600; /* Couleur orange */
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease-in-out, background 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Effet au survol */
+.cart-float-btn:hover {
+    transform: scale(1.1);
+    background: #e65c00; /* Orange un peu plus foncé */
+}
+
+.cart-float-btn:hover {
+    transform: scale(1.1);
+}
+
+/* Badge du panier */
+.cart-badge {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: red;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 🛒 Sidebar Panier (caché par défaut, à droite) */
+.cart-sidebar {
+    position: fixed;
+    top: 0;
+    right: -400px; /* Caché */
+    width: 350px;
+    height: 100%;
+    background: white;
+    box-shadow: -4px 0 10px rgba(0, 0, 0, 0.3);
+    transition: right 0.4s ease-in-out;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Sidebar ouvert */
+.cart-sidebar.open {
+    right: 0;
+}
+
+/* En-tête du panier */
+.cart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 18px;
+    font-weight: bold;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #ddd;
+}
+
+/* Contenu du panier */
+.cart-content {
+    flex-grow: 1;
+    padding-top: 10px;
+}
+
+/* Bouton de fermeture */
+.close-btn {
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: red;
+    transition: transform 0.2s ease-in-out;
+}
+
+.close-btn:hover {
+    transform: rotate(180deg);
+}

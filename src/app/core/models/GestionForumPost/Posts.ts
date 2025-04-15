@@ -1,3 +1,6 @@
+import { User } from "../GestionUser/User";
+import { CommentPosts } from "./CommentPosts";
+import { EmojiPosts } from "./EmojiPosts";
 
 export class Posts {
 
@@ -8,6 +11,9 @@ export class Posts {
     createdAt!: Date;
     updatedAt!: Date;
     upVote!: number;
-    downVote!: string;
+    downVote!: number;
+    user!: User | null;           
+  emojiPosts!: EmojiPosts[];   
+  commentPosts!: CommentPosts[];
   
 }
