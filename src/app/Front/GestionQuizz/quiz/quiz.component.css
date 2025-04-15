@@ -1,0 +1,38 @@
+/* Keep these styles but enhance them */
+.progress {
+    height: 30px;  /* Makes progress bar more visible */
+    border-radius: 15px; /* Matches the height for pill shape */
+    overflow: hidden; /* Ensures inner bar respects border radius */
+  }
+  
+  .progress-bar {
+    transition: width 0.3s ease;
+    font-size: 14px; /* Better text visibility */
+    font-weight: 500;
+  }
+  
+  .list-group-item {
+    transition: all 0.2s ease;
+    cursor: pointer;
+    
+    /* Better hover state */
+    &:hover:not(.active) {
+      background-color: #f8f9fa;
+      transform: translateX(5px);
+    }
+    
+    &.active {
+      background-color: #007bff !important; /* Override Bootstrap */
+      border-color: #007bff !important;
+      box-shadow: 0 2px 8px rgba(0,123,255,0.3);
+      
+      &:hover {
+        background-color: #0069d9 !important;
+      }
+    }
+  }
+  
+  /* Add this if using Font Awesome icons */
+  .btn i {
+    margin: 0 0.5rem;
+  }

@@ -144,4 +144,13 @@ export class QuizComponent implements OnInit {
       console.error('Quiz ID is undefined.');
     }
   }
+  loadQuizForEdit(quiz: any): void {
+    this.quizId = quiz.id;
+    this.quizForm.patchValue({
+      title: quiz.title,
+    });
+  
+    this.imageUrl = 'data:image/jpeg;base64,' + quiz.image;
+  }
+  
 }

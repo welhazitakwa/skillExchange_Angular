@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { QuestionService } from 'src/app/core/services/GestionQuizz/question.service';
 import { Question } from 'src/app/core/models/QuestionQuizz/question';
 
+
 @Component({
   selector: 'app-question',
   templateUrl: './question.component.html',
@@ -111,7 +112,10 @@ export class QuestionComponent implements OnInit {
         next: () => {
           this.questions = this.questions.filter((q) => q.id !== id);
           alert('Question deleted successfully');
-        },
+/*************  ✨ Windsurf Command ⭐  *************/
+        /**
+/*******  ce7199dd-1319-4f6b-8ff7-99cd002d3430  *******/        },
+
         error: (error) => {
           console.error('Error deleting question:', error);
           this.errorMessage = 'Failed to delete question';

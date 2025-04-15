@@ -33,6 +33,7 @@ import { AllEventsComponent } from './Back/GestionEvents/Events/all-events/all-e
 import { ShowproductComponent } from './Front/GestionProduit/Product/showproduct/showproduct.component';
 import { ProductDetailsComponent } from './Front/GestionProduit/Product/product-details/product-details.component';
 import { AllCartProductsComponent } from './Back/GestionProduit/CartProduct/all-cart-products/all-cart-products.component';
+import { FrontQuizComponent } from './Front/GestionQuizz/quiz/quiz.component';
 
 const routes: Routes = [
   //canActivate: [AdminGuard] to lock for admin
@@ -80,6 +81,15 @@ const routes: Routes = [
 
 
   // Front Office
+  { 
+    path: 'quiz/:quizId', 
+    component: FrontQuizComponent 
+  },
+  // Add this if you need a direct participation link
+  { 
+    path: 'quiz/:quizId/participate/:participationId', 
+    component: FrontQuizComponent 
+  },
   { path: '', component: MainFrontComponent/*, canActivate: [UserGuard] */},
   { path: 'bloglist', component: BlogListComponent/*, canActivate: [UserGuard] */},
   {

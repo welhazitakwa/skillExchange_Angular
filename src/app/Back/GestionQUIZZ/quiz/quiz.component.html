@@ -62,19 +62,31 @@
 
     <!-- Display All Quizzes -->
    <!-- Display All Quizzes -->
-<h3>All Quizzes</h3>
-<div class="quiz-list">
-  <div *ngFor="let quiz of quizzes" (click)="navigateToQuestions(quiz.id)" class="quiz-item">
-    <h4>{{ quiz.title }}</h4>
+   <h3>All Quizzes</h3>
+   <div class="quiz-list">
+     <div *ngFor="let quiz of quizzes" class="quiz-item">
+       <h4>{{ quiz.title }}</h4>
+   
+       <!-- Display quiz image if available -->
+       <div *ngIf="quiz.image">
+         <img [src]="'data:image/jpeg;base64,' + quiz.image" alt="Quiz Image" width="150" height="100" />
+       </div>
+   
+       <!-- Action buttons -->
+       <div class="button-group mt-2">
+         <!-- Button to edit quiz title/image -->
+         <button class="btn btn-outline-primary btn-sm me-2" (click)="loadQuizForEdit(quiz)">Edit Quiz</button>
+   
+         <!-- Button to navigate to questions for editing -->
+         <button class="btn btn-outline-dark btn-sm me-2" (click)="navigateToQuestions(quiz.id)">Edit Questions</button>
 
-    <!-- Display quiz image if available -->
-    <div *ngIf="quiz.image">
-      <img [src]="'data:image/jpeg;base64,' + quiz.image" alt="Quiz Image">
-    </div>
 
-    <!-- Edit and Delete Buttons -->
-    <button class="btn-edit">Edit</button>
-    <button class="btn-delete" (click)="deleteQuiz(quiz.id); $event.stopPropagation()">Delete</button>
-  </div>
-</div>
+   
+         <!-- Delete Quiz -->
+         <button class="btn btn-outline-danger btn-sm" (click)="deleteQuiz(quiz.id)">Delete</button>
+       </div>
+     </div>
+   </div>
+   
+
 

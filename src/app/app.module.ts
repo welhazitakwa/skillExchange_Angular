@@ -76,6 +76,8 @@ import { TeachersComponent } from './Front/teachers/teachers.component';
 import { UpdateEventImageComponent } from './Back/GestionEvents/EventImage/update-event-image/update-event-image.component';
 import { AllCartProductsComponent } from './Back/GestionProduit/CartProduct/all-cart-products/all-cart-products.component';
 import { CartProductsComponent } from './Front/GestionProduit/cart-products/cart-products.component';
+import { FrontQuizComponent } from './Front/GestionQuizz/quiz/quiz.component';
+
 
 
 @NgModule({
@@ -96,7 +98,7 @@ import { CartProductsComponent } from './Front/GestionProduit/cart-products/cart
     ContactComponent,
     AuthRegisterComponent,
     AuthLoginComponent,
-
+    FrontQuizComponent,
     ListpostComponent,
     ListaddComponent,
 

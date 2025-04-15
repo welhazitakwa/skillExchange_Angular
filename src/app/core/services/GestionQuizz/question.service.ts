@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { catchError, map, Observable, throwError } from 'rxjs';
 import { Question } from 'src/app/core/models/QuestionQuizz/question';
 
@@ -11,17 +11,11 @@ export class QuestionService {
 
   constructor(private http: HttpClient) {}
 
-  // Fetch questions by quiz ID
   getQuestionsByQuizId(quizId: number): Observable<Question[]> {
-    return this.http.get<Question[]>(`${this.apiUrl}/quiz/${quizId}`).pipe(
-      catchError((error) => {
-        console.error('Error fetching questions:', error);
-        return throwError(() => new Error('Failed to fetch questions'));
-      })
-    );
+    return this.http.get<Question[]>(`http://localhost:8084/skillExchange/api/questions/quiz/${quizId}`);
   }
+  
 
-  // Fetch all questions
   getAllQuestions(): Observable<Question[]> {
     return this.http.get<Question[]>(this.apiUrl).pipe(
       catchError((error) => {
@@ -31,44 +25,28 @@ export class QuestionService {
     );
   }
 
-  // Add a new question
   addQuestion(question: Question): Observable<Question> {
-    // Include quizId as a query parameter in the URL
-    const url = `${this.apiUrl}?quizId=${question.quiz.id}`;
-  
-    // Define the body for the request
     const requestBody = {
-      question: question.question,  // backend expects 'question'
-      reponse: question.reponse,    // backend expects 'reponse'
-      option1: question.option1,    // backend expects 'option1'
-      option2: question.option2,    // backend expects 'option2'
-      option3: question.option3,    // backend expects 'option3'
-      option4: question.option4,    // backend expects 'option4'
-      quiz: { id: question.quiz.id }, // Include the quiz object if needed
+      quizId: question.quiz.id,
+      question: {
+        question: question.question,
+        reponse: question.reponse,
+        option1: question.option1,
+        option2: question.option2,
+        option3: question.option3,
+        option4: question.option4
+      }
     };
-  
-    // Log the request body to check if the data is correct
-    console.log('Request Body:', requestBody);
-    console.log('Request URL:', url);
-  
-    return this.http.post<Question>(url, requestBody, { observe: 'response' }).pipe(
-      map((response) => {
-        console.log('Full Response:', response); // Log the full response
-        if (response.status === 200 && response.body) {
-          return response.body; // Return the question added
-        } else {
-          console.error('Unexpected response format', response);
-          throw new Error('Unexpected response format');
-        }
-      }),
+
+    return this.http.post<Question>(this.apiUrl, requestBody).pipe(
+      map((response) => response),
       catchError((error) => {
         console.error('Error adding question:', error);
         return throwError(() => new Error('Failed to add question'));
       })
     );
   }
-  
-  // Edit an existing question
+
   editQuestion(id: number, question: Question): Observable<Question> {
     return this.http.put<Question>(`${this.apiUrl}/${id}`, question).pipe(
       catchError((error) => {
@@ -78,13 +56,18 @@ export class QuestionService {
     );
   }
 
-  // Delete a question
-  deleteQuestion(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+  deleteQuestion(id: number): Observable<string> {
+    return this.http.delete<{ message: string }>(`${this.apiUrl}/${id}`).pipe(
+      map(response => {
+        // Handle the message here
+        return response.message;  // Extract the message from the response
+      }),
       catchError((error) => {
         console.error('Error deleting question:', error);
         return throwError(() => new Error('Failed to delete question'));
       })
     );
   }
+  
+  
 }
