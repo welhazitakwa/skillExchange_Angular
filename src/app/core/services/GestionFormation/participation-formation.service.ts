@@ -37,4 +37,8 @@ export class ParticipationFormationService {
   updateFormation(participation: ParticipationFormation) {
     return this.http.put(this.url + '/modify-participation', participation);
   }
+
+  getParticipationsByIdCourse(id: number): Observable<any> {
+    return this.http.post(this.url + '/findById/', id);
+  }
 }

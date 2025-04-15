@@ -101,6 +101,7 @@ import { AllCommentsComponent } from './Back/GestionForumPost/CommentPost/all-co
 import { ShowPostsComponent } from './Front/GestionForumPost/Posts/show-posts/show-posts.component';
 import { PostDetailsComponent } from './Front/GestionForumPost/Posts/post-details/post-details.component';
 import { DetailsFormationBackComponent } from './Back/GestionFormation/Formation/details-formation-back/details-formation-back.component';
+import { ParticipantsListComponent } from './Back/GestionFormation/Formation/participants-list/participants-list.component';
 
 
 @NgModule({
@@ -180,6 +181,7 @@ import { DetailsFormationBackComponent } from './Back/GestionFormation/Formation
     ShowPostsComponent,
     PostDetailsComponent,
     DetailsFormationBackComponent,
+    ParticipantsListComponent,
 
   ],
   imports: [
