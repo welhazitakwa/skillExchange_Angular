@@ -16,7 +16,7 @@
           <h4
             class="page-title text-truncate text-dark font-weight-medium mb-1"
           >
-            Courses Management
+            Participations Management
           </h4>
           <div class="d-flex align-items-center">
             <nav aria-label="breadcrumb">
@@ -28,7 +28,7 @@
                   class="breadcrumb-item text-muted active"
                   aria-current="page"
                 >
-                  Courses
+                  Participations
                 </li>
               </ol>
             </nav>
@@ -45,9 +45,9 @@
               <div
                 class="d-flex justify-content-between align-items-center mb-4"
               >
-                <h4 class="card-title mb-0 text-primary fw-semibold">
-                  Courses Management
-                </h4>
+                <h2 class="card-title mb-0 text-primary fw-semibold">
+                  Participations Management of : {{ formation?.title }}
+                </h2>
                 <!-- <button class="btn btn-sm btn-outline-primary">
                   <i class="fas fa-download me-2"></i>Export CSV
                 </button> -->
@@ -70,14 +70,6 @@
                     <!-- /> -->
                   </div>
                 </div>
-                <div class="col-md-6" >
-                  <button mat-raised-button class="btn btn-sm btn-outline-primary" 
-                  (click)="openAddCourseForm()"
-                  style="margin-left: 400px; height: 40px;"
-                  >
-                  <i class="fas fa-plus me-2"></i>Add Course
-                </button>
-                </div>
                 
               </div>
 
@@ -85,65 +77,57 @@
                 <table class="table table-hover align-middle mb-0">
                   <thead class="table-light">
                     <tr>
-                      <th class="ps-4 fw-medium text-muted cursor-pointer"> Title
+                      <th class="ps-4 fw-medium text-muted cursor-pointer"> Participant
                       </th>
                       
-                      <th class="fw-medium text-muted cursor-pointer"> State
+                      <th class="fw-medium text-muted cursor-pointer"> Participation Date
                       </th>
                       
                       <th class="fw-medium text-muted cursor-pointer" >
-                        duration  
+                        Progress 
                       </th>
-                      <th class="fw-medium text-muted cursor-pointer" >
-                        Added at  <i class="fas fa-sort ms-1"></i>
-                      </th>
+                     
                       <th class="fw-medium text-muted cursor-pointer" >
                         Operations <i class="fas fa-sort ms-1"></i>
                       </th>
                     </tr>
                   </thead>
                   <tbody  #formationTableBody>
-                    <tr *ngFor="let f of listFormations" >
+                    <tr *ngFor="let p of listParticipation" >
                       <td class="ps-4">
                         <div class="d-flex align-items-center">
                           <img
-                           [src]="'data:' + f.imageType + ';base64,' + f.image"
+                             [src]="
+                getUserById(p.participant).avatar
+                  ? 'data:image/*;base64,' + getUserById(p.participant).avatar
+                  : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
+              "
                             class="rounded-circle me-3"
                             width="40"
                             height="40"
                             alt="Category"
                           />   
-                          {{f.title}}
+      {{ getUserById(p.participant).name }}
                         </div> 
                       
                       </td>
-                       <td>
-<span  [ngStyle]="{ color: f.state === 0 ? 'red' : 'green' }" >
-  {{ f.state === 0 ? 'private' : 'public' }}
-</span>
-
-                                    </td>
-                      <td>{{f.duration}}</td>
-                      
                       <td class="text-muted">
-                       {{ f.date_ajout | date }}
+                       {{ p.date_participation| date }}
                       </td>
+                      <td> {{p.progress}} </td>
  <td  style="text-align: center;"  >
-                                         <button mat-raised-button type="button" class="btn btn-sm btn-square btn-neutral text-danger-hover"
+                                         <!-- <button mat-raised-button type="button" class="btn btn-sm btn-square btn-neutral text-danger-hover"
                                           (click)="openDetailsCourse(f.id)"> 
                                             <i class="text-info fa fa-eye"></i> 
                                         </button>
                  
 
 
-                                  <button  class="btn btn-sm btn-square btn-neutral text-danger-hover" 
-        (click)="openParticipantsList(f.id)">
-  <i class="text-warning fa fa-list me-2"></i> 
-</button>
+  -->
 
-                                        <button type="button" class="btn btn-sm btn-square btn-neutral text-danger-hover" (click)="deleteCourse(f.id)">
-                                            <i class="text-danger fa fa-trash"></i>
-                                        </button>
+                                        <button style="width: 100px;" type="button" class="btn btn-sm btn-square btn-neutral text-danger-hover" (click)="deleteParticipation(p.idp)"> 
+                                            <i class="text-danger fa fa-trash"> delete Participation</i>
+                                        </button> 
                                 
                                     </td>                      
                     </tr>

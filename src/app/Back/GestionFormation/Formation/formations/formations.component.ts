@@ -4,6 +4,8 @@ import { Formation } from 'src/app/core/models/GestionFormation/formation';
 import { FormationService } from 'src/app/core/services/GestionFormation/formation.service';
 import Swal from 'sweetalert2';
 import { AddFormationComponent } from '../add-formation/add-formation.component';
+import { DetailsFormationBackComponent } from '../details-formation-back/details-formation-back.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-formations',
@@ -11,7 +13,11 @@ import { AddFormationComponent } from '../add-formation/add-formation.component'
   styleUrls: ['./formations.component.css'],
 })
 export class FormationsComponent {
-  constructor(private dialog: MatDialog, private formServ: FormationService) {}
+  constructor(
+    private dialog: MatDialog,
+    private formServ: FormationService,
+    private router: Router
+  ) {}
 
   listFormations: Formation[] = [];
   @ViewChild('formationTableBody')
@@ -92,6 +98,25 @@ export class FormationsComponent {
         }
       },
       error: console.log,
+    });
+  }
+  openDetailsCourse(formId: number) {
+    const dialogRef = this.dialog.open(DetailsFormationBackComponent, {
+      data: { id: formId },
+      //width: '1000px',
+    });
+    dialogRef.afterClosed().subscribe({
+      next: (val) => {
+        if (val) {
+          this.getFormationsList();
+        }
+      },
+      error: console.log,
+    });
+  }
+  openParticipantsList(id: number) {
+    this.router.navigate(['/participantsList'], {
+      state: { formationId: id },
     });
   }
 }

@@ -1,27 +1,23 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
 import { Category } from 'src/app/core/models/GestionFormation/category';
 import { Formation } from 'src/app/core/models/GestionFormation/formation';
 import { CategoryService } from 'src/app/core/services/GestionFormation/category.service';
 import { FormationService } from 'src/app/core/services/GestionFormation/formation.service';
 
 @Component({
-  selector: 'app-details-formation',
-  templateUrl: './details-formation.component.html',
-  styleUrls: ['./details-formation.component.css'],
+  selector: 'app-details-formation-back',
+  templateUrl: './details-formation-back.component.html',
+  styleUrls: ['./details-formation-back.component.css']
 })
-export class DetailsFormationComponent {
-  id!: number;
+export class DetailsFormationBackComponent {
+ id!: number;
   formation?: Formation;
   category?: Category;
 
   constructor(
-    private actR: ActivatedRoute,
     private formServ: FormationService,
     private catServ: CategoryService,
-    private Rout: Router,
-    private dialogRef: MatDialogRef<DetailsFormationComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 

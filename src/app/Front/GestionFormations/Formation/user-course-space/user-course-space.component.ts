@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Formation } from 'src/app/core/models/GestionFormation/formation';
 import { CategoryService } from 'src/app/core/services/GestionFormation/category.service';
@@ -7,6 +7,7 @@ import { AddCourseComponent } from '../add-course/add-course.component';
 import { MatDialog } from '@angular/material/dialog';
 import Swal from 'sweetalert2';
 import { EditCourseComponent } from '../edit-course/edit-course.component';
+import { DetailsFormationComponent } from '../details-formation/details-formation.component';
 
 @Component({
   selector: 'app-user-course-space',
@@ -14,6 +15,10 @@ import { EditCourseComponent } from '../edit-course/edit-course.component';
   styleUrls: ['./user-course-space.component.css'],
 })
 export class UserCourseSpaceComponent {
+  // @ViewChild('formationTableBody')
+  // formationCardBodyRef!: ElementRef<HTMLInputElement>;
+  searchText: string = '';
+  filteredFormations: Formation[] = [];
   constructor(
     private catServ: CategoryService,
     private formServ: FormationService,
@@ -34,7 +39,10 @@ export class UserCourseSpaceComponent {
   }
   getFormationsList() {
     this.formServ.getCoursesByUserId(this.userId).subscribe(
-      (data) => (this.listFormations = data),
+      (data) => {
+        this.listFormations = data;
+        this.filteredFormations = data;
+      },
       (erreur) => console.log('erreur'),
       () => console.log(this.listFormations)
     );
@@ -82,8 +90,22 @@ export class UserCourseSpaceComponent {
 
   openEditCourseForm(formId: number) {
     const dialogRef = this.dialog.open(EditCourseComponent, {
-      data: { id: formId, userId:this.userId },
-      width: '700px',
+      data: { id: formId, userId: this.userId },
+      width: '850px',
+    });
+    dialogRef.afterClosed().subscribe({
+      next: (val) => {
+        if (val) {
+          this.getFormationsList();
+        }
+      },
+      error: console.log,
+    });
+  }
+  openDetailsCourse(formId: number) {
+    const dialogRef = this.dialog.open(DetailsFormationComponent, {
+      data: { id: formId },
+      //width: '1000px', 
     });
     dialogRef.afterClosed().subscribe({
       next: (val) => {
@@ -98,5 +120,34 @@ export class UserCourseSpaceComponent {
     const hours = Math.floor(duration / 60); // Nombre d'heures
     const minutes = duration % 60; // Nombre de minutes restantes
     return `${hours}h ${minutes}min`;
+  }
+  // filterTable(searchText: string) {
+  //   searchText = searchText.toLowerCase().trim();
+  //   const tableBody = this.formationCardBodyRef.nativeElement;
+
+  //   if (tableBody) {
+  //     const rows = tableBody.getElementsByTagName('tr');
+
+  //     for (let i = 0; i < rows.length; i++) {
+  //       const cells = rows[i].getElementsByTagName('td');
+  //       let showRow = false;
+
+  //       for (let j = 0; j < cells.length; j++) {
+  //         const cellContent = cells[j].textContent || cells[j].innerText;
+  //         if (cellContent.toLowerCase().indexOf(searchText) > -1) {
+  //           showRow = true;
+  //           break;
+  //         }
+  //       }
+
+  //       rows[i].style.display = showRow ? '' : 'none';
+  //     }
+  //   }
+  // }
+  filterTable(search: string) {
+    this.searchText = search.toLowerCase().trim();
+    this.filteredFormations = this.listFormations.filter((f) =>
+      (f.title + f.price + f.duration).toLowerCase().includes(this.searchText)
+    );
   }
 }

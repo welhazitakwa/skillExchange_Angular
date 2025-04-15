@@ -2,3 +2,23 @@ img.img-fluid {
   height: 200px;  /* or any other value you prefer */
   width: 350px;
 }
+
+.course-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Fait en sorte que les cards remplissent l’espace */
+  background-color: #f8f9fa;
+}
+
+.course-card img {
+  object-fit: cover;
+  width: 100%;
+  height: 200px; /* Fixe une hauteur pour toutes les images */
+}
+
+.course-card .bg-secondary {
+  flex-grow: 1; /* Étend la partie texte pour équilibrer toutes les cartes */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}

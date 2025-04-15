@@ -41,6 +41,7 @@ import { AllCartProductsComponent } from './Back/GestionProduit/CartProduct/all-
 import { AllCommentsComponent } from './Back/GestionForumPost/CommentPost/all-comments/all-comments.component';
 import { ShowPostsComponent } from './Front/GestionForumPost/Posts/show-posts/show-posts.component';
 import { PostDetailsComponent } from './Front/GestionForumPost/Posts/post-details/post-details.component';
+import { ParticipantsListComponent } from './Back/GestionFormation/Formation/participants-list/participants-list.component';
 
 
 const routes: Routes = [
@@ -93,6 +94,7 @@ const routes: Routes = [
   { path: 'backcoursescat', component: CousesByCategoryComponent },
   { path: 'coursescat', component: CoursesByCatFrontComponent },
   { path: 'userCourseSpace', component: UserCourseSpaceComponent },
+  { path: 'participantsList', component: ParticipantsListComponent },
 
   { path: 'backcartProducts', component: AllCartProductsComponent },
   /***************************************************************/
