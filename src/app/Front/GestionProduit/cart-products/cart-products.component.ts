@@ -11,11 +11,12 @@ import { CartService } from 'src/app/core/services/GestionProduit/cart.service';
 export class CartProductsComponent  {
   @Input() cartProducts: CartProducts[] = [];
 
+  showPaymentModal: boolean = false;
 
 
  
  //cartProducts: CartProducts[] = []; 
- cartId!: number;
+ cartId?: number;
 
   constructor(private cartProductService: CartProductService) {}
   
@@ -23,7 +24,7 @@ export class CartProductsComponent  {
 
  ngOnInit() {
   
-  this.cartId = 1; 
+ // this.cartId = 1; 
     this.cartProductService.getCartProducts().subscribe((products) => {
       console.log("Produits du panier récupérés :", products);
       this.cartProducts = products;
@@ -31,6 +32,15 @@ export class CartProductsComponent  {
    
    
   }
+  // loadCartId() {
+  //   const storedCartId = localStorage.getItem('cartId');
+  //   if (storedCartId) {
+  //     this.cartId = Number(storedCartId);  // Utiliser le cartId trouvé dans localStorage
+  //   } else {
+  //     // Créer un panier pour l'utilisateur si aucun cartId n'est trouvé
+  //     this.cartId = undefined;  // Aucun panier n'est encore créé ou associé à l'utilisateur
+  //   }
+  // }
   
 increaseQuantity(cartProduct: CartProducts): void {
   this.cartProductService.updateCartProduct(cartProduct).subscribe(
@@ -85,6 +95,9 @@ increaseQuantity(cartProduct: CartProducts): void {
     this.cartProductService.removeProduct(cartProduct.id).subscribe({
       next: () => {
         this.cartProducts = this.cartProducts.filter(cp => cp.id !== cartProduct.id);
+        const count = this.cartProducts.reduce((sum, item) => sum + item.quantity, 0);
+      localStorage.setItem("cartCount", String(count));
+        
         alert("Produit supprimé du panier !");
       },
       error: (err) => {
@@ -94,7 +107,7 @@ increaseQuantity(cartProduct: CartProducts): void {
   }
   
   clearCart(): void {
-    this.cartProductService.clearCart(this.cartId).subscribe(
+    this.cartProductService.clearCart(this.cartId!).subscribe(
        () => {
         this.cartProducts = []; // Mettre à jour l'affichage
        // this.cartCount = 0;
@@ -107,6 +120,24 @@ increaseQuantity(cartProduct: CartProducts): void {
       }
     );
   }
+  // clearCart(): void {
+  //   if (this.cartId === undefined) {
+  //     alert("Aucun panier trouvé pour l'utilisateur actuel.");
+  //     return; // Empêche l'appel à clearCart si cartId est undefined
+  //   }
+  
+  //   this.cartProductService.clearCart(this.cartId).subscribe(
+  //     () => {
+  //       this.cartProducts = []; // Mettre à jour l'affichage
+  //       localStorage.removeItem("cartCount"); // Retirer l'élément du localStorage
+  //       alert("Le panier a été vidé !");
+  //     },
+  //     (err) => {
+  //       console.error("Erreur lors du vidage du panier", err);
+  //     }
+  //   );
+  // }
+  
   
  
   validateCart(): void {
@@ -119,4 +150,19 @@ increaseQuantity(cartProduct: CartProducts): void {
     alert("Panier validé avec succès !");
   }
  
+
+
+  paymentSchedules = [
+      {
+        id: 1,
+        creditId: "hello",
+      dueDate: "2025-04-15",
+      dueAmount: 700,
+      paidAmount: 200,
+      remainingAmount: 500,
+      paymentStatus: "Pending",
+      lateInterest:  0,
+      penaltyFee:  0
+      }
+    ];
 }

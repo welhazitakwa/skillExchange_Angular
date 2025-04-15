@@ -1,7 +1,7 @@
 <div class="cart-item" *ngFor="let cartProduct of cartProducts">
   <div class="cart-item-info">
     <h5>{{ cartProduct.product.productName }}</h5>
-    <p>{{ cartProduct.product.price | currency: 'TND' }}</p>
+    <p>{{ cartProduct.product.price  }}</p>
   </div>
 
   <div class="cart-item-controls">
@@ -19,5 +19,125 @@
 <!-- Boutons supplémentaires -->
 <div class="cart-actions">
   <button (click)="clearCart()" class="clear-cart">Clear cart</button>
-  <button (click)="validateCart()" class="validate-cart">Validate cart</button>
+ <!--- <button (click)="validateCart()" class="validate-cart">Validate cart</button> -->
+ <!-- <button class="btn btn-success" [routerLink]="['/payment-schedule']">Validate Cart</button>-->
+
+<button class="btn btn-success" (click)="showPaymentModal = true">Validate Cart</button>
+
+</div>
+<!-- Modal en Angular pur -->
+<!--<div class="modal fade show d-block" *ngIf="showPaymentModal" style="background: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Paiement</h5>
+        <button type="button" class="btn-close" (click)="showPaymentModal = false"></button>
+      </div>
+      <div class="modal-body">
+       
+        <app-payment-schedule></app-payment-schedule>
+      </div>
+    </div>
+  </div>
+</div> -->
+<!-- Modal in pure Angular -->
+<div class="modal fade show d-block" *ngIf="showPaymentModal" style="background: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content border-0">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">Payment Details</h5>
+        <button type="button" class="btn-close btn-close-white" (click)="showPaymentModal = false"></button>
+      </div>
+      <div class="modal-body p-4">
+        <div class="row">
+          <!-- Payment schedule card -->
+          <div class="col-12" *ngFor="let schedule of paymentSchedules">
+            <div class="card shadow-sm mb-4">
+              <div class="card-header bg-light">
+                <h5 class="card-title mb-0">
+                  <i class="fas fa-calendar-alt me-2"></i>
+                  Due Date: {{ schedule.dueDate | date:'longDate' }}
+                </h5>
+              </div>
+              <div class="card-body">
+                <!-- Payment Summary -->
+                <div class="payment-summary mb-4">
+                  <div class="d-flex justify-content-between py-2 border-bottom">
+                    <span class="text-muted">Amount Due:</span>
+                    <strong>{{ schedule.dueAmount }} DT</strong>
+                  </div>
+                  <div class="d-flex justify-content-between py-2 border-bottom">
+                    <span class="text-muted">Amount Paid:</span>
+                    <strong class="text-success">{{ schedule.paidAmount }} DT</strong>
+                  </div>
+                  <div class="d-flex justify-content-between py-2 border-bottom">
+                    <span class="text-muted">Remaining:</span>
+                    <strong class="text-primary">{{ schedule.remainingAmount }} DT</strong>
+                  </div>
+                  <div class="d-flex justify-content-between py-2">
+                    <span class="text-muted">Status:</span>
+                    <span [ngClass]="{
+                      'badge bg-success': schedule.paymentStatus === 'PAID',
+                      'badge bg-warning': schedule.paymentStatus === 'PARTIALLY_PAID',
+                      'badge bg-danger': schedule.paymentStatus === 'LATE' || schedule.paymentStatus === 'PENDING'
+                    }">
+                      {{ schedule.paymentStatus }}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Payment Methods -->
+                <div class="payment-methods mb-4">
+                  <h6 class="mb-3"><i class="fas fa-credit-card me-2"></i>Payment Options</h6>
+                  
+                  <!-- Credit Card Icons -->
+                  <div class="card-icons mb-3">
+                    <div class="d-flex gap-2">
+                      <div class="payment-method-card active">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png" alt="Visa" height="24">
+                      </div>
+                      <div class="payment-method-card">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png" alt="MasterCard" height="24">
+                      </div>
+                      <div class="payment-method-card">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/PayPal_logo.svg" alt="PayPal" height="24">
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Amount Input -->
+                  <div class="mb-3">
+                    <label class="form-label">Payment Amount (DT)</label>
+                    <div class="input-group">
+                      <span class="input-group-text">DT</span>
+                      <input type="number" 
+                             [(ngModel)]="schedule.remainingAmount" 
+                             class="form-control" 
+                             min="1" 
+                             [max]="schedule.remainingAmount">
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Payment Actions -->
+                <div class="d-grid gap-2">
+                  <button class="btn btn-primary btn-lg">
+                    <i class="fas fa-lock me-2"></i>Pay Now
+                  </button>
+                  
+                  <div class="text-center my-3">
+                    <span class="divider">OR</span>
+                  </div>
+                  
+                  <div class="paypal-button-container">
+                    <div id="paypal-button-container-{{schedule.creditId}}"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

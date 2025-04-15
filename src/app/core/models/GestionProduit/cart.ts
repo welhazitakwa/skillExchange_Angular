@@ -7,5 +7,6 @@ export class Cart {
    
     user!:User;
     cartProducts!: CartProducts[]; 
+    isActive: boolean = true;
   
 }
