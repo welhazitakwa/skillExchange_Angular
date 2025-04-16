@@ -18,7 +18,7 @@ export class AddCourseComponent {
   categories: Category[] = [];
 
   addForm = new FormGroup({
-    id: new FormControl(0),
+    id: new FormControl(''),
     title: new FormControl('', Validators.required),
     description: new FormControl('', [
       Validators.required,
@@ -67,7 +67,7 @@ export class AddCourseComponent {
 
   getCategoriesList() {
     this.catServ.getCategory().subscribe(
-      (data) => (this.categories = data),
+      (data) => (this.categories = data.filter((c) => c.status === 1)),
       (erreur) => console.log('erreur'),
       () => console.log(this.categories)
     );

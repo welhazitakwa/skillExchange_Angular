@@ -31,10 +31,9 @@
 </div>
 <br><br>
 <div>
-    <label for="category">Category</label>
-    <select id="category" formControlName="category_id"
+    <select id="category" formControlName="category_id" class="form-select"
 >
-      <option value="" disabled selected>Select a category</option>
+      <option [value]="0" disabled selected>Select a category</option>
       <option *ngFor="let category of categories" [value]="category.id | json">
         {{ category.name }} 
       </option>
