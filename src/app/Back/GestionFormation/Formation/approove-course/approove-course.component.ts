@@ -85,26 +85,30 @@ export class ApprooveCourseComponent {
       }
     });
   }
-  approoveDiapproove(id: number) {
+  approoveDiapproove(id: number, currentState: number) {
+    const action = currentState === 1 ? 'disapprove' : 'approve';
+    const successMessage =
+      currentState === 1
+        ? 'The course has been disapproved.'
+        : 'The course has been approved.';
+
     Swal.fire({
-      title: 'Are you sure?',
-      text: 'This Course will be permanently deleted! ',
+      title: `Are you sure you want to ${action} this course?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!',
+      confirmButtonText: `Yes, ${action} it`,
       cancelButtonText: 'Cancel',
     }).then((result) => {
       if (result.isConfirmed) {
         this.formServ.approoveDiapproove(id).subscribe({
-          next: (res) => {
-            console.log("yyyyyyyyyaaaaaaaaaaa wkhay badel ")
-            Swal.fire('Deleted!', 'Your Course has been deleted', 'success');
+          next: () => {
+            Swal.fire('Success!', successMessage, 'success');
             this.getFormationsList();
           },
-          error: (err) => {
-            Swal.fire('Error!', 'An error occurred while deleting.', 'error');
+          error: () => {
+            Swal.fire('Error!', 'An error occurred while updating.', 'error');
           },
         });
       }

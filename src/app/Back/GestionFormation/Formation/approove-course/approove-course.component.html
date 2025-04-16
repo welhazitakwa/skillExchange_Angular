@@ -150,7 +150,7 @@
 
 
 
-                                      <button mat-raised-button type="button" class="btn btn-sm" (click)="approoveDiapproove(f.id)">
+                                      <button mat-raised-button type="button" class="btn btn-sm" (click)="approoveDiapproove(f.id, f.approoved)">
                                         <i 
     class="fa" 
     [ngClass]="f.approoved === 0 ? 'fa-check text-success' : 'fa-ban text-danger'">
