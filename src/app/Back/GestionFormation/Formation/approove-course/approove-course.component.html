@@ -65,10 +65,20 @@
                       type="text"
                       class="form-control"
                       placeholder="Search Courses..."
-                      (keyup)="filterTable(searchInput.value)"                             />
-
-                    <!-- /> -->
+                      (keyup)="filterTable(searchInput.value)"  />
+&nbsp;&nbsp;&nbsp;
+                       <select class="form-select" [(ngModel)]="approvalStatus" (change)="applyFilters()">
+      <option value="">All  </option>
+      <option value="approved">Approved</option>
+      <option value="pending">Disapproved</option>
+    </select>
                   </div>
+                 
+                  <!-- ********************************************* -->
+                   
+   
+ 
+                  <!-- ********************************************* -->
                 </div>
                  <div class="col-md-6" >
                   <button class="btn btn-sm btn-outline-primary"                   style="margin-left: 400px; height: 40px;">
@@ -99,7 +109,7 @@
                     </tr>
                   </thead>
                   <tbody  #formationTableBody>
-                    <tr *ngFor="let f of listFormations" >
+                    <tr *ngFor="let f of filteredCourses" >
                       <td class="ps-4">
                         <div class="d-flex align-items-center">
                           <img
@@ -114,7 +124,7 @@
                       
                       </td>
                       <td> <span  [ngStyle]="{ color: f.approoved === 0 ? 'red' : 'green' }" >
-  {{ f.approoved === 0 ? 'disapprooved' : 'approoved' }}
+  {{ f.approoved === 0 ? 'Disapproved' : 'Approved' }}
 </span> </td>
                        <td>
 <span  [ngStyle]="{ color: f.state === 0 ? 'red' : 'green' }" >

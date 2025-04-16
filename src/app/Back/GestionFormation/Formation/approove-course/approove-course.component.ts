@@ -19,13 +19,21 @@ export class ApprooveCourseComponent {
   ) {}
 
   listFormations: Formation[] = [];
+  filteredCourses: Formation[] = [];
+  searchText: string = '';
+  approvalStatus: string = ''; // '', 'approved', 'pending'
+
   @ViewChild('formationTableBody')
   categoryTableBodyRef!: ElementRef<HTMLTableSectionElement>;
   ngOnInit() {
     // this.getFormationsList();
 
     this.formServ.getCourses().subscribe(
-      (data) => (this.listFormations = data),
+      (data) => {
+        this.listFormations = data;
+        this.filteredCourses = [...this.listFormations];
+        this.applyFilters();
+      },
       (erreur) => console.log('erreur'),
       () => console.log(this.listFormations)
     );
@@ -127,6 +135,21 @@ export class ApprooveCourseComponent {
         }
       },
       error: console.log,
+    });
+  }
+
+  applyFilters(): void {
+    this.filteredCourses = this.listFormations.filter((course) => {
+      const matchesSearch =
+        !this.searchText ||
+        course.title.toLowerCase().includes(this.searchText.toLowerCase());
+
+      const matchesApproval =
+        !this.approvalStatus ||
+        (this.approvalStatus === 'approved' && course.approoved) ||
+        (this.approvalStatus === 'pending' && !course.approoved);
+
+      return matchesSearch && matchesApproval;
     });
   }
 }
