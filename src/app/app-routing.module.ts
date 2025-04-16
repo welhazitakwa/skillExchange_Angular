@@ -42,6 +42,7 @@ import { AllCommentsComponent } from './Back/GestionForumPost/CommentPost/all-co
 import { ShowPostsComponent } from './Front/GestionForumPost/Posts/show-posts/show-posts.component';
 import { PostDetailsComponent } from './Front/GestionForumPost/Posts/post-details/post-details.component';
 import { ParticipantsListComponent } from './Back/GestionFormation/Formation/participants-list/participants-list.component';
+import { ApprooveCourseComponent } from './Back/GestionFormation/Formation/approove-course/approove-course.component';
 
 
 const routes: Routes = [
@@ -95,6 +96,7 @@ const routes: Routes = [
   { path: 'coursescat', component: CoursesByCatFrontComponent },
   { path: 'userCourseSpace', component: UserCourseSpaceComponent },
   { path: 'participantsList', component: ParticipantsListComponent },
+  { path: 'approveCourse', component: ApprooveCourseComponent },
 
   { path: 'backcartProducts', component: AllCartProductsComponent },
   /***************************************************************/

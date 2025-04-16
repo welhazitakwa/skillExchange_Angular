@@ -32,4 +32,9 @@ export class FormationService {
   getCoursesByUserId(id: number): Observable<any> {
     return this.http.post(this.url + '/findById/', id);
   }
+  approoveDiapproove(id: number)  {
+    return this.http.put(this.url + '/approoveDiapproove/', id);
+  }
+
+ 
 }

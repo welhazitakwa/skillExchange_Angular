@@ -102,6 +102,7 @@ import { ShowPostsComponent } from './Front/GestionForumPost/Posts/show-posts/sh
 import { PostDetailsComponent } from './Front/GestionForumPost/Posts/post-details/post-details.component';
 import { DetailsFormationBackComponent } from './Back/GestionFormation/Formation/details-formation-back/details-formation-back.component';
 import { ParticipantsListComponent } from './Back/GestionFormation/Formation/participants-list/participants-list.component';
+import { ApprooveCourseComponent } from './Back/GestionFormation/Formation/approove-course/approove-course.component';
 
 
 @NgModule({
@@ -182,6 +183,7 @@ import { ParticipantsListComponent } from './Back/GestionFormation/Formation/par
     PostDetailsComponent,
     DetailsFormationBackComponent,
     ParticipantsListComponent,
+    ApprooveCourseComponent,
 
   ],
   imports: [

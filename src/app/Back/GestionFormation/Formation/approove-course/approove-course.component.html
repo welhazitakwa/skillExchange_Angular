@@ -71,11 +71,8 @@
                   </div>
                 </div>
                  <div class="col-md-6" >
-                  <button mat-raised-button class="btn btn-sm btn-outline-primary" 
-                  routerLink="/approveCourse"
-                  style="margin-left: 400px; height: 40px;"
-                  >
-                  <i class="fas fa-plus me-2"></i> Formations à approuver
+                  <button class="btn btn-sm btn-outline-primary"                   style="margin-left: 400px; height: 40px;">
+                  <i class="fas fa-download me-2"></i>Export CSV
                 </button>
                 </div> 
                 
@@ -92,10 +89,7 @@
                       
                       <th class="fw-medium text-muted cursor-pointer"> State
                       </th>
-                      
-                      <th class="fw-medium text-muted cursor-pointer" >
-                        duration  
-                      </th>
+                  
                       <th class="fw-medium text-muted cursor-pointer" >
                         Added at  <i class="fas fa-sort ms-1"></i>
                       </th>
@@ -119,30 +113,98 @@
                         </div> 
                       
                       </td>
-                      <td> approved </td>
+                      <td> <span  [ngStyle]="{ color: f.approoved === 0 ? 'red' : 'green' }" >
+  {{ f.approoved === 0 ? 'disapprooved' : 'approoved' }}
+</span> </td>
                        <td>
 <span  [ngStyle]="{ color: f.state === 0 ? 'red' : 'green' }" >
   {{ f.state === 0 ? 'private' : 'public' }}
 </span>
 
                                     </td>
-                      <td>{{f.duration}}</td>
-                      
+                       
                       <td class="text-muted">
                        {{ f.date_ajout | date }}
                       </td>
- <td  style="text-align: center;"  >
+ <td    >
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                      <button mat-raised-button type="button" class="btn btn-sm" (click)="approoveDiapproove(f.id)">
+                                        <i 
+    class="fa" 
+    [ngClass]="f.approoved === 0 ? 'fa-check text-success' : 'fa-ban text-danger'">
+  </i>
+  {{ f.approoved === 0 ? 'Approve' : 'Disapprove' }}
+ 
+</button>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                                          <button mat-raised-button type="button" class="btn btn-sm btn-square btn-neutral text-danger-hover"
                                           (click)="openDetailsCourse(f.id)"> 
                                             <i class="text-info fa fa-eye"></i> 
                                         </button>
-                 
 
-
-                                  <button  class="btn btn-sm btn-square btn-neutral text-danger-hover" 
-        (click)="openParticipantsList(f.id)">
-  <i class="text-warning fa fa-list me-2"></i> 
-</button>
 
                                         <button type="button" class="btn btn-sm btn-square btn-neutral text-danger-hover" (click)="deleteCourse(f.id)">
                                             <i class="text-danger fa fa-trash"></i>
