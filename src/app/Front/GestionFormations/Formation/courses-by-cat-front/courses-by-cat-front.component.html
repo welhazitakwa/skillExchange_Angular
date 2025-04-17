@@ -14,6 +14,35 @@
             </div>
         </div>
     </div>
+     <!-- ******************************************* -->
+     
+     <div class="star-rating" (mouseleave)="resetHover()">
+  <ng-container *ngFor="let star of stars; let i = index">
+    <i
+      class="star"
+      [class.filled]="i < rating || (hoverRating !== null && i < hoverRating)"
+      (mouseover)="hover(i + 1)"
+      (click)="selectRating(i + 1)">
+      ★
+    </i>
+  </ng-container>
+</div>
+ <br>
+<!-- Emoji shown on hover -->
+<div class="emoji-hover" *ngIf="hoverRating && !showEmoji">
+  {{ getEmoji(hoverRating) }}
+</div>
+
+<!-- Emoji that blinks then disappears after click -->
+<div
+  class="emoji-popup"
+  *ngIf="showEmoji"
+  [@blink]>
+  {{ getEmoji(rating) }}
+</div>
+
+
+            <!-- ******************************************* -->
     <!-- Header End -->
                   <input
     #searchInput
@@ -28,8 +57,9 @@
         <div class="container py-5">
             <div class="text-center mb-5">
                 <h5 class="text-primary text-uppercase mb-3" style="letter-spacing: 5px;">Courses</h5>
-                <h1>Our  Courses</h1>
+                <h1>Our  Courses       </h1>
             </div>
+           
             <div class="row">
                 <div *ngFor="let f of filteredFormations" class="col-lg-4 col-md-6 mb-4">
                     <div class="rounded overflow-hidden mb-2 course-card">

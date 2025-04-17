@@ -23,3 +23,29 @@ img.img-fluid {
   flex-direction: column;
   justify-content: space-between;
 }
+
+
+.star-rating {
+  display: flex;
+  gap: 10px;
+  font-size: 2rem;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.star {
+  color: #ccc;
+  transition: transform 0.2s ease, color 0.3s;
+}
+
+.star.filled {
+  color: gold;
+  transform: scale(1.2);
+}
+
+.emoji-hover, .emoji-popup {
+  font-size: 2.5rem;
+  text-align: center;
+  margin-top: 10px;
+}
+

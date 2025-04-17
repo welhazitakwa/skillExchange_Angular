@@ -40,7 +40,11 @@ export class ApprooveCourseComponent {
   }
   getFormationsList() {
     this.formServ.getCourses().subscribe(
-      (data) => (this.listFormations = data),
+      (data) => {
+        this.listFormations = data;
+        this.filteredCourses = [...this.listFormations];
+        this.applyFilters();
+      },
       (erreur) => console.log('erreur'),
       () => console.log(this.listFormations)
     );

@@ -75,7 +75,7 @@
                   routerLink="/approveCourse"
                   style="margin-left: 400px; height: 40px;"
                   >
-                  <i class="fas fa-plus me-2"></i> Formations à approuver
+                   Courses to Approve
                 </button>
                 </div> 
                 
@@ -119,7 +119,9 @@
                         </div> 
                       
                       </td>
-                      <td> approved </td>
+                      <td> <span  [ngStyle]="{ color: f.approoved === 0 ? 'red' : 'green' }" >
+  {{ f.approoved === 0 ? 'Disapproved' : 'Approved' }}
+</span> </td>
                        <td>
 <span  [ngStyle]="{ color: f.state === 0 ? 'red' : 'green' }" >
   {{ f.state === 0 ? 'private' : 'public' }}

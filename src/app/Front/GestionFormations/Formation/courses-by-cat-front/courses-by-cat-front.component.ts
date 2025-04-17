@@ -12,11 +12,23 @@ import { User } from 'src/app/core/models/GestionUser/User';
 import { ParticipationFormation } from 'src/app/core/models/GestionFormation/participation-formation';
 import { ParticipationFormationService } from 'src/app/core/services/GestionFormation/participation-formation.service';
 import Swal from 'sweetalert2';
+import { animate, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-courses-by-cat-front',
   templateUrl: './courses-by-cat-front.component.html',
   styleUrls: ['./courses-by-cat-front.component.css'],
+  animations: [
+    trigger('blink', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('0.2s ease-in', style({ opacity: 1 })),
+        animate('0.2s ease-out', style({ opacity: 0.2 })),
+        animate('0.2s ease-in', style({ opacity: 1 })),
+        animate('0.2s ease-out', style({ opacity: 0 })),
+      ]),
+    ]),
+  ],
 })
 export class CoursesByCatFrontComponent {
   searchText: string = '';
@@ -69,7 +81,9 @@ export class CoursesByCatFrontComponent {
   getCoursesOfCategory() {
     this.catServ.getCoursesOfCategorie(this.categoryId).subscribe(
       (data) => {
-        this.listFormations = data.filter((f: Formation) => f.state === 1);
+        this.listFormations = data.filter(
+          (f: Formation) => f.state === 1 && f.approoved === 1
+        );
         this.filteredFormations = this.listFormations;
       },
       (erreur) => console.log('erreur'),
@@ -127,12 +141,12 @@ export class CoursesByCatFrontComponent {
     this.participationService.addParticipation(participation).subscribe({
       next: (res) => {
         console.log('Participation ajoutée avec succès', res);
-         Swal.fire({
-           icon: 'success',
-           title: 'Participation Added',
-           text: 'Your participation has been successfully recorded!',
-           confirmButtonText: 'OK',
-         });
+        Swal.fire({
+          icon: 'success',
+          title: 'Participation Added',
+          text: 'Your participation has been successfully recorded!',
+          confirmButtonText: 'OK',
+        });
       },
       error: (err) => {
         console.error("Erreur lors de l'ajout", err);
@@ -142,8 +156,42 @@ export class CoursesByCatFrontComponent {
           text: 'Failed to add participation. Please try again.',
           confirmButtonText: 'Close',
         });
-
       },
     });
+  }
+  // emojis *******************************************
+  rating = 0;
+  hoverRating: number | null = null;
+  showEmoji = false;
+  stars = new Array(5);
+
+  hover(value: number) {
+    this.hoverRating = value;
+  }
+
+  resetHover() {
+    this.hoverRating = null;
+  }
+
+  selectRating(value: number) {
+    this.rating = value;
+    this.showEmoji = true;
+
+    // Hide emoji after animation (1 second)
+    setTimeout(() => {
+      this.showEmoji = false;
+    }, 1000);
+  }
+
+  getEmoji(value: number): string {
+    const emojis = ['😡', '😕', '😐', '🙂', '🤩'];
+    return emojis[value - 1] || '';
+  }
+
+  playSound() {
+    const audio = new Audio();
+    audio.src = 'assets/sounds/tada.mp3';
+    audio.load();
+    audio.play();
   }
 }
