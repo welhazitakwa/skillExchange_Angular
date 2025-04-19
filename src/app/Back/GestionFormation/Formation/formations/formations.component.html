@@ -81,6 +81,23 @@
                 
               </div>
 
+              <div class="container-fluid">
+      <!-- Chart Section -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="card shadow-sm border-0">
+            <div class="card-body">
+              <h4 class="card-title mb-4 text-primary fw-semibold">Courses by Season</h4>
+              <canvas baseChart
+                      [data]="lineChartData"
+                      [options]="lineChartOptions"
+                      [type]="lineChartType"
+                      height="200">
+              </canvas>
+            </div>
+          </div>
+        </div>
+      </div>
               <div class="table-responsive rounded-3">
                 <table class="table table-hover align-middle mb-0">
                   <thead class="table-light">

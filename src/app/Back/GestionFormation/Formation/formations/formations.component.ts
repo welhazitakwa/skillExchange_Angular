@@ -6,6 +6,7 @@ import Swal from 'sweetalert2';
 import { AddFormationComponent } from '../add-formation/add-formation.component';
 import { DetailsFormationBackComponent } from '../details-formation-back/details-formation-back.component';
 import { Router } from '@angular/router';
+import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
 
 @Component({
   selector: 'app-formations',
@@ -29,6 +30,36 @@ export class FormationsComponent {
       (data) => (this.listFormations = data),
       (erreur) => console.log('erreur'),
       () => console.log(this.listFormations)
+    );
+    // this.formServ.getCoursesBySeason().subscribe(
+    //   (data) => {
+    //     this.lineChartData.datasets[0].data = [
+    //       data['Hiver'] || 0,
+    //       data['Printemps'] || 0,
+    //       data['Été'] || 0,
+    //       data['Automne'] || 0,
+    //     ];
+    //   },
+    //   (error) => {
+    //     console.log('Error fetching seasonal stats:', error);
+    //     Swal.fire('Error', 'Failed to load seasonal statistics.', 'error');
+    //   }
+    // );
+  
+    this.formServ.getCoursesBySeason().subscribe(
+      (data) => {
+        console.log('Seasonal data:', data);
+        this.lineChartData.datasets[0].data = [
+          data['Hiver'] || 0,
+          data['Printemps'] || 0,
+          data['Été'] || 0,
+          data['Automne'] || 0,
+        ];
+      },
+      (error) => {
+        console.log('Error fetching seasonal stats:', error);
+        Swal.fire('Error', 'Failed to load seasonal statistics.', 'error');
+      }
     );
   }
   getFormationsList() {
@@ -119,4 +150,28 @@ export class FormationsComponent {
       state: { formationId: id },
     });
   }
+
+  //------------------------------------------------
+  // Chart properties
+  public lineChartData: ChartData<'line'> = {
+    labels: ['Hiver', 'Printemps', 'Été', 'Automne'],
+    datasets: [
+      {
+        data: [0, 0, 0, 0],
+        label: 'Courses by Season',
+        borderColor: '#007bff',
+        backgroundColor: 'rgba(0, 123, 255, 0.1)',
+        fill: true,
+        tension: 0.4,
+      },
+    ],
+  };
+  public lineChartOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    plugins: {
+      legend: { display: true },
+      title: { display: true, text: 'Courses by Season' },
+    },
+  };
+  public lineChartType: ChartType = 'line';
 }
