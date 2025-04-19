@@ -14,35 +14,7 @@
             </div>
         </div>
     </div>
-     <!-- ******************************************* -->
-     
-     <div class="star-rating" (mouseleave)="resetHover()">
-  <ng-container *ngFor="let star of stars; let i = index">
-    <i
-      class="star"
-      [class.filled]="i < rating || (hoverRating !== null && i < hoverRating)"
-      (mouseover)="hover(i + 1)"
-      (click)="selectRating(i + 1)">
-      ★
-    </i>
-  </ng-container>
-</div>
- <br>
-<!-- Emoji shown on hover -->
-<div class="emoji-hover" *ngIf="hoverRating && !showEmoji">
-  {{ getEmoji(hoverRating) }}
-</div>
 
-<!-- Emoji that blinks then disappears after click -->
-<div
-  class="emoji-popup"
-  *ngIf="showEmoji"
-  [@blink]>
-  {{ getEmoji(rating) }}
-</div>
-
-
-            <!-- ******************************************* -->
     <!-- Header End -->
                   <input
     #searchInput
@@ -85,15 +57,49 @@
                                             <i class="text-danger fas fa-tasks"> Participer</i>
                                         </button>
                                     </div> -->
+ <ng-container [ngSwitch]="getButtonState(f)">
+ 
+ <div *ngSwitchCase="'exam'">
+              <!-- ******************************************* -->
+     
+  <div class="star-rating" (mouseleave)="resetHover()">
+  <ng-container *ngFor="let star of stars; let i = index">
+    <i
+      class="star"
+      [class.filled]="i < rating || (hoverRating !== null && i < hoverRating)"
+      (mouseover)="hover(i + 1)"
+      (click)="selectRating(i + 1)">
+      ★
+    </i>
+  </ng-container>
+</div>
+ <br>
+<!-- Emoji shown on hover -->
+<div class="emoji-hover" *ngIf="hoverRating && !showEmoji">
+  {{ getEmoji(hoverRating) }}
+</div>
+
+<!-- Emoji that blinks then disappears after click -->
+<div
+  class="emoji-popup"
+  *ngIf="showEmoji"
+  [@blink]>
+  {{ getEmoji(rating) }}
+</div>
 
 
-
+            <!-- ******************************************* -->
+ 
+    </div>
+</ng-container>
  <div>
   <ng-container [ngSwitch]="getButtonState(f)">
     
     <button *ngSwitchCase="'pay'" (click)="payer(f.id, f.price)" class="btn btn-warning"> 💰 Pay</button>
     <button *ngSwitchCase="'participate'" (click)="addParticipation(f.id)" class="btn btn-success">Participate</button>
-    <button *ngSwitchCase="'exam'" (click)="passerExam()" class="btn btn-info"> 📝 Exam</button>
+    <div *ngSwitchCase="'exam'">
+    <button  (click)="passerExam()" class="btn btn-info"> 📝 Exam</button>
+    </div>
   </ng-container>
 
 
