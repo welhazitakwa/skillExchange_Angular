@@ -95,9 +95,9 @@
  <div>
   <ng-container [ngSwitch]="getButtonState(f)">
     
-    <button *ngSwitchCase="'pay'" (click)="payer(f.id, f.price)" class="btn btn-warning"> 💰 Pay</button>
+    <button *ngSwitchCase="'pay'" (click)="payer(f.id, f.price, f.title)" class="btn btn-warning"> 💰 Pay</button>
     <button *ngSwitchCase="'participate'" (click)="addParticipation(f.id)" class="btn btn-success">Participate</button>
-    <div *ngSwitchCase="'exam'">
+    <div *ngSwitchCase="'exam'"> 
     <button  (click)="passerExam()" class="btn btn-info"> 📝 Exam</button>
     </div>
   </ng-container>

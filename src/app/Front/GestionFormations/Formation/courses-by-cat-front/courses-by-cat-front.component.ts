@@ -14,6 +14,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { catchError, map, Observable, of } from 'rxjs';
 import { PaiementFormationService } from 'src/app/core/services/GestionFormation/paiement-formation.service';
 import { PaiementFormation } from 'src/app/core/models/GestionFormation/paiement-formation';
+import { HistoricTransactions, TransactionType } from 'src/app/core/models/GestionUser/HistoricTransactions';
 
 @Component({
   selector: 'app-courses-by-cat-front',
@@ -191,7 +192,7 @@ export class CoursesByCatFrontComponent {
   // ------------********************boutonet************************------------------------
   // Dans ton service de participation
 
-  payer(courseId: number, prix: number) {
+  payer(courseId: number, prix: number, title : string ) {
     const paiement = new PaiementFormation();
     //participation.idp = 0;
     paiement.participant = this.currentUser?.id ?? 0;
@@ -199,82 +200,89 @@ export class CoursesByCatFrontComponent {
     course.id = courseId;
     paiement.course = course;
     console.log('Données paiement à envoyer :', paiement);
-          if (this.currentUser!.balance > prix) {
-                  Swal.fire({
-                    title: 'Confirm Payment',
-                    text: 'Are you sure you want to proceed with the payment?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes, pay now',
-                    cancelButtonText: 'Cancel',
-                  }).then((result) => {
-                    if (result.isConfirmed) {
-                      this.payServ.addPaiement(paiement).subscribe({
-                        next: (res) => {
-                          this.getCoursesOfCategory();
-                          console.log(
-                            'prix qbal manzalb7ouh' + this.currentUser!.balance
-                          );
-                          this.currentUser!.balance =
-                            this.currentUser!.balance - prix;
-                          console.log(
-                            'prix qbal mazalba7neh' + this.currentUser!.balance
-                          );
-                          //  --**********-------------******************---------------************
-                          if (this.currentUser) {
-                            this.userService
-                              .updateUser(this.currentUser)
-                              .subscribe({
-                                next: (val: any) => {
-                                  console.log('balance updated');
-                                  this.loadCurrentUser;
-                                },
-                                error: (err: any) => {
-                                  console.log('paiement non effectué');
-                                },
-                              });
-                          }
+    if (this.currentUser!.balance > prix) {
+      Swal.fire({
+        title: 'Confirm Payment',
+        text: 'Are you sure you want to proceed with the payment?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, pay now',
+        cancelButtonText: 'Cancel',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.payServ.addPaiement(paiement).subscribe({
+            next: (res) => {
+              this.getCoursesOfCategory();
+              console.log('prix avant' + this.currentUser!.balance);
+              this.currentUser!.balance = this.currentUser!.balance - prix;
+              console.log('prix après ' + this.currentUser!.balance);
+              //  --**********-------------******************---------------************
+              if (this.currentUser) {
+                this.userService.updateUser(this.currentUser).subscribe({
+                  next: (val: any) => {
+                    console.log('balance updated');
+                    this.loadCurrentUser;
+                  },
+                  error: (err: any) => {
+                    console.log('paiement non effectué');
+                  },
+                });
+              }
 
-                          //  --**********-------------******************---------------************
-                          console.log('Paiement ajoutée avec succès', res);
-                          Swal.fire({
-                            icon: 'success',
-                            title: 'Paid!',
-                            text: 'Your payment has been successfully processed.',
-                            confirmButtonText: 'OK',
-                          }).then(() => {
-                            //window.location.reload();
-                            this.reloadComponentWithId(this.categoryId); // ← à adapter selon ta logique
-                          });
-                        },
-                        error: (err) => {
-                          console.error("Erreur lors de l'ajout", err);
-                          Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Failed to add participation. Please try again.',
-                            confirmButtonText: 'Close',
-                          });
-                        },
-                      });
-                    } else if (result.dismiss === Swal.DismissReason.cancel) {
-                      Swal.fire(
-                        'Cancelled',
-                        'Your payment was not processed.',
-                        'error'
-                      );
-                    }
-                  });
-                } else {
-                  Swal.fire({
-                    icon: 'warning',
-                    title: 'Oops!',
-                    text: 'You don’t have enough balance to proceed.',
-                    confirmButtonColor: '#3085d6',
-                    confirmButtonText: 'Got it!',
-                  });
+              //  --**********-------------Transaction ---------------************
+                            if (this.currentUser) { 
+        this.createTransaction(
+          this.currentUser,
+          prix,
+          TransactionType.PAYMENT,
+          'Course Payment '+ title
+        ).subscribe(
+          () => {
+            alert('Withdrawal completed successfully');
+          },
+          (error) => {
+            console.error('Withdrawal transaction failed:', error);
+            alert('Withdrawal failed');
+          }
+        );
+                            }
 
-                }
+      
+              //  --**********-------------******************---------------************
+              console.log('Paiement ajoutée avec succès', res);
+              Swal.fire({
+                icon: 'success',
+                title: 'Paid!',
+                text: 'Your payment has been successfully processed.',
+                confirmButtonText: 'OK',
+              }).then(() => {
+                //window.location.reload();
+                this.reloadComponentWithId(this.categoryId); // ← à adapter selon ta logique
+              });
+            },
+            error: (err) => {
+              console.error("Erreur lors de l'ajout", err);
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to add participation. Please try again.',
+                confirmButtonText: 'Close',
+              });
+            },
+          });
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          Swal.fire('Cancelled', 'Your payment was not processed.', 'error');
+        }
+      });
+    } else {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Oops!',
+        text: 'You don’t have enough balance to proceed.',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Got it!',
+      });
+    }
   }
 
   reloadComponentWithId(id: number) {
@@ -368,11 +376,6 @@ export class CoursesByCatFrontComponent {
     });
   }
 
-  // refreshAllButtons(): void {
-  //   this.listFormations.forEach((f) =>
-  //     this.updateButtonState(f, this.currentUser!.id)
-  //   );
-  // }
   // emojis *******************************************
   rating = 0;
   hoverRating: number | null = null;
@@ -402,10 +405,6 @@ export class CoursesByCatFrontComponent {
     return emojis[value - 1] || '';
   }
 
-  // dfdlld;gl;gld;gld;g;ld;gld;gl;dl;gld;gld;gldlg;dl;gld;gl;dlg;
-  // participationMap: { [courseId: number]: boolean } = {};
-  // paimentMap: { [courseId: number]: boolean } = {};
-
   // Méthode pour vérifier l'état synchronement
   getButtonState(f: Formation): string {
     if (!this.paimentMap[f.id]) {
@@ -413,5 +412,22 @@ export class CoursesByCatFrontComponent {
     } else {
       return this.participationMap[f.id] ? 'exam' : 'participate';
     }
+  }
+  // --------------------------------- transaction ----------------------------
+  private createTransaction(
+    recipient: User,
+    amount: number,
+    transactionType: TransactionType,
+    description: string
+  ): Observable<any> {
+    const transaction: HistoricTransactions = {
+      id: null,
+      type: transactionType,
+      amount: amount,
+      description: description,
+      date: new Date(),
+    };
+
+    return this.userService.addTransaction(recipient.id, transaction);
   }
 }
