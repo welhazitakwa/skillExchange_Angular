@@ -160,12 +160,6 @@ export class CoursesByCatFrontComponent {
                this.participationMap[f.id] = false;
              }
            });
-console.log(
-  `Appel de checkPaiement avec participantId=${
-    this.currentUser!.id
-  }, courseId=${f.id}`
-);
-
         });
 
         // ekher mouhawla qabl nawm
@@ -204,29 +198,42 @@ console.log(
     const course = new Formation();
     course.id = courseId;
     paiement.course = course;
-    console.log('Données à envoyer :', paiement);
+    console.log('Données paiement à envoyer :', paiement);
 
-    this.payServ.addPaiement(paiement).subscribe({
-      next: (res) => {
-        this.getCoursesOfCategory();
-        console.log('Participation ajoutée avec succès', res);
-        Swal.fire({
-          icon: 'success',
-          title: 'Participation Added',
-          text: 'Your participation has been successfully recorded!',
-          confirmButtonText: 'OK',
-        });
-      },
-      error: (err) => {
-        console.error("Erreur lors de l'ajout", err);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Failed to add participation. Please try again.',
-          confirmButtonText: 'Close',
-        });
-      },
-    });
+   Swal.fire({
+     title: 'Confirm Payment',
+     text: 'Are you sure you want to proceed with the payment?',
+     icon: 'warning',
+     showCancelButton: true,
+     confirmButtonText: 'Yes, pay now',
+     cancelButtonText: 'Cancel',
+   }).then((result) => {
+     if (result.isConfirmed) {
+       this.payServ.addPaiement(paiement).subscribe({
+         next: (res) => {
+           this.getCoursesOfCategory();
+           console.log('Paiement ajoutée avec succès', res);
+           Swal.fire({
+             icon: 'success',
+             title: 'Paid!',
+             text: 'Your payment has been successfully processed.',
+             confirmButtonText: 'OK',
+           });
+         },
+         error: (err) => {
+           console.error("Erreur lors de l'ajout", err);
+           Swal.fire({
+             icon: 'error',
+             title: 'Error',
+             text: 'Failed to add participation. Please try again.',
+             confirmButtonText: 'Close',
+           });
+         },
+       });
+     } else if (result.dismiss === Swal.DismissReason.cancel) {
+       Swal.fire('Cancelled', 'Your payment was not processed.', 'error');
+     }
+   });
   }
 
   passerExam() {
