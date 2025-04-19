@@ -145,21 +145,21 @@ export class CoursesByCatFrontComponent {
         // });
         // ---------------------------------------------
         this.filteredFormations.forEach((f) => {
-         this.payServ
-           .checkPaiement(this.currentUser!.id, f.id)
-           .subscribe((hasPaid) => {
-             this.paimentMap[f.id] = hasPaid;
+          this.payServ
+            .checkPaiement(this.currentUser!.id, f.id)
+            .subscribe((hasPaid) => {
+              this.paimentMap[f.id] = hasPaid;
 
-             if (hasPaid) {
-               this.participationService
-                 .checkParticipation(this.currentUser!.id, f.id)
-                 .subscribe((hasParticipated) => {
-                   this.participationMap[f.id] = hasParticipated;
-                 });
-             } else {
-               this.participationMap[f.id] = false;
-             }
-           });
+              if (hasPaid) {
+                this.participationService
+                  .checkParticipation(this.currentUser!.id, f.id)
+                  .subscribe((hasParticipated) => {
+                    this.participationMap[f.id] = hasParticipated;
+                  });
+              } else {
+                this.participationMap[f.id] = false;
+              }
+            });
         });
 
         // ekher mouhawla qabl nawm
@@ -191,7 +191,7 @@ export class CoursesByCatFrontComponent {
   // ------------********************boutonet************************------------------------
   // Dans ton service de participation
 
-  payer(courseId: number) {
+  payer(courseId: number, prix: number) {
     const paiement = new PaiementFormation();
     //participation.idp = 0;
     paiement.participant = this.currentUser?.id ?? 0;
@@ -200,40 +200,66 @@ export class CoursesByCatFrontComponent {
     paiement.course = course;
     console.log('Données paiement à envoyer :', paiement);
 
-   Swal.fire({
-     title: 'Confirm Payment',
-     text: 'Are you sure you want to proceed with the payment?',
-     icon: 'warning',
-     showCancelButton: true,
-     confirmButtonText: 'Yes, pay now',
-     cancelButtonText: 'Cancel',
-   }).then((result) => {
-     if (result.isConfirmed) {
-       this.payServ.addPaiement(paiement).subscribe({
-         next: (res) => {
-           this.getCoursesOfCategory();
-           console.log('Paiement ajoutée avec succès', res);
-           Swal.fire({
-             icon: 'success',
-             title: 'Paid!',
-             text: 'Your payment has been successfully processed.',
-             confirmButtonText: 'OK',
-           });
-         },
-         error: (err) => {
-           console.error("Erreur lors de l'ajout", err);
-           Swal.fire({
-             icon: 'error',
-             title: 'Error',
-             text: 'Failed to add participation. Please try again.',
-             confirmButtonText: 'Close',
-           });
-         },
-       });
-     } else if (result.dismiss === Swal.DismissReason.cancel) {
-       Swal.fire('Cancelled', 'Your payment was not processed.', 'error');
-     }
-   });
+    Swal.fire({
+      title: 'Confirm Payment',
+      text: 'Are you sure you want to proceed with the payment?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, pay now',
+      cancelButtonText: 'Cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.payServ.addPaiement(paiement).subscribe({
+          next: (res) => {
+            this.getCoursesOfCategory();
+            console.log('prix qbal manzalb7ouh' + this.currentUser!.balance);
+            this.currentUser!.balance = this.currentUser!.balance - prix;
+            console.log('prix qbal mazalba7neh' + this.currentUser!.balance);
+            //  --**********-------------******************---------------************
+            if (this.currentUser) {
+              this.userService.updateUser(this.currentUser).subscribe({
+                next: (val: any) => {
+                  console.log('balance updated');
+                  this.loadCurrentUser;
+                },
+                error: (err: any) => {
+                  console.log('paiement non effectué');
+                },
+              });
+            }
+
+            //  --**********-------------******************---------------************
+            console.log('Paiement ajoutée avec succès', res);
+            Swal.fire({
+              icon: 'success',
+              title: 'Paid!',
+              text: 'Your payment has been successfully processed.',
+              confirmButtonText: 'OK',
+            }).then(() => {
+              //window.location.reload();
+              this.reloadComponentWithId(this.categoryId); // ← à adapter selon ta logique
+            });
+          },
+          error: (err) => {
+            console.error("Erreur lors de l'ajout", err);
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Failed to add participation. Please try again.',
+              confirmButtonText: 'Close',
+            });
+          },
+        });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        Swal.fire('Cancelled', 'Your payment was not processed.', 'error');
+      }
+    });
+  }
+
+  reloadComponentWithId(id: number) {
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.router.navigate(['/coursescat'], { state: { categoryId: id } });
+    });
   }
 
   passerExam() {
@@ -361,13 +387,10 @@ export class CoursesByCatFrontComponent {
 
   // Méthode pour vérifier l'état synchronement
   getButtonState(f: Formation): string {
-
     if (!this.paimentMap[f.id]) {
       return 'pay';
     } else {
       return this.participationMap[f.id] ? 'exam' : 'participate';
     }
   }
-
-
 }
