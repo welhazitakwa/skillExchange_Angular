@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { PaiementFormation } from '../../models/GestionFormation/paiement-formation';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { catchError, Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -40,4 +40,14 @@ export class PaiementFormationService {
       this.url + `/check?participantId=${participantId}&courseId=${courseId}`
     );
   }
+
+  // checkPaiement(userId: number, courseId: number): Observable<boolean> {
+  //   return this.http
+  //     .get<boolean>(
+  //       this.url + `/check?participantId=${userId}&courseId=${courseId}`
+  //     )
+  //     .pipe(
+  //       catchError(() => of(false)) // Retourne false si erreur
+  //     );
+  // }
 }
