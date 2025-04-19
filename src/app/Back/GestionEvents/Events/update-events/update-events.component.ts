@@ -44,17 +44,19 @@ export class UpdateEventsComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.eventData) {
+      console.log('Initializing event data:', JSON.stringify(this.eventData, null, 2));
       this.eventForm.patchValue({
         ...this.eventData,
         startDate: this.formatDate(this.eventData.startDate),
         endDate: this.formatDate(this.eventData.endDate)
       });
-      // Load existing images (assuming images are Base64 strings with data URL prefix)
+      // Load existing images
       if (this.eventData.images) {
         this.existingImages = Array.from(this.eventData.images).map(img => ({
-          ...img,
+          idImage: img.idImage,
           images: img.images.startsWith('data:image') ? img.images : `data:image/jpeg;base64,${img.images}`
         }));
+        console.log('Loaded existing images:', this.existingImages.map(img => ({ idImage: img.idImage })));
       }
     }
   }
@@ -87,6 +89,7 @@ export class UpdateEventsComponent implements OnInit {
           this.imagePreviews.push(base64String);
           const base64Data = base64String.split(',')[1];
           this.imageBase64s.push(base64Data);
+          console.log('Added new image (preview):', base64String.substring(0, 50) + '...');
         };
         reader.readAsDataURL(file);
       }
@@ -98,6 +101,7 @@ export class UpdateEventsComponent implements OnInit {
     if (index > -1) {
       this.imagePreviews.splice(index, 1);
       this.imageBase64s.splice(index, 1);
+      console.log('Removed new image preview:', preview.substring(0, 50) + '...');
     }
   }
 
@@ -105,32 +109,46 @@ export class UpdateEventsComponent implements OnInit {
     const index = this.existingImages.indexOf(image);
     if (index > -1) {
       this.existingImages.splice(index, 1);
+      console.log('Removed existing image, ID:', image.idImage);
     }
   }
 
   submit(): void {
     if (this.eventForm.valid) {
+      // Construct the images array: include only remaining existing images and new images
       const updatedImages = [
-        ...this.existingImages.map(img => ({ idImage: img.idImage, images: img.images.startsWith('data:image') ? img.images.split(',')[1] : img.images })),
+        ...this.existingImages.map(img => ({
+          idImage: img.idImage,
+          images: img.images.startsWith('data:image') ? img.images.split(',')[1] : img.images
+        })),
         ...this.imageBase64s.map(base64 => ({ images: base64 }))
       ];
 
-      const updatedEvent = {
-        ...this.eventData,
+      const updatedEvent: Events = {
+        ...this.eventData!,
         ...this.eventForm.value,
         images: updatedImages
       };
 
-      this.eventsService.updateEvent(updatedEvent).subscribe(
-        (response) => {
-          this.onUpdate.emit(updatedEvent);
+      console.log('Submitting update payload:', JSON.stringify(updatedEvent, null, 2));
+
+      this.eventsService.updateEvent(updatedEvent).subscribe({
+        next: (response) => {
+          console.log('Update successful, server response:', JSON.stringify(response, null, 2));
+          this.onUpdate.emit(response);
         },
-        (error) => {
-          console.error('Erreur lors de la mise à jour de l\'événement', error);
+        error: (error) => {
+          console.error('Error updating event:', error);
+          if (error.status === 415) {
+            console.error('HTTP 415: Verify Content-Type is application/json and JSON payload is valid');
+          } else if (error.status === 400) {
+            console.error('HTTP 400: Check JSON payload structure, possible deserialization issue');
+          }
         }
-      );
+      });
     } else {
       this.eventForm.markAllAsTouched();
+      console.log('Form invalid, errors:', this.eventForm.errors);
     }
   }
 

@@ -31,7 +31,7 @@
                    alt="Event Image">
             </ng-container>
             <ng-template #noImage>
-              <img class="img-fluid" src="assets/assetsFront/img/course-2.jpg" alt="Default Event Image">
+              <img class="img-fluid" src="assets/assetsFront/img/course-1.jpg" alt="Default Event Image">
             </ng-template>
           </div>
           <!-- Carousel Arrows -->
@@ -77,162 +77,12 @@
         </p>
       </div>
     </div>
-    
-    <!-- Comments Section -->
+    <!-- Comments Section Placeholder -->
     <div class="row mt-5">
       <div class="col-12">
         <h3>Comments</h3>
-        
-        <!-- Comment Form -->
-        <div class="mb-4" *ngIf="authService.getCurrentUserEmail()">
-          <form [formGroup]="commentForm" (ngSubmit)="submitComment()">
-            <div class="form-group">
-              <textarea class="form-control" formControlName="content" rows="3" 
-                        placeholder="Add a comment..."></textarea>
-              <div *ngIf="commentForm.get('content')?.invalid && commentForm.get('content')?.touched" 
-                   class="text-danger">
-                Comment is required and must be less than 500 characters.
-              </div>
-            </div>
-            <div class="mt-2">
-              <button type="submit" class="btn btn-primary" 
-                      [disabled]="commentForm.invalid">Post Comment</button>
-              <button type="button" class="btn btn-outline-secondary ml-2" 
-                      *ngIf="editingComment !== null" (click)="cancelEdit()">Cancel</button>
-            </div>
-          </form>
-        </div>
-        
-        <!-- Comments List -->
-        <div class="comments-list">
-          <div *ngFor="let comment of comments" class="comment mb-4">
-            <div class="d-flex">
-              <div class="flex-shrink-0">
-                <img [src]="comment.user?.image || 'assets/assetsFront/img/user.jpg'" 
-                     class="rounded-circle" width="50" height="50" alt="User">
-              </div>
-              <div class="flex-grow-1 ms-3">
-                <div class="d-flex justify-content-between align-items-center">
-                  <h6 class="mb-0">{{ comment.user?.name || comment.email }}</h6>
-                  <small class="text-muted">{{ comment.date | date:'medium' }}</small>
-                </div>
-                
-                <!-- Comment Content or Edit Form -->
-                <ng-container *ngIf="editingComment !== comment.idComment; else editCommentForm">
-                  <p class="mb-2">{{ comment.content }}</p>
-                  <div class="comment-actions mb-2">
-                    <button class="btn btn-sm btn-outline-primary" (click)="startReply(comment.idComment!)">
-                      Reply
-                    </button>
-                    <button *ngIf="canModify(comment)" 
-                            class="btn btn-sm btn-outline-secondary ms-2" 
-                            (click)="startEdit(comment)">
-                      Edit
-                    </button>
-                    <button *ngIf="canModify(comment)" 
-                            class="btn btn-sm btn-outline-danger ms-2" 
-                            (click)="deleteComment(comment.idComment!)">
-                      Delete
-                    </button>
-                  </div>
-                </ng-container>
-                
-                <ng-template #editCommentForm>
-                  <form [formGroup]="commentForm" (ngSubmit)="updateComment(comment)">
-                    <div class="form-group">
-                      <textarea class="form-control" formControlName="content" rows="3"></textarea>
-                      <div *ngIf="commentForm.get('content')?.invalid && commentForm.get('content')?.touched" 
-                           class="text-danger">
-                        Comment is required and must be less than 500 characters.
-                      </div>
-                    </div>
-                    <div class="mt-2">
-                      <button type="submit" class="btn btn-primary btn-sm" 
-                              [disabled]="commentForm.invalid">Update</button>
-                      <button type="button" class="btn btn-outline-secondary btn-sm ml-2" 
-                              (click)="cancelEdit()">Cancel</button>
-                    </div>
-                  </form>
-                </ng-template>
-                
-                <!-- Reply Form -->
-                <div *ngIf="replyingTo === comment.idComment" class="mt-3">
-                  <form [formGroup]="replyForm" (ngSubmit)="submitReply(comment)">
-                    <div class="form-group">
-                      <textarea class="form-control" formControlName="replyContent" rows="2" 
-                                placeholder="Write a reply..."></textarea>
-                      <div *ngIf="replyForm.get('replyContent')?.invalid && replyForm.get('replyContent')?.touched" 
-                           class="text-danger">
-                        Reply is required and must be less than 500 characters.
-                      </div>
-                    </div>
-                    <div class="mt-2">
-                      <button type="submit" class="btn btn-primary btn-sm" 
-                              [disabled]="replyForm.invalid">Post Reply</button>
-                      <button type="button" class="btn btn-outline-secondary btn-sm ml-2" 
-                              (click)="cancelReply()">Cancel</button>
-                    </div>
-                  </form>
-                </div>
-                
-                <!-- Replies Section -->
-                <div *ngIf="comment.replies && comment.replies.length > 0" class="replies mt-3 ms-4">
-                  <div *ngFor="let reply of comment.replies" class="reply mb-3">
-                    <div class="d-flex">
-                      <div class="flex-shrink-0">
-                        <img [src]="reply.user?.image || 'assets/assetsFront/img/user.jpg'" 
-                             class="rounded-circle" width="40" height="40" alt="User">
-                      </div>
-                      <div class="flex-grow-1 ms-3">
-                        <div class="d-flex justify-content-between align-items-center">
-                          <h6 class="mb-0">{{ reply.user?.name || reply.email }}</h6>
-                          <small class="text-muted">{{ reply.date | date:'medium' }}</small>
-                        </div>
-                        
-                        <!-- Reply Content or Edit Form -->
-                        <ng-container *ngIf="editingComment !== reply.idComment; else editReplyForm">
-                          <p class="mb-1">{{ reply.content }}</p>
-                          <div class="comment-actions">
-                            <button *ngIf="canModify(reply)" 
-                                    class="btn btn-sm btn-outline-secondary" 
-                                    (click)="startEdit(reply)">
-                              Edit
-                            </button>
-                            <button *ngIf="canModify(reply)" 
-                                    class="btn btn-sm btn-outline-danger ms-2" 
-                                    (click)="deleteComment(reply.idComment!)">
-                              Delete
-                            </button>
-                          </div>
-                        </ng-container>
-                        
-                        <ng-template #editReplyForm>
-                          <form [formGroup]="replyForm" (ngSubmit)="updateComment(reply)" class="mt-2">
-                            <div class="form-group">
-                              <textarea class="form-control" formControlName="replyContent" rows="2"></textarea>
-                              <div *ngIf="replyForm.get('replyContent')?.invalid && replyForm.get('replyContent')?.touched" 
-                                   class="text-danger">
-                                Reply is required and must be less than 500 characters.
-                              </div>
-                            </div>
-                            <div class="mt-2">
-                              <button type="submit" class="btn btn-primary btn-sm">Update</button>
-                              <button type="button" class="btn btn-outline-secondary btn-sm ml-2" 
-                                      (click)="cancelEdit()">Cancel</button>
-                            </div>
-                          </form>
-                        </ng-template>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div *ngIf="comments.length === 0" class="p-4 bg-light rounded">
-          <p class="text-muted">No comments yet. Be the first to comment!</p>
+        <div class="p-4 bg-light rounded">
+          <p class="text-muted">Comments section will be implemented soon.</p>
         </div>
       </div>
     </div>

@@ -1,7 +1,5 @@
 import { NgModule } from '@angular/core';
-
-import { ToastService, AngularToastifyModule } from 'angular-toastify'; 
-
+import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SideBarComponent } from './Back/side-bar/side-bar.component';
@@ -17,11 +15,9 @@ import { CoursesComponent } from './Front/courses/courses.component';
 import { TeachersComponent } from './Front/teachers/teachers.component';
 import { ContactComponent } from './Front/contact/contact.component';
 import { ErrorComponent } from './error/error.component';
-
 import { HttpClientModule } from '@angular/common/http';
 import { AuthRegisterComponent } from './Auth/auth-register/auth-register.component';
 import { AuthLoginComponent } from './Auth/auth-login/auth-login.component';
-
 import { AddcartComponent } from './Front/GestionProduit/Cart/addcart/addcart.component';
 import { ShowcartComponent } from './Front/GestionProduit/Cart/showcart/showcart.component';
 import { UpdatecartComponent } from './Front/GestionProduit/Cart/updatecart/updatecart.component';
@@ -30,17 +26,14 @@ import { AddproductComponent } from './Front/GestionProduit/Product/addproduct/a
 import { ProductDetailsComponent } from './Front/GestionProduit/Product/product-details/product-details.component';
 import { UpdateproductComponent } from './Front/GestionProduit/Product/updateproduct/updateproduct.component';
 import { ShowproductComponent } from './Front/GestionProduit/Product/showproduct/showproduct.component';
-
 import { AllProductsComponent } from './Back/GestionProduit/Product/all-products/all-products.component';
 import { AllCartsComponent } from './Back/GestionProduit/Cart/all-carts/all-carts.component';
 import { AllReviewsComponent } from './Back/GestionProduit/ReviewP/all-reviews/all-reviews.component';
 import { AllImagesComponent } from './Back/GestionProduit/ImageP/all-images/all-images.component';
-
 import { ProfileComponent } from './Front/GestionUser/profile/profile.component';
 import { BalanceComponent } from './Front/GestionUser/balance/balance.component';
 import { SettingsComponent } from './Front/GestionUser/settings/settings.component';
 import { AllUsersComponent } from './Back/GestionUser/User/all-users/all-users.component';
-
 import { ImageCropperComponent } from 'ngx-image-cropper';
 import { UserBackDetailsComponent } from './Back/GestionUser/User/user-back-details/user-back-details.component';
 import { AuthBanComponent } from './Auth/auth-ban/auth-ban.component';
@@ -49,7 +42,6 @@ import { SignaturePadComponent } from './components/signature-pad/signature-pad.
 import { CertificatComponent } from './Back/GestionQUIZZ/certificat/certificat.component';
 import { QuizComponent } from './Back/GestionQUIZZ/quiz/quiz.component';
 import { QuestionComponent } from './Back/GestionQUIZZ/question/question.component';
-import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AllEventsComponent } from './Back/GestionEvents/Events/all-events/all-events.component';
 import { UpdateEventsComponent } from './Back/GestionEvents/Events/update-events/update-events.component';
@@ -73,6 +65,14 @@ import { EventImagesComponent } from './Back/GestionEvents/event-images/event-im
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { EventDetailsComponent } from './Front/GestionEvents/event-details/event-details.component';
+import { FullCalendarModule } from '@fullcalendar/angular';
+import { ToastService, AngularToastifyModule } from 'angular-toastify';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -92,13 +92,10 @@ import { EventDetailsComponent } from './Front/GestionEvents/event-details/event
     ContactComponent,
     AuthRegisterComponent,
     AuthLoginComponent,
-
     ProfileComponent,
     BalanceComponent,
     SettingsComponent,
     AllUsersComponent,
-
-    
     AddcartComponent,
     ShowcartComponent,
     UpdatecartComponent,
@@ -136,13 +133,11 @@ import { EventDetailsComponent } from './Front/GestionEvents/event-details/event
     ShowEventsComponent,
     AddEventModalComponent,
     EventImagesComponent,
-    EventDetailsComponent,
-
-    
-
+    EventDetailsComponent
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
@@ -151,10 +146,13 @@ import { EventDetailsComponent } from './Front/GestionEvents/event-details/event
     HttpClientModule,
     ImageCropperComponent,
     AngularToastifyModule,
-    MatDialogModule
-
-    
-
+    MatDialogModule,
+    FullCalendarModule,
+    MatSelectModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
   providers: [ToastService],
   bootstrap: [AppComponent]

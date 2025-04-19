@@ -1,13 +1,10 @@
 import { Events } from "./events";
-import { User } from "../GestionUser/User";
+
 
 export class EventComment {
-    idComment?: number;
+    idComment!: number;
     content!: string;
     date!: Date;
-    email!: string;
-    user?: User;
+    idUser!: number;
     event!: Events;
-    parentComment?: EventComment;
-    replies?: EventComment[];
 }

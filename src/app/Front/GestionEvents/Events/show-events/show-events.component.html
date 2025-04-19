@@ -20,10 +20,104 @@
   <div class="container py-5">
     <div class="text-center mb-5">
       <h5 class="text-primary text-uppercase mb-3" style="letter-spacing: 5px;">Upcoming Events</h5>
-      <h1>Our Events</h1>
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1>Our Events</h1>
+        <button class="btn btn-outline-primary btn-sm" (click)="toggleCalendar()">
+          <i class="fa fa-calendar-alt mr-2"></i>
+          {{ showCalendar ? 'Show List' : 'Show Calendar' }}
+        </button>
+      </div>
+      <!-- Filters -->
+      <div class="d-flex justify-content-center align-items-center flex-wrap mb-4">
+        <!-- Search Input -->
+        <div class="input-group mx-2" style="max-width: 300px;">
+          <div class="input-group-prepend">
+            <span class="input-group-text bg-white border-0">
+              <i class="fa fa-search text-primary"></i>
+            </span>
+          </div>
+          <input
+            type="text"
+            class="form-control border-0 shadow-sm"
+            placeholder="Search events..."
+            [(ngModel)]="searchQuery"
+            (ngModelChange)="filterEvents()"
+          />
+        </div>
+        <!-- Location Dropdown -->
+        <mat-form-field appearance="outline" class="mx-2" style="max-width: 200px;">
+          <mat-label>Location</mat-label>
+          <mat-select [(ngModel)]="locationFilter" (selectionChange)="filterEvents()">
+            <mat-option value="all">All Locations</mat-option>
+            <mat-option *ngFor="let place of filteredPlaces" [value]="place">{{ place }}</mat-option>
+            <mat-option value="search">
+              <button class="btn btn-link w-100 text-left" (click)="openLocationSearch()">Search Location</button>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <!-- Date Dropdown -->
+        <mat-form-field appearance="outline" class="mx-2" style="max-width: 200px;">
+          <mat-label>Date</mat-label>
+          <mat-select [(ngModel)]="dateFilter" (selectionChange)="onDateFilterChange()">
+            <mat-option value="any">Any Date</mat-option>
+            <mat-option value="today">Today</mat-option>
+            <mat-option value="tomorrow">Tomorrow</mat-option>
+            <mat-option value="this-weekend">This Weekend</mat-option>
+            <mat-option value="this-week">This Week</mat-option>
+            <mat-option value="next-week">Next Week</mat-option>
+            <mat-option value="this-month">This Month</mat-option>
+            <mat-option value="custom">
+              <button class="btn btn-link w-100 text-left" (click)="openDatePicker()">Custom Period</button>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <!-- Reset Button -->
+        <button class="btn btn-secondary btn-sm mx-2" (click)="resetFilters()">Clear Filters</button>
+      </div>
+      <!-- Location Search Panel -->
+      <div *ngIf="showLocationSearch" class="card p-3 mb-3" style="max-width: 300px; margin: 0 auto;">
+        <input
+          type="text"
+          class="form-control mb-2"
+          placeholder="Search city or place..."
+          [(ngModel)]="locationSearch"
+          (ngModelChange)="filterLocations()"
+        />
+        <div class="list-group" style="max-height: 200px; overflow-y: auto;">
+          <button
+            *ngFor="let place of filteredPlaces"
+            class="list-group-item list-group-item-action"
+            (click)="selectLocation(place)"
+          >
+            {{ place }}
+          </button>
+        </div>
+        <button class="btn btn-secondary btn-sm mt-2" (click)="showLocationSearch = false">Close</button>
+      </div>
+      <!-- Date Picker Panel -->
+      <div *ngIf="showDatePicker" class="card p-3 mb-3" style="max-width: 300px; margin: 0 auto;">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Choose a date range</mat-label>
+          <mat-date-range-input [rangePicker]="picker">
+            <input matStartDate placeholder="Start date" [(ngModel)]="customStartDate" (ngModelChange)="logDateChange()">
+            <input matEndDate placeholder="End date" [(ngModel)]="customEndDate" (ngModelChange)="logDateChange()">
+          </mat-date-range-input>
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-date-range-picker #picker></mat-date-range-picker>
+        </mat-form-field>
+        <div class="d-flex justify-content-end">
+          <button class="btn btn-primary btn-sm mt-2 mr-2" (click)="applyCustomDate()" [disabled]="!customStartDate || !customEndDate">Apply</button>
+          <button class="btn btn-secondary btn-sm mt-2" (click)="showDatePicker = false">Close</button>
+        </div>
+      </div>
     </div>
-    <div class="row">
-      <div class="col-lg-4 col-md-6 mb-4" *ngFor="let event of events">
+    <!-- Calendar View -->
+    <div *ngIf="showCalendar" class="calendar-container mb-5">
+      <full-calendar [options]="calendarOptions"></full-calendar>
+    </div>
+    <!-- List View -->
+    <div *ngIf="!showCalendar" class="row">
+      <div class="col-lg-4 col-md-6 mb-4" *ngFor="let event of filteredEvents">
         <div class="card rounded overflow-hidden mb-2 shadow-sm" 
              (click)="goToEventDetails(event.idEvent)" 
              style="cursor: pointer;">
@@ -35,7 +129,8 @@
                      [src]="event.images[carouselIndices[event.idEvent]].images.startsWith('data:image') ? 
                              event.images[carouselIndices[event.idEvent]].images : 
                              'data:image/jpeg;base64,' + event.images[carouselIndices[event.idEvent]].images" 
-                     alt="Event Image">
+                     alt="Event Image"
+                     (error)="handleImageError($event)">
               </ng-container>
               <ng-template #noImage>
                 <img class="img-fluid" src="assets/assetsFront/img/course-1.jpg" alt="Default Event Image">
@@ -62,7 +157,7 @@
                      [ngClass]="{
                        'text-success': event.status === Status.GOING,
                        'text-info': event.status === Status.INTERESTED,
-                       'text-muted': !event.status
+                       'text-muted': event.status === Status.NOT_ATTENDING
                      }">
                 <i class="fa fa-calendar text-primary mr-2"></i>
                 {{ event.status === Status.GOING ? 'Going' : 
@@ -78,18 +173,25 @@
             <!-- Action Buttons -->
             <div class="border-top mt-4 pt-4">
               <div class="d-flex justify-content-between">
-                <button class="btn btn-sm btn-primary" 
-                        (click)="participate(event, Status.GOING, $event)">
-                  <i class="fa fa-check mr-2"></i> Going
+                <button class="btn btn-sm"
+                        (click)="toggleEvent(event, Status.GOING, $event)"
+                        [ngClass]="{'btn-primary': event.status !== Status.GOING, 'btn-success': event.status === Status.GOING}">
+                  <i class="fa fa-check mr-2"></i> {{ event.status === Status.GOING ? 'Cancel Going' : 'Going' }}
                 </button>
-                <button class="btn btn-sm btn-info" 
-                        (click)="participate(event, Status.INTERESTED, $event)">
-                  <i class="fa fa-star mr-2"></i> Interested
+                <button class="btn btn-sm"
+                        (click)="toggleEvent(event, Status.INTERESTED, $event)"
+                        [ngClass]="{'btn-info': event.status !== Status.INTERESTED, 'btn-warning': event.status === Status.INTERESTED}">
+                  <i class="fa fa-star mr-2"></i> {{ event.status === Status.INTERESTED ? 'Cancel Interested' : 'Interested' }}
                 </button>
               </div>
             </div>
           </div>
         </div>
+      </div>
+      <!-- No Events -->
+      <div *ngIf="filteredEvents.length === 0" class="col-12 text-center py-4">
+        <img src="https://i.pinimg.com/originals/5d/35/e3/5d35e39988e3a183bdc3a9d2570d20a9.gif" height="400px">
+        <p class="text-muted">No events found</p>
       </div>
     </div>
   </div>

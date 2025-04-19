@@ -8,6 +8,11 @@
   data-header-position="fixed"
   data-boxed-layout="full"
 >
+  <!-- Hidden logo for PDF rendering -->
+  <div id="pdf-logo" style="display: none;">
+    <h3 class="m-0"><span class="text-primary">Skill</span>Exchange</h3>
+  </div>
+
   <app-nav></app-nav>
   <app-side-bar></app-side-bar>
 
@@ -43,17 +48,122 @@
                 <h4 class="card-title mb-0 text-primary fw-semibold">
                   Event Management
                 </h4>
-                <div>
-                  <button class="btn btn-sm btn-outline-primary me-2">
-                    <i class="fas fa-download me-2"></i>Export to CSV
+                <div class="d-flex gap-2">
+                  <button class="btn btn-sm export-csv-btn" (click)="exportToCsv()">
+                    <i class="fas fa-file-csv me-2"></i>Export CSV
+                  </button>
+                  <button class="btn btn-sm export-pdf-btn" (click)="exportToPdf()">
+                    <i class="fas fa-file-pdf me-2"></i>Export PDF
+                  </button>
+                  <button class="btn btn-sm export-excel-btn" (click)="exportToExcel()">
+                    <i class="fas fa-file-excel me-2"></i>Export Excel
                   </button>
                   <button class="btn btn-sm btn-primary" (click)="openAddEventModal()">
                     <i class="fas fa-plus me-2"></i>Add Event
                   </button>
                 </div>
               </div>
+              
 
-              <!-- Search and Filter Row -->
+              <!-- Filter Panel Toggle -->
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <button
+                  class="btn btn-sm btn-outline-secondary"
+                  (click)="toggleFilters()"
+                >
+                  {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+                </button>
+              </div>
+
+              <!-- Filter Panel -->
+              <div class="card mb-4" *ngIf="showFilters">
+                <div class="card-header bg-light">
+                  <h6 class="mb-0">Filter Events</h6>
+                </div>
+                <div class="card-body">
+                  <form [formGroup]="filterForm" (ngSubmit)="applyFilters()">
+                    <div class="row g-3">
+                      <!-- Place Filter -->
+                      <div class="col-md-3">
+                        <label class="form-label">Place</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="place"
+                          placeholder="e.g., Tunis"
+                          (input)="applyFilters()"
+                        />
+                      </div>
+                      <!-- Max Participants Filter -->
+                      <div class="col-md-3">
+                        <label class="form-label">Max Participants</label>
+                        <div class="input-group">
+                          <input
+                            type="number"
+                            class="form-control"
+                            formControlName="minParticipants"
+                            placeholder="Min"
+                            min="0"
+                            (input)="applyFilters()"
+                          />
+                          <input
+                            type="number"
+                            class="form-control"
+                            formControlName="maxParticipants"
+                            placeholder="Max"
+                            min="0"
+                            (input)="applyFilters()"
+                          />
+                        </div>
+                      </div>
+                      <!-- Date Range Filter -->
+                      <div class="col-md-3">
+                        <label class="form-label">Date Range</label>
+                        <div class="input-group">
+                          <input
+                            type="date"
+                            class="form-control"
+                            formControlName="startDate"
+                            (change)="applyFilters()"
+                          />
+                          <input
+                            type="date"
+                            class="form-control"
+                            formControlName="endDate"
+                            (change)="applyFilters()"
+                          />
+                        </div>
+                      </div>
+                      <!-- Images Filter -->
+                      <div class="col-md-3 align-self-end">
+                        <div class="form-check">
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            formControlName="hasImages"
+                            id="hasImages"
+                            (change)="applyFilters()"
+                          />
+                          <label class="form-check-label" for="hasImages">
+                            Events with Images
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="d-flex justify-content-end mt-3">
+                      <button
+                        type="button"
+                        class="btn btn-sm clear-filters-btn"
+                        (click)="clearFilters()"
+                      >
+                        Clear Filters
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              <!-- Search Row -->
               <div class="row mb-4">
                 <div class="col-md-6">
                   <div class="input-group">
@@ -63,13 +173,12 @@
                     <input
                       type="text"
                       class="form-control"
-                      placeholder="Search for an event..."
+                      placeholder="Search events by name, description, place, etc..."
                       [(ngModel)]="searchText"
                       (input)="applyFilters()"
                     />
                   </div>
                 </div>
-                
               </div>
 
               <!-- Table -->
@@ -105,11 +214,16 @@
                       <th class="fw-medium text-muted cursor-pointer" (click)="sort('description')">
                         Description
                       </th>
-                      
+                      <th class="fw-medium text-muted">
+                        Images
+                      </th>
+                      <th class="fw-medium text-muted">
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr *ngFor="let event of events" style="cursor: pointer">
+                    <tr *ngFor="let event of filteredEvents" style="cursor: pointer">
                       <td>{{ event.eventName }}</td>
                       <td>{{ event.startDate | date: 'dd/MM/yyyy' }}</td>
                       <td>{{ event.endDate | date: 'dd/MM/yyyy' }}</td>
@@ -117,13 +231,18 @@
                       <td>{{ event.nbr_max }}</td>
                       <td>{{ event.description }}</td>
                       <td>
-                        <div *ngIf="event.images && event.images.length > 0" class="d-flex flex-wrap gap-2">
-                          <img *ngFor="let img of event.images" [src]="img.images.startsWith('data:image') ? img.images : 'data:image/jpeg;base64,' + img.images"
-                               alt="Event Image" style="max-width: 50px; max-height: 50px;" />
+                        <div class="d-flex flex-wrap gap-2" *ngIf="event.images && event.images.length > 0; else noImages">
+                          <img *ngFor="let img of event.images"
+                               [src]="img.images.startsWith('data:image') ? img.images : 'data:image/jpeg;base64,' + img.images"
+                               alt="Event Image"
+                               class="img-thumbnail"
+                               style="width: 60px; height: 60px; object-fit: cover;"
+                               (error)="handleImageError($event)">
                         </div>
-                        <span *ngIf="!event.images || event.images.length === 0">No images</span>
+                        <ng-template #noImages>
+                          <span class="text-muted">No images</span>
+                        </ng-template>
                       </td>
-                      
                       <td>
                         <button class="btn btn-sm btn-warning me-2" (click)="openEditEventModal(event)">
                           <i class="fas fa-edit"></i>
@@ -133,8 +252,8 @@
                         </button>
                       </td>
                     </tr>
-                    <tr *ngIf="events.length === 0">
-                      <td colspan="7" class="text-center py-4">
+                    <tr *ngIf="filteredEvents.length === 0">
+                      <td colspan="8" class="text-center py-4">
                         <img
                           src="https://i.pinimg.com/originals/5d/35/e3/5d35e39988e3a183bdc3a9d2570d20a9.gif"
                           height="400px"
@@ -150,63 +269,58 @@
       </div>
     </div>
 
-   <!-- Modale "Add Event" -->
-<div *ngIf="isAddEventModalOpen" class="modal fade show" style="display: block;">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Add New Event</h5>
-        <button type="button" class="btn-close" (click)="closeAddEventModal()"></button>
-      </div>
-      <div class="modal-body">
-        <app-add-event-modal
-          (onCancel)="closeAddEventModal()"
-          (onSubmit)="handleAddEvent($event)">
-        </app-add-event-modal>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-
-
-<!-- Edit Event Modal -->
-<div *ngIf="eventToEdit" class="modal fade show" style="display: block;">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Edit Event</h5>
-        <button type="button" class="btn-close" (click)="closeEditModal()"></button>
-      </div>
-      <div class="modal-body">
-        <app-update-event
-          [eventData]="eventToEdit"
-          (onCancel)="closeEditModal()"
-          (onUpdate)="handleEventUpdate($event)">
-        </app-update-event>
+    <!-- Add Event Modal -->
+    <div *ngIf="isAddEventModalOpen" class="modal fade show" style="display: block;">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="card-header">
+            <h5 class="modal-title">Add New Event</h5>
+            <button type="button" class="btn-close" (click)="closeAddEventModal()"></button>
+          </div>
+          <div class="modal-body">
+            <app-add-event-modal
+              (onCancel)="closeAddEventModal()"
+              (onSubmit)="handleAddEvent($event)">
+            </app-add-event-modal>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
 
-<!-- Delete Event Modal -->
-<div *ngIf="eventToDelete" class="modal fade show" style="display: block;">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-body">
-        <app-delete-event
-          [eventToDelete]="eventToDelete"
-          (onCancel)="closeDeleteModal()"
-          (onDelete)="handleEventDelete()">
-        </app-delete-event>
+    <!-- Edit Event Modal -->
+    <div *ngIf="eventToEdit" class="modal fade show" style="display: block;">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Edit Event</h5>
+            <button type="button" class="btn-close" (click)="closeEditModal()"></button>
+          </div>
+          <div class="modal-body">
+            <app-update-event
+              [eventData]="eventToEdit"
+              (onCancel)="closeEditModal()"
+              (onUpdate)="handleEventUpdate($event)">
+            </app-update-event>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
+
+    <!-- Delete Event Modal -->
+    <div *ngIf="eventToDelete" class="modal fade show" style="display: block;">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-body">
+            <app-delete-event
+              [eventToDelete]="eventToDelete"
+              (onCancel)="closeDeleteModal()"
+              (onDelete)="handleEventDelete()">
+            </app-delete-event>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Backdrops -->
+    <div *ngIf="eventToEdit || eventToDelete || isAddEventModalOpen" class="modal-backdrop fade show"></div>
 </div>
-
-<!-- Backdrops -->
-<div *ngIf="eventToEdit || eventToDelete || isAddEventModalOpen" class="modal-backdrop fade show"></div>
-
-<!-- Fond sombre -->
-<div *ngIf="isAddEventModalOpen" class="modal-backdrop fade show" (click)="closeAddEventModal()"></div>
