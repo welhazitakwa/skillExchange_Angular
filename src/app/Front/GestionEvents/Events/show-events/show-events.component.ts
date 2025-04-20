@@ -10,6 +10,7 @@ import { CalendarOptions, EventInput } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-showevents',
@@ -40,7 +41,8 @@ export class ShowEventsComponent implements OnInit {
     private participationService: ParticipationEventsService,
     private authService: AuthService,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private snackBar: MatSnackBar
   ) {
     this.calendarOptions = {
       plugins: [dayGridPlugin, timeGridPlugin, listPlugin],
@@ -68,6 +70,7 @@ export class ShowEventsComponent implements OnInit {
 
   ngOnInit() {
     this.userEmail = this.authService.getCurrentUserEmail() || '';
+    console.log('Logged-in user email:', this.userEmail); 
     this.loadEvents();
   }
 
@@ -90,7 +93,7 @@ export class ShowEventsComponent implements OnInit {
       },
       (error) => {
         console.error('Error loading events:', error);
-        alert('Failed to load events. Please try again later.');
+        this.snackBar.open('Failed to load events. Please try again later.', 'Close', { duration: 3000 });
       }
     );
   }
@@ -121,7 +124,7 @@ export class ShowEventsComponent implements OnInit {
         this.events = [...updatedEvents];
         this.filteredEvents = [...updatedEvents];
         this.filterEvents();
-        this.cdr.detectChanges(); // ⬅️ important pour forcer la mise à jour de la vue
+        this.cdr.detectChanges();
       },
       (error) => {
         console.error('Error loading user participations', error);
@@ -130,7 +133,6 @@ export class ShowEventsComponent implements OnInit {
       }
     );
   }
-  
   
   updatePlaces(): void {
     this.filteredPlaces = [...new Set(this.events.map(event => event.place).filter(place => place))] as string[];
@@ -296,7 +298,7 @@ export class ShowEventsComponent implements OnInit {
     $event.stopPropagation();
     const userEmail = this.authService.getCurrentUserEmail();
     if (!userEmail) {
-      alert('You must be logged in to participate in an event.');
+      this.snackBar.open('You must be logged in to participate in an event.', 'Close', { duration: 3000 });
       this.router.navigate(['/login']);
       return;
     }
@@ -310,6 +312,11 @@ export class ShowEventsComponent implements OnInit {
         event.status = newStatus;
         this.filterEvents();
         this.cdr.detectChanges();
+        if (newStatus === Status.GOING || newStatus === Status.INTERESTED) {
+          this.snackBar.open(`Successfully registered for ${event.eventName}! A confirmation email has been sent.`, 'Close', { duration: 5000 });
+        } else {
+          this.snackBar.open(`You have canceled your participation in ${event.eventName}.`, 'Close', { duration: 5000 });
+        }
       },
       (error) => {
         console.error('Error updating participation:', {
@@ -326,7 +333,7 @@ export class ShowEventsComponent implements OnInit {
         } else if (error.status === 404) {
           errorMessage = 'Event or user not found.';
         }
-        alert(errorMessage);
+        this.snackBar.open(errorMessage, 'Close', { duration: 5000 });
       }
     );
   }
