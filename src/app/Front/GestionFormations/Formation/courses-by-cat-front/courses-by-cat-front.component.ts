@@ -41,6 +41,8 @@ export class CoursesByCatFrontComponent {
   verifParticipation!: boolean;
   listFormations: Formation[] = [];
   currentUser: User | null = null;
+  listParticipation: ParticipationFormation[] = [];
+  totalProgress: number = 0;
   constructor(
     private catServ: CategoryService,
     private dialog: MatDialog,
@@ -48,6 +50,7 @@ export class CoursesByCatFrontComponent {
     private participationService: ParticipationFormationService,
     private authService: AuthService,
     private router: Router,
+    private participationServ: ParticipationFormationService,
     private payServ: PaiementFormationService,
     private ratingService: RatingCourseService // Add this
   ) {}
@@ -61,11 +64,6 @@ export class CoursesByCatFrontComponent {
     }
 
     this.getCoursesOfCategory();
-    // this.catServ.getCoursesOfCategorie(this.categoryId).subscribe(
-    //   (data) => {this.listFormations = data; this.filteredFormations = data;},
-    //   (erreur) => console.log('erreur'),
-    //   () => console.log(this.listFormations)
-    // );
     this.loadCurrentUser();
   }
   // buttonStates: { [formationId: number]: 'pay' | 'participate' | 'exam' } = {};
@@ -175,6 +173,18 @@ export class CoursesByCatFrontComponent {
               );
               this.ratingCountMap[f.id] = 0;
             }
+          );
+
+          this.participationServ.getParticipationsByIdCourse(f.id).subscribe(
+            (data) => {
+              this.listParticipation = data;
+              this.totalProgress = this.listParticipation.reduce(
+                (sum, participation) => sum + (participation.progress || 0),
+                0
+              );
+            },
+            (erreur) => console.log('erreur'),
+            () => console.log(this.listParticipation)
           );
 
           // Fetch payment and participation status
@@ -472,10 +482,7 @@ export class CoursesByCatFrontComponent {
                 // Refresh average rating and count
                 this.ratingService
                   .getAverageRatingForCourse(courseId)
-                  .subscribe(
-                    (avg) =>
-                      (this.averageRatingMap[courseId] = avg)
-                  );
+                  .subscribe((avg) => (this.averageRatingMap[courseId] = avg));
                 this.ratingService
                   .getRatingCountForCourse(courseId)
                   .subscribe(
@@ -505,10 +512,7 @@ export class CoursesByCatFrontComponent {
                 // Refresh average rating and count
                 this.ratingService
                   .getAverageRatingForCourse(courseId)
-                  .subscribe(
-                    (avg) =>
-                      (this.averageRatingMap[courseId] = avg)
-                  );
+                  .subscribe((avg) => (this.averageRatingMap[courseId] = avg));
                 this.ratingService
                   .getRatingCountForCourse(courseId)
                   .subscribe(

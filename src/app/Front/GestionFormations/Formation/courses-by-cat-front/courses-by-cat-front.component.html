@@ -40,10 +40,11 @@
                           alt="">
                         <div class="bg-secondary p-4">
                             <div class="d-flex justify-content-between mb-3">
-                                <small class="m-0"><i class="fa fa-users text-primary mr-2"></i>25 Students</small>
+                                <small class="m-0"><i class="fa fa-users text-primary mr-2"></i>
+                                  {{ totalProgress }} Students</small>
                              <h6 class="m-0">
                 <i class="fa fa-star text-primary mr-2"></i>
-                {{ averageRatingMap[f.id] || 0 }}
+                {{ averageRatingMap[f.id] || 0 }} {{ getEmoji(averageRatingMap[f.id]) }}
                 <small>{{ ratingCountMap[f.id] ? '(' + ratingCountMap[f.id] + ')' : '(0)' }}</small>
               </h6>
             
