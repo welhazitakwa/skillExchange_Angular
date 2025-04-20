@@ -14,16 +14,32 @@ export class  ShowcartComponent {
 
    totalTND: number = 0;
    totalTokens: number = 0;
-
+  //  ngDoCheck(): void {
+  //   const stored = localStorage.getItem('cartProducts');
+  //   if (stored) {
+  //     const updatedCart = JSON.parse(stored);
+  //     if (JSON.stringify(updatedCart) !== JSON.stringify(this.cartProducts)) {
+  //       this.cartProducts = updatedCart;
+  //       this.calculateTotalPrice();
+  //     }
+  //   }
+  //  else {
+  //   // Si localStorage est vide (panier vidé)
+  //   this.cartProducts = [];
+  //   this.totalTND = 0;
+  //   this.totalTokens = 0;
+  // }
+  // }
   constructor(private cartProductService: CartProductService) {}
 
   
     ngOnInit() {
       this.cartProductService.getCartProducts().subscribe(
         (products) => {
+          console.log("Produits récupérés :", this.cartProducts);
           this.cartProducts = products;
         
-          console.log("Produits récupérés :", this.cartProducts);
+          //console.log("Produits récupérés :", this.cartProducts);
       
           this.calculateTotalPrice(); // Mise à jour du prix total
         },

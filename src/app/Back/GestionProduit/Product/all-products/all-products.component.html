@@ -202,6 +202,10 @@
                           }"
                         ></i>
                       </th>
+                      <th class="fw-medium text-muted">
+                        Status
+                      </th>
+                      
                       <th
                         class="fw-medium text-muted cursor-pointer"
                         
@@ -214,9 +218,11 @@
                   <tbody>
                     <tr
                       *ngFor="let product of filteredproduct"
+                      
                       style="cursor: pointer"
                       [routerLink]="['/backproductdetail', product.idProduct]"
                     >
+                    {{ product.isApproved }}
                       <td>
                         <!-- Affichage de l'image du produit avec le nom et type -->
                         <div class="d-flex align-items-center">
@@ -255,6 +261,15 @@
                         </span>
                       </td>
                       <td>{{ product.type }}</td>
+                      <td>
+                        <span *ngIf="product.isApproved == 1" class="badge bg-success text-white px-3 py-2 rounded-pill">
+                          <i class="fas fa-check-circle me-1"></i> Approved
+                        </span>
+                        <span *ngIf="product.isApproved == 0" class="badge bg-warning text-dark px-3 py-2 rounded-pill">
+                          <i class="fas fa-hourglass-half me-1"></i> Pending
+                        </span>
+                      </td>
+                      
                           <!-- ✅ Nouvelle cellule "Actions" -->
                           <td class="text-center">
                             <!-- Bouton de modification : affiché uniquement pour les TOKENS -->
@@ -273,11 +288,29 @@
                             >
                               <i class="fas fa-trash"></i>
                             </button>
+                            <button
+                            *ngIf="!product.isApproved"
+                            class="btn btn-sm btn-success"
+                            (click)="approveProduct(product.idProduct); $event.stopPropagation()"
+                            title="Approve"
+                          >
+                            <i class="fas fa-check"></i>
+                          </button>
+                      
+                          <!-- ❌ Rejeter -->
+                          <button
+                            class="btn btn-sm btn-secondary"
+                            (click)="rejectProduct(product.idProduct); $event.stopPropagation()"
+                            title="Reject"
+                          >
+                            <i class="fas fa-times"></i>
+                          </button>
                           </td>
  
 
                     </tr>
                     <tr *ngIf="filteredproduct.length === 0">
+                      
                       <td colspan="5" class="text-center py-4">
                         <img
                           src="https://i.pinimg.com/originals/5d/35/e3/5d35e39988e3a183bdc3a9d2570d20a9.gif"

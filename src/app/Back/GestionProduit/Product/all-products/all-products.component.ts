@@ -76,6 +76,7 @@ private extractUniqueSellers(): void {
   ));}
   applyFilters(): void {
     this.filteredproduct = this.products.filter((p) => {
+      const isApproved = p.isApproved === 1;
       // Search text filter (name or email)
       const matchesSearch =
         !this.searchText ||
@@ -330,4 +331,46 @@ private extractUniqueSellers(): void {
     cancelEditProduct() {
       this.showModalProduct = false;
     }
+    approveProduct(id: number): void {
+      this.productService.approveProduct(id).subscribe({
+        next: () => {
+          alert("✅ Product approved successfully");
+          this.refreshProducts();
+        },
+        error: (err) => {
+          console.error("❌ Failed to approve product", err);
+          alert("An error occurred while approving the product.");
+        }
+      });
+    }
+    
+    rejectProduct(id: number): void {
+      if (confirm("Are you sure you want to reject this product?")) {
+        this.productService.rejectProduct(id).subscribe({
+          next: () => {
+            alert("❌ Product rejected and removed");
+            this.refreshProducts();
+          },
+          error: (err) => {
+            console.error("❌ Failed to reject product", err);
+            alert("An error occurred while rejecting the product.");
+          }
+        });
+      }
+    }
+    refreshProducts(): void {
+      this.productService.getProduct().subscribe(
+        (products) => {
+          this.products = products;
+          this.filteredproduct = [...products];
+          this.extractUniqueSellers();
+          this.applyFilters();
+        },
+        (error) => {
+          console.error("Erreur lors de la mise à jour des produits :", error);
+        }
+      );
+    }
+    
+    
 }

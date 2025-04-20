@@ -68,8 +68,15 @@ listCartProducts: CartProducts[] = [];
   getCartProductByID(id:number){
   return this.http.get<CartProducts>(this.url+'/'+id);
  }
- updateCartProduct(cartp:CartProducts){
-  return this.http.patch(this.url+'/'+cartp.id,cartp);
- }
+//  updateCartProduct(cartp:CartProducts){
+//   return this.http.patch(this.url+'/'+cartp.id,cartp);
+//  }
+updateCartProduct(cartp: CartProducts): Observable<CartProducts | null> {
+  return this.http.patch<CartProducts | null>(
+    `${this.url}/update/${cartp.id}?quantity=${cartp.quantity}`,
+    null  // pas besoin de body
+  );
+}
+
 
 }

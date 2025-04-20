@@ -41,7 +41,11 @@ import { AllCartProductsComponent } from './Back/GestionProduit/CartProduct/all-
 import { AllCommentsComponent } from './Back/GestionForumPost/CommentPost/all-comments/all-comments.component';
 import { ShowPostsComponent } from './Front/GestionForumPost/Posts/show-posts/show-posts.component';
 import { PostDetailsComponent } from './Front/GestionForumPost/Posts/post-details/post-details.component';
+
+import { SuccessComponent } from './Front/GestionProduit/success/success.component';
+
 import { ParticipantsListComponent } from './Back/GestionFormation/Formation/participants-list/participants-list.component';
+
 
 
 const routes: Routes = [
@@ -112,6 +116,8 @@ const routes: Routes = [
     { path: 'products', component: ShowproductComponent/*, canActivate: [UserGuard]*/ },
 
    { path: 'productD/:idProduct', component: ProductDetailsComponent/*, canActivate: [UserGuard]*/ },
+   { path: 'success', component: SuccessComponent },
+   ///////////////////////////////////////////////////////////////
   { path: 'about', component: AboutComponent/*, canActivate: [UserGuard] */},
   { path: 'courses', component: CoursesComponent/*, canActivate: [UserGuard] */},
   { path: 'teachers', component: TeachersComponent/*, canActivate: [UserGuard]*/ },

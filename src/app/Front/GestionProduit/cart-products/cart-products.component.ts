@@ -1,8 +1,16 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Cart } from 'src/app/core/models/GestionProduit/cart';
 import { CartProducts } from 'src/app/core/models/GestionProduit/cart-products';
+import { CurrencyType } from 'src/app/core/models/GestionProduit/currency-type';
+import { Payment, PaymentMethod, PaymentStatus } from 'src/app/core/models/GestionProduit/payment';
+import { User } from 'src/app/core/models/GestionUser/User';
+import { AuthService } from 'src/app/core/services/Auth/auth.service';
 import { CartProductService } from 'src/app/core/services/GestionProduit/cart-product.service';
 import { CartService } from 'src/app/core/services/GestionProduit/cart.service';
-
+import { PayementService } from 'src/app/core/services/GestionProduit/payement.service';
+import { UserService } from 'src/app/core/services/GestionUser/user.service';
+declare var paypal: any;
 @Component({
   selector: 'app-cart-products',
   templateUrl: './cart-products.component.html',
@@ -10,26 +18,53 @@ import { CartService } from 'src/app/core/services/GestionProduit/cart.service';
 })
 export class CartProductsComponent  {
   @Input() cartProducts: CartProducts[] = [];
+  @Input() totalTND!: number;
+@Input() totalTokens!: number;
+
 
   showPaymentModal: boolean = false;
-
+  openPaymentModal(): void {
+    this.showPaymentModal = true;
+  
+    // 💡 attendre que la vue se mette à jour
+    setTimeout(() => {
+      this.payService.loadPayPalScript().then(() => {
+        this.initPayPalButton();
+      });
+    }, 50); // 50ms pour être sûr que le DOM soit prêt
+  }
+  updateLocalStorageCartProducts() {
+    localStorage.setItem('cartProducts', JSON.stringify(this.cartProducts));
+  }
 
  
  //cartProducts: CartProducts[] = []; 
- cartId?: number;
+ 
 
-  constructor(private cartProductService: CartProductService) {}
+  constructor(private router: Router, private authService: AuthService,
+      private userService: UserService,
+      private route: ActivatedRoute,private cartProductService: CartProductService,private payService: PayementService) {}
   
-  
+  ngOnChanges(): void {
+    console.log("✅ CartProducts reçus :", this.cartProducts);
+  }
 
  ngOnInit() {
   
- // this.cartId = 1; 
+ 
+    const storedCartId = localStorage.getItem('cartId');
+    if (storedCartId) {
+      this.cartId = Number(storedCartId);
+    } else {
+      console.warn("Aucun cartId trouvé dans le localStorage.");
+    }
+  
     this.cartProductService.getCartProducts().subscribe((products) => {
       console.log("Produits du panier récupérés :", products);
       this.cartProducts = products;
     });
-   
+    this.loadCurrentUser();
+    
    
   }
   // loadCartId() {
@@ -42,45 +77,46 @@ export class CartProductsComponent  {
   //   }
   // }
   
+
 increaseQuantity(cartProduct: CartProducts): void {
+  cartProduct.quantity++; // D'abord on met à jour localement la quantité
+
   this.cartProductService.updateCartProduct(cartProduct).subscribe(
     (updatedCartProduct) => {
-      cartProduct.quantity++; // Mise à jour locale sans reload
       console.log('Produit mis à jour avec succès : ', updatedCartProduct);
+      this.cartProducts = [...this.cartProducts];
+      this.updateLocalStorageCartProducts();
     },
     (error) => {
       console.error('Erreur lors de la mise à jour du produit : ', error);
+      cartProduct.quantity--; // En cas d’erreur, on revient à l’ancienne valeur
     }
   );
 }
+
 
   // Diminuer une unité du produit au panier
   decreaseQuantity(cartProduct: CartProducts): void {
     if (cartProduct.quantity > 1) {
       cartProduct.quantity--;  // Diminuer la quantité
+      this.cartProducts = [...this.cartProducts];
       this.updateCartProduct(cartProduct);  // Mettre à jour le produit après modification de la quantité
+      //this.updateLocalStorageCartProducts();
     }
   }
 
-  // Mettre à jour un produit dans le panier via CartService
- /* updateCartProduct(cartProduct: CartProducts): void {
-    this.cartProductService.updateCartProduct(cartProduct).subscribe(
-      (updatedCartProduct) => {
-        console.log('Produit mis à jour avec succès : ', updatedCartProduct);
-      },
-      (error) => {
-        console.error('Erreur lors de la mise à jour du produit : ', error);
-      }
-    );
-  }*/
+ 
     updateCartProduct(cartProduct: CartProducts): void {
       this.cartProductService.updateCartProduct(cartProduct).subscribe(
         (updatedCartProduct) => {
           if (updatedCartProduct) {
             console.log('Produit mis à jour avec succès : ', updatedCartProduct);
+            this.cartProducts = [...this.cartProducts]; // <- force le changement
+        this.updateLocalStorageCartProducts();      // <- synchroniser
           } else {
             // Si `null`, c'est que le produit a été supprimé
             this.cartProducts = this.cartProducts.filter(cp => cp.id !== cartProduct.id);
+            this.updateLocalStorageCartProducts(); // important ici aussi
             alert('Produit supprimé du panier !');
           }
         },
@@ -95,6 +131,7 @@ increaseQuantity(cartProduct: CartProducts): void {
     this.cartProductService.removeProduct(cartProduct.id).subscribe({
       next: () => {
         this.cartProducts = this.cartProducts.filter(cp => cp.id !== cartProduct.id);
+        this.updateLocalStorageCartProducts();
         const count = this.cartProducts.reduce((sum, item) => sum + item.quantity, 0);
       localStorage.setItem("cartCount", String(count));
         
@@ -106,37 +143,25 @@ increaseQuantity(cartProduct: CartProducts): void {
     });
   }
   
+  
+  cartId?: number;
   clearCart(): void {
-    this.cartProductService.clearCart(this.cartId!).subscribe(
-       () => {
-        this.cartProducts = []; // Mettre à jour l'affichage
-       // this.cartCount = 0;
-       localStorage.removeItem("cartCount");
-      
+    if (this.cartId === undefined) {
+      alert("Aucun panier trouvé pour l'utilisateur actuel.");
+      return;
+    }
+  
+    this.cartProductService.clearCart(this.cartId).subscribe(
+      () => {
+        this.cartProducts = [];
+        localStorage.removeItem("cartCount");
         alert("Le panier a été vidé !");
       },
-       (err) => {
+      (err) => {
         console.error("Erreur lors du vidage du panier", err);
       }
     );
   }
-  // clearCart(): void {
-  //   if (this.cartId === undefined) {
-  //     alert("Aucun panier trouvé pour l'utilisateur actuel.");
-  //     return; // Empêche l'appel à clearCart si cartId est undefined
-  //   }
-  
-  //   this.cartProductService.clearCart(this.cartId).subscribe(
-  //     () => {
-  //       this.cartProducts = []; // Mettre à jour l'affichage
-  //       localStorage.removeItem("cartCount"); // Retirer l'élément du localStorage
-  //       alert("Le panier a été vidé !");
-  //     },
-  //     (err) => {
-  //       console.error("Erreur lors du vidage du panier", err);
-  //     }
-  //   );
-  // }
   
   
  
@@ -146,23 +171,162 @@ increaseQuantity(cartProduct: CartProducts): void {
       return;
     }
     
-    // Ici, on pourrait appeler un service pour finaliser la commande
+    
     alert("Panier validé avec succès !");
   }
  
 
 
-  paymentSchedules = [
-      {
-        id: 1,
-        creditId: "hello",
-      dueDate: "2025-04-15",
-      dueAmount: 700,
-      paidAmount: 200,
-      remainingAmount: 500,
-      paymentStatus: "Pending",
-      lateInterest:  0,
-      penaltyFee:  0
+ 
+  ////////////////////payment//////////////////////
+
+  payment: Payment = new Payment();
+  
+   
+    payerAvecStripe(): void {
+     // const amount = this.payment.montant;
+     const amount = this.totalTND
+      //const cartId = this.payment.cart?.id;
+      const cartId = this.cartProducts[0]?.cart?.id;
+      if (!amount || !cartId) {
+        alert("Montant ou panier non défini.");
+        return;
       }
-    ];
+    
+      this.payService.createStripeSession(amount, cartId).subscribe(
+        (sessionUrl: string) => {
+          window.location.href = sessionUrl;
+        },
+        error => {
+          console.error('Erreur Stripe:', error);
+        }
+      );
+    }
+    payerAvecSolde(): void {
+      const cartId = this.cartProducts[0]?.cart?.id;
+      const email = localStorage.getItem('userEmail'); // assure-toi qu'il est stocké après le login
+      const amount = this.totalTokens;
+      console.log("💬 PAY WITH BALANCE DEBUG", { cartId, email, amount });
+      if (!cartId || !email || amount<=0) {
+        alert("Missing cart, amount or user information.");
+        return;
+      }
+    
+      const payment: Payment = {
+        montant: amount,
+        methodePaiement: PaymentMethod.BALANCE,
+        statutPaiement: PaymentStatus.PENDING,
+        userEmail: this.currentUser?.email,
+        cart: { id: +cartId } as Cart,
+        currencyType: CurrencyType.TOKENS,
+        datePaiement: new Date()
+      };
+    
+      this.payService.createPayment2(payment).subscribe({
+        next: res => {
+          alert("✅ Payment completed using balance.");
+          localStorage.removeItem('cartProducts');
+          location.reload();
+        },
+        error: err => {
+          console.error("❌ Error during balance payment:", err);
+          alert("Payment failed. Insufficient balance or invalid user.");
+        }
+      });
+    }
+    currentUser: User | null = null;
+    private loadCurrentUser() {
+      const currentUserEmail = this.authService.getCurrentUserEmail();
+    
+      if (!currentUserEmail) {
+        this.router.navigate(['/login']);
+        return;
+      }
+    
+      console.log(currentUserEmail);
+    
+      this.userService.getUserByEmail(currentUserEmail).subscribe(
+        (user: User) => {
+          this.currentUser = user;
+    
+          // ✅ Sauvegarder l'email pour le paiement
+          localStorage.setItem("userEmail", user.email);
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    }
+  //////////////////////////
+  loadPayPalScript(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (document.getElementById('paypal-sdk')) {
+        resolve(); return;
+      }
+      const script = document.createElement('script');
+      script.id = 'paypal-sdk';
+      script.src = 'https://www.paypal.com/sdk/js?client-id=AQgP1txB3rkh5U1Tb_7RHytsAQ6qJ_tPZKKkDMFivbiiZ4ppsKMQ4M0EuwY8qpzZ_ZMF699mXRHenUM5&currency=USD'; // 🔁 change client-id
+      script.onload = () => resolve();
+      script.onerror = () => reject();
+      document.body.appendChild(script);
+    });
+  }
+  initPayPalButton() {
+    console.log("🔵 PayPal init lancé");
+    paypal.Buttons({
+      style: {
+        layout: 'vertical',
+        color: 'gold',
+        shape: 'rect',
+        label: 'paypal'
+      },
+      createOrder: (data: any, actions: any) => {
+        return actions.order.create({
+          purchase_units: [{
+            description: 'SkillExchange cart payment',
+            amount: {
+              value: this.totalTND.toFixed(2),
+              currency_code: 'USD'
+            }
+          }]
+        });
+      },
+      onApprove: async (data: any, actions: any) => {
+        const details = await actions.order.capture();
+        console.log("✅ Payment success:", details);
+        this.sendToBackend(details.id);
+      },
+      onError: (err: any) => {
+        console.error("❌ PayPal error:", err);
+      }
+    }).render('#paypal-button-container');
+  }
+
+  sendToBackend(transactionId: string): void {
+    const email = localStorage.getItem('userEmail');
+    const cartId = this.cartProducts[0]?.cart?.id;
+    if (!email || !this.cartId) {
+      alert("Missing cart ID or user email.");
+      return;
+    }
+
+    const payload = {
+      userEmail: email,
+      cartId: this.cartId,
+      montant: this.totalTND,
+      transactionId: transactionId
+    };
+
+    this.payService.notifyPaypalSuccess(payload).subscribe({
+      next: () => {
+        alert("📧 Invoice sent and payment saved!");
+        localStorage.removeItem("cartProducts");
+        window.location.href = "/payment/success";
+      },
+      error: (err) => {
+        console.error("❌ Backend error:", err);
+        alert("Error saving payment.");
+      }
+    });
+  }
 }

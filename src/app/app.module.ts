@@ -100,8 +100,12 @@ import { CartProductsComponent } from './Front/GestionProduit/cart-products/cart
 import { AllCommentsComponent } from './Back/GestionForumPost/CommentPost/all-comments/all-comments.component';
 import { ShowPostsComponent } from './Front/GestionForumPost/Posts/show-posts/show-posts.component';
 import { PostDetailsComponent } from './Front/GestionForumPost/Posts/post-details/post-details.component';
+
+import { SuccessComponent } from './Front/GestionProduit/success/success.component';
+
 import { DetailsFormationBackComponent } from './Back/GestionFormation/Formation/details-formation-back/details-formation-back.component';
 import { ParticipantsListComponent } from './Back/GestionFormation/Formation/participants-list/participants-list.component';
+
 
 
 @NgModule({
@@ -180,6 +184,8 @@ import { ParticipantsListComponent } from './Back/GestionFormation/Formation/par
     AllCommentsComponent,
     ShowPostsComponent,
     PostDetailsComponent,
+
+    SuccessComponent,
     DetailsFormationBackComponent,
     ParticipantsListComponent,
 

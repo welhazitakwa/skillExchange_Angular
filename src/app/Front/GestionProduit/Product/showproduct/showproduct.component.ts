@@ -264,11 +264,7 @@ selectedFiles: File[]=[]
          // file: file,
           file: resizedFile
         });
-        // // Ajouter l'image en base64 à la liste des images du produit en cours d'édition
-        // this.editingProduct!.imageProducts.push({
-        //   image: e.target.result, // Stockage de l'image en base64 dans l'objet ImageProduct
-        //   product: this.editingProduct // Associer l'image au produit
-        // });
+     
       };
 
       reader.readAsDataURL(resizedFile);
@@ -377,13 +373,13 @@ imagesToDelete: number[] = []; // celles à supprimer
       reader.readAsDataURL(file);
     });
   }
-  private async getBase64WithPrefix(file: File): Promise<string> {
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = (e: any) => resolve(e.target.result); // Ne pas splitter le résultat
-      reader.readAsDataURL(file);
-    });
-  }
+  // private async getBase64WithPrefix(file: File): Promise<string> {
+  //   return new Promise((resolve) => {
+  //     const reader = new FileReader();
+  //     reader.onload = (e: any) => resolve(e.target.result); // Ne pas splitter le résultat
+  //     reader.readAsDataURL(file);
+  //   });
+  // }
   switchMainImage(product: Product, index: number) {
     if (product.imageProducts && product.imageProducts.length > index) {
       // Échange la première image avec celle cliquée
@@ -401,12 +397,39 @@ imagesToDelete: number[] = []; // celles à supprimer
     if (confirm('Are you sure you want to remove this image?')) {
       this.imagesPreviews.splice(index, 1);
       this.selectedImages.splice(index, 1);
+      this.imagesToDelete.push(index);
     }
-    else {
-      const actualIndex = index - this.imagesPreviews.length;
-      this.markImageForDeletion(actualIndex);
+    // else {
+    //   const actualIndex = index - this.imagesPreviews.length;
+    //   this.markImageForDeletion(actualIndex);
+    // }
+  }
+  imageError: string | null = null;
+  onFileChange(event: any): void {
+  const files = event.target.files;
+  this.imageError = null;
+  this.imagesPreviews = [];  // Réinitialisation des aperçus
+  this.selectedImages = [];  // Réinitialisation des images sélectionnées
+
+  if (files.length > 0) {
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (!file.type.startsWith('image/')) {
+        this.imageError = 'Only image files are allowed.';
+        return;  // Arrêter l'exécution si le type de fichier n'est pas une image
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        const base64String = e.target.result;
+        this.imagesPreviews.push(base64String);  // Ajout de la prévisualisation
+        const base64Data = base64String.split(',')[1];
+        this.selectedImages.push(base64Data);  // Ajout du base64 à la liste des images sélectionnées
+      };
+      reader.readAsDataURL(file);
     }
   }
+}
   private updateImagePreviews(): void {
     this.imagesPreviews = [
       ...this.editingProduct!.imageProducts
@@ -419,7 +442,7 @@ imagesToDelete: number[] = []; // celles à supprimer
     ];
   }
   showModalProduct = false;
-  editingProduct?: Product;
+  
   onImageSelected(event: any) {
     const files = event.target.files;
     
@@ -435,11 +458,41 @@ imagesToDelete: number[] = []; // celles à supprimer
   cancelEditProduct() {
     this.showModalProduct = false;
   }
-
+  editingProduct?: Product;
+//fonctionnel
+  // submitEditProduct() {
+  //   if (!this.editingProduct) return;
+  
+  //   this.productService.updateProduct(this.editingProduct).subscribe({
+  //     next: () => {
+  //       console.log('Product updated');
+  //       this.productService.getProduct().subscribe({
+  //         next: (products) => {
+  //           this.products = products;
+  //           console.log(this.products);
+  //         },
+  //         error: (error) => {
+  //           console.error('Erreur lors de la récupération des produits', error);
+  //         }
+  //       });
+  //       this.showModalProduct = false;
+  //       this.editingProduct = undefined;
+  //     },
+  //     error: (error) => {
+  //       console.error('Error updating product', error);
+  //     }
+  //   });
+  // }
   submitEditProduct() {
     if (!this.editingProduct) return;
   
-    this.productService.updateProduct(this.editingProduct).subscribe({
+    // Inclure les indices des images à supprimer dans le produit
+    const productData = {
+      ...this.editingProduct,
+      imagesToDelete: this.imagesToDelete
+    };
+  
+    this.productService.updateProduct(productData).subscribe({
       next: () => {
         console.log('Product updated');
         this.productService.getProduct().subscribe({
@@ -448,7 +501,7 @@ imagesToDelete: number[] = []; // celles à supprimer
             console.log(this.products);
           },
           error: (error) => {
-            console.error('Erreur lors de la récupération des produits', error);
+            console.error('Error retrieving products', error);
           }
         });
         this.showModalProduct = false;
@@ -459,6 +512,57 @@ imagesToDelete: number[] = []; // celles à supprimer
       }
     });
   }
+  
+  removeExistingImage(imageId: number) {
+    if (!this.imagesToDelete.includes(imageId)) {
+      this.imagesToDelete.push(imageId);
+    }
+  
+    // Supprimer visuellement l'image
+    this.editingProduct!.imageProducts = this.editingProduct!.imageProducts.filter(img => img.idImage !== imageId);
+  }
+  
+  // async submitEditProduct() {
+  //   const formData = new FormData();
+  
+  //   const productToSend = {
+  //     productName: this.editingProduct?.productName,
+  //     type: this.editingProduct?.type,
+  //     price: this.editingProduct?.price,
+  //     stock: this.editingProduct?.stock,
+  //     currencyType: this.editingProduct?.currencyType
+  //   };
+  
+  //   formData.append('product', new Blob([JSON.stringify(productToSend)], { type: 'application/json' }));
+  
+  //   // Ajouter les nouvelles images
+  //   for (let file of this.selectedFiles) {
+  //     formData.append('newImages', file);
+  //   }
+  
+  //   // Ajouter les ids des images à supprimer
+  //   for (let id of this.imagesToDelete) {
+  //     formData.append('imagesToDelete', id.toString());
+  //   }
+  //   console.log("Images à supprimer :", this.imagesToDelete);
+  //   for (const [key, value] of (formData as any).entries()) {
+  //     console.log(`${key}:`, value);
+  //   }
+
+  
+  //   this.productService.updateProduct(this.editingProduct!.idProduct!, formData).subscribe({
+  //     next: () => {
+  //       alert("Produit modifié avec succès !");
+  //       this.showModalProduct = false;
+  //       this.loadProducts(); // ou toute méthode pour rafraîchir
+  //     },
+  //     error: (err) => {
+  //       console.error('Erreur update:', err);
+  //       alert('Erreur lors de la mise à jour');
+  //     }
+  //   });
+  // }
+  
   
   
   
@@ -497,56 +601,6 @@ isSubmitting: boolean = false;
 
 
 newImages: { url: string, file: File | null }[] = [];
-// async submitEditProduct(): Promise<void> {
-//   if (!this.currentUser) {
-//     alert('Vous devez être connecté');
-//     return;
-//   }
-
-//   try {
-//     // 1. Convertir les fichiers sélectionnés en ImageProduct[] sans référence au produit
-//     const newImageProducts: ImageProduct[] = await Promise.all(
-//       this.selectedFiles.map(async file => ({
-//         image: await this.getBase64WithPrefix(file),
-//         product: { id: this.editingProduct.idProduct }as unknown as Product
-//         // Ne pas inclure la référence au produit ici
-//         // product: this.editingProduct // <-- Retirer cette ligne
-//       }))
-//     );
-
-//     // 2. Garder les anciennes images non supprimées
-//     const keptImages = this.editingProduct.imageProducts
-//       .filter((_, index) => !this.imagesToDelete.includes(index));
-
-//     // 3. Créer une copie "propre" du produit à mettre à jour
-//     const updatedProduct: Product = {
-//       ...this.editingProduct,
-//       imageProducts: [...keptImages, ...newImageProducts],
-//       postedBy: this.currentUser
-//     };
-
-//     // 4. Nettoyer les références circulaires avant l'envoi
-//     const productToSend = this.removeCircularReferences(updatedProduct);
-
-//     // 5. Envoyer la mise à jour
-//     this.productService.updateProduct(productToSend).subscribe({
-//       next: () => {
-//         alert('Produit modifié avec succès !');
-//         this.showModalProduct = false;
-//         this.loadProducts();
-//       },
-//       error: (err) => {
-//         console.error('Erreur lors de la mise à jour du produit :', err);
-//         alert('Une erreur est survenue lors de la modification.');
-//       }
-//     });
-//   } catch (error) {
-//     console.error('Erreur lors du traitement des images :', error);
-//     alert('Erreur lors du traitement des images.');
-//   }
-// }
-
-
 
 
 
