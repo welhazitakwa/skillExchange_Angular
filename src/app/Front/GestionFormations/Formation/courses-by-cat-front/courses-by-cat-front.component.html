@@ -41,8 +41,13 @@
                         <div class="bg-secondary p-4">
                             <div class="d-flex justify-content-between mb-3">
                                 <small class="m-0"><i class="fa fa-users text-primary mr-2"></i>25 Students</small>
-                                <h6 class="m-0"><i class="fa fa-star text-primary mr-2"></i>4.5 <small>(250)</small></h6>
-                                <small class="m-0"><i class="far fa-clock text-primary mr-2"></i>{{ convertDuration(f.duration) }}</small>
+                             <h6 class="m-0">
+                <i class="fa fa-star text-primary mr-2"></i>
+                {{ averageRatingMap[f.id] || 0 }}
+                <small>{{ ratingCountMap[f.id] ? '(' + ratingCountMap[f.id] + ')' : '(0)' }}</small>
+              </h6>
+            
+              <small class="m-0"><i class="far fa-clock text-primary mr-2"></i>{{ convertDuration(f.duration) }}</small>
                             </div>
                             <a class="h5" style="cursor: pointer;" (click)="openDetailsCourse(f.id)"> {{f.title}} </a>
                             <div class="border-top mt-4 pt-4">

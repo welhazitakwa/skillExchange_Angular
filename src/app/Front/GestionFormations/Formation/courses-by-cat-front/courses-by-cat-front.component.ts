@@ -148,7 +148,36 @@ export class CoursesByCatFrontComponent {
         //     });
         // });
         // ---------------------------------------------
+
         this.filteredFormations.forEach((f) => {
+          this.ratingService.getAverageRatingForCourse(f.id).subscribe(
+            (avg) => {
+              this.averageRatingMap[f.id] = Number(avg.toFixed(1)); // Round to 1 decimal place
+            },
+            (error) => {
+              console.error(
+                `Error fetching average rating for course ${f.id}:`,
+                error
+              );
+              this.averageRatingMap[f.id] = 0;
+            }
+          );
+
+          // Fetch rating count
+          this.ratingService.getRatingCountForCourse(f.id).subscribe(
+            (count) => {
+              this.ratingCountMap[f.id] = count;
+            },
+            (error) => {
+              console.error(
+                `Error fetching rating count for course ${f.id}:`,
+                error
+              );
+              this.ratingCountMap[f.id] = 0;
+            }
+          );
+
+          // Fetch payment and participation status
           this.payServ
             .checkPaiement(this.currentUser!.id, f.id)
             .subscribe((hasPaid) => {
@@ -392,6 +421,8 @@ export class CoursesByCatFrontComponent {
 
   // emojis *******************************************
   ratingMap: { [courseId: number]: number } = {}; // Store ratings for each course
+  averageRatingMap: { [courseId: number]: number } = {}; // Store average ratings
+  ratingCountMap: { [courseId: number]: number } = {}; // Store rating counts
   rating = 0;
   hoverRating: number | null = null;
   showEmoji = false;
@@ -403,6 +434,18 @@ export class CoursesByCatFrontComponent {
 
   resetHover() {
     this.hoverRating = null;
+  }
+
+  formatAverageRating(rating: number | undefined): string {
+    if (rating === undefined || rating === 0) {
+      return '0';
+    }
+    // Check if the rating is a whole number
+    if (Math.floor(rating) === rating) {
+      return rating.toString(); // No decimal for whole numbers (e.g., 3.0 -> '3')
+    }
+    // Show one decimal place for non-whole numbers (e.g., 2.5 -> '2.5')
+    return rating.toFixed(1);
   }
 
   selectRating(value: number, courseId: number) {
@@ -417,17 +460,27 @@ export class CoursesByCatFrontComponent {
 
     const showEmoji = true;
 
-    // Check if the user has already rated this course
     this.ratingService
       .getRatingByUserAndCourse(this.currentUser!.id, courseId)
       .subscribe(
         (ratings) => {
           if (ratings.length > 0) {
-            // Update existing rating
             ratingCourse.id = ratings[0].id;
             this.ratingService.updateRating(ratingCourse).subscribe(
               (response) => {
                 console.log('Rating updated:', response);
+                // Refresh average rating and count
+                this.ratingService
+                  .getAverageRatingForCourse(courseId)
+                  .subscribe(
+                    (avg) =>
+                      (this.averageRatingMap[courseId] = avg)
+                  );
+                this.ratingService
+                  .getRatingCountForCourse(courseId)
+                  .subscribe(
+                    (count) => (this.ratingCountMap[courseId] = count)
+                  );
                 Swal.fire({
                   icon: 'success',
                   title: 'Rating Updated',
@@ -446,10 +499,21 @@ export class CoursesByCatFrontComponent {
               }
             );
           } else {
-            // Add new rating
             this.ratingService.addRating(ratingCourse).subscribe(
               (response) => {
                 console.log('Rating added:', response);
+                // Refresh average rating and count
+                this.ratingService
+                  .getAverageRatingForCourse(courseId)
+                  .subscribe(
+                    (avg) =>
+                      (this.averageRatingMap[courseId] = avg)
+                  );
+                this.ratingService
+                  .getRatingCountForCourse(courseId)
+                  .subscribe(
+                    (count) => (this.ratingCountMap[courseId] = count)
+                  );
                 Swal.fire({
                   icon: 'success',
                   title: 'Rating Submitted',
@@ -472,7 +536,6 @@ export class CoursesByCatFrontComponent {
         (error) => console.error('Error checking existing rating:', error)
       );
 
-    // Show emoji animation
     setTimeout(() => {
       this.showEmoji = false;
     }, 1000);

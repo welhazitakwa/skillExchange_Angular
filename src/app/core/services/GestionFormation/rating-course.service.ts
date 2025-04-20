@@ -43,4 +43,12 @@ export class RatingCourseService {
         )
       );
   }
+
+  getAverageRatingForCourse(courseId: number): Observable<number> {
+    return this.http.get<number>(this.url+`/average-rating/${courseId}`);
+  }
+
+  getRatingCountForCourse(courseId: number): Observable<number> {
+    return this.http.get<number>(this.url + `/rating-count/${courseId}`);
+  }
 }
