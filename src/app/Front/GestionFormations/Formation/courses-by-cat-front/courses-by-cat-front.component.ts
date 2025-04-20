@@ -270,47 +270,76 @@ export class CoursesByCatFrontComponent {
               console.log('prix avant' + this.currentUser!.balance);
               this.currentUser!.balance = this.currentUser!.balance - prix;
               console.log('prix après ' + this.currentUser!.balance);
-              //  --**********-------------******************---------------************
+              //  --**********------------- Client ---------------************
               if (this.currentUser) {
                 this.userService.updateUser(this.currentUser).subscribe({
                   next: (val: any) => {
                     console.log('balance updated');
                     this.loadCurrentUser;
-                      author.balance = author.balance + prix;
-                      this.userService.updateUser(author).subscribe({
-                        next: (val: any) => {
-                          console.log('balance author updated');
-                          this.loadCurrentUser;
-                        },
-                        error: (err: any) => {
-                          console.log('balance author not updated ');
-                        },
-                      });
+                    //  --**********-------------Transaction ---------------************
+                 
+
+                    //  --**********-------------Author ---------------************
+
+                    author.balance = author.balance + prix;
+                    this.userService.updateUser(author).subscribe({
+                      next: (val: any) => {
+                        console.log('balance author updated');
+                        this.loadCurrentUser;
+                                             
+                      },
+                      error: (err: any) => {
+                        console.log('balance author not updated ');
+                      },
+                    });
                   },
                   error: (err: any) => {
                     console.log('paiement non effectué');
                   },
                 });
+// tttttrrrrrrrrrrrrraaaaaaaaasssssssaaaaaaaaaaccccccccttttttttttttiiiiiiiiiioooooonnnnnnnnnnnn
+      if (this.currentUser) {
+        this.createTransaction(
+          this.currentUser,
+          -prix,
+          TransactionType.PAYMENT,
+          'Course Payment ' + title
+        ).subscribe(
+          () => {
+           // alert('Withdrawal completed successfully');
+          },
+          (error) => {
+            console.error('Withdrawal transaction failed:', error);
+            alert('Withdrawal failed');
+          }
+        );
+      }
+
+
+// tttttrrrrrrrrrrrrraaaaaaaaasssssssaaaaaaaaaaccccccccttttttttttttiiiiiiiiiioooooonnnnnnnnnnnn
+
+
+this.createTransaction(
+  author,
+  prix,
+  TransactionType.PAYMENT,
+  'Recu from course Payment ' + title
+).subscribe(
+  () => {
+   // alert('Withdrawal completed successfully');
+  },
+  (error) => {
+    console.error('Withdrawal transaction failed:', error);
+    alert('Withdrawal failed');
+  }
+);
+// tttttrrrrrrrrrrrrraaaaaaaaasssssssaaaaaaaaaaccccccccttttttttttttiiiiiiiiiioooooonnnnnnnnnnnn
+
+
+
               }
 
-              //  --**********-------------Transaction ---------------************
-              if (this.currentUser) {
-                this.createTransaction(
-                  this.currentUser,
-                  prix,
-                  TransactionType.PAYMENT,
-                  'Course Payment ' + title
-                ).subscribe(
-                  () => {
-                    alert('Withdrawal completed successfully');
-                  },
-                  (error) => {
-                    console.error('Withdrawal transaction failed:', error);
-                    alert('Withdrawal failed');
-                  }
-                );
-              }
-
+             
               //  --**********-------------******************---------------************
               console.log('Paiement ajoutée avec succès', res);
               Swal.fire({
