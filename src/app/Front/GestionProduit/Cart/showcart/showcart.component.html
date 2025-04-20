@@ -4,4 +4,10 @@
 
   <!-- Affichage des produits si le panier contient des articles -->
   <app-cart-products *ngIf="cartProducts && cartProducts.length > 0" [cartProducts]="cartProducts"></app-cart-products>
+  <!-- Affichage du total -->
+  <div class="cart-total" *ngIf="cartProducts && cartProducts.length > 0">
+    <hr />
+    <p><strong>Total en TND :</strong> {{ totalTND | currency: 'TND' }}</p>
+    <p><strong>Total en Tokens :</strong> {{ totalTokens }} 🪙</p>
+  </div>
 </div>

@@ -1,0 +1,55 @@
+<!-- 🔍 Bouton de détection de fraude -->
+<div class="modal fade show d-block" *ngIf="showPaymentModal" style="background: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Paiement</h5>
+          <button type="button" class="btn-close" (click)="showPaymentModal = false"></button>
+        </div>
+        <div class="modal-body">
+<div class="row">
+
+    <!-- Carte d'échéance de paiement -->
+    <div class="col-md-4 mb-3" *ngFor="let schedule of paymentSchedules">
+      <div class="card shadow-lg h-100">
+        <div class="card-body">
+          <h5 class="card-title text-center">Échéance du : {{ schedule.dueDate | date:'longDate' }}</h5>
+          <p class="card-text">
+          <div class="mb-2">
+            <strong>Montant dû :</strong> {{ schedule.dueAmount }} €
+          </div>
+          <div class="mb-2">
+            <strong>Montant payé :</strong> {{ schedule.paidAmount }} €
+          </div>
+          <div class="mb-2">
+            <strong>Reste à payer :</strong> {{ schedule.remainingAmount }} €
+          </div>
+          <div class="mb-2">
+            <strong>Intérêts de retard :</strong> {{ schedule.lateInterest || 0 }} €
+          </div>
+          <div class="mb-2">
+            <strong>Pénalité :</strong> {{ schedule.penaltyFee || 0 }} €
+          </div>
+          <div class="mb-3">
+            <strong>Statut :</strong>
+            <span [ngClass]="{
+                'text-success': schedule.paymentStatus === 'PAID',
+                'text-warning': schedule.paymentStatus === 'PARTIALLY_PAID',
+                'text-danger': schedule.paymentStatus === 'LATE' || schedule.paymentStatus === 'PENDING'
+              }">{{ schedule.paymentStatus }}</span>
+          </div>
+          <!-- Conteneur pour le bouton PayPal -->
+          <div id="paypal-button-container-{{schedule.id}}" class="mb-3">
+            <app-paypal-payment [schedule]="schedule"></app-paypal-payment>
+            <input type="number" [(ngModel)]="schedule.remainingAmount" class="form-control" min="1" />
+          </div>
+          <button class="btn btn-primary w-100" (click)="payer(schedule)">Payer</button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+</div>

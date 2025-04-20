@@ -12,13 +12,14 @@ export class  ShowcartComponent {
   //@Output() cartChanged = new EventEmitter<void>(); // Nouvel EventEmitter
    @Input() cartProducts: CartProducts[] = [];
 
-  totalPrice: number = 0;
+   totalTND: number = 0;
+   totalTokens: number = 0;
 
   constructor(private cartProductService: CartProductService) {}
 
   
     ngOnInit() {
-     /* this.cartProductService.getCartProducts().subscribe(
+      this.cartProductService.getCartProducts().subscribe(
         (products) => {
           this.cartProducts = products;
         
@@ -27,13 +28,26 @@ export class  ShowcartComponent {
           this.calculateTotalPrice(); // Mise à jour du prix total
         },
         (err) => console.error("Erreur lors du chargement du panier :", err)
-      );*/
+      );
       console.log("CartProduits récupérés :", this.cartProducts);
+      //this.calculateTotalPrice();
     }
   
     calculateTotalPrice() {
-      this.totalPrice = this.cartProducts.reduce((total, item) => total + (item.product?.price ?? 0) * item.quantity, 0);
-    }
+      this.totalTND = 0;
+      this.totalTokens = 0;
+    
+      for (const item of this.cartProducts) {
+        const price = item.product?.price ?? 0;
+        const quantity = item.quantity;
+        const currency = item.product?.currencyType;
+    
+        if (currency === 'TND') {
+          this.totalTND += price * quantity;
+        } else if (currency === 'TOKENS') {
+          this.totalTokens += price * quantity;
+        }
+      }    }
 
   
 }

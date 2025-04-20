@@ -1,18 +1,22 @@
-<app-header-front></app-header-front>    
-    <!-- Header Start -->
-    <div class="container-fluid page-header" style="margin-bottom: 90px;">
-        <div class="container">
-            <div class="d-flex flex-column justify-content-center" style="min-height: 300px">
-                <h3 class="display-4 text-white text-uppercase">Products</h3>
-                <div class="d-inline-flex text-white">
-                    <p class="m-0 text-uppercase"><a class="text-white" href="">Home</a></p>
-                    <i class="fa fa-angle-double-right pt-1 px-3"></i>
-                    <p class="m-0 text-uppercase">Products</p>
-                </div>
+<app-header-front></app-header-front>
+
+<!-- Header Start -->
+<div class="container-fluid page-header" style="margin-bottom: 90px;">
+    <div class="container">
+        <div class="d-flex flex-column justify-content-center" style="min-height: 300px">
+            <h3 class="display-4 text-white text-uppercase">Products</h3>
+            <div class="d-inline-flex text-white">
+                <p class="m-0 text-uppercase"><a class="text-white" href="">Home</a></p>
+                <i class="fa fa-angle-double-right pt-1 px-3"></i>
+                <p class="m-0 text-uppercase">Products</p>
             </div>
         </div>
     </div>
-    <!-- Header End -->
+</div>
+<!-- Header End -->
+
+<!-- Overlay pour le panier -->
+<div class="cart-overlay" [class.active]="isCartOpen" (click)="toggleCart()"></div>
 
 <!-- Bouton Panier flottant (à droite) -->
 <button class="cart-float-btn" (click)="toggleCart()">
@@ -27,14 +31,11 @@
         <button class="close-btn" (click)="toggleCart()">✖</button>
     </div>
     <div class="cart-content">
-      <app-showcart   [cartProducts]="cartProducts"></app-showcart> 
-        
+        <app-showcart [cartProducts]="cartProducts"></app-showcart>
     </div>
 </div>
-  
 
-
- <!-- Products Start -->
+<!-- Products Start -->
 <div class="container-fluid py-5">
     <div class="container py-5">
         <div class="text-center mb-5">
@@ -43,15 +44,37 @@
         </div>
         <div class="text-center mb-4">
             <button class="btn btn-success" data-toggle="modal" data-target="#addProductModal">
-              ➕ Add New Product
+                ➕ Add New Product
             </button>
-          </div>
-          
+        </div>
+        
         <div class="row">
             <div class="col-lg-4 col-md-6 mb-4" *ngFor="let product of products">
                 <div class="rounded overflow-hidden mb-2">
-                    <!-- On garde les images existantes -->
-                    <img class="img-fluid" src="assets/assetsFront/img/course-1.jpg" alt="Product Image">
+                    <div *ngIf="product.imageProducts?.length">
+                        <div class="product-image-container">
+                            <!-- Image principale (première image) -->
+                            <img [src]="'data:image/jpeg;base64,' + product.imageProducts[0].image" 
+                                 class="img-fluid main-product-image"
+                                 alt="{{product.productName}}">
+                            
+                            <!-- Miniatures pour les images supplémentaires -->
+                            <div class="thumbnail-container" *ngIf="product.imageProducts.length > 1">
+                                <div *ngFor="let img of product.imageProducts.slice(1, 5); let i = index">
+                                    <img [src]="'data:image/jpeg;base64,' + img.image" 
+                                         class="img-thumbnail"
+                                         (click)="switchMainImage(product, i+1)"
+                                         alt="Thumbnail {{i+1}}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Fallback si pas d'images -->
+                    <div *ngIf="!product.imageProducts?.length" class="no-image-placeholder">
+                        <i class="fas fa-image"></i>
+                        <span>No images available</span>
+                    </div>
+                    
                     <div class="bg-secondary p-4">
                         <div class="d-flex justify-content-between mb-3">
                             <!-- Stock restant avec couleur conditionnelle -->
@@ -68,24 +91,27 @@
                         <a class="h5" [routerLink]="['/productD', product.idProduct]">{{ product.productName }}</a>
 
                         <p class="m-0 ">{{ product.type }}</p>
-                         <!-- Si c’est l’utilisateur qui a posté ce produit -->
-  <div *ngIf="currentUser?.id === product.postedBy?.id">
-    <button class="btn btn-warning btn-sm me-2" (click)="startEditProduct(product)">Edit</button>
-    <button class="btn btn-danger btn-sm" (click)="deleteProduct(product.idProduct)">Delete</button>
-  </div>
-
-                        <!-- Affichage du rating -->
-                        
+                        <!-- Si c'est l'utilisateur qui a posté ce produit -->
+                        <div *ngIf="currentUser?.id === product.postedBy?.id">
+                            <button class="btn btn-warning btn-sm me-2" (click)="startEditProduct(product)">Edit</button>
+                            <button class="btn btn-danger btn-sm" (click)="deleteProduct(product.idProduct)">Delete</button>
+                        </div>
 
                         <div class="border-top mt-4 pt-4">
                             <div class="d-flex justify-content-between">
-                                <h5 class="m-0 ">{{ product.price | currency:'TND' }}</h5>
-                                <button class="btn btn-primary btn-sm" 
-                                      (click)="addToCart(product)"
-                                        [disabled]="product.stock === 0">
+                                <ng-container *ngIf="product.currencyType === 'TND'; else tokenTemplate">
+                                    <i class="fas fa-money-bill-wave fa-lg text-success me-1"></i>{{ product.price }} DT
+                                  </ng-container>
+                                  <ng-template #tokenTemplate>
+                                    <i class="fas fa-coins fa-lg text-warning me-1"></i>{{ product.price }} Tokens
+                                  </ng-template>
+                                  
+                                  
+                                <button *ngIf="currentUser?.id !== product.postedBy?.id" class="btn btn-primary btn-sm" 
+                                    (click)="addToCart(product)"
+                                    [disabled]="product.stock === 0">
                                     🛒 Add to Cart
                                 </button>
-                                
                             </div>
                         </div> 
                     </div>
@@ -94,94 +120,170 @@
         </div>
     </div>
 </div>
+
 <!-- Add Product Modal -->
 <div class="modal fade" id="addProductModal" tabindex="-1" role="dialog" aria-labelledby="addProductModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content rounded">
+        <div class="modal-content rounded">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="addProductModalLabel">Add New Product</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form (ngSubmit)="submitNewProduct()">
+                    <div class="form-group">
+                        <label for="productName">Product Name</label>
+                        <input type="text" id="productName" class="form-control" required [(ngModel)]="newProduct.productName" name="productName">
+                    </div>
+        
+                    <div class="form-group">
+                        <label for="type">Type</label>
+                        <select id="type" class="form-control" required [(ngModel)]="newProduct.type" name="type">
+                            <option value="TOKENS">Tokens</option>
+                            <option value="DIGITAL">Digital</option>
+                            <option value="PHYSICAL">Physical</option>
+                          </select>
+                    </div>
+        
+                    <div class="form-group">
+                        <label>Price</label>
+                        <div class="d-flex">
+                            <input type="number" class="form-control" required [(ngModel)]="newProduct.price" name="price">
+                            <select class="form-control ml-2" [(ngModel)]="newProduct.currencyType" name="currencyType">
+                                <option value="TND">TND</option>
+                                <option value="TOKENS">Tokens</option>
+                            </select>
+                        </div>
+                    </div>
+        
+                    <div class="form-group">
+                        <label for="stock">Stock</label>
+                        <input type="number" id="stock" class="form-control" required [(ngModel)]="newProduct.stock" name="stock">
+                    </div>
+                    
+                    <label>Product Images</label>
+                    <input type="file" class="form-control-file" (change)="onFilesSelected($event)" accept="image/*" multiple #fileInput>
+                    <small class="form-text text-muted">Select multiple images (JPEG, PNG) - Max 5MB each</small>
+                
+                    <div class="image-previews mt-3">
+                        <div *ngFor="let preview of imagesPreviews; let i = index" class="image-preview-item">
+                            <img [src]="preview.url" alt="Preview" class="img-thumbnail">
+                            <button type="button" class="btn btn-sm btn-danger remove-btn" (click)="removeImage(i)">
+                                &times;
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-primary">Save Product</button>
+                        <button type="button" class="btn btn-secondary ml-2" data-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal édition produit -->
+<div *ngIf="showModalProduct" class="modal fade show d-block" tabindex="-1" style="z-index: 1050;">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
         <div class="modal-header bg-primary text-white">
-          <h5 class="modal-title" id="addProductModalLabel">Add New Product</h5>
-          <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+          <h5 class="modal-title">Edit Product</h5>
+          <button type="button" class="close text-white" (click)="cancelEditProduct()">
+            <span>&times;</span>
           </button>
         </div>
+  
         <div class="modal-body">
-          <form (ngSubmit)="submitNewProduct()">
+          <form (ngSubmit)="submitEditProduct()">
+            <!-- Nom du produit -->
             <div class="form-group">
               <label for="productName">Product Name</label>
-              <input type="text" id="productName" class="form-control" required [(ngModel)]="newProduct.productName" name="productName">
+              <input type="text" class="form-control" id="productName" required [(ngModel)]="editingProduct!.productName" name="productName">
             </div>
   
+            <!-- Type du produit -->
             <div class="form-group">
-              <label for="type">Type</label>
-              <input type="text" id="type" class="form-control" required [(ngModel)]="newProduct.type" name="type">
+              <label for="productType">Type</label>
+              <select class="form-control" id="productType" required [(ngModel)]="editingProduct!.type" name="type">
+                <option value="TOKENS">Tokens</option>
+                <option value="DIGITAL">Digital</option>
+                <option value="PHYSICAL">Physical</option>
+              </select>
             </div>
   
+            <!-- Prix + Currency -->
             <div class="form-group">
               <label>Price</label>
               <div class="d-flex">
-                <input type="number" class="form-control" required [(ngModel)]="newProduct.price" name="price">
-                <select class="form-control ml-2" [(ngModel)]="newProduct.currencyType" name="currencyType">
+                <input type="number" class="form-control" required [(ngModel)]="editingProduct!.price" name="price">
+                <select class="form-control ml-2" [(ngModel)]="editingProduct!.currencyType" name="currencyType">
                   <option value="TND">TND</option>
-                  <option value="Tokens">Tokens</option>
+                  <option value="TOKENS">Tokens</option>
                 </select>
               </div>
             </div>
   
+            <!-- Stock -->
             <div class="form-group">
-              <label for="stock">Stock</label>
-              <input type="number" id="stock" class="form-control" required [(ngModel)]="newProduct.stock" name="stock">
+              <label for="productStock">Stock</label>
+              <input type="number" class="form-control" id="productStock" required [(ngModel)]="editingProduct!.stock" name="stock">
             </div>
   
-            <div class="text-right">
-              <button type="submit" class="btn btn-primary">Save Product</button>
-              <button type="button" class="btn btn-secondary ml-2" data-dismiss="modal">Cancel</button>
+            <!-- Upload nouvelles images -->
+            <div class="form-group">
+              <label>Product Images</label>
+              <input type="file" class="form-control-file" (change)="onFilesSelected($event)" accept="image/*" multiple>
+              <small class="form-text text-muted">JPEG, PNG - Max 5MB each</small>
+            </div>
+  
+            <!-- Aperçu nouvelles images -->
+            <div class="image-previews mt-3" *ngIf="imagesPreviews.length > 0">
+              <div *ngFor="let img of imagesPreviews; let i = index" class="image-preview-item">
+                <img [src]="img.url" class="img-thumbnail">
+                <button type="button" class="btn btn-sm btn-danger remove-btn" (click)="removeImage(i)">
+                  &times;
+                </button>
+              </div>
+            </div>
+  
+            <!-- Images existantes -->
+            <div class="mt-4" *ngIf="editingProduct!.imageProducts?.length">
+              <h6>Current Images</h6>
+              <div class="image-grid">
+                <div class="image-card" *ngFor="let img of editingProduct!.imageProducts; let i = index">
+                  <div class="image-wrapper">
+                    <img [src]="'data:image/jpeg;base64,' + img.image" class="img-thumbnail">
+                    <button type="button" class="btn btn-danger btn-sm remove-btn" (click)="markImageForDeletion(i)">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                  <div class="image-info">
+                    <small class="text-muted">Existing image</small>
+                    <small *ngIf="imagesToDelete.includes(i)" class="text-danger">(Will be deleted)</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+  
+            <!-- Footer -->
+            <div class="text-right mt-4">
+              <button type="submit" class="btn btn-primary" [disabled]="isSubmitting">
+                <span *ngIf="!isSubmitting">Save Changes</span>
+                <span *ngIf="isSubmitting"><i class="fas fa-spinner fa-spin"></i> Saving...</span>
+              </button>
+              <button type="button" class="btn btn-secondary ml-2" (click)="cancelEditProduct()">Cancel</button>
             </div>
           </form>
         </div>
       </div>
     </div>
   </div>
-<!-- Modal édition produit -->
-<div *ngIf="showModalProduct" class="modal fade show d-block" tabindex="-1" style="z-index: 1050;">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Edit Product</h5>
-          <button type="button" class="close" (click)="cancelEditProduct()">
-            <span>&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <form (ngSubmit)="submitEditProduct()">
-            <div class="form-group mb-2">
-              <label>Name</label>
-              <input [(ngModel)]="editingProduct.productName" name="name" class="form-control" required />
-            </div>
-            <div class="form-group mb-2">
-              <label>Type</label>
-              <input [(ngModel)]="editingProduct.type" name="type" class="form-control" required />
-            </div>
-            <div class="form-group mb-2">
-              <label>Price</label>
-              <input type="number" [(ngModel)]="editingProduct.price" name="price" class="form-control" required />
-            </div>
-            <div class="form-group mb-2">
-              <label>Stock</label>
-              <input type="number" [(ngModel)]="editingProduct.stock" name="stock" class="form-control" required />
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-secondary" (click)="cancelEditProduct()">Cancel</button>
-          <button class="btn btn-primary" (click)="submitEditProduct()">Save</button>
-        </div>
-      </div>
-    </div>
-  </div>
   
-  <!-- Backdrop -->
-  <div class="modal-backdrop fade show" *ngIf="showModalProduct" style="z-index: 1040;"></div>
-    
-
+<!-- Backdrop -->
+<div class="modal-backdrop fade show" *ngIf="showModalProduct" style="z-index: 1040;"></div>
 
 <app-footer-front></app-footer-front>
