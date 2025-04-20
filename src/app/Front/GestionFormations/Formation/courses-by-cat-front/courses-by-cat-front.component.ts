@@ -246,7 +246,7 @@ export class CoursesByCatFrontComponent {
   // ------------********************boutonet************************------------------------
   // Dans ton service de participation
 
-  payer(courseId: number, prix: number, title: string) {
+  payer(courseId: number, prix: number, title: string , author: User) {
     const paiement = new PaiementFormation();
     //participation.idp = 0;
     paiement.participant = this.currentUser?.id ?? 0;
@@ -276,6 +276,16 @@ export class CoursesByCatFrontComponent {
                   next: (val: any) => {
                     console.log('balance updated');
                     this.loadCurrentUser;
+                      author.balance = author.balance + prix;
+                      this.userService.updateUser(author).subscribe({
+                        next: (val: any) => {
+                          console.log('balance author updated');
+                          this.loadCurrentUser;
+                        },
+                        error: (err: any) => {
+                          console.log('balance author not updated ');
+                        },
+                      });
                   },
                   error: (err: any) => {
                     console.log('paiement non effectué');
