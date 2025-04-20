@@ -11,8 +11,8 @@ export class Posts {
     createdAt!: Date;
     updatedAt!: Date;
     upVote!: number;
-    downVote!: string;
-    user!: User;           
+    downVote!: number;
+    user!: User | null;           
   emojiPosts!: EmojiPosts[];   
   commentPosts!: CommentPosts[];
   

@@ -83,6 +83,36 @@
             <span class="hide-menu">Badges</span>
           </a>
         </li>
+
+        <!-- ************************ -->
+         <li
+          class="sidebar-item"
+          routerLinkActive="selected"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <a class="sidebar-link" routerLink="/categories"
+            aria-expanded="false"
+          >
+          
+           <i class="fa fa-database"></i>
+            <span class="hide-menu">Categories</span>
+          </a>
+        </li>
+         <li
+          class="sidebar-item"
+          routerLinkActive="selected"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <a class="sidebar-link" routerLink="/backcourses"
+            aria-expanded="false"
+          >
+          
+          <i class="fa fa-book"></i>  
+            <span class="hide-menu">Courses</span>
+          </a>
+        </li>
+        <!-- ************************ -->
+
         <li class="sidebar-item" routerLinkActive="selected" [routerLinkActiveOptions]="{exact: true}">
           <a class="sidebar-link" routerLink="/backproducts" aria-expanded="false">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-icon">
@@ -103,6 +133,7 @@
             <span class="hide-menu">Cart Products</span>
           </a>
         </li>
+
         <li class="list-divider"></li>
         <!-- ... remaining multi-level dropdown ... -->
       </ul>
