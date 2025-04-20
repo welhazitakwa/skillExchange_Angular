@@ -19,7 +19,8 @@
 <!-- Boutons supplémentaires -->
 <div class="cart-actions">
   <button (click)="clearCart()" class="clear-cart">Clear cart</button>
-<button class="btn btn-success" (click)="showPaymentModal = true">Validate Cart</button>
+<!--<button class="btn btn-success" (click)="showPaymentModal = true">Validate Cart</button>-->
+<button class="btn btn-success" (click)="openPaymentModal()">Validate Cart</button>
 
 </div>
 
@@ -81,6 +82,12 @@
                     <i class="fas fa-lock me-2"></i>Pay with Stripe
                   </button>
                 </div>
+                <!-- ✅ PayPal button container -->
+<div class="d-grid mt-3">
+  <div id="paypal-button-container"></div>
+
+</div>
+
 
                 <!-- OR -->
                 <div class="text-center my-3">

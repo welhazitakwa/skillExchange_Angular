@@ -8,7 +8,8 @@ export class Payment {
     datePaiement?: Date;
     methodePaiement?: PaymentMethod;
     statutPaiement?: PaymentStatus;
-    cart?:Cart;
+    //cart?:Cart; 
+    cart?: Partial<Cart>;
     userEmail?:string;
     currencyType?:CurrencyType;
     productType?:ProductType;

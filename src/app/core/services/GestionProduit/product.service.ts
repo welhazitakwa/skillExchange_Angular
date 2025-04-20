@@ -39,6 +39,13 @@ export class ProductService {
     return this.http.patch(this.url + "/modify-product/${id}" , prod);
 
   }
+  approveProduct(id: number): Observable<any> {
+    return this.http.put(`${this.url}/approve/${id}`, null, { responseType: 'text' }); // PUT vide, pas PATCH
+  }
+  
+  rejectProduct(id: number): Observable<any> {
+    return this.http.delete(`${this.url}/reject/${id}`); // DELETE
+  }
   // updateProduct(id: number, data: FormData) {
   //   return this.http.patch<Product>(`${this.url}/update/${id}`, data);
   // }

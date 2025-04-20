@@ -10,7 +10,7 @@ import { CartProductService } from 'src/app/core/services/GestionProduit/cart-pr
 import { CartService } from 'src/app/core/services/GestionProduit/cart.service';
 import { PayementService } from 'src/app/core/services/GestionProduit/payement.service';
 import { UserService } from 'src/app/core/services/GestionUser/user.service';
-
+declare var paypal: any;
 @Component({
   selector: 'app-cart-products',
   templateUrl: './cart-products.component.html',
@@ -23,6 +23,16 @@ export class CartProductsComponent  {
 
 
   showPaymentModal: boolean = false;
+  openPaymentModal(): void {
+    this.showPaymentModal = true;
+  
+    // 💡 attendre que la vue se mette à jour
+    setTimeout(() => {
+      this.payService.loadPayPalScript().then(() => {
+        this.initPayPalButton();
+      });
+    }, 50); // 50ms pour être sûr que le DOM soit prêt
+  }
   updateLocalStorageCartProducts() {
     localStorage.setItem('cartProducts', JSON.stringify(this.cartProducts));
   }
@@ -54,6 +64,7 @@ export class CartProductsComponent  {
       this.cartProducts = products;
     });
     this.loadCurrentUser();
+    
    
   }
   // loadCartId() {
@@ -168,6 +179,7 @@ increaseQuantity(cartProduct: CartProducts): void {
 
  
   ////////////////////payment//////////////////////
+
   payment: Payment = new Payment();
   
    
@@ -245,5 +257,76 @@ increaseQuantity(cartProduct: CartProducts): void {
         }
       );
     }
-     
+  //////////////////////////
+  loadPayPalScript(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (document.getElementById('paypal-sdk')) {
+        resolve(); return;
+      }
+      const script = document.createElement('script');
+      script.id = 'paypal-sdk';
+      script.src = 'https://www.paypal.com/sdk/js?client-id=AQgP1txB3rkh5U1Tb_7RHytsAQ6qJ_tPZKKkDMFivbiiZ4ppsKMQ4M0EuwY8qpzZ_ZMF699mXRHenUM5&currency=USD'; // 🔁 change client-id
+      script.onload = () => resolve();
+      script.onerror = () => reject();
+      document.body.appendChild(script);
+    });
+  }
+  initPayPalButton() {
+    console.log("🔵 PayPal init lancé");
+    paypal.Buttons({
+      style: {
+        layout: 'vertical',
+        color: 'gold',
+        shape: 'rect',
+        label: 'paypal'
+      },
+      createOrder: (data: any, actions: any) => {
+        return actions.order.create({
+          purchase_units: [{
+            description: 'SkillExchange cart payment',
+            amount: {
+              value: this.totalTND.toFixed(2),
+              currency_code: 'USD'
+            }
+          }]
+        });
+      },
+      onApprove: async (data: any, actions: any) => {
+        const details = await actions.order.capture();
+        console.log("✅ Payment success:", details);
+        this.sendToBackend(details.id);
+      },
+      onError: (err: any) => {
+        console.error("❌ PayPal error:", err);
+      }
+    }).render('#paypal-button-container');
+  }
+
+  sendToBackend(transactionId: string): void {
+    const email = localStorage.getItem('userEmail');
+    const cartId = this.cartProducts[0]?.cart?.id;
+    if (!email || !this.cartId) {
+      alert("Missing cart ID or user email.");
+      return;
+    }
+
+    const payload = {
+      userEmail: email,
+      cartId: this.cartId,
+      montant: this.totalTND,
+      transactionId: transactionId
+    };
+
+    this.payService.notifyPaypalSuccess(payload).subscribe({
+      next: () => {
+        alert("📧 Invoice sent and payment saved!");
+        localStorage.removeItem("cartProducts");
+        window.location.href = "/payment/success";
+      },
+      error: (err) => {
+        console.error("❌ Backend error:", err);
+        alert("Error saving payment.");
+      }
+    });
+  }
 }

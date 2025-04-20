@@ -15,5 +15,6 @@ export class Product {
   reviewProducts!: ReviewProduct[];
   imageProducts!: ImageProduct[]; 
   currencyType?: 'TND' | 'TOKENS';
+  isApproved?: number ;
 
 }

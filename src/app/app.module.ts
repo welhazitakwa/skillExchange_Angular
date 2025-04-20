@@ -79,6 +79,7 @@ import { CartProductsComponent } from './Front/GestionProduit/cart-products/cart
 import { AllCommentsComponent } from './Back/GestionForumPost/CommentPost/all-comments/all-comments.component';
 import { ShowPostsComponent } from './Front/GestionForumPost/Posts/show-posts/show-posts.component';
 import { PostDetailsComponent } from './Front/GestionForumPost/Posts/post-details/post-details.component';
+import { SuccessComponent } from './Front/GestionProduit/success/success.component';
 
 
 @NgModule({
@@ -148,6 +149,7 @@ import { PostDetailsComponent } from './Front/GestionForumPost/Posts/post-detail
     AllCommentsComponent,
     ShowPostsComponent,
     PostDetailsComponent,
+    SuccessComponent,
 
   ],
   imports: [
