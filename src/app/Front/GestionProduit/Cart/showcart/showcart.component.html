@@ -3,7 +3,9 @@
   <p *ngIf="!cartProducts || cartProducts.length === 0">Votre panier est vide.</p>
 
   <!-- Affichage des produits si le panier contient des articles -->
-  <app-cart-products *ngIf="cartProducts && cartProducts.length > 0" [cartProducts]="cartProducts"></app-cart-products>
+  <app-cart-products *ngIf="cartProducts && cartProducts.length > 0" [cartProducts]="cartProducts"
+    [totalTND]="totalTND"
+  [totalTokens]="totalTokens"></app-cart-products>
   <!-- Affichage du total -->
   <div class="cart-total" *ngIf="cartProducts && cartProducts.length > 0">
     <hr />

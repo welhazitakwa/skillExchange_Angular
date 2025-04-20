@@ -9,14 +9,12 @@ declare var paypal: any;
 })
 export class PaypalPaymentComponent  implements OnInit, OnDestroy{
   payment: Payment = {
-    transactionId: "",
+  
     montant: 0,
     datePaiement: new Date(),
     methodePaiement: PaymentMethod.PAYPAL,
     statutPaiement: PaymentStatus.PENDING,
-    phoneNumber: '',
-    creditId :'',
-    scheduleId:''
+    
   };
 
   constructor(private paymentService: PayementService) {}
@@ -151,18 +149,18 @@ export class PaypalPaymentComponent  implements OnInit, OnDestroy{
     alert('Échec de l\'initialisation de PayPal. Actualisez ou essayez une autre méthode.');
   }
   ////////////////////end paypal et carte bancaire//////////////
-  simulerPaiementFictif() {
-    this.payment.transactionId = 'FAKE-' + new Date().getTime(); // ID fictif unique
-    this.payment.statutPaiement = PaymentStatus.COMPLETED;
-    this.payment.creditId = this.schedule.creditId;
-    this.payment.scheduleId = this.schedule.id;
-    this.payment.datePaiement = new Date();
+  // simulerPaiementFictif() {
+  //   this.payment.transactionId = 'FAKE-' + new Date().getTime(); // ID fictif unique
+  //   this.payment.statutPaiement = PaymentStatus.COMPLETED;
+  //   this.payment.creditId = this.schedule.creditId;
+  //   this.payment.scheduleId = this.schedule.id;
+  //   this.payment.datePaiement = new Date();
 
-    this.paymentService.createPayment2(this.payment).subscribe({
-      next: (reponse) => this.gererSucces(reponse, { id: this.payment.transactionId }),
-      error: (err) => this.gererErreurPaiement(err)
-    });
-  }
+  //   this.paymentService.createPayment2(this.payment).subscribe({
+  //     next: (reponse) => this.gererSucces(reponse, { id: this.payment.transactionId }),
+  //     error: (err) => this.gererErreurPaiement(err)
+  //   });
+  // }
 
 
 }

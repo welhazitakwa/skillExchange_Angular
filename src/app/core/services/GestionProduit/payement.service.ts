@@ -3,38 +3,28 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Payment } from '../../models/GestionProduit/payment';
 import { PaymentSchedule } from '../../models/GestionProduit/payment-schedule';
+import { Cart } from '../../models/GestionProduit/cart';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PayementService {
-  url = 'http://localhost:8084/skillExchange/payements';
+  url = 'http://localhost:8084/skillExchange/api/payments';
   constructor(private http: HttpClient) {}
-  createPayment(payment: {
-    montant: any;
-    datePaiement: Date;
-    methodePaiement: string;
-    statutPaiement: string;
-    phoneNumber: string;
-    creditId: string | null;
-    scheduleId: any;
-    typePaiement: string
-  }): Observable<Payment> {
-    return this.http.post<Payment>(this.url, payment);
-  }  createPayment2(payment: Payment): Observable<Payment> {
+ 
+  createPayment2(payment: Payment): Observable<Payment> {
     return this.http.post<Payment>(this.url, payment);
   }
-
-  getPaymentSchedule(creditId: string): Observable<PaymentSchedule[]> {
-    return this.http.get<PaymentSchedule[]>(`http://localhost:8023/api/payments/schedule/${creditId}`);
+  // createStripeSession(amount: number, productName: string): Observable<string> {
+  //   return this.http.post(`${this.url}/stripe-session?amount=${amount}&productName=${productName}`, {}, { responseType: 'text' });
+  // }
+  createStripeSession(amount: number, cartId:number): Observable<string> {
+    return this.http.post(`${this.url}/stripe-session?amount=${amount}&cartId=${cartId}`, {}, { responseType: 'text' });
   }
 
-  // Créer un faux paiement
-  enregistrerPaiement(payment: any): Observable<any> {
-    return this.http.post('http://localhost:8024/api/payments/enregistrer', payment);
-  }
+ 
 
-  loadPayPalScript(): Promise<void> {
+  /*loadPayPalScript(): Promise<void> {
     return new Promise((resolve, reject) => {
       const scriptElement = document.createElement('script');
       scriptElement.src = 'https://www.paypal.com/sdk/js?client-id=YOUR_CLIENT_ID&currency=USD';
@@ -49,7 +39,7 @@ export class PayementService {
   }
   getPaymentSchedulesWithInfo(creditId: string): Observable<any[]> {
     return this.http.get<any[]>(`${this.url}/payments/schedule/with-payments/${creditId}`);
-  }
+  }*/
   
 
   // // 📊 Statistiques
