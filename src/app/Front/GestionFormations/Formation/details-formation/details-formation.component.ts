@@ -75,12 +75,14 @@ export class DetailsFormationComponent {
 
   formatAverageRating(rating: number | undefined): string {
     if (rating === undefined || rating === 0) {
-      return '0';
+      return '0.00';
     }
+    // Check if the rating is a whole number
     if (Math.floor(rating) === rating) {
-      return rating.toString();
+      return rating.toString(); // No decimal for whole numbers (e.g., 3.0 -> '3')
     }
-    return rating.toFixed(1);
+    // Show one decimal place for non-whole numbers (e.g., 2.5 -> '2.5')
+    return rating.toFixed(2);
   }
   getEmoji(value: number): string {
     const emojis = ['😡', '😕', '😐', '🙂', '🤩'];

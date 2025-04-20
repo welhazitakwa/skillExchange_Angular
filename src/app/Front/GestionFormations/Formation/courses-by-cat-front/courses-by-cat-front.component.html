@@ -44,7 +44,7 @@
                                   {{ totalProgress }} Students</small>
                              <h6 class="m-0">
                 <i class="fa fa-star text-primary mr-2"></i>
-                {{ averageRatingMap[f.id] || 0 }} {{ getEmoji(averageRatingMap[f.id]) }}
+                {{ formatAverageRating(averageRatingMap[f.id] || 0) }} {{ getEmoji(averageRatingMap[f.id]) }}
                 <small>{{ ratingCountMap[f.id] ? '(' + ratingCountMap[f.id] + ')' : '(0)' }}</small>
               </h6>
             
