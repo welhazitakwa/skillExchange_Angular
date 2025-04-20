@@ -62,32 +62,29 @@
  <div *ngSwitchCase="'exam'">
               <!-- ******************************************* -->
      
-  <div class="star-rating" (mouseleave)="resetHover()">
-  <ng-container *ngFor="let star of stars; let i = index">
-    <i
-      class="star"
-      [class.filled]="i < rating || (hoverRating !== null && i < hoverRating)"
-      (mouseover)="hover(i + 1)"
-      (click)="selectRating(i + 1)">
-      ★
-    </i>
-  </ng-container>
-</div>
- <br>
-<!-- Emoji shown on hover -->
-<div class="emoji-hover" *ngIf="hoverRating && !showEmoji">
-  {{ getEmoji(hoverRating) }}
-</div>
-
-<!-- Emoji that blinks then disappears after click -->
-<div
-  class="emoji-popup"
-  *ngIf="showEmoji"
-  [@blink]>
-  {{ getEmoji(rating) }}
-</div>
-
-
+<!-- Star Rating -->
+    <div class="star-rating" (mouseleave)="resetHover()">
+      <ng-container *ngFor="let star of stars; let i = index">
+        <i
+          class="star"
+          [class.filled]="i < ratingMap[f.id] || (hoverRating !== null && i < hoverRating)"
+          (mouseover)="hover(i + 1, f.id)"
+          (click)="selectRating(i + 1, f.id)"
+        >
+          ★
+        </i>
+      </ng-container>
+    </div>
+    <br />
+    <!-- Emoji shown on hover -->
+    <div class="emoji-hover" *ngIf="hoverRating && !showEmoji">
+      {{ getEmoji(hoverRating) }}
+    </div>
+    <!-- Emoji that blinks then disappears after click -->
+    <div class="emoji-popup" *ngIf="showEmoji" [@blink]>
+      {{ getEmoji(ratingMap[f.id]) }}
+    </div>
+              
             <!-- ******************************************* -->
  
     </div>

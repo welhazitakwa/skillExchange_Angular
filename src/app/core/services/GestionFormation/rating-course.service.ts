@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Rating } from '../../models/GestionFormation/rating';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -27,7 +27,20 @@ export class RatingCourseService {
   }
 
   updateRating(rating: Rating) {
-      return this.http.put(this.url + '/modify-rating', rating );
-    }
- 
+    return this.http.put(this.url + '/modify-rating', rating);
+  }
+
+  // Check if a user has rated a course
+  getRatingByUserAndCourse(
+    userId: number,
+    courseId: number
+  ): Observable<Rating[]> {
+    return this.http
+      .get<Rating[]>(this.url + '/retrieve-all-rating')
+      .pipe(
+        map((ratings) =>
+          ratings.filter((r) => r.idUser === userId && r.course.id === courseId)
+        )
+      );
+  }
 }

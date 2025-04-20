@@ -15,6 +15,8 @@ import { catchError, map, Observable, of } from 'rxjs';
 import { PaiementFormationService } from 'src/app/core/services/GestionFormation/paiement-formation.service';
 import { PaiementFormation } from 'src/app/core/models/GestionFormation/paiement-formation';
 import { HistoricTransactions, TransactionType } from 'src/app/core/models/GestionUser/HistoricTransactions';
+import { RatingCourseService } from 'src/app/core/services/GestionFormation/rating-course.service';
+import { Rating } from 'src/app/core/models/GestionFormation/rating';
 
 @Component({
   selector: 'app-courses-by-cat-front',
@@ -46,7 +48,8 @@ export class CoursesByCatFrontComponent {
     private participationService: ParticipationFormationService,
     private authService: AuthService,
     private router: Router,
-    private payServ: PaiementFormationService
+    private payServ: PaiementFormationService,
+    private ratingService: RatingCourseService // Add this
   ) {}
 
   ngOnInit() {
@@ -156,6 +159,18 @@ export class CoursesByCatFrontComponent {
                   .checkParticipation(this.currentUser!.id, f.id)
                   .subscribe((hasParticipated) => {
                     this.participationMap[f.id] = hasParticipated;
+                    if (hasParticipated && this.currentUser) {
+                      this.ratingService
+                        .getRatingByUserAndCourse(this.currentUser.id, f.id)
+                        .subscribe((ratings) => {
+                          if (ratings.length > 0) {
+                            this.ratingMap[f.id] = ratings[0].rating;
+                          } else {
+                            this.ratingMap[f.id] = 0; // No rating yet
+                            this.ratingMap[f.id] = 0;
+                          }
+                        });
+                    }
                   });
               } else {
                 this.participationMap[f.id] = false;
@@ -192,7 +207,7 @@ export class CoursesByCatFrontComponent {
   // ------------********************boutonet************************------------------------
   // Dans ton service de participation
 
-  payer(courseId: number, prix: number, title : string ) {
+  payer(courseId: number, prix: number, title: string) {
     const paiement = new PaiementFormation();
     //participation.idp = 0;
     paiement.participant = this.currentUser?.id ?? 0;
@@ -230,24 +245,23 @@ export class CoursesByCatFrontComponent {
               }
 
               //  --**********-------------Transaction ---------------************
-                            if (this.currentUser) { 
-        this.createTransaction(
-          this.currentUser,
-          prix,
-          TransactionType.PAYMENT,
-          'Course Payment '+ title
-        ).subscribe(
-          () => {
-            alert('Withdrawal completed successfully');
-          },
-          (error) => {
-            console.error('Withdrawal transaction failed:', error);
-            alert('Withdrawal failed');
-          }
-        );
-                            }
+              if (this.currentUser) {
+                this.createTransaction(
+                  this.currentUser,
+                  prix,
+                  TransactionType.PAYMENT,
+                  'Course Payment ' + title
+                ).subscribe(
+                  () => {
+                    alert('Withdrawal completed successfully');
+                  },
+                  (error) => {
+                    console.error('Withdrawal transaction failed:', error);
+                    alert('Withdrawal failed');
+                  }
+                );
+              }
 
-      
               //  --**********-------------******************---------------************
               console.log('Paiement ajoutée avec succès', res);
               Swal.fire({
@@ -377,12 +391,13 @@ export class CoursesByCatFrontComponent {
   }
 
   // emojis *******************************************
+  ratingMap: { [courseId: number]: number } = {}; // Store ratings for each course
   rating = 0;
   hoverRating: number | null = null;
   showEmoji = false;
   stars = new Array(5);
 
-  hover(value: number) {
+  hover(value: number, courseId: number) {
     this.hoverRating = value;
   }
 
@@ -390,11 +405,74 @@ export class CoursesByCatFrontComponent {
     this.hoverRating = null;
   }
 
-  selectRating(value: number) {
-    this.rating = value;
-    this.showEmoji = true;
+  selectRating(value: number, courseId: number) {
+    this.ratingMap[courseId] = value;
 
-    // Hide emoji after animation (1 second)
+    const ratingCourse = new Rating();
+    ratingCourse.idUser = this.currentUser?.id ?? 0;
+    const course = new Formation();
+    course.id = courseId;
+    ratingCourse.course = course;
+    ratingCourse.rating = value;
+
+    const showEmoji = true;
+
+    // Check if the user has already rated this course
+    this.ratingService
+      .getRatingByUserAndCourse(this.currentUser!.id, courseId)
+      .subscribe(
+        (ratings) => {
+          if (ratings.length > 0) {
+            // Update existing rating
+            ratingCourse.id = ratings[0].id;
+            this.ratingService.updateRating(ratingCourse).subscribe(
+              (response) => {
+                console.log('Rating updated:', response);
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Rating Updated',
+                  text: 'Your rating has been updated!',
+                  confirmButtonText: 'OK',
+                });
+              },
+              (error) => {
+                console.error('Error updating rating:', error);
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Error',
+                  text: 'Failed to update rating. Please try again.',
+                  confirmButtonText: 'Close',
+                });
+              }
+            );
+          } else {
+            // Add new rating
+            this.ratingService.addRating(ratingCourse).subscribe(
+              (response) => {
+                console.log('Rating added:', response);
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Rating Submitted',
+                  text: 'Thank you for your rating!',
+                  confirmButtonText: 'OK',
+                });
+              },
+              (error) => {
+                console.error('Error adding rating:', error);
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Error',
+                  text: 'Failed to submit rating. Please try again.',
+                  confirmButtonText: 'Close',
+                });
+              }
+            );
+          }
+        },
+        (error) => console.error('Error checking existing rating:', error)
+      );
+
+    // Show emoji animation
     setTimeout(() => {
       this.showEmoji = false;
     }, 1000);
@@ -430,4 +508,5 @@ export class CoursesByCatFrontComponent {
 
     return this.userService.addTransaction(recipient.id, transaction);
   }
+  // ----------------------rating ---------------------------------------------
 }
