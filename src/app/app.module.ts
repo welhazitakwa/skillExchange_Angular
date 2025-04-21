@@ -1,8 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
-import { ToastService, AngularToastifyModule } from 'angular-toastify';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SideBarComponent } from './Back/side-bar/side-bar.component';
@@ -87,19 +85,13 @@ import { UpdateParticipationEventsComponent } from './Back/GestionEvents/Partici
 import { DeleteParticipationEventsComponent } from './Back/GestionEvents/ParticipationEvents/delete-participation-events/delete-participation-events.component';
 import { ShowEventsComponent } from './Front/GestionEvents/Events/show-events/show-events.component';
 import { AddEventModalComponent } from './Back/GestionEvents/Events/add-event-modal/add-event-modal.component';
-import { MatDialogModule } from '@angular/material/dialog';
 import { EventImagesComponent } from './Back/GestionEvents/event-images/event-images.component';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
 import { EventDetailsComponent } from './Front/GestionEvents/event-details/event-details.component';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { ToastService, AngularToastifyModule } from 'angular-toastify';
-import { MatSelectModule } from '@angular/material/select';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { RouterModule } from '@angular/router';
 import { UpdateEventCommentComponent } from './Back/GestionEvents/EventComment/update-event-comment/update-event-comment.component';
@@ -196,7 +188,7 @@ import { NgChartsModule } from 'ng2-charts';
     ShowEventsComponent,
     AddEventModalComponent,
     EventImagesComponent,
-    EventDetailsComponent
+    EventDetailsComponent,
     AllCartProductsComponent,
     CartProductsComponent,
     AllCommentsComponent,
@@ -227,8 +219,7 @@ import { NgChartsModule } from 'ng2-charts';
     MatInputModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatSnackBarModule
-    BrowserAnimationsModule,
+    MatSnackBarModule,
     MatDialogModule,
     NgChartsModule, // Add NgChartsModule
   ],

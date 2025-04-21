@@ -35,6 +35,10 @@ export class ShowEventsComponent implements OnInit {
   calendarOptions: CalendarOptions;
   userEmail: string = '';
   participations: ParticipationEvents[] = [];
+  // Pagination properties
+  currentPage: number = 1;
+  pageSize: number = 6;
+  totalPages: number = 1;
 
   constructor(
     private eventService: EventsService,
@@ -89,6 +93,7 @@ export class ShowEventsComponent implements OnInit {
         });
         this.filteredEvents = [...this.events];
         this.updatePlaces();
+        this.updatePagination();
         this.loadUserParticipations();
       },
       (error) => {
@@ -106,6 +111,7 @@ export class ShowEventsComponent implements OnInit {
         status: Status.NOT_ATTENDING
       }));
       this.filteredEvents = [...this.events];
+      this.updatePagination();
       this.filterEvents();
       this.cdr.detectChanges();
       return;
@@ -123,12 +129,14 @@ export class ShowEventsComponent implements OnInit {
   
         this.events = [...updatedEvents];
         this.filteredEvents = [...updatedEvents];
+        this.updatePagination();
         this.filterEvents();
         this.cdr.detectChanges();
       },
       (error) => {
         console.error('Error loading user participations', error);
         this.filteredEvents = [...this.events];
+        this.updatePagination();
         this.filterEvents();
       }
     );
@@ -271,7 +279,57 @@ export class ShowEventsComponent implements OnInit {
     }
 
     this.filteredEvents = tempEvents;
+    this.currentPage = 1; // Reset to first page on filter change
+    this.updatePagination();
     this.updateCalendarEvents();
+  }
+
+  updatePagination(): void {
+    this.totalPages = Math.ceil(this.filteredEvents.length / this.pageSize);
+    this.currentPage = Math.min(this.currentPage, this.totalPages) || 1;
+  }
+
+  get paginatedEvents(): Events[] {
+    const start = (this.currentPage - 1) * this.pageSize;
+    const end = start + this.pageSize;
+    return this.filteredEvents.slice(start, end);
+  }
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.cdr.detectChanges();
+    }
+  }
+
+  prevPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.cdr.detectChanges();
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.cdr.detectChanges();
+    }
+  }
+
+  get pageNumbers(): number[] {
+    const pages: number[] = [];
+    const maxPagesToShow = 5;
+    let startPage = Math.max(1, this.currentPage - Math.floor(maxPagesToShow / 2));
+    let endPage = Math.min(this.totalPages, startPage + maxPagesToShow - 1);
+
+    if (endPage - startPage + 1 < maxPagesToShow) {
+      startPage = Math.max(1, endPage - maxPagesToShow + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+    return pages;
   }
 
   onDateFilterChange(): void {
@@ -313,7 +371,7 @@ export class ShowEventsComponent implements OnInit {
         this.filterEvents();
         this.cdr.detectChanges();
         if (newStatus === Status.GOING || newStatus === Status.INTERESTED) {
-          this.snackBar.open(`Successfully registered for ${event.eventName}! A confirmation email has been sent.`, 'Close', { duration: 5000 });
+          this.snackBar.open(`Successfully registered for ${event.eventName}!`, 'Close', { duration: 5000 });
         } else {
           this.snackBar.open(`You have canceled your participation in ${event.eventName}.`, 'Close', { duration: 5000 });
         }
@@ -405,6 +463,7 @@ export class ShowEventsComponent implements OnInit {
     this.customEndDate = null;
     this.showLocationSearch = false;
     this.showDatePicker = false;
+    this.currentPage = 1;
     this.filterEvents();
   }
 }
