@@ -1,80 +1,42 @@
 
 <app-header-front></app-header-front>    
-      
+                      
 <div class="container">
 
    <div class="main-video-container">
       
-      <iframe id="ytplayer" class="list-video" type="text/html" width="640" height="405px"
-  src="https://www.youtube.com/embed/watch?v=n79JpaKE2Ck"
-  frameborder="0"></iframe>
-
-      <h3 class="main-vid-title">house flood animation</h3>
+      <iframe 
+       class="list-video" 
+       type="text/html" 
+       width="750" 
+       height="405px"
+       [src]="sanitizedUrl"
+       frameborder="0"></iframe>
+       <h3 class="main-vid-title"> {{ firstElement.title }} </h3>
+      <span> {{ firstElement.description }} </span>
    </div>
 
    <div class="video-list-container">
 
       <div class="list active">
-        <iframe class="list-video" id="ytplayer" type="text/html" width="640" height="50px"
-  src="https://www.youtube.com/embed/watch?v=n79JpaKE2Ck"
-  frameborder="0"></iframe>
-         <h3 class="list-title">house flood animation</h3>
+         <iframe 
+       class="list-video" 
+       type="text/html" 
+       width="640" height="50px"
+       [src]="sanitizedUrl"
+       frameborder="0"></iframe>
+         <h3 class="list-title"> {{ firstElement.title }}</h3>
       </div>
 
-      <div class="list">
-         <iframe class="list-video" id="ytplayer" type="text/html" width="640" height="50px"
-  src="https://www.youtube.com/embed/watch?v=n79JpaKE2Ck"
-  frameborder="0"></iframe>
-    <h3 class="list-title">zoombie walking animation</h3>
+      <div class="list"  *ngFor="let c of secondList" >
+         <iframe class="list-video" 
+          type="text/html" width="640" height="50px"
+           [src]="c.sanitizedLnk"
+          frameborder="0"></iframe>
+    <h3 class="list-title"> {{ c.title }} </h3>
       </div>
 
-      <div class="list">
-<iframe class="list-video" id="ytplayer" type="text/html" width="640" height="50px"
-  src="https://www.youtube.com/embed/watch?v=n79JpaKE2Ck"
-  frameborder="0"></iframe>
-           <h3 class="list-title">emoji falling animation</h3>
-      </div>
-
-      <div class="list">
-<iframe class="list-video" id="ytplayer" type="text/html" width="640" height="50px"
-  src="https://www.youtube.com/embed/watch?v=n79JpaKE2Ck"
-  frameborder="0"></iframe>
-           <h3 class="list-title">3D town animation</h3>
-      </div>
-
-      <div class="list">
-<iframe class="list-video" id="ytplayer" type="text/html" width="640" height="50px"
-  src="https://www.youtube.com/embed/watch?v=n79JpaKE2Ck"
-  frameborder="0"></iframe>
-           <h3 class="list-title">man chasing carrot animation</h3>
-      </div>
-
-      <div class="list">
-<iframe class="list-video" id="ytplayer" type="text/html" width="640" height="50px"
-  src="https://www.youtube.com/embed/watch?v=n79JpaKE2Ck"
-  frameborder="0"></iframe>
-           <h3 class="list-title">door hinge animation</h3>
-      </div>
-
-      <div class="list">
-<iframe class="list-video" id="ytplayer" type="text/html" width="640" height="50px"
-  src="https://www.youtube.com/embed/watch?v=n79JpaKE2Ck"
-  frameborder="0"></iframe>
-           <h3 class="list-title">poeple walking in town animation</h3>
-      </div>
-
-      <div class="list">
-<iframe class="list-video" id="ytplayer" type="text/html" width="640" height="50px"
-  src="https://www.youtube.com/embed/watch?v=n79JpaKE2Ck"
-  frameborder="0"></iframe>
-           <h3 class="list-title">knight chasing virus animation</h3>
-      </div>
-
-      <div class="list">
-<iframe class="list-video" id="ytplayer" type="text/html" width="640" height="50px"
-  src="https://www.youtube.com/embed/watch?v=n79JpaKE2Ck"
-  frameborder="0"></iframe>         <h3 class="list-title">3D helicopter animation</h3>
-      </div>
+    
 
    </div>
 
@@ -82,8 +44,15 @@
 
 
 
+<div *ngIf="listcourseContents.length === 0">
+   <div  class="text-center py-4">
+                           <img
+                             src="https://i.pinimg.com/originals/5d/35/e3/5d35e39988e3a183bdc3a9d2570d20a9.gif"
+                             height="400px"
+                           />
+                         </div>
 
-
+</div>
 
 
 
