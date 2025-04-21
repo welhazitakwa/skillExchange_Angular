@@ -93,7 +93,7 @@ const routes: Routes = [
   { path: 'userCourseSpace', component: UserCourseSpaceComponent },
   { path: 'participantsList', component: ParticipantsListComponent },
   { path: 'approveCourse', component: ApprooveCourseComponent },
-  { path: 'courses/:id/contents', component: ContentListComponent },
+  { path: 'ContentList', component: ContentListComponent },
   { path: 'courses/:id/contents/add', component: AddContentComponent },
 
   { path: 'backcartProducts', component: AllCartProductsComponent },

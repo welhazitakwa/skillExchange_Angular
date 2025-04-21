@@ -1,8 +1,10 @@
+import { Formation } from "./formation";
+
 export class ContentCourse {
   id!: number;
   title!: string;
   description!: string;
   contentType!: string;
-  fileUrl!: string;
-  textContent!: string;
+  Url!: string;
+ course!: Formation;
 }

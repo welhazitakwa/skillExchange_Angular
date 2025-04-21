@@ -10,8 +10,8 @@ import { ContentCourseService } from 'src/app/core/services/GestionFormation/con
 })
 export class ContentListComponent {
   listcourseContents: ContentCourse[] = [];
-  courseId!: number;
-
+  formationId!: number;
+ 
   constructor(
     private courseContentService: ContentCourseService,
     private route: ActivatedRoute,
@@ -20,14 +20,20 @@ export class ContentListComponent {
   ) {}
 
   ngOnInit(): void {
-   this.courseContentService.getContentByCourseId(this.courseId).subscribe(
-     (data) => (this.listcourseContents = data),
-     (erreur) => console.log('erreur dans le chargement de content'),
-   );
+    // Récupérer l'ID depuis l'état de la navigation
+    const navigationState = history.state;
+    if (navigationState && navigationState.formationId) {
+      this.formationId = navigationState.formationId;
+      console.log('ID de formation depuis navigation:', this.formationId); // Vérification dans la console
+    }
+    this.loadContent();
   }
 
   loadContent(){
-
+this.courseContentService.getContentByCourseId(this.formationId).subscribe(
+  (data) => (this.listcourseContents = data),
+  (erreur) => console.log('erreur dans le chargement de content')
+);
   }
 
 

@@ -128,7 +128,9 @@ export class UserCourseSpaceComponent {
     );
   }
   AssignCourseToFormation(idFormation : number){
-        this.router.navigate(['/courses', idFormation, 'contents']);
+        this.router.navigate(['/ContentList'], {
+          state: { formationId: idFormation },
+        });
 
   }
 }
