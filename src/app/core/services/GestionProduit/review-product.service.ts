@@ -31,9 +31,7 @@ export class ReviewProductService {
   }
   
  
- /*deleteReview(id:number){
-  return this.http.delete(this.url+'/'+id);
- }*/
+ 
   deleteReview(id: number) {
     return this.http.delete(`${this.url}/remove-ReviewProduct/${id}`);
   }

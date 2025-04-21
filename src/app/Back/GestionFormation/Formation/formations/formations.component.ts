@@ -6,6 +6,7 @@ import Swal from 'sweetalert2';
 import { AddFormationComponent } from '../add-formation/add-formation.component';
 import { DetailsFormationBackComponent } from '../details-formation-back/details-formation-back.component';
 import { Router } from '@angular/router';
+import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
 
 @Component({
   selector: 'app-formations',
@@ -30,6 +31,31 @@ export class FormationsComponent {
       (erreur) => console.log('erreur'),
       () => console.log(this.listFormations)
     );
+ this.formServ.getCoursesBySeason().subscribe(
+   (data) => {
+     console.log('Monthly data:', data);
+     const monthlyData = [
+       data['January'] || 0,
+       data['February'] || 0,
+       data['March'] || 0,
+       data['April'] || 0,
+       data['May'] || 0,
+       data['June'] || 0,
+       data['July'] || 0,
+       data['August'] || 0,
+       data['September'] || 0,
+       data['October'] || 0,
+       data['November'] || 0,
+       data['December'] || 0,
+     ];
+     this.lineChartData.datasets[0].data = monthlyData;
+     this.lineChartData = { ...this.lineChartData };
+   },
+   (error) => {
+     console.log('Error fetching monthly stats:', error);
+     Swal.fire('Error', 'Failed to load monthly statistics.', 'error');
+   }
+ );
   }
   getFormationsList() {
     this.formServ.getCourses().subscribe(
@@ -119,4 +145,88 @@ export class FormationsComponent {
       state: { formationId: id },
     });
   }
+
+  //------------------------------------------------
+  // Chart properties
+  // Chart properties updated for months
+  public lineChartData: ChartData<'bar'> = {
+    labels: [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ],
+    datasets: [
+      {
+        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        label: 'Courses by Month',
+        backgroundColor: [
+          '#ff6384',
+          '#36a2eb',
+          '#ffce56',
+          '#4bc0c0',
+          '#9966ff',
+          '#ff9f40',
+          '#ffcd56',
+          '#4bc0c0',
+          '#36a2eb',
+          '#ff6384',
+          '#9966ff',
+          '#ff9f40',
+        ],
+        borderColor: [
+          '#ff6384',
+          '#36a2eb',
+          '#ffce56',
+          '#4bc0c0',
+          '#9966ff',
+          '#ff9f40',
+          '#ffcd56',
+          '#4bc0c0',
+          '#36a2eb',
+          '#ff6384',
+          '#9966ff',
+          '#ff9f40',
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+  public lineChartOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    plugins: {
+      legend: { display: true },
+      title: { display: true, text: 'Courses by Month' },
+      tooltip: {
+        enabled: true,
+        callbacks: {
+          label: (context) =>
+            `${context.dataset.label}: ${context.raw} courses`,
+        },
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: { display: true, text: 'Number of Courses' },
+      },
+      x: {
+        title: { display: true, text: 'Month' },
+        ticks: {
+          autoSkip: false,
+          maxRotation: 45,
+          minRotation: 45,
+        },
+      },
+    },
+  };
+  public lineChartType: ChartType = 'bar';
 }

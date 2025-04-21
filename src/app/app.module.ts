@@ -102,8 +102,14 @@ import { FrontQuizComponent } from './Front/GestionQuizz/quiz/quiz.component';
 import { AllCommentsComponent } from './Back/GestionForumPost/CommentPost/all-comments/all-comments.component';
 import { ShowPostsComponent } from './Front/GestionForumPost/Posts/show-posts/show-posts.component';
 import { PostDetailsComponent } from './Front/GestionForumPost/Posts/post-details/post-details.component';
+
+import { SuccessComponent } from './Front/GestionProduit/success/success.component';
+
 import { DetailsFormationBackComponent } from './Back/GestionFormation/Formation/details-formation-back/details-formation-back.component';
 import { ParticipantsListComponent } from './Back/GestionFormation/Formation/participants-list/participants-list.component';
+import { ApprooveCourseComponent } from './Back/GestionFormation/Formation/approove-course/approove-course.component';
+import { NgChartsModule } from 'ng2-charts';
+
 
 
 @NgModule({
@@ -171,7 +177,7 @@ import { ParticipantsListComponent } from './Back/GestionFormation/Formation/par
     DeleteEventCommentComponent,
     AllEventImageComponent,
     UpdateEventImageComponent,
-   // DeleteEventImageComponent,
+    // DeleteEventImageComponent,
     AllRateEventComponent,
     UpdateRateEventComponent,
     DeleteRateEventComponent,
@@ -183,9 +189,11 @@ import { ParticipantsListComponent } from './Back/GestionFormation/Formation/par
     AllCommentsComponent,
     ShowPostsComponent,
     PostDetailsComponent,
+
+    SuccessComponent,
     DetailsFormationBackComponent,
     ParticipantsListComponent,
-
+    ApprooveCourseComponent,
   ],
   imports: [
     RouterModule,
@@ -198,10 +206,10 @@ import { ParticipantsListComponent } from './Back/GestionFormation/Formation/par
     AngularToastifyModule,
     BrowserAnimationsModule,
     MatDialogModule,
+    NgChartsModule, // Add NgChartsModule
   ],
   providers: [ToastService],
   bootstrap: [AppComponent],
 })
-
-export class AppModule { }
+export class AppModule {}
 

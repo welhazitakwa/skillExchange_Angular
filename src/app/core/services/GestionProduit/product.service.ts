@@ -8,34 +8,51 @@ import { ReviewProduct } from '../../models/GestionProduit/review-product';
   providedIn: 'root'
 })
 export class ProductService {
-  
+
 
   listProducts: Product[] = [];
- url = 'http://localhost:8084/skillExchange/product';
+  url = 'http://localhost:8084/skillExchange/product';
   constructor(private http: HttpClient) { }
+  // addProductImages(productId: number, images: string[]): Observable<Product> {
+  //   const formData = new FormData();
+  //   formData.append('files', images.join(', '));  // Concaténer les images Base64 en une seule chaîne (si nécessaire)
 
-getProduct() : Observable<Product[]> 
-  {
-   
-   return this.http.get<Product[]>(`${this.url}/retrieve-products`);}
+  //   return this.http.post<Product>(`${this.url}/${productId}/images`, images);
+  // }
 
-addProduct(prod: Product): Observable<Product> {
- return this.http.post<Product>(this.url+"/add", prod);
-}
+  getProduct(): Observable<Product[]> {
 
-deleteProduct(id:number){
- return this.http.delete(this.url+"/delete/"+id);
-}
-getProductByID(id:number){
-  return this.http.get<Product>(`${this.url}/retrieve-products/${id}`);
-}
-updateProduct(prod:Product){
- return this.http.patch(this.url + "/update/" + prod.idProduct, prod);
- 
-}
+    return this.http.get<Product[]>(`${this.url}/retrieve-products`);
+  }
 
-/*addProductReview(productId: number, review: ReviewProduct): Observable<ReviewProduct> {
-  return this.http.post<ReviewProduct>(`${this.url}/${productId}/reviews`, review);
-}*/
+  addProduct(prod: Product): Observable<Product> {
+    return this.http.post<Product>(this.url + "/add", prod);
+  }
+
+  deleteProduct(id: number) {
+    return this.http.delete(this.url + "/delete/" + id);
+  }
+  getProductByID(id: number) {
+    return this.http.get<Product>(`${this.url}/retrieve-products/${id}`);
+  }
+  updateProduct(prod: Product) {
+    return this.http.patch(this.url + "/modify-product/${id}" , prod);
+
+  }
+  approveProduct(id: number): Observable<any> {
+    return this.http.put(`${this.url}/approve/${id}`, null, { responseType: 'text' }); // PUT vide, pas PATCH
+  }
+  
+  rejectProduct(id: number): Observable<any> {
+    return this.http.delete(`${this.url}/reject/${id}`); // DELETE
+  }
+  // updateProduct(id: number, data: FormData) {
+  //   return this.http.patch<Product>(`${this.url}/update/${id}`, data);
+  // }
+  
+
+  /*addProductReview(productId: number, review: ReviewProduct): Observable<ReviewProduct> {
+    return this.http.post<ReviewProduct>(`${this.url}/${productId}/reviews`, review);
+  }*/
 
 }

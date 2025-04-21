@@ -4,6 +4,7 @@ import { Category } from 'src/app/core/models/GestionFormation/category';
 import { Formation } from 'src/app/core/models/GestionFormation/formation';
 import { CategoryService } from 'src/app/core/services/GestionFormation/category.service';
 import { FormationService } from 'src/app/core/services/GestionFormation/formation.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-details-formation-back',
@@ -43,4 +44,45 @@ export class DetailsFormationBackComponent {
     const minutes = duration % 60; // Nombre de minutes restantes
     return `${hours}h ${minutes}min`;
   }
+
+
+  shareCourse(): void {
+    if (this.formation) {
+      const courseDate = new Date(
+        this.formation.date_ajout
+      ).toLocaleDateString();
+      const shareText = `${
+        this.formation.title
+      }\n\nDate Added: ${courseDate}\nDuration: ${
+        this.formation.duration
+      }\nApproval Status: ${
+        this.formation.approoved === 0 ? 'Disapproved' : 'Approved'
+      }\nState: ${this.formation.state === 0 ? 'Private' : 'Public'}`;
+
+      if (navigator.share) {
+        navigator
+          .share({
+            title: this.formation.title,
+            text: shareText,
+            url: window.location.href,
+          })
+          .catch((err) => {
+            console.error('Erreur de partage:', err);
+            this.copyToClipboard(shareText);
+          });
+      } else {
+        this.copyToClipboard(shareText);
+      }
+    }
+  }
+
+  private copyToClipboard(text: string): void {
+    navigator.clipboard.writeText(text).then(() => {
+      Swal.fire('Success', 'Course details have been copied to the clipboard!', 'success');
+    }).catch((err) => {
+      console.error('Erreur de copie:', err);
+      Swal.fire('Error', `Unable to copy details. Here is the information:\n\n${text}`, 'error');
+    });
+  }
 }
+

@@ -14,6 +14,7 @@
             </div>
         </div>
     </div>
+
     <!-- Header End -->
                   <input
     #searchInput
@@ -28,8 +29,9 @@
         <div class="container py-5">
             <div class="text-center mb-5">
                 <h5 class="text-primary text-uppercase mb-3" style="letter-spacing: 5px;">Courses</h5>
-                <h1>Our  Courses</h1>
+                <h1>Our  Courses       </h1>
             </div>
+           
             <div class="row">
                 <div *ngFor="let f of filteredFormations" class="col-lg-4 col-md-6 mb-4">
                     <div class="rounded overflow-hidden mb-2 course-card">
@@ -38,23 +40,74 @@
                           alt="">
                         <div class="bg-secondary p-4">
                             <div class="d-flex justify-content-between mb-3">
-                                <small class="m-0"><i class="fa fa-users text-primary mr-2"></i>25 Students</small>
-                                <h6 class="m-0"><i class="fa fa-star text-primary mr-2"></i>4.5 <small>(250)</small></h6>
-                                <small class="m-0"><i class="far fa-clock text-primary mr-2"></i>{{ convertDuration(f.duration) }}</small>
+                                <small class="m-0"><i class="fa fa-users text-primary mr-2"></i>
+                                  {{ totalProgress }} Students</small>
+                             <h6 class="m-0">
+                <i class="fa fa-star text-primary mr-2"></i>
+                {{ formatAverageRating(averageRatingMap[f.id] || 0) }} {{ getEmoji(averageRatingMap[f.id]) }}
+                <small>{{ ratingCountMap[f.id] ? '(' + ratingCountMap[f.id] + ')' : '(0)' }}</small>
+              </h6>
+            
+              <small class="m-0"><i class="far fa-clock text-primary mr-2"></i>{{ convertDuration(f.duration) }}</small>
                             </div>
                             <a class="h5" style="cursor: pointer;" (click)="openDetailsCourse(f.id)"> {{f.title}} </a>
                             <div class="border-top mt-4 pt-4">
                                 <div class="d-flex justify-content-between">
                                                                         <h5 class="m-0"> {{f.price}} dt </h5>
 
-                                    <div>
+                                    <!-- <div>
                                           <button type="button" class="btn btn-sm btn-square btn-neutral text-danger-hover" >
                                             <i class="text-success fas fa-cart-plus"></i>
                                         </button>
                                           <button (click)="addParticipation(f.id)" type="button" class="btn btn-sm" >
                                             <i class="text-danger fas fa-tasks"> Participer</i>
                                         </button>
-                                    </div>
+                                    </div> -->
+ <ng-container [ngSwitch]="getButtonState(f)">
+ 
+ <div *ngSwitchCase="'exam'">
+              <!-- ******************************************* -->
+     
+<!-- Star Rating -->
+    <div class="star-rating" (mouseleave)="resetHover()">
+      <ng-container *ngFor="let star of stars; let i = index">
+        <i
+          class="star"
+          [class.filled]="i < ratingMap[f.id] || (hoverRating !== null && i < hoverRating)"
+          (mouseover)="hover(i + 1, f.id)"
+          (click)="selectRating(i + 1, f.id)"
+        >
+          ★
+        </i>
+      </ng-container>
+    </div>
+    <br />
+    <!-- Emoji shown on hover -->
+    <div class="emoji-hover" *ngIf="hoverRating && !showEmoji">
+      {{ getEmoji(hoverRating) }}
+    </div>
+    <!-- Emoji that blinks then disappears after click -->
+    <div class="emoji-popup" *ngIf="showEmoji" [@blink]>
+      {{ getEmoji(ratingMap[f.id]) }}
+    </div>
+              
+            <!-- ******************************************* -->
+ 
+    </div>
+</ng-container>
+ <div>
+  <ng-container [ngSwitch]="getButtonState(f)">
+    
+    <button *ngSwitchCase="'pay'" (click)="payer(f.id, f.price, f.title, f.author)" class="btn btn-warning"> 💰 Pay</button>
+    <button *ngSwitchCase="'participate'" (click)="addParticipation(f.id)" class="btn btn-success">Participate</button>
+    <div *ngSwitchCase="'exam'"> 
+    <button  (click)="passerExam()" class="btn btn-info"> 📝 Exam</button>
+    </div>
+  </ng-container>
+
+
+</div>
+
                                     
                                 </div>
                             </div>
