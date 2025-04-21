@@ -105,7 +105,7 @@ export class UserCourseSpaceComponent {
   openDetailsCourse(formId: number) {
     const dialogRef = this.dialog.open(DetailsFormationComponent, {
       data: { id: formId },
-      //width: '1000px', 
+      //width: '1000px',
     });
     dialogRef.afterClosed().subscribe({
       next: (val) => {
@@ -121,33 +121,13 @@ export class UserCourseSpaceComponent {
     const minutes = duration % 60; // Nombre de minutes restantes
     return `${hours}h ${minutes}min`;
   }
-  // filterTable(searchText: string) {
-  //   searchText = searchText.toLowerCase().trim();
-  //   const tableBody = this.formationCardBodyRef.nativeElement;
-
-  //   if (tableBody) {
-  //     const rows = tableBody.getElementsByTagName('tr');
-
-  //     for (let i = 0; i < rows.length; i++) {
-  //       const cells = rows[i].getElementsByTagName('td');
-  //       let showRow = false;
-
-  //       for (let j = 0; j < cells.length; j++) {
-  //         const cellContent = cells[j].textContent || cells[j].innerText;
-  //         if (cellContent.toLowerCase().indexOf(searchText) > -1) {
-  //           showRow = true;
-  //           break;
-  //         }
-  //       }
-
-  //       rows[i].style.display = showRow ? '' : 'none';
-  //     }
-  //   }
-  // }
   filterTable(search: string) {
     this.searchText = search.toLowerCase().trim();
     this.filteredFormations = this.listFormations.filter((f) =>
       (f.title + f.price + f.duration).toLowerCase().includes(this.searchText)
     );
+  }
+  AssignCourseToFormation(idFormation : number){
+
   }
 }
