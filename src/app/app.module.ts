@@ -105,6 +105,8 @@ import { SuccessComponent } from './Front/GestionProduit/success/success.compone
 
 import { DetailsFormationBackComponent } from './Back/GestionFormation/Formation/details-formation-back/details-formation-back.component';
 import { ParticipantsListComponent } from './Back/GestionFormation/Formation/participants-list/participants-list.component';
+import { ApprooveCourseComponent } from './Back/GestionFormation/Formation/approove-course/approove-course.component';
+import { NgChartsModule } from 'ng2-charts';
 
 
 
@@ -172,7 +174,7 @@ import { ParticipantsListComponent } from './Back/GestionFormation/Formation/par
     DeleteEventCommentComponent,
     AllEventImageComponent,
     UpdateEventImageComponent,
-   // DeleteEventImageComponent,
+    // DeleteEventImageComponent,
     AllRateEventComponent,
     UpdateRateEventComponent,
     DeleteRateEventComponent,
@@ -188,7 +190,7 @@ import { ParticipantsListComponent } from './Back/GestionFormation/Formation/par
     SuccessComponent,
     DetailsFormationBackComponent,
     ParticipantsListComponent,
-
+    ApprooveCourseComponent,
   ],
   imports: [
     RouterModule,
@@ -201,10 +203,10 @@ import { ParticipantsListComponent } from './Back/GestionFormation/Formation/par
     AngularToastifyModule,
     BrowserAnimationsModule,
     MatDialogModule,
+    NgChartsModule, // Add NgChartsModule
   ],
   providers: [ToastService],
   bootstrap: [AppComponent],
 })
-
-export class AppModule { }
+export class AppModule {}
 

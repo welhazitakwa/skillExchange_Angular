@@ -45,6 +45,7 @@ import { PostDetailsComponent } from './Front/GestionForumPost/Posts/post-detail
 import { SuccessComponent } from './Front/GestionProduit/success/success.component';
 
 import { ParticipantsListComponent } from './Back/GestionFormation/Formation/participants-list/participants-list.component';
+import { ApprooveCourseComponent } from './Back/GestionFormation/Formation/approove-course/approove-course.component';
 
 
 
@@ -99,6 +100,7 @@ const routes: Routes = [
   { path: 'coursescat', component: CoursesByCatFrontComponent },
   { path: 'userCourseSpace', component: UserCourseSpaceComponent },
   { path: 'participantsList', component: ParticipantsListComponent },
+  { path: 'approveCourse', component: ApprooveCourseComponent },
 
   { path: 'backcartProducts', component: AllCartProductsComponent },
   /***************************************************************/

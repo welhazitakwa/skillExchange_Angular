@@ -28,7 +28,7 @@
                   class="breadcrumb-item text-muted active"
                   aria-current="page"
                 >
-                  <a routerLink="/categories" class="text-muted">Categories</a>
+                  Courses
                 </li>
               </ol>
             </nav>
@@ -65,19 +65,26 @@
                       type="text"
                       class="form-control"
                       placeholder="Search Courses..."
-                      (keyup)="filterTable(searchInput.value)"                             />
-
-                    <!-- /> -->
+                      (keyup)="filterTable(searchInput.value)"  />
+&nbsp;&nbsp;&nbsp;
+                       <select class="form-select" [(ngModel)]="approvalStatus" (change)="applyFilters()">
+      <option value="">All  </option>
+      <option value="approved">Approved</option>
+      <option value="pending">Disapproved</option>
+    </select>
                   </div>
+                 
+                  <!-- ********************************************* -->
+                   
+   
+ 
+                  <!-- ********************************************* -->
                 </div>
-                <!-- <div class="col-md-6" >
-                  <button mat-raised-button class="btn btn-sm btn-outline-primary" 
-                  (click)="openAddCourseForm()"
-                  style="margin-left: 400px; height: 40px;"
-                  >
-                  <i class="fas fa-plus me-2"></i>Add Course
+                 <div class="col-md-6" >
+                  <button class="btn btn-sm btn-outline-primary"                   style="margin-left: 400px; height: 40px;">
+                  <i class="fas fa-download me-2"></i>Export CSV
                 </button>
-                </div> -->
+                </div> 
                 
               </div>
 
@@ -87,13 +94,12 @@
                     <tr>
                       <th class="ps-4 fw-medium text-muted cursor-pointer"> Title
                       </th>
+                      <th class="ps-4 fw-medium text-muted cursor-pointer"> Approved
+                      </th>
                       
                       <th class="fw-medium text-muted cursor-pointer"> State
                       </th>
-                      
-                      <th class="fw-medium text-muted cursor-pointer" >
-                        duration  
-                      </th>
+                  
                       <th class="fw-medium text-muted cursor-pointer" >
                         Added at  <i class="fas fa-sort ms-1"></i>
                       </th>
@@ -103,60 +109,55 @@
                     </tr>
                   </thead>
                   <tbody  #formationTableBody>
-                    <tr *ngFor="let f of listFormations" >
+                    <tr *ngFor="let f of filteredCourses" >
                       <td class="ps-4">
                         <div class="d-flex align-items-center">
                           <img
+                           [src]="'data:' + f.imageType + ';base64,' + f.image"
                             class="rounded-circle me-3"
                             width="40"
                             height="40"
-                            alt="course"
-                        [src]="'data:' + f.imageType + ';base64,' + f.image"
-
+                            alt="Category"
                           />   
                           {{f.title}}
                         </div> 
                       
                       </td>
+                      <td> <span  [ngStyle]="{ color: f.approoved === 0 ? 'red' : 'green' }" >
+  {{ f.approoved === 0 ? 'Disapproved' : 'Approved' }}
+</span> </td>
                        <td>
 <span  [ngStyle]="{ color: f.state === 0 ? 'red' : 'green' }" >
   {{ f.state === 0 ? 'private' : 'public' }}
 </span>
 
                                     </td>
-                      <td>{{f.duration}}</td>
-                      
+                       
                       <td class="text-muted">
                        {{ f.date_ajout | date }}
                       </td>
- <td  style="text-align: center;"  >
-                                         <button type="button" class="btn btn-sm btn-square btn-neutral text-danger-hover"> 
+ <td    >
+                                         <button mat-raised-button type="button" class="btn btn-sm btn-square btn-neutral text-danger-hover"
+                                          (click)="openDetailsCourse(f.id)"> 
                                             <i class="text-info fa fa-eye"></i> 
                                         </button>
-                                 <!-- <a   class="btn btn-sm btn-square btn-neutral text-danger-hover"  [routerLink]="['/updateCategory',f.id]">
-                                  <i class="text-warning fa fa-edit"></i></a> -->
 
-
-
-                                  <!-- <button mat-raised-button class="btn btn-sm btn-square btn-neutral text-danger-hover" 
-        (click)="openEditCatForm(f.id)">
-  <i class="text-warning fa fa-edit me-2"></i> 
-</button> -->
 
                                         <button type="button" class="btn btn-sm btn-square btn-neutral text-danger-hover" (click)="deleteCourse(f.id)">
                                             <i class="text-danger fa fa-trash"></i>
                                         </button>
                                 
+                                                                              <button mat-raised-button type="button" class="btn btn-sm" (click)="approoveDiapproove(f.id, f.approoved)">
+                                        <i 
+    class="fa" 
+    [ngClass]="f.approoved === 0 ? 'fa-check text-success' : 'fa-ban text-danger'">
+  </i>
+  {{ f.approoved === 0 ? 'Approve' : 'Disapprove' }}
+ 
+</button>
                                     </td>                      
                     </tr>
-                      <tr *ngIf="listFormations.length === 0">
-                      <td colspan="6" class="text-center py-4">
-                        <img
-                          src="https://i.pinimg.com/originals/5d/35/e3/5d35e39988e3a183bdc3a9d2570d20a9.gif"
-                          height="400px"
-                        />
-                      </td>
-                    </tr>
+                
                     
                   </tbody>
                 </table>
