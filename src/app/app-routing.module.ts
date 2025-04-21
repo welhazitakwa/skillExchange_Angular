@@ -43,6 +43,8 @@ import { ShowPostsComponent } from './Front/GestionForumPost/Posts/show-posts/sh
 import { PostDetailsComponent } from './Front/GestionForumPost/Posts/post-details/post-details.component';
 import { ParticipantsListComponent } from './Back/GestionFormation/Formation/participants-list/participants-list.component';
 import { ApprooveCourseComponent } from './Back/GestionFormation/Formation/approove-course/approove-course.component';
+import { ContentListComponent } from './Front/GestionFormations/CourseContent/content-list/content-list.component';
+import { AddContentComponent } from './Front/GestionFormations/CourseContent/add-content/add-content.component';
 
 
 const routes: Routes = [
@@ -50,11 +52,9 @@ const routes: Routes = [
   //canActivate: [UserGuard] to lock for user
   // Back Office
 
+  { path: 'backpost', component: ListpostComponent },
 
-  { path:"backpost", component: ListpostComponent},
-  
-  { path:"backCommentpost", component: AllCommentsComponent},
-  
+  { path: 'backCommentpost', component: AllCommentsComponent },
 
   { path: 'back', component: MainBackComponent /*,canActivate: [AdminGuard]*/ },
 
@@ -73,13 +73,9 @@ const routes: Routes = [
   },
   /***************************************************************/
 
-
-
-//**************Back Gestion Events********************************
+  //**************Back Gestion Events********************************
 
   { path: 'backEvents', component: AllEventsComponent },
-
-
 
   /***************************************************************/
 
@@ -97,27 +93,46 @@ const routes: Routes = [
   { path: 'userCourseSpace', component: UserCourseSpaceComponent },
   { path: 'participantsList', component: ParticipantsListComponent },
   { path: 'approveCourse', component: ApprooveCourseComponent },
+  { path: 'courses/:id/contents', component: ContentListComponent },
+  { path: 'courses/:id/contents/add', component: AddContentComponent },
 
   { path: 'backcartProducts', component: AllCartProductsComponent },
   /***************************************************************/
 
-
   // Front Office
-  { path: '', component: MainFrontComponent/*, canActivate: [UserGuard] */},
-  { path: 'bloglist', component: BlogListComponent/*, canActivate: [UserGuard] */},
+  { path: '', component: MainFrontComponent /*, canActivate: [UserGuard] */ },
+  {
+    path: 'bloglist',
+    component: BlogListComponent /*, canActivate: [UserGuard] */,
+  },
   {
     path: 'blogdetails',
-    component: BlogDetailsComponent/*,
-    canActivate: [UserGuard],*/
+    component: BlogDetailsComponent /*,
+    canActivate: [UserGuard],*/,
   },
-    /// Gestion Produit 
-    { path: 'products', component: ShowproductComponent/*, canActivate: [UserGuard]*/ },
+  /// Gestion Produit
+  {
+    path: 'products',
+    component: ShowproductComponent /*, canActivate: [UserGuard]*/,
+  },
 
-   { path: 'productD/:idProduct', component: ProductDetailsComponent/*, canActivate: [UserGuard]*/ },
-  { path: 'about', component: AboutComponent/*, canActivate: [UserGuard] */},
-  { path: 'courses', component: CoursesComponent/*, canActivate: [UserGuard] */},
-  { path: 'teachers', component: TeachersComponent/*, canActivate: [UserGuard]*/ },
-  { path: 'contact', component: ContactComponent/*, canActivate: [UserGuard]*/ },
+  {
+    path: 'productD/:idProduct',
+    component: ProductDetailsComponent /*, canActivate: [UserGuard]*/,
+  },
+  { path: 'about', component: AboutComponent /*, canActivate: [UserGuard] */ },
+  {
+    path: 'courses',
+    component: CoursesComponent /*, canActivate: [UserGuard] */,
+  },
+  {
+    path: 'teachers',
+    component: TeachersComponent /*, canActivate: [UserGuard]*/,
+  },
+  {
+    path: 'contact',
+    component: ContactComponent /*, canActivate: [UserGuard]*/,
+  },
 
   // Auth
   { path: 'register', component: AuthRegisterComponent },
@@ -133,12 +148,13 @@ const routes: Routes = [
 
   // Question Routes
   { path: 'questions/:quizId', component: QuestionComponent },
-   //Gestion ForumPosts
-   { path: 'posts', component: ShowPostsComponent },
-   { path: 'posts/:id', component: PostDetailsComponent/*, canActivate: [UserGuard]*/ },
+  //Gestion ForumPosts
+  { path: 'posts', component: ShowPostsComponent },
+  {
+    path: 'posts/:id',
+    component: PostDetailsComponent /*, canActivate: [UserGuard]*/,
+  },
   { path: '**', redirectTo: '' },
- 
-
 ];
 
 @NgModule({

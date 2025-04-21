@@ -104,6 +104,8 @@ import { DetailsFormationBackComponent } from './Back/GestionFormation/Formation
 import { ParticipantsListComponent } from './Back/GestionFormation/Formation/participants-list/participants-list.component';
 import { ApprooveCourseComponent } from './Back/GestionFormation/Formation/approove-course/approove-course.component';
 import { NgChartsModule } from 'ng2-charts';
+import { ContentListComponent } from './Front/GestionFormations/CourseContent/content-list/content-list.component';
+import { AddContentComponent } from './Front/GestionFormations/CourseContent/add-content/add-content.component';
 
 
 @NgModule({
@@ -185,6 +187,8 @@ import { NgChartsModule } from 'ng2-charts';
     DetailsFormationBackComponent,
     ParticipantsListComponent,
     ApprooveCourseComponent,
+    ContentListComponent,
+    AddContentComponent,
   ],
   imports: [
     RouterModule,

@@ -128,6 +128,7 @@ export class UserCourseSpaceComponent {
     );
   }
   AssignCourseToFormation(idFormation : number){
+        this.router.navigate(['/courses', idFormation, 'contents']);
 
   }
 }
