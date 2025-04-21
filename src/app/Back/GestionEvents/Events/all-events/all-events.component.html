@@ -49,6 +49,7 @@
                   Event Management
                 </h4>
                 <div class="d-flex gap-2">
+                 
                   <button class="btn btn-sm export-csv-btn" (click)="exportToCsv()">
                     <i class="fas fa-file-csv me-2"></i>Export CSV
                   </button>
@@ -63,7 +64,6 @@
                   </button>
                 </div>
               </div>
-              
 
               <!-- Filter Panel Toggle -->
               <div class="d-flex justify-content-between align-items-center mb-3">
@@ -72,6 +72,12 @@
                   (click)="toggleFilters()"
                 >
                   {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+                </button>
+                <button
+                  class="btn btn-sm btn-outline-secondary"
+                  (click)="clearFilters()"
+                >
+                  Clear Filters
                 </button>
               </div>
 
@@ -150,15 +156,6 @@
                         </div>
                       </div>
                     </div>
-                    <div class="d-flex justify-content-end mt-3">
-                      <button
-                        type="button"
-                        class="btn btn-sm clear-filters-btn"
-                        (click)="clearFilters()"
-                      >
-                        Clear Filters
-                      </button>
-                    </div>
                   </form>
                 </div>
               </div>
@@ -179,6 +176,11 @@
                     />
                   </div>
                 </div>
+              </div>
+
+              <!-- Calendar View -->
+              <div *ngIf="showCalendar" class="mb-4">
+                <full-calendar [options]="calendarOptions"></full-calendar>
               </div>
 
               <!-- Table -->
@@ -204,15 +206,35 @@
                       </th>
                       <th class="fw-medium text-muted cursor-pointer" (click)="sort('endDate')">
                         End Date
+                        <i class="fas fa-sort ms-1"
+                          [ngClass]="{
+                            'fa-sort-up': sortColumn === 'endDate' && sortDirection === 'asc',
+                            'fa-sort-down': sortColumn === 'endDate' && sortDirection === 'desc'
+                          }"></i>
                       </th>
                       <th class="fw-medium text-muted cursor-pointer" (click)="sort('place')">
                         Place
+                        <i class="fas fa-sort ms-1"
+                          [ngClass]="{
+                            'fa-sort-up': sortColumn === 'place' && sortDirection === 'asc',
+                            'fa-sort-down': sortColumn === 'place' && sortDirection === 'desc'
+                          }"></i>
                       </th>
                       <th class="fw-medium text-muted cursor-pointer" (click)="sort('nbr_max')">
                         Max Participants
+                        <i class="fas fa-sort ms-1"
+                          [ngClass]="{
+                            'fa-sort-up': sortColumn === 'nbr_max' && sortDirection === 'asc',
+                            'fa-sort-down': sortColumn === 'nbr_max' && sortDirection === 'desc'
+                          }"></i>
                       </th>
                       <th class="fw-medium text-muted cursor-pointer" (click)="sort('description')">
                         Description
+                        <i class="fas fa-sort ms-1"
+                          [ngClass]="{
+                            'fa-sort-up': sortColumn === 'description' && sortDirection === 'asc',
+                            'fa-sort-down': sortColumn === 'description' && sortDirection === 'desc'
+                          }"></i>
                       </th>
                       <th class="fw-medium text-muted">
                         Images
@@ -227,7 +249,21 @@
                       <td>{{ event.eventName }}</td>
                       <td>{{ event.startDate | date: 'dd/MM/yyyy' }}</td>
                       <td>{{ event.endDate | date: 'dd/MM/yyyy' }}</td>
-                      <td>{{ event.place }}</td>
+                      <td>
+                        {{ event.place }}
+                        <button
+                          class="btn btn-sm btn-info ms-2"
+                          (click)="toggleMap(event.idEvent)"
+                          *ngIf="event.latitude != null && event.longitude != null"
+                        >
+                          {{ showMap[event.idEvent] ? 'Hide Map' : 'Show Map' }}
+                        </button>
+                        <div
+                          *ngIf="showMap[event.idEvent]"
+                          [id]="'map-' + event.idEvent"
+                          style="height: 150px; width: 100%; margin-top: 10px; border: 1px solid #ccc; border-radius: 4px;"
+                        ></div>
+                      </td>
                       <td>{{ event.nbr_max }}</td>
                       <td>{{ event.description }}</td>
                       <td>
@@ -323,4 +359,5 @@
 
     <!-- Backdrops -->
     <div *ngIf="eventToEdit || eventToDelete || isAddEventModalOpen" class="modal-backdrop fade show"></div>
+  </div>
 </div>

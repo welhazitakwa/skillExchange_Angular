@@ -32,3 +32,8 @@ mat-dialog-content {
     min-width: 100px;
   }
   
+  /* Style pour la carte maps*/
+#map {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}

@@ -1,5 +1,7 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators, ValidatorFn } from '@angular/forms';
+import { Component, Input, Output, EventEmitter, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import * as L from 'leaflet';
+import { HttpClient } from '@angular/common/http';
 import { Events } from 'src/app/core/models/GestionEvents/events';
 import { EventsService } from 'src/app/core/services/GestionEvents/events.service';
 
@@ -8,26 +10,156 @@ import { EventsService } from 'src/app/core/services/GestionEvents/events.servic
   templateUrl: './update-events.component.html',
   styleUrls: ['./update-events.component.css']
 })
-export class UpdateEventsComponent implements OnInit {
+export class UpdateEventsComponent implements OnInit, AfterViewInit {
   @Input() eventData: Events | null = null;
   @Output() onCancel = new EventEmitter<void>();
   @Output() onUpdate = new EventEmitter<Events>();
+  @ViewChild('map') mapElement!: ElementRef;
+  @ViewChild('searchInput') searchInput!: ElementRef;
 
   eventForm: FormGroup;
   imagePreviews: string[] = [];
   imageBase64s: string[] = [];
   existingImages: any[] = [];
   imageError: string | null = null;
+  map!: L.Map;
+  marker: L.Marker | null = null;
 
-  constructor(private fb: FormBuilder, private eventsService: EventsService) {
+  constructor(private fb: FormBuilder, private http: HttpClient, private eventsService: EventsService) {
     this.eventForm = this.fb.group({
       eventName: ['', [Validators.required, Validators.minLength(3)]],
       description: ['', [Validators.required, Validators.minLength(10)]],
       startDate: ['', Validators.required],
       endDate: ['', Validators.required],
       place: ['', [Validators.required, Validators.minLength(3)]],
+      latitude: [null],
+      longitude: [null],
       nbr_max: ['', [Validators.required, Validators.min(1), Validators.pattern('^[0-9]+$')]],
     }, { validator: this.dateRangeValidator });
+  }
+
+  ngOnInit(): void {
+    if (this.eventData) {
+      console.log('Initializing event data:', JSON.stringify(this.eventData, null, 2));
+      this.eventForm.patchValue({
+        ...this.eventData,
+        startDate: this.formatDate(this.eventData.startDate),
+        endDate: this.formatDate(this.eventData.endDate),
+        latitude: this.eventData.latitude || null,
+        longitude: this.eventData.longitude || null
+      });
+      if (this.eventData.images) {
+        this.existingImages = Array.from(this.eventData.images).map(img => ({
+          idImage: img.idImage,
+          images: img.images.startsWith('data:image') ? img.images : `data:image/jpeg;base64,${img.images}`
+        }));
+        console.log('Loaded existing images:', this.existingImages.map(img => ({ idImage: img.idImage })));
+      }
+    }
+  }
+
+  ngAfterViewInit(): void {
+    this.initMap();
+    this.setupSearch();
+  }
+
+  initMap(): void {
+    const iconRetinaUrl = 'assets/marker-icon-2x.png';
+    const iconUrl = 'assets/marker-icon.png';
+    const shadowUrl = 'assets/marker-shadow.png';
+    const iconDefault = L.icon({
+      iconRetinaUrl,
+      iconUrl,
+      shadowUrl,
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      tooltipAnchor: [16, -28],
+      shadowSize: [41, 41]
+    });
+    L.Marker.prototype.options.icon = iconDefault;
+
+    // Typage explicite pour defaultLocation
+    const defaultLocation: L.LatLngTuple = this.eventData?.latitude && this.eventData?.longitude
+      ? [this.eventData.latitude, this.eventData.longitude]
+      : [36.8065, 10.1815]; // Tunis, Tunisie
+
+    this.map = L.map(this.mapElement.nativeElement).setView(defaultLocation, 12);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(this.map);
+
+    this.marker = L.marker(defaultLocation, { draggable: true }).addTo(this.map);
+
+    this.marker.on('dragend', () => {
+      this.updateLocationFromMarker();
+    });
+
+    this.map.on('click', (e: L.LeafletMouseEvent) => {
+      const coords = e.latlng;
+      if (this.marker) {
+        this.marker.setLatLng(coords);
+        this.updateLocationFromMarker();
+      }
+    });
+  }
+
+  setupSearch(): void {
+    this.searchInput.nativeElement.addEventListener('input', (e: Event) => {
+      const query = (e.target as HTMLInputElement).value;
+      if (query.length > 3) {
+        this.searchAddress(query);
+      }
+    });
+  }
+
+  searchAddress(query: string): void {
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`;
+    this.http.get<any[]>(url).subscribe(
+      (results) => {
+        if (results.length > 0) {
+          const result = results[0];
+          const coords: L.LatLngTuple = [parseFloat(result.lat), parseFloat(result.lon)];
+          this.map.setView(coords, 15);
+          if (this.marker) {
+            this.marker.setLatLng(coords);
+          }
+          this.eventForm.patchValue({
+            place: result.display_name,
+            latitude: coords[0],
+            longitude: coords[1]
+          });
+        }
+      },
+      (error) => {
+        console.error('Error searching address:', error);
+      }
+    );
+  }
+
+  updateLocationFromMarker(): void {
+    if (this.marker) {
+      const coords = this.marker.getLatLng();
+      const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${coords.lat}&lon=${coords.lng}`;
+      this.http.get<any>(url).subscribe(
+        (result) => {
+          this.eventForm.patchValue({
+            place: result.display_name || 'Unknown location',
+            latitude: coords.lat,
+            longitude: coords.lng
+          });
+        },
+        (error) => {
+          console.warn('Reverse geocoding failed:', error);
+          this.eventForm.patchValue({
+            place: '',
+            latitude: coords.lat,
+            longitude: coords.lng
+          });
+        }
+      );
+    }
   }
 
   dateRangeValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
@@ -41,25 +173,6 @@ export class UpdateEventsComponent implements OnInit {
     }
     return null;
   };
-
-  ngOnInit(): void {
-    if (this.eventData) {
-      console.log('Initializing event data:', JSON.stringify(this.eventData, null, 2));
-      this.eventForm.patchValue({
-        ...this.eventData,
-        startDate: this.formatDate(this.eventData.startDate),
-        endDate: this.formatDate(this.eventData.endDate)
-      });
-      // Load existing images
-      if (this.eventData.images) {
-        this.existingImages = Array.from(this.eventData.images).map(img => ({
-          idImage: img.idImage,
-          images: img.images.startsWith('data:image') ? img.images : `data:image/jpeg;base64,${img.images}`
-        }));
-        console.log('Loaded existing images:', this.existingImages.map(img => ({ idImage: img.idImage })));
-      }
-    }
-  }
 
   private formatDate(date: any): string {
     const d = new Date(date);
@@ -115,7 +228,6 @@ export class UpdateEventsComponent implements OnInit {
 
   submit(): void {
     if (this.eventForm.valid) {
-      // Construct the images array: include only remaining existing images and new images
       const updatedImages = [
         ...this.existingImages.map(img => ({
           idImage: img.idImage,

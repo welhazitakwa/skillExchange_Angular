@@ -5,7 +5,8 @@ import { EventsService } from 'src/app/core/services/GestionEvents/events.servic
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
-import { CalendarOptions, EventInput } from '@fullcalendar/core'; // Import FullCalendar types
+import { CalendarOptions, EventInput } from '@fullcalendar/core';
+import * as L from 'leaflet';
 
 @Component({
   selector: 'app-all-events',
@@ -13,8 +14,8 @@ import { CalendarOptions, EventInput } from '@fullcalendar/core'; // Import Full
   styleUrls: ['./all-events.component.css']
 })
 export class AllEventsComponent implements OnInit {
-  events: Events[] = []; // Original event list
-  filteredEvents: Events[] = []; // Filtered event list for display
+  events: Events[] = [];
+  filteredEvents: Events[] = [];
   searchText: string = '';
   sortColumn: keyof Events = 'eventName';
   sortDirection: string = 'asc';
@@ -22,9 +23,10 @@ export class AllEventsComponent implements OnInit {
   eventToEdit: Events | null = null;
   eventToDelete: Events | null = null;
   filterForm: FormGroup;
-  showFilters: boolean = true; // Default to visible
-  showCalendar: boolean = false; // Toggle for calendar view
-  calendarOptions: CalendarOptions; // FullCalendar options
+  showFilters: boolean = true;
+  showCalendar: boolean = false;
+  calendarOptions: CalendarOptions;
+  showMap: { [key: number]: boolean } = {};
 
   constructor(private eventsService: EventsService, private fb: FormBuilder) {
     this.filterForm = this.fb.group({
@@ -36,20 +38,18 @@ export class AllEventsComponent implements OnInit {
       hasImages: [false]
     });
 
-    // Initialize calendar options
     this.calendarOptions = {
-      initialView: 'dayGridMonth', // Default to month view
-      events: [], // Will be updated in applyFilters
-      eventColor: '#fd7e14', // Orange to match theme
+      initialView: 'dayGridMonth',
+      events: [],
+      eventColor: '#fd7e14',
       headerToolbar: {
         left: 'prev,next today',
         center: 'title',
         right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
       },
-      eventClick: this.handleEventClick.bind(this), // Handle event clicks
-      height: 'auto', // Adjust height dynamically
+      eventClick: this.handleEventClick.bind(this),
+      height: 'auto',
       eventDidMount: (info) => {
-        // Add tooltip with event details
         const tooltipContent = `
           <strong>${info.event.title}</strong><br>
           Place: ${info.event.extendedProps['place'] || 'N/A'}<br>
@@ -76,7 +76,7 @@ export class AllEventsComponent implements OnInit {
             images: img.images || ''
           })) : []
         }));
-        this.applyFilters(); // Initialize filteredEvents and update calendar
+        this.applyFilters();
       },
       (error) => {
         console.error('Error loading events:', error);
@@ -84,10 +84,48 @@ export class AllEventsComponent implements OnInit {
     );
   }
 
+  toggleMap(eventId: number): void {
+    this.showMap[eventId] = !this.showMap[eventId];
+    if (this.showMap[eventId]) {
+      setTimeout(() => this.initMap(eventId), 0);
+    }
+  }
+
+  initMap(eventId: number): void {
+    const iconRetinaUrl = 'assets/marker-icon-2x.png';
+    const iconUrl = 'assets/marker-icon.png';
+    const shadowUrl = 'assets/marker-shadow.png';
+    const iconDefault = L.icon({
+      iconRetinaUrl,
+      iconUrl,
+      shadowUrl,
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      tooltipAnchor: [16, -28],
+      shadowSize: [41, 41]
+    });
+    L.Marker.prototype.options.icon = iconDefault;
+
+    const event = this.events.find(e => e.idEvent === eventId);
+    if (!event || !event.latitude || !event.longitude) return;
+
+    const mapElement = document.getElementById(`map-${eventId}`);
+    if (!mapElement) return;
+
+    const coords: L.LatLngTuple = [event.latitude, event.longitude];
+    const map = L.map(mapElement).setView(coords, 15);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    L.marker(coords).addTo(map);
+  }
+
   applyFilters(): void {
     let filteredEvents = [...this.events];
 
-    // Apply text search (across all fields)
     if (this.searchText.trim()) {
       const searchTerm = this.searchText.toLowerCase().trim();
       filteredEvents = filteredEvents.filter(event => {
@@ -113,10 +151,8 @@ export class AllEventsComponent implements OnInit {
       });
     }
 
-    // Apply attribute-based filters
     const filters = this.filterForm.value;
 
-    // Place filter
     if (filters.place?.trim()) {
       const placeFilter = filters.place.toLowerCase().trim();
       filteredEvents = filteredEvents.filter(event =>
@@ -124,7 +160,6 @@ export class AllEventsComponent implements OnInit {
       );
     }
 
-    // Participants filter
     if (filters.minParticipants != null) {
       filteredEvents = filteredEvents.filter(
         event => event.nbr_max != null && event.nbr_max >= filters.minParticipants
@@ -136,7 +171,6 @@ export class AllEventsComponent implements OnInit {
       );
     }
 
-    // Date range filter
     if (filters.startDate) {
       const startFilter = new Date(filters.startDate);
       filteredEvents = filteredEvents.filter(
@@ -150,14 +184,12 @@ export class AllEventsComponent implements OnInit {
       );
     }
 
-    // Images filter
     if (filters.hasImages) {
       filteredEvents = filteredEvents.filter(
         event => event.images && event.images.length > 0
       );
     }
 
-    // Apply sorting
     if (this.sortColumn) {
       filteredEvents.sort((a, b) => {
         const valA = a[this.sortColumn];
@@ -190,18 +222,16 @@ export class AllEventsComponent implements OnInit {
     this.filteredEvents = filteredEvents;
     console.log('Filtered events:', this.filteredEvents.length);
 
-    // Update calendar events
     this.updateCalendarEvents();
   }
 
-  // Map filteredEvents to FullCalendar events
   updateCalendarEvents(): void {
     const calendarEvents: EventInput[] = this.filteredEvents
-      .filter(event => event.startDate) // Only include events with a startDate
+      .filter(event => event.startDate)
       .map(event => ({
         title: event.eventName || 'Unnamed Event',
-        start: event.startDate, // FullCalendar uses this for placement
-        end: event.endDate || event.startDate, // Use endDate if available, else same as startDate
+        start: event.startDate,
+        end: event.endDate || event.startDate,
         extendedProps: {
           place: event.place,
           nbr_max: event.nbr_max,
@@ -215,7 +245,6 @@ export class AllEventsComponent implements OnInit {
     };
   }
 
-  // Handle event click (e.g., show details)
   handleEventClick(info: any): void {
     const event = info.event;
     alert(
@@ -227,7 +256,6 @@ export class AllEventsComponent implements OnInit {
     );
   }
 
-  // Toggle calendar visibility
   toggleCalendar(): void {
     this.showCalendar = !this.showCalendar;
   }
@@ -243,6 +271,8 @@ export class AllEventsComponent implements OnInit {
       'Start Date',
       'End Date',
       'Place',
+      'Latitude',
+      'Longitude',
       'Max Participants',
       'Description',
       'Images'
@@ -269,6 +299,8 @@ export class AllEventsComponent implements OnInit {
         formatDate(event.startDate),
         formatDate(event.endDate),
         escapeCsv(event.place),
+        escapeCsv(event.latitude || ''),
+        escapeCsv(event.longitude || ''),
         escapeCsv(event.nbr_max),
         escapeCsv(event.description),
         escapeCsv(event.images ? event.images.length : 0)
@@ -318,13 +350,15 @@ export class AllEventsComponent implements OnInit {
       event.startDate ? new Date(event.startDate).toLocaleDateString('fr-FR') : '',
       event.endDate ? new Date(event.endDate).toLocaleDateString('fr-FR') : '',
       event.place || '',
+      event.latitude?.toString() || '',
+      event.longitude?.toString() || '',
       event.nbr_max?.toString() || '',
       event.description || ''
     ]);
 
     autoTable(doc, {
       startY: 50,
-      head: [['Event Name', 'Start Date', 'End Date', 'Place', 'Max Participants', 'Description', 'Images']],
+      head: [['Event Name', 'Start Date', 'End Date', 'Place', 'Latitude', 'Longitude', 'Max Participants', 'Description', 'Images']],
       body: tableData,
       theme: 'striped',
       headStyles: { fillColor: [253, 126, 20], textColor: 255 },
@@ -332,11 +366,11 @@ export class AllEventsComponent implements OnInit {
       styles: { fontSize: 10, cellPadding: 2 },
       columnStyles: {
         0: { cellWidth: 30 },
-        5: { cellWidth: 50 },
-        6: { cellWidth: 40 }
+        7: { cellWidth: 50 },
+        8: { cellWidth: 40 }
       },
       didDrawCell: (data) => {
-        if (data.column.index === 6 && data.row.index >= 0 && data.row.index < this.filteredEvents.length) {
+        if (data.column.index === 8 && data.row.index >= 0 && data.row.index < this.filteredEvents.length) {
           const event = this.filteredEvents[data.row.index];
           const images = event.images || [];
           if (images.length > 0) {
@@ -387,7 +421,9 @@ export class AllEventsComponent implements OnInit {
       'Start Date': event.startDate ? new Date(event.startDate).toLocaleDateString('fr-FR') : '',
       'End Date': event.endDate ? new Date(event.endDate).toLocaleDateString('fr-FR') : '',
       'Place': event.place || '',
-      'Max Participants': event.nbr_max || '',
+      'Latitude': event.latitude?.toString() || '',
+      'Longitude': event.longitude?.toString() || '',
+      'Max Participants': event.nbr_max?.toString() || '',
       'Description': event.description || '',
       'Images': event.images ? event.images.length : 0
     }));
@@ -400,7 +436,7 @@ export class AllEventsComponent implements OnInit {
       alignment: { horizontal: 'center' }
     };
     
-    const range = XLSX.utils.decode_range(ws['!ref'] || 'A1:G1');
+    const range = XLSX.utils.decode_range(ws['!ref'] || 'A1:I1');
     for (let C = range.s.c; C <= range.e.c; ++C) {
       const cell = ws[XLSX.utils.encode_cell({ r: 0, c: C })];
       if (cell) cell.s = headerStyle;
@@ -411,6 +447,8 @@ export class AllEventsComponent implements OnInit {
       { wpx: 100 },
       { wpx: 100 },
       { wpx: 120 },
+      { wpx: 100 },
+      { wpx: 100 },
       { wpx: 100 },
       { wpx: 200 },
       { wpx: 80 }

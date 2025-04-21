@@ -199,6 +199,7 @@ import { NgChartsModule } from 'ng2-charts';
     DetailsFormationBackComponent,
     ParticipantsListComponent,
     ApprooveCourseComponent,
+    
   ],
   imports: [
     RouterModule,
@@ -223,6 +224,8 @@ import { NgChartsModule } from 'ng2-charts';
     MatDialogModule,
     NgChartsModule, // Add NgChartsModule
   ],
+
+  
   providers: [ToastService],
   bootstrap: [AppComponent],
 })

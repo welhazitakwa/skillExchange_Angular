@@ -68,12 +68,39 @@ h1 {
 }
 
 .text-muted i {
-  color: #007bff;
+  color: #f28c38; /* Orange theme */
 }
 
 p {
   font-size: 1.1rem;
   line-height: 1.6;
+}
+
+/* Participation counts */
+.participation-count {
+  display: inline-flex;
+  align-items: center;
+  background-color: #f8f9fa;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #2d3436;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.participation-count:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(242, 140, 56, 0.3);
+}
+
+.participation-count i {
+  margin-right: 6px;
+}
+
+.participation-count span {
+  color: #f28c38; /* Orange theme */
 }
 
 /* Comments section */
@@ -89,6 +116,11 @@ p {
 
   h1 {
     font-size: 2rem;
+  }
+
+  .participation-count {
+    padding: 6px 10px;
+    font-size: 0.9rem;
   }
 }
 
@@ -106,6 +138,11 @@ p {
     height: 40px;
     padding: 10px;
   }
+
+  .participation-count {
+    padding: 5px 8px;
+    font-size: 0.85rem;
+  }
 }
 
 @media (max-width: 576px) {
@@ -115,5 +152,14 @@ p {
 
   h1 {
     font-size: 1.5rem;
+  }
+
+  .participation-count {
+    padding: 4px 6px;
+    font-size: 0.8rem;
+  }
+
+  .participation-count i {
+    margin-right: 4px;
   }
 }

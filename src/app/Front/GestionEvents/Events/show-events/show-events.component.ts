@@ -74,15 +74,17 @@ export class ShowEventsComponent implements OnInit {
 
   ngOnInit() {
     this.userEmail = this.authService.getCurrentUserEmail() || '';
-    console.log('Logged-in user email:', this.userEmail); 
+    console.log('Logged-in user email:', this.userEmail);
     this.loadEvents();
   }
 
   loadEvents(): void {
-    this.eventService.getEvents().subscribe(
-      (events) => {
+    this.eventService.getEvents().subscribe({
+      next: (events) => {
+        // Initialize events with default status
         this.events = events.map(event => ({
           ...event,
+          status: Status.NOT_ATTENDING, // Default status
           images: event.images ? event.images.map(img => ({
             ...img,
             images: img.images || ''
@@ -91,16 +93,18 @@ export class ShowEventsComponent implements OnInit {
         this.events.forEach(event => {
           this.carouselIndices[event.idEvent] = 0;
         });
+        // Update filteredEvents to ensure consistency
         this.filteredEvents = [...this.events];
         this.updatePlaces();
         this.updatePagination();
+        // Load user participations after events are loaded
         this.loadUserParticipations();
       },
-      (error) => {
+      error: (error) => {
         console.error('Error loading events:', error);
         this.snackBar.open('Failed to load events. Please try again later.', 'Close', { duration: 3000 });
       }
-    );
+    });
   }
 
   loadUserParticipations(): void {
@@ -116,32 +120,47 @@ export class ShowEventsComponent implements OnInit {
       this.cdr.detectChanges();
       return;
     }
-  
-    this.participationService.getParticipationsByUserEmail(this.userEmail).subscribe(
-      (participations) => {
+
+    this.participationService.getParticipationsByUserEmail(this.userEmail).subscribe({
+      next: (participations) => {
+        console.log('Participations loaded:', participations);
+        // Update event statuses based on participations
         const updatedEvents = this.events.map(event => {
           const match = participations.find(p => p.event?.idEvent === event.idEvent);
+          const status = match ? match.status : Status.NOT_ATTENDING;
+          console.log(`Event ${event.idEvent} status: ${status}`);
           return {
             ...event,
-            status: match ? match.status : Status.NOT_ATTENDING
+            status
           };
         });
-  
+
+        // Update both events and filteredEvents
         this.events = [...updatedEvents];
         this.filteredEvents = [...updatedEvents];
         this.updatePagination();
         this.filterEvents();
         this.cdr.detectChanges();
       },
-      (error) => {
-        console.error('Error loading user participations', error);
+      error: (error) => {
+        console.error('Error loading user participations:', error);
+        // Log specific error details
+        console.error('Error details:', {
+          status: error.status,
+          statusText: error.statusText,
+          message: error.message,
+          url: error.url,
+          error: error.error
+        });
+        // Fallback: keep existing events without resetting statuses
         this.filteredEvents = [...this.events];
         this.updatePagination();
         this.filterEvents();
+        this.snackBar.open('Failed to load participations. Please try again.', 'Close', { duration: 5000 });
       }
-    );
+    });
   }
-  
+
   updatePlaces(): void {
     this.filteredPlaces = [...new Set(this.events.map(event => event.place).filter(place => place))] as string[];
   }
@@ -361,13 +380,19 @@ export class ShowEventsComponent implements OnInit {
       return;
     }
 
+    console.log('Current event status:', event.status);
     const newStatus = event.status === status ? Status.NOT_ATTENDING : status;
-    console.log(`Toggling event ${event.idEvent} to status: ${newStatus}`);
+    console.log(`Toggling event ${event.idEvent} from status ${event.status} to ${newStatus}`);
 
-    this.participationService.participateInEvent(event.idEvent, newStatus).subscribe(
-      (response) => {
+    this.participationService.participateInEvent(event.idEvent, newStatus).subscribe({
+      next: (response) => {
         console.log('Participation updated successfully:', response);
         event.status = newStatus;
+        // Ensure filteredEvents reflects the updated status
+        this.filteredEvents = this.filteredEvents.map(e =>
+          e.idEvent === event.idEvent ? { ...e, status: newStatus } : e
+        );
+        this.updatePagination();
         this.filterEvents();
         this.cdr.detectChanges();
         if (newStatus === Status.GOING || newStatus === Status.INTERESTED) {
@@ -376,7 +401,7 @@ export class ShowEventsComponent implements OnInit {
           this.snackBar.open(`You have canceled your participation in ${event.eventName}.`, 'Close', { duration: 5000 });
         }
       },
-      (error) => {
+      error: (error) => {
         console.error('Error updating participation:', {
           status: error.status,
           statusText: error.statusText,
@@ -393,7 +418,7 @@ export class ShowEventsComponent implements OnInit {
         }
         this.snackBar.open(errorMessage, 'Close', { duration: 5000 });
       }
-    );
+    });
   }
 
   prevImage(eventId: number, $event: Event): void {
