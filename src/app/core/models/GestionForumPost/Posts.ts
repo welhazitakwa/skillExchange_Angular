@@ -18,6 +18,7 @@ export class Posts {
   emojiPosts!: EmojiPosts[];   
   commentPosts!: CommentPosts[];
   imagePost!: ImagePosts[];
+  approved?: boolean;
   
   
 }

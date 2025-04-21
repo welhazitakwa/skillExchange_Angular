@@ -128,14 +128,14 @@
                         <div class="d-flex align-items-start">
                             <!-- User Avatar -->
                             <div class="me-3">
-                                <img [src]="usersMap[comment!.email]?.image || '/assets/assetsFront/img/user.jpg'"
+                                <img [src]="usersMap[comment!.email].image || '/assets/assetsFront/img/user.jpg'"
                                      class="rounded-circle" width="60" height="60" alt="User avatar">
                             </div>
 
                            <!-- Comment Content -->
 <div class="flex-grow-1">
     <div class="d-flex justify-content-between align-items-center mb-2">
-      <h5 class="mb-0 fw-bold">{{ usersMap[comment!.email]?.name || 'Anonymous' }}</h5>
+      <h5 class="mb-0 fw-bold">{{ usersMap[comment!.email].name || 'Anonymous' }}</h5>
       <small class="text-muted">
         <i *ngIf="isValidDate(comment.createdAt)">
           Posted At: {{ comment.createdAt | date: 'dd/MM/yyyy à HH:mm' }}

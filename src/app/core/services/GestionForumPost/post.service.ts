@@ -13,7 +13,8 @@ export class PostService {
 
   // Récupérer tous les posts
   getAllPosts(): Observable<any> {
-    return this.http.get<any>(`${this.url}/retrievePostss`);
+    return this.http.get<any>(`${this.url}/retrieveBackPostss`);
+    
   }
   showPosts(page: number, size: number): Observable<any> {
     return this.http.get<any>(`${this.url}/retrievePostss?page=${page}&size=${size}`);
@@ -34,7 +35,18 @@ export class PostService {
   deletePost(id: number): Observable<void> {
     return this.http.delete<void>(`${this.url}/deletePosts/${id}`);
   }
-
+  approvePost(id: number): Observable<any> {
+    return this.http.post(`${this.url}/approvePost/${id}`, {});
+  }
+  
+  rejectPost(id: number): Observable<any> {
+    return this.http.post(`${this.url}/rejectPost/${id}`, {});
+  }
+  
+  
+  
+  
+  
 
   
 }

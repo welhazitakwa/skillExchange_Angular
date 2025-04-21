@@ -129,11 +129,16 @@ export class ShowPostsComponent implements OnInit {
         // 🔥 Ajout de l'utilisateur courant
         this.newPost.user = this.currentUser;
   
-        this.postService.addPost(this.newPost).subscribe(response => {
-          this.posts.push(response);
+        this.postService.addPost(this.newPost).subscribe(() => {
+          alert('✅ Votre post a été soumis et sera visible après validation par un administrateur.');
           this.showPostModalOpen = false;
           this.newPost = new Posts();
+          this.selectedFiles = [];
+          this.imagesPreviews = [];
+          this.page = 0; // retour à la première page (optionnel)
+          this.loadPosts(); // ⬅️ Recharge la liste des posts depuis le backend
         });
+        
   
       } catch (error) {
         console.error('Erreur lors du traitement des images:', error);
