@@ -7,7 +7,7 @@ import { User } from '../../models/GestionUser/User';
   providedIn: 'root'
 })
 export class EmojiPostsService {
-  private baseUrl = 'http://localhost:8084/skillExchange/emojiPosts'; // adapte le port si nécessaire
+  private baseUrl = 'http://localhost:8084/skillExchange/emojiPosts'; 
   private headers = new HttpHeaders({
     'Content-Type': 'application/json',
     'Authorization': 'Bearer ' + localStorage.getItem('token')
@@ -35,7 +35,7 @@ export class EmojiPostsService {
   }
   
 
-  getUserReaction(postId: number, userId: number): Observable<string | null> {
-    return this.http.get<string | null>(`${this.baseUrl}/user-reaction?postId=${postId}&userId=${userId}`);
-  }
+  // getUserReaction(postId: number, userId: number): Observable<string | null> {
+  //   return this.http.get<string | null>(`${this.baseUrl}/user-reaction?postId=${postId}&userId=${userId}`);
+  // }
 }

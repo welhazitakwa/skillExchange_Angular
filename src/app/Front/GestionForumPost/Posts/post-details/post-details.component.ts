@@ -7,6 +7,7 @@ import { Posts } from 'src/app/core/models/GestionForumPost/Posts';
 import { User } from 'src/app/core/models/GestionUser/User';
 import { AuthService } from 'src/app/core/services/Auth/auth.service';
 import { CommentPostsService } from 'src/app/core/services/GestionForumPost/comment-posts.service';
+import { EmojiCommentsService } from 'src/app/core/services/GestionForumPost/emoji-comments.service';
 import { EmojiPostsService } from 'src/app/core/services/GestionForumPost/emoji-posts.service';
 import { PostService } from 'src/app/core/services/GestionForumPost/post.service';
 import { UserService } from 'src/app/core/services/GestionUser/user.service';
@@ -27,7 +28,8 @@ export class PostDetailsComponent {
   currentUser: User | null = null;
   usersMap: { [key: string]: User } = {};
   selectedImage: File | null = null;
- 
+  currentImageIndexes: { [key: number]: number } = {}; 
+
 
   constructor(
     private postService: PostService,
@@ -36,7 +38,8 @@ export class PostDetailsComponent {
     private userService: UserService,
     private emojiPostsService: EmojiPostsService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private emojiCommentsService:EmojiCommentsService
   ) { }
 
   ngOnInit(): void {
@@ -45,7 +48,32 @@ export class PostDetailsComponent {
     this.loadCurrentUser();
     this.getComments();
     this.loadEmojiCounts();
+    this.loadEmojiCountsForComments();
+    
+    if (!this.post?.imagePost) {
+      console.log('Le post ou imagePost est undefined');
+      return;
+    }
+
+    // Si le post existe et contient imagePost, assure-toi qu'il est bien rempli
+    if (this.post.imagePost.length === 0) {
+      console.log('Aucune image dans imagePost');
+      return;
+    }
+
+    console.log('post et imagePost initialisés');
+    console.log("llliiissssssssstttttttttt : "+ this.currentImageIndexes)
+    
+
   }
+
+  currentImageIndex(post: Posts): number {
+    return post.idPost !== undefined ? this.currentImageIndexes[post.idPost] || 0 : 0;
+    console.log("llliiissssssssstttttttttt : "+ this.currentImageIndexes)
+  }
+
+    
+  
   // emojiCount(emoji: string): number {
   //   if (!this.post?.emojiPosts) return 0;
   //   return this.post.emojiPosts.filter(e => e.emoji === emoji).length;
@@ -62,7 +90,27 @@ export class PostDetailsComponent {
       }
     );
   }
+  // currentImageIndex(post: Posts): number {
+  //   // S'assurer que l'index existe avant de l'utiliser
+  //   //return post.idPost !== undefined ? this.currentImageIndexes[post.idPost] || 0 : 0;
+    
+  //     return post.idPost !== undefined ? this.currentImageIndexes[post.idPost] ?? 0 : 0;
+  //   }
+  // currentImageIndex(post: Posts): number {
+  //   // Vérifie si l'ID du post est défini et renvoie l'index pour ce post
+  //   return post.idPost !== undefined ? this.currentImageIndexes[post.idPost] || 0 : 0;
 
+  // }
+    getImageSrc(post?: Posts): string | null {
+      if (!post?.imagePost || post.imagePost.length === 0) {
+        return null;
+      }
+    
+      const index = this.currentImageIndex(post); // Ici post est garanti non undefined
+      const imageObj = post.imagePost[index];
+      return imageObj?.image ? 'data:image/jpeg;base64,' + imageObj.image : null;
+    }
+    
   private loadCurrentUser() {
     const currentUserEmail = this.authService.getCurrentUserEmail();
     if (!currentUserEmail) {
@@ -79,23 +127,45 @@ export class PostDetailsComponent {
     );
   }
 
- 
   
-  getComments(): void {
-    this.commentService.getCommentsByPost(this.postId).subscribe(
-      (comments) => {
-        this.comments = comments.map(comment => ({
-          ...comment,
-          created_at: new Date(comment.created_at)
-        }));
-        console.log(comments)
-        this.loadUserDetails();
-      },
-      (error) => {
-        console.error('Error fetching comments', error);
-      }
+ // Fonction pour parser une chaîne de date
+ getComments(): void {
+  this.commentService.getCommentsByPost(this.postId).subscribe(
+    (comments) => {
+      console.log("RAW created_at:", comments.map(c => typeof c.createdAt)); // Affiche avant la conversion
+
+      this.comments = comments.map(comment => ({
+        ...comment,
+        createdAt: comment.createdAt ? new Date(comment.createdAt) : null,
+    updatedAt: comment.updatedAt ? new Date(comment.updatedAt) : null,
+      })
     );
-  }
+
+      console.log("AFTER PARSE:", this.comments.map(c => c.createdAt)); // Affiche après la conversion
+      this.loadUserDetails();
+      this.loadEmojiCountsForComments();
+    },
+    (error) => {
+      console.error('Error fetching comments', error);
+    }
+  );
+}
+
+
+
+
+isValidDate(date: any): boolean {
+  return date instanceof Date && !isNaN(date.getTime());
+}
+
+
+
+
+  
+  
+  
+  
+  
 
   loadUserDetails(): void {
     this.comments.forEach(comment => {
@@ -114,15 +184,19 @@ export class PostDetailsComponent {
 
   addComment(): void {
     if (this.currentUser && this.post) {
-      const commentToSend: CommentPosts = {
-        idComment: 0,
-        content: this.newComment.content,
-        email: this.currentUser.email,
-        created_at: new Date(),
-        updated_at: new Date(),
-        post_id_post: this.post
-      };
-
+      // const commentToSend: CommentPosts = {
+      //   idComment: 0,
+        
+      //   content: this.newComment.content,
+      //   email: this.currentUser.email,
+      //   createdAt: new Date(),
+      //   updatedAt: new Date(),
+      //   post_id_post: this.post,
+      //   emojiComments: []
+      // };
+      const commentToSend = new CommentPosts();
+      commentToSend.content = this.newComment.content;
+      commentToSend.email = this.currentUser.email;
       this.commentService.addComment(commentToSend, this.post.idPost!).subscribe(
         () => {
           this.showCommentModalOpen = false;
@@ -210,40 +284,7 @@ emojis: EmojiType[] = [
   }
   
 
-// reactToPost(selectedEmoji: string): void {
-//   if (this.currentUser?.email && this.post?.idPost) {
-//     console.log('Emoji sélectionné:', selectedEmoji);
 
-//     // Valider si c'est un emoji valide
-//     if (!Object.values(EmojiType).includes(selectedEmoji as EmojiType)) {
-//       console.error('Emoji sélectionné non valide');
-//       alert('Emoji sélectionné non valide');
-//       return;
-//     }
-
-//     // Mapper l'emoji sélectionné vers la valeur attendue par le backend
-//     const mappedEmoji = EmojiTypeMapping[selectedEmoji as EmojiType];
-
-//     const reaction = {
-//       postId: this.post.idPost,
-//       email: this.currentUser.email,
-//       emoji: mappedEmoji // On envoie "WOW" ou "LIKE" ou autre, au lieu de "😮"
-//     };
-
-//     this.emojiPostsService.addReaction(reaction).subscribe(
-//       () => {
-//         console.log('Réaction ajoutée avec succès');
-//         this.getPostDetails(); // Recharge le post pour afficher les emojis à jour
-//         this.loadEmojiCounts(); // Met à jour le compteur
-//       },
-//       (error) => {
-//         console.error('Erreur lors de l’ajout de la réaction', error);
-//       }
-//     );
-//   } else {
-//     alert('Vous devez être connecté pour réagir.');
-//   }
-// }
 
 ////emoji+User///
 
@@ -266,7 +307,7 @@ reactToPost(selectedEmoji: string): void {
   this.emojiPostsService.hasUserReactedWithEmoji(postId, email, mappedEmoji)
     .subscribe((hasReacted: boolean) => {
       if (hasReacted) {
-        // ✅ Sécurisé ici aussi
+        
         this.emojiPostsService.removeReaction(postId, email, mappedEmoji).subscribe(
           () => {
             console.log('Réaction supprimée');
@@ -329,6 +370,121 @@ onEmojiLeave(): void {
 }
 
  // Afficher les utilisateurs au survol de l'emoji
+
+
+
+
+////////////////////////////EMOJICOMMENT//////////////
+// Fonction pour réagir à un commentaire avec un emoji
+
+reactToComment(selectedEmoji: string, comment: CommentPosts): void {
+  const mappedEmoji = EmojiTypeMapping[selectedEmoji as EmojiType];
+
+  if (!mappedEmoji) {
+    console.error('Emoji non valide');
+    return;
+  }
+
+  const commentId = comment.idComment;
+  const email = this.currentUser?.email;
+  console.log('DEBUG ➤ commentId:', commentId, 'email:', email);
+  
+  if (!commentId || !email) {
+    alert("L'utilisateur ou le commentaire est introuvable.");
+    return;
+  }
+
+  this.emojiCommentsService.hasUserReactedWithEmojiForComment(commentId, email, mappedEmoji)
+    .subscribe((hasReacted: boolean) => {
+      if (hasReacted) {
+        // Supprimer la réaction existante
+        this.emojiCommentsService.removeReactionFromComment(commentId, email, mappedEmoji).subscribe(
+          () => {
+            console.log('Réaction supprimée');
+            this.getComments();  // Recharger les commentaires
+           
+            this.loadEmojiCountsForComments();  // Mettre à jour les comptages d'emoji
+          },
+          (error) => {
+            console.error('Erreur suppression réaction :', error);
+          }
+        );
+      } else {
+        // Ajouter une nouvelle réaction
+        const reaction = {
+          commentId,
+          email,
+          emoji: mappedEmoji
+        };
+
+        this.emojiCommentsService.addReactionToComment(reaction).subscribe(
+          () => {
+            console.log('Réaction ajoutée');
+            this.getComments();  // Recharger les commentaires
+     
+            this.loadEmojiCountsForComments();  // Mettre à jour les comptages d'emoji
+          },
+          (error) => {
+            console.error('Erreur ajout réaction :', error);
+          }
+        );
+      }
+    });
+}
+
+usersByEmojiForComment: { [emoji: string]: User[] } = {};
+
+// Fonction pour récupérer les utilisateurs ayant réagi avec un emoji sur un commentaire
+getUsersByEmojiForComment(emoji: string, commentId: number): void {
+  const emojiKey = EmojiTypeMapping[emoji as keyof typeof EmojiTypeMapping];
+  if (!emojiKey) return;
+
+  this.emojiCommentsService.getUsersByEmojiAndCommentId(commentId, emojiKey)
+    .subscribe({
+      next: (users) => {
+        this.usersByEmojiForComment[emoji] = users;
+      },
+      error: (err) => {
+        console.error('Erreur récupération users emoji commentaire:', err);
+      }
+    });
+}
+
+hoveredEmojiComment: string | null = null;
+
+// Afficher ou masquer la liste des utilisateurs réagissant à un emoji sur un commentaire
+onEmojiHoverComment(emoji: string, commentId: number): void {
+  this.hoveredEmojiComment = emoji;
+  this.getUsersByEmojiForComment(emoji, commentId);  // Charger les utilisateurs pour cet emoji et ce commentaire
+}
+
+onEmojiLeaveComment(): void {
+  this.hoveredEmojiComment = null;
+}
+
+emojiCountsForComment: { [commentId: number]: { [emoji: string]: number } } = {};
+
+loadEmojiCountsForComments(): void {
+  if (!this.comments) return;
+
+  this.comments.forEach((comment) => {
+    this.emojiCommentsService.getEmojiCountsForComment(comment.idComment).subscribe(
+      (counts) => {
+        this.emojiCountsForComment[comment.idComment] = counts;
+      },
+      (error) => {
+        console.error(`Erreur lors du chargement des emojis pour le commentaire ${comment.idComment}`, error);
+      }
+    );
+  });
+}
+
+
+
+
+
+
+
  
 
 }

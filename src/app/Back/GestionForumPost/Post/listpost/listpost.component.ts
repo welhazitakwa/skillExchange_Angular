@@ -9,21 +9,20 @@ import { PostService } from 'src/app/core/services/GestionForumPost/post.service
 })
 export class ListpostComponent implements OnInit {
 
-  listPosts: Posts[] = [];
+  listPosts: Posts[] = [];  // Déclaration de la liste des posts
 
   constructor(private postService: PostService) { }
 
   ngOnInit(): void {
+    // Récupérer tous les posts au démarrage du composant
     this.postService.getAllPosts().subscribe(
       (data) => {
-        this.listPosts = data;
-        console.log(this.listPosts)
+        this.listPosts = data;  // Assigner les posts récupérés à la liste
+        console.log("Liste des posts : ", this.listPosts);  // Affichage dans la console pour vérifier
       },
       (error) => {
-        console.log(error);
+        console.log("Erreur lors de la récupération des posts : ", error);  // Gestion d'erreur
       }
-    )
-
+    );
   }
-
 }

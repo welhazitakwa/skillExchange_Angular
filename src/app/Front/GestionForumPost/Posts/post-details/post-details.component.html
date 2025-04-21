@@ -26,8 +26,55 @@
                     <!-- Affichage du titre du post -->
                     <h1 class="mb-5">{{ post?.title }}</h1>
                     <!-- Affichage de l'image du post -->
-                    <img *ngIf="post?.ImageP" [src]="'data:image/jpeg;base64,' + post?.ImageP" class="img-fluid rounded w-100 mb-4" alt="Post image">
-                    <!-- Affichage du contenu du post -->
+                    
+                    
+                    
+                    
+                    
+                    
+                    <!-- <div *ngIf="post?.imagePost; else noImage">
+                        <img  [src]="getImageSrc(post)" class="img-fluid rounded w-100 mb-4" alt="Post image">
+                      </div> -->
+                     
+                     
+                     
+                     
+                     
+                     
+                     
+
+                   
+                      
+                      <div *ngIf="post?.imagePost && post?.imagePost!.length > 0; else noImage">
+                        <div class="row">
+                          <div class="col-md-4 mb-3" *ngFor="let image of post?.imagePost; let i = index">
+                            <!-- Afficher toutes les images -->
+                            <img [src]="'data:image/jpeg;base64,' + image.image"
+                                 class="img-fluid rounded w-100"
+                                 alt="Post image">
+                          </div>
+                        </div>
+                      </div>
+           
+                      
+
+
+
+
+
+                     
+                     
+                     
+                     
+                     
+                     
+                     
+                     
+                      <ng-template #noImage>
+                        <p class="text-muted">Aucune image disponible pour ce post.</p>
+                      </ng-template>
+                      
+                                          <!-- Affichage du contenu du post -->
                     <p>{{ post?.content }}</p>
                 </div>
 <!-- Emoji Reactions Section -->
@@ -81,44 +128,96 @@
                         <div class="d-flex align-items-start">
                             <!-- User Avatar -->
                             <div class="me-3">
-                                <img [src]="usersMap[comment.email]?.image || 'assets/assetsFront/img/user.jpg'"
+                                <img [src]="usersMap[comment!.email]?.image || '/assets/assetsFront/img/user.jpg'"
                                      class="rounded-circle" width="60" height="60" alt="User avatar">
                             </div>
 
-                            <!-- Comment Content -->
-                            <div class="flex-grow-1">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <h5 class="mb-0 fw-bold">{{ usersMap[comment.email]?.name || 'Anonymous' }}</h5>
-                                    <small class="text-muted">
-                                        <i>Posted At: {{ comment.created_at | date: 'dd/MM/yyyy à HH:mm'}}</i>
-                                        <i>Posted By: {{ comment.email }}</i>
-                                    </small>
-                                </div>
+                           <!-- Comment Content -->
+<div class="flex-grow-1">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h5 class="mb-0 fw-bold">{{ usersMap[comment!.email]?.name || 'Anonymous' }}</h5>
+      <small class="text-muted">
+        <i *ngIf="isValidDate(comment.createdAt)">
+          Posted At: {{ comment.createdAt | date: 'dd/MM/yyyy à HH:mm' }}
+        </i>
+        <i *ngIf="!isValidDate(comment.createdAt)">
+          Posted At: Date invalide - {{ comment.createdAt }}
+        </i>
+        <br />
+        <i>Posted By: {{ comment.email }}</i>
+      </small>
+    </div>
+  
+    <p class="mb-2">{{ comment.content }}</p>
+  
+  <!-- Emoji Reactions -->
+<div class="d-flex align-items-center gap-2 flex-wrap mb-2">
+    <ng-container *ngFor="let emoji of emojis">
+      <span
+        class="emoji-btn"
+       (click)="reactToComment(emoji,comment)"
+        (mouseenter)="onEmojiHoverComment(emoji, comment.idComment)"
+        (mouseleave)="onEmojiLeave()"
+        [ngStyle]="{
+          'cursor': 'pointer',
+          'font-size': '20px',
+          'margin-right': '8px',
+          'color': getEmojiColor(emoji)
+        }"
+        [title]="emoji"
+      >
+        {{ emoji }}
+        <small class="ms-1 text-muted">
+          {{
+            emojiCountsForComment[comment.idComment]?.[EmojiTypeMapping[emoji]] || 0
+           
+          }}
+        </small>
+      </span> 
+  
+      <!-- Liste des utilisateurs ayant réagi à ce commentaire avec cet emoji -->
+     <div
+        *ngIf="hoveredEmojiComment === emoji && usersByEmoji[emoji]"
+        class="emoji-users-popup p-2 rounded shadow bg-light"
+        style="position: absolute; z-index: 1000;"
+      >
+        <strong>Réagi par :</strong>
+        <ul class="mb-0 ps-3">
+          <li *ngFor="let user of usersByEmojiForComment[emoji]">
+            {{ user.name }}
+          </li>
+        </ul>
+      </div>
+    </ng-container>
+  </div>
 
-                                <p class="mb-2">{{ comment.content }}</p>
+  
+    <!-- Delete Button if the comment was posted by the current user -->
+    <button
+      *ngIf="currentUser?.email === comment.email"
+      class="btn btn-sm btn-danger"
+      (click)="deleteComment(comment.idComment)"
+    >
+      Delete
+    </button>
+  </div>
+  
 
-                                <!-- Delete Button if the comment was posted by the current user -->
-                                <button *ngIf="currentUser?.email === comment.email"
-                                        class="btn btn-sm btn-danger"
-                                        (click)="deleteComment(comment.idComment)">
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- If no comments -->
-                    <div *ngIf="comments.length === 0" class="alert alert-info mt-3">
-                        No comments for this post yet.
-                    </div>
-
-                    <!-- Button to open the modal for adding a new comment -->
-                    <button type="button" class="btn btn-primary" (click)="showCommentModalOpen = true">
-                        Leave a Comment
-                    </button>
+                    
                 </div>
             </div>
             <!-- Comment List End -->
+               <!-- If no comments -->
+               <div *ngIf="comments.length === 0" class="alert alert-info mt-3">
+                No comments for this post yet.
+            </div>
+
+            <!-- Button to open the modal for adding a new comment -->
+            <button type="button" class="btn btn-primary" (click)="showCommentModalOpen = true">
+                Leave a Comment
+            </button>
+        </div>
+    </div>
 
             <div class="col-lg-4 mt-5 mt-lg-0">
                 <!-- Author Bio -->
@@ -147,7 +246,7 @@
                         </form>
                     </div>
 
-                    <!-- Category List -->
+                    <!-- Category List 
                     <div class="mb-5">
                         <h3 class="text-uppercase mb-4" style="letter-spacing: 5px;">Categories</h3>
                         <ul class="list-group list-group-flush">
@@ -155,15 +254,15 @@
                                 <a href="" class="text-decoration-none h6 m-0">Web Design</a>
                                 <span class="badge badge-primary badge-pill">150</span>
                             </li>
-                            <!-- More categories can be added here -->
+                             More categories can be added here 
                         </ul>
                     </div>
 
-                    <!-- Recent Post -->
+                     Recent Post 
                     <div class="mb-5">
                         <h3 class="text-uppercase mb-4" style="letter-spacing: 5px;">Recent Post</h3>
                         <a class="d-flex align-items-center text-decoration-none mb-3" href="">
-                            <img class="img-fluid rounded" src="assets/assetsFront/img/blog-80x80.jpg" alt="">
+                            <img class="img-fluid rounded" src="/assets/assetsFront/img/blog-80x80.jpg" alt="">
                             <div class="pl-3">
                                 <h6 class="m-1">Diam lorem dolore justo eirmod lorem dolore</h6>
                                 <small>Jan 01, 2050</small>
@@ -171,7 +270,7 @@
                         </a>
                     </div>
 
-                    <!-- Tag Cloud -->
+                     Tag Cloud 
                     <div class="mb-5">
                         <h3 class="text-uppercase mb-4" style="letter-spacing: 5px;">Tag Cloud</h3>
                         <div class="d-flex flex-wrap m-n1">
@@ -181,7 +280,7 @@
                         </div>
                     </div>
                 </div>
-                <!-- Sidebar End -->
+                 Sidebar End -->
             </div>
         </div>
     </div>
