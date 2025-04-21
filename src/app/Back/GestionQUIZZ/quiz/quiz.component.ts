@@ -17,6 +17,8 @@ export class QuizComponent implements OnInit {
   questions: Question[] = []; // To store all available questions
   selectedQuestions: Question[] = []; // To store selected questions for the quiz
   quizId?: number; // Optional quizId, for editing purposes
+  selectedFile: File | null = null; // To store the selected file
+  imageUrl: string | null = null; // To store the existing image URL (or preview URL)
 
   constructor(
     private fb: FormBuilder,
@@ -46,11 +48,11 @@ export class QuizComponent implements OnInit {
     });
   }
 
-  // Initialize the form for quiz creation or editing
+  // Initialize the form for quiz creation or editing.
+  // Note: We remove the "image" control because we handle file input separately.
   initForm(): void {
     this.quizForm = this.fb.group({
       title: ['', Validators.required],
-      image: ['', Validators.required],
       questions: [[]] // Store selected questions
     });
   }
@@ -60,35 +62,56 @@ export class QuizComponent implements OnInit {
     this.quizService.getQuizById(this.quizId!).subscribe((quiz) => {
       this.quizForm.patchValue({
         title: quiz.title,
-        image: quiz.image,
         questions: quiz.questions || []
       });
       this.selectedQuestions = quiz.questions || []; // Preselect questions for the quiz
+      // Set the imageUrl from the quiz data so that it displays in the template
+      this.imageUrl = quiz.image ? quiz.image : null;
     });
   }
 
-  // Submit form for creating or updating a quiz
+  // Handle file selection from the file input.
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+      // Optional: Create a local preview URL for the selected file
+      this.imageUrl = URL.createObjectURL(file);
+    }
+  }
+
+  // Submit form for creating or updating a quiz.
+  // We create a FormData object and append the title, file, and questions.
   onSubmit(): void {
-    const quizData: Quiz = {
-      ...this.quizForm.value,
-      questions: this.selectedQuestions // Assign selected questions to the quiz
-    };
+    const formData: FormData = new FormData();
+    formData.append('title', this.quizForm.get('title')!.value);
+
+    if (this.selectedFile) {
+      formData.append('file', this.selectedFile);
+    } else {
+      console.error('No file selected');
+    }
+    
+    // Append selected questions as JSON, if your backend expects them.
+    formData.append('questions', JSON.stringify(this.selectedQuestions));
 
     if (this.quizId) {
       // Update existing quiz
-      this.quizService.updateQuiz(this.quizId, quizData).subscribe(() => {
-        this.router.navigate([`/questions/${this.quizId}`]); // Navigate to the quiz's question page
+      this.quizService.updateQuiz(this.quizId, formData).subscribe(() => {
+        this.router.navigate([`/questions/${this.quizId}`]);
       });
     } else {
       // Create a new quiz
-      this.quizService.createQuiz(quizData).subscribe((newQuiz) => {
-        this.router.navigate([`/questions/${newQuiz.id}`]); // Navigate to the question page for the new quiz
+      this.quizService.createQuiz(formData).subscribe((newQuiz) => {
+        this.router.navigate([`/questions/${newQuiz.id}`]);
       });
     }
   }
+
+  // Navigate to questions for the given quiz.
   navigateToQuestions(quizId: number | undefined): void {
     if (quizId !== undefined) {
-      this.router.navigate([`/questions/${quizId}`]); // Navigate to the quiz's question page
+      this.router.navigate([`/questions/${quizId}`]);
     } else {
       console.error('Quiz ID is undefined.');
     }
@@ -98,9 +121,9 @@ export class QuizComponent implements OnInit {
   toggleQuestionSelection(question: Question): void {
     const index = this.selectedQuestions.findIndex((q) => q.id === question.id);
     if (index >= 0) {
-      this.selectedQuestions.splice(index, 1); // Remove from selected questions
+      this.selectedQuestions.splice(index, 1);
     } else {
-      this.selectedQuestions.push(question); // Add to selected questions
+      this.selectedQuestions.push(question);
     }
   }
 
@@ -109,10 +132,13 @@ export class QuizComponent implements OnInit {
     this.router.navigate([`/quiz/${quizId}`]);
   }
 
+  // Delete a quiz
   deleteQuiz(quizId: number | undefined): void {
     if (quizId !== undefined) {
       this.quizService.deleteQuiz(quizId).subscribe(() => {
-        this.quizzes = this.quizzes.filter((quiz) => quiz.id !== quizId); // Remove quiz from list after deletion
+        this.quizzes = this.quizzes.filter((quiz) => quiz.id !== quizId); // Remove the deleted quiz from the array
+      }, (error) => {
+        console.error('Error deleting quiz:', error);
       });
     } else {
       console.error('Quiz ID is undefined.');

@@ -1,9 +1,12 @@
+import { User } from "../GestionUser/User";
+import { CartProducts } from "./cart-products";
 import { Product } from "./product";
 
 export class Cart {
     id!: number;
-    quantity!: number;
-    idUser!: number;
-   products!: Product[];
+   
+    user!:User;
+    cartProducts!: CartProducts[]; 
+    isActive: boolean = true;
   
 }

@@ -102,18 +102,16 @@
                 >
                   <thead>
                     <tr>
-                      <th>Name</th>
-                      <th>Type</th>
-                      <th>Price</th>
-                      <th>Stock</th>
-                      <th>Posted By </th>
+                      <th>image</th>
+                      <th>Product</th>
+                     
                       <th>Tools</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr *ngFor="let img of imagesP">
                       <td>{{img.image}}</td>
-                      <th>{{img.product}}</th>
+                      <th>{{img.product.productName}}</th>
                      
                       <th>Delete</th>
                     </tr>

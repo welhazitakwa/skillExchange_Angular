@@ -8,15 +8,29 @@
       <div class="balance-card">
         <div class="balance-content">
           <h3>Available Balance</h3>
-          <h2>🪙{{currentUser?.balance}}</h2>
+          <h2>🪙{{ currentUser?.balance | number : "1.2-2" }}</h2>
           <div class="balance-actions">
-            <button class="btn-action transfer" (click)="showSection('transfer')">
+            <button
+              class="btn-action transfer"
+              (click)="showSection(TransactionType.TRANSFER)"
+            >
               <i class="fas fa-exchange-alt"></i>
               Transfer
             </button>
-            <button class="btn-action withdraw" (click)="showSection('withdraw')">
+            <button
+              class="btn-action withdraw"
+              (click)="showSection(TransactionType.WITHDRAWAL)"
+            >
               <i class="fas fa-wallet"></i>
               Withdraw
+            </button>
+
+            <button
+              class="btn-action btn-success"
+              (click)="showModalDeposit = true"
+            >
+              <i class="fas fa-wallet"></i>
+              Deposit
             </button>
           </div>
         </div>
@@ -33,39 +47,47 @@
       <div class="col-lg-4 mb-4">
         <div class="wallet-card operation-form" [class.active]="activeSection">
           <div class="form-header">
-            <h4>{{ activeSection?.toUpperCase() || 'SELECT OPERATION' }}</h4>
+            <h4>{{ activeSection?.toUpperCase() || "SELECT OPERATION" }}</h4>
           </div>
-          
+
           <form *ngIf="activeSection" (submit)="submitTransaction()">
             <div class="form-group">
               <label>Amount</label>
               <div class="input-group">
                 <span class="input-group-text">🪙</span>
-                <input type="number" class="form-control" 
-                       [(ngModel)]="transactionAmount" 
-                       name="amount" 
-                       placeholder="0.00"
-                       step="0.01"
-                       required>
+                <input
+                  type="number"
+                  class="form-control"
+                  [(ngModel)]="transactionAmount"
+                  name="amount"
+                  placeholder="0.00"
+                  step="0.01"
+                  required
+                />
               </div>
             </div>
 
-            <div *ngIf="activeSection === 'transfer'" class="form-group">
+            <div *ngIf="activeSection === 'TRANSFER'" class="form-group">
               <label>Recipient Email</label>
-              <input type="email" class="form-control" 
-                     [(ngModel)]="recipientEmail" 
-                     name="email"
-                     placeholder="name@example.com"
-                     required>
+              <input
+                type="email"
+                class="form-control"
+                [(ngModel)]="recipientEmail"
+                name="email"
+                placeholder="name@example.com"
+                required
+              />
             </div>
 
             <div class="form-group">
               <label>Description</label>
-              <textarea class="form-control" 
-                        [(ngModel)]="transactionDescription" 
-                        name="description"
-                        rows="2"
-                        placeholder="Add note"></textarea>
+              <textarea
+                class="form-control"
+                [(ngModel)]="transactionDescription"
+                name="description"
+                rows="2"
+                placeholder="Add note"
+              ></textarea>
             </div>
 
             <button type="submit" class="btn-submit">
@@ -81,7 +103,11 @@
           <div class="history-header">
             <h4>Transaction History</h4>
             <div class="history-controls">
-              <input type="text" placeholder="Search transactions..." class="form-control search">
+              <input
+                type="text"
+                placeholder="Search transactions..."
+                class="form-control search"
+              />
               <select class="form-select filter">
                 <option>All</option>
                 <option>Transfers</option>
@@ -92,16 +118,39 @@
           </div>
 
           <div class="transaction-list">
-            <div *ngFor="let transaction of transactions" class="transaction-item">
+            <div
+              *ngIf="transactions.length === 0"
+              class="no-transactions-message"
+            >
+              <img
+                src="https://i.pinimg.com/originals/f8/c4/22/f8c422a0a0e6793b3f9113d419c5143a.gif"
+                width="200"
+                height="200"
+              /><br />
+              <i class="fas fa-exchange-alt fa-2x"></i>
+              <h5>No transactions yet</h5>
+              <p>Your transaction history will appear here</p>
+            </div>
+            <div
+              *ngFor="let transaction of transactions"
+              class="transaction-item"
+            >
               <div class="transaction-icon">
                 <i [class]="getTransactionIcon(transaction.type)"></i>
               </div>
               <div class="transaction-details">
                 <h5>{{ transaction.description }}</h5>
-                <small class="text-muted">{{ transaction.date | date:'medium' }}</small>
+                <small class="text-muted">{{
+                  transaction.date | date : "medium"
+                }}</small>
               </div>
-              <div class="transaction-amount" [class.income]="transaction.amount > 0">
-                {{ transaction.amount > 0 ? '+' : '' }}🪙{{ transaction.amount }}
+              <div
+                class="transaction-amount"
+                [class.income]="transaction.amount > 0"
+              >
+                {{ transaction.amount > 0 ? "+" : "" }}🪙{{
+                  transaction.amount
+                }}
               </div>
             </div>
           </div>
@@ -112,3 +161,56 @@
 </div>
 
 <app-footer-front></app-footer-front>
+
+<div
+  *ngIf="showModalDeposit"
+  class="modal-backdrop fade show"
+  (click)="showModalDeposit = false"
+></div>
+<div
+  class="modal fade"
+  [class.show]="showModalDeposit"
+  style="display: block"
+  *ngIf="showModalDeposit"
+>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-semibold" id="addBadgeModalLabel">
+          Deposit Funds
+        </h5>
+
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+          (click)="showModalDeposit = false"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label class="form-label">Amount in USD:</label>
+            <input type="number" min="1" class="form-control" step="1" />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Card Details:</label>
+            <div #cardElement class="card-element"></div>
+          </div>
+
+          <div class="conversion-info">You will receive: 10 tokens</div>
+
+          <button
+            (click)="showModalDeposit = false"
+            ype="submit"
+            class="btn btn-primary"
+          >
+            Deposit
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
