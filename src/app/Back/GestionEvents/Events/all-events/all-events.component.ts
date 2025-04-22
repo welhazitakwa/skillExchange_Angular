@@ -7,6 +7,8 @@ import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import { CalendarOptions, EventInput } from '@fullcalendar/core';
 import * as L from 'leaflet';
+import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
+import html2canvas from 'html2canvas';
 
 @Component({
   selector: 'app-all-events',
@@ -20,6 +22,7 @@ export class AllEventsComponent implements OnInit {
   sortColumn: keyof Events = 'eventName';
   sortDirection: string = 'asc';
   isAddEventModalOpen: boolean = false;
+  isStatsModalOpen: boolean = false; // Ajout pour le modal des statistiques
   eventToEdit: Events | null = null;
   eventToDelete: Events | null = null;
   filterForm: FormGroup;
@@ -27,6 +30,60 @@ export class AllEventsComponent implements OnInit {
   showCalendar: boolean = false;
   calendarOptions: CalendarOptions;
   showMap: { [key: number]: boolean } = {};
+
+  // Données pour le diagramme en donut (répartition par lieu)
+  public doughnutChartData: ChartData<'doughnut'> = {
+    labels: [],
+    datasets: [{
+      data: [],
+      backgroundColor: ['#007bff', '#dc3545', '#28a745', '#ffc107', '#17a2b8'],
+    }]
+  };
+  public doughnutChartType: ChartType = 'doughnut';
+  public doughnutChartOptions: ChartConfiguration['options'] = {
+    plugins: {
+      legend: { position: 'top' },
+      title: { display: true, text: 'Répartition des événements par lieu' }
+    }
+  };
+
+  // Données pour l'histogramme (nombre max de participants)
+  public barChartData: ChartData<'bar'> = {
+    labels: [],
+    datasets: [{
+      data: [],
+      label: 'Max Participants',
+      backgroundColor: '#007bff'
+    }]
+  };
+  public barChartType: ChartType = 'bar';
+  public barChartOptions: ChartConfiguration['options'] = {
+    scales: {
+      y: { beginAtZero: true }
+    },
+    plugins: {
+      legend: { display: true },
+      title: { display: true, text: 'Nombre maximum de participants par événement' }
+    }
+  };
+
+  // Données pour le diagramme en ligne (évolution par mois)
+  public lineChartData: ChartData<'line'> = {
+    labels: [],
+    datasets: [{
+      data: [],
+      label: 'Événements par mois',
+      borderColor: '#007bff',
+      fill: false
+    }]
+  };
+  public lineChartType: ChartType = 'line';
+  public lineChartOptions: ChartConfiguration['options'] = {
+    plugins: {
+      legend: { display: true },
+      title: { display: true, text: 'Évolution des événements par mois' }
+    }
+  };
 
   constructor(private eventsService: EventsService, private fb: FormBuilder) {
     this.filterForm = this.fb.group({
@@ -77,6 +134,7 @@ export class AllEventsComponent implements OnInit {
           })) : []
         }));
         this.applyFilters();
+        this.updateChartData();
       },
       (error) => {
         console.error('Error loading events:', error);
@@ -117,7 +175,7 @@ export class AllEventsComponent implements OnInit {
     const map = L.map(mapElement).setView(coords, 15);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
     L.marker(coords).addTo(map);
@@ -223,6 +281,53 @@ export class AllEventsComponent implements OnInit {
     console.log('Filtered events:', this.filteredEvents.length);
 
     this.updateCalendarEvents();
+    this.updateChartData();
+  }
+
+  updateChartData(): void {
+    // Données pour le diagramme en donut (par lieu)
+    const placeCounts = this.filteredEvents.reduce((acc, event) => {
+      const place = event.place || 'Unknown';
+      acc[place] = (acc[place] || 0) + 1;
+      return acc;
+    }, {} as { [key: string]: number });
+
+    this.doughnutChartData = {
+      labels: Object.keys(placeCounts),
+      datasets: [{
+        data: Object.values(placeCounts),
+        backgroundColor: ['#007bff', '#dc3545', '#28a745', '#ffc107', '#17a2b8'],
+      }]
+    };
+
+    // Données pour l'histogramme (nombre max de participants)
+    this.barChartData = {
+      labels: this.filteredEvents.map(event => event.eventName || 'Unnamed'),
+      datasets: [{
+        data: this.filteredEvents.map(event => event.nbr_max || 0),
+        label: 'Max Participants',
+        backgroundColor: '#007bff'
+      }]
+    };
+
+    // Données pour le diagramme en ligne (par mois)
+    const eventsByMonth = this.filteredEvents.reduce((acc, event) => {
+      if (event.startDate) {
+        const month = new Date(event.startDate).toLocaleString('fr-FR', { month: 'long', year: 'numeric' });
+        acc[month] = (acc[month] || 0) + 1;
+      }
+      return acc;
+    }, {} as { [key: string]: number });
+
+    this.lineChartData = {
+      labels: Object.keys(eventsByMonth),
+      datasets: [{
+        data: Object.values(eventsByMonth),
+        label: 'Événements par mois',
+        borderColor: '#007bff',
+        fill: false
+      }]
+    };
   }
 
   updateCalendarEvents(): void {
@@ -258,6 +363,15 @@ export class AllEventsComponent implements OnInit {
 
   toggleCalendar(): void {
     this.showCalendar = !this.showCalendar;
+  }
+
+  // Ajout des méthodes pour le modal des statistiques
+  openStatsModal(): void {
+    this.isStatsModalOpen = true;
+  }
+
+  closeStatsModal(): void {
+    this.isStatsModalOpen = false;
   }
 
   exportToCsv(): void {
@@ -337,7 +451,6 @@ export class AllEventsComponent implements OnInit {
     doc.text('Skill', 10, 15);
     doc.setTextColor(0, 0, 0);
     doc.text('Exchange', 28, 15);
-
     doc.setFontSize(18);
     doc.setTextColor(253, 126, 20);
     doc.text('Event Management Report', 10, 30);
@@ -345,69 +458,76 @@ export class AllEventsComponent implements OnInit {
     doc.setTextColor(100);
     doc.text(`Generated on: ${exportDate}`, 10, 40);
 
-    const tableData = this.filteredEvents.map(event => [
-      event.eventName || '',
-      event.startDate ? new Date(event.startDate).toLocaleDateString('fr-FR') : '',
-      event.endDate ? new Date(event.endDate).toLocaleDateString('fr-FR') : '',
-      event.place || '',
-      event.latitude?.toString() || '',
-      event.longitude?.toString() || '',
-      event.nbr_max?.toString() || '',
-      event.description || ''
-    ]);
+    // Capturer les diagrammes
+    const captureCharts = async () => {
+      let currentY = 50;
 
-    autoTable(doc, {
-      startY: 50,
-      head: [['Event Name', 'Start Date', 'End Date', 'Place', 'Latitude', 'Longitude', 'Max Participants', 'Description', 'Images']],
-      body: tableData,
-      theme: 'striped',
-      headStyles: { fillColor: [253, 126, 20], textColor: 255 },
-      alternateRowStyles: { fillColor: [240, 240, 240] },
-      styles: { fontSize: 10, cellPadding: 2 },
-      columnStyles: {
-        0: { cellWidth: 30 },
-        7: { cellWidth: 50 },
-        8: { cellWidth: 40 }
-      },
-      didDrawCell: (data) => {
-        if (data.column.index === 8 && data.row.index >= 0 && data.row.index < this.filteredEvents.length) {
-          const event = this.filteredEvents[data.row.index];
-          const images = event.images || [];
-          if (images.length > 0) {
-            let xOffset = data.cell.x + 2;
-            const y = data.cell.y + 2;
-            const maxImages = Math.min(images.length, 3);
-            for (let i = 0; i < maxImages; i++) {
-              const imgData = images[i].images.startsWith('data:image')
-                ? images[i].images
-                : `data:image/jpeg;base64,${images[i].images}`;
-              try {
-                doc.addImage(imgData, 'JPEG', xOffset, y, 12, 12);
-                xOffset += 14;
-              } catch (error) {
-                console.warn(`Failed to add image for event ${event.eventName}:`, error);
-                doc.setFontSize(8);
-                doc.text('Image error', xOffset, y + 6);
-              }
-            }
-          } else {
-            doc.setFontSize(8);
-            doc.text('No images', data.cell.x + 2, data.cell.y + 8);
-          }
-        }
+      // Diagramme en donut
+      const doughnutCanvas = document.querySelector('canvas[baseChart][type="doughnut"]') as HTMLCanvasElement;
+      if (doughnutCanvas) {
+        const canvas = await html2canvas(doughnutCanvas);
+        const imgData = canvas.toDataURL('image/png');
+        doc.addImage(imgData, 'PNG', 10, currentY, 190, 100);
+        currentY += 110;
       }
-    });
 
-    const pageCount = doc.getNumberOfPages();
-    for (let i = 1; i <= pageCount; i++) {
-      doc.setPage(i);
-      doc.setFontSize(10);
-      doc.setTextColor(100);
-      doc.text(`Page ${i} of ${pageCount}`, doc.internal.pageSize.width - 30, doc.internal.pageSize.height - 10);
-    }
+      // Histogramme
+      const barCanvas = document.querySelector('canvas[baseChart][type="bar"]') as HTMLCanvasElement;
+      if (barCanvas) {
+        const canvas = await html2canvas(barCanvas);
+        const imgData = canvas.toDataURL('image/png');
+        doc.addImage(imgData, 'PNG', 10, currentY, 190, 100);
+        currentY += 110;
+      }
 
-    doc.save(`events_${new Date().toISOString().split('T')[0]}.pdf`);
-    console.log('PDF exported:', this.filteredEvents.length, 'events');
+      // Diagramme en ligne
+      const lineCanvas = document.querySelector('canvas[baseChart][type="line"]') as HTMLCanvasElement;
+      if (lineCanvas) {
+        const canvas = await html2canvas(lineCanvas);
+        const imgData = canvas.toDataURL('image/png');
+        doc.addImage(imgData, 'PNG', 10, currentY, 190, 100);
+        currentY += 110;
+      }
+
+      // Ajouter le tableau
+      const tableData = this.filteredEvents.map(event => [
+        event.eventName || '',
+        event.startDate ? new Date(event.startDate).toLocaleDateString('fr-FR') : '',
+        event.endDate ? new Date(event.endDate).toLocaleDateString('fr-FR') : '',
+        event.place || '',
+        event.latitude?.toString() || '',
+        event.longitude?.toString() || '',
+        event.nbr_max?.toString() || '',
+        event.description || ''
+      ]);
+
+      autoTable(doc, {
+        startY: currentY,
+        head: [['Event Name', 'Start Date', 'End Date', 'Place', 'Latitude', 'Longitude', 'Max Participants', 'Description']],
+        body: tableData,
+        theme: 'striped',
+        headStyles: { fillColor: [253, 126, 20], textColor: 255 },
+        alternateRowStyles: { fillColor: [240, 240, 240] },
+        styles: { fontSize: 10, cellPadding: 2 },
+        columnStyles: {
+          0: { cellWidth: 30 },
+          7: { cellWidth: 50 }
+        }
+      });
+
+      const pageCount = doc.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(10);
+        doc.setTextColor(100);
+        doc.text(`Page ${i} of ${pageCount}`, doc.internal.pageSize.width - 30, doc.internal.pageSize.height - 10);
+      }
+
+      doc.save(`events_${new Date().toISOString().split('T')[0]}.pdf`);
+      console.log('PDF exported:', this.filteredEvents.length, 'events');
+    };
+
+    captureCharts();
   }
 
   exportToExcel(): void {

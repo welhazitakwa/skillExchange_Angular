@@ -114,4 +114,100 @@ div[id^="map-"] {
   div[id^="map-"] {
     height: 120px !important; /* Réduire la hauteur sur petits écrans */
   }
+
+
+
+ 
+/* Style pour le bouton Statistiques */
+.stats-btn {
+  background-color: #6f42c1;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  font-size: 0.875rem;
+  border-radius: 4px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.stats-btn:hover {
+  background-color: #5a32a3;
+  transform: translateY(-2px);
+}
+
+.stats-btn i {
+  font-size: 1rem;
+}
+
+.card.mb-4 {
+  display: block !important;
+}
+
+div[id^="map-"] {
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  margin-top: 10px;
+  height: 150px !important;
+  width: 100% !important;
+  z-index: 0;
+}
+
+/* Styles pour les diagrammes */
+.chart-container {
+  position: relative;
+  height: 300px;
+  width: 100%;
+}
+
+.card-body canvas {
+  max-height: 250px;
+}
+
+/* Styles pour le modal des statistiques */
+.modal-lg {
+  max-width: 900px;
+}
+
+.modal-content {
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.modal-title {
+  font-weight: 600;
+  color: #343a40;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .card-body {
+    padding: 1rem;
+  }
+  .row.g-3 > div {
+    margin-bottom: 1rem;
+  }
+  .d-flex.gap-2 {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  div[id^="map-"] {
+    height: 120px !important;
+  }
+  .chart-container {
+    height: 200px;
+  }
+  .card-body canvas {
+    max-height: 180px;
+  }
+  .modal-lg {
+    max-width: 95%;
+  }
+}
 }
