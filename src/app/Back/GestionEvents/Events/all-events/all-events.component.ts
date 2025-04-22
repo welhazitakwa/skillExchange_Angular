@@ -22,7 +22,7 @@ export class AllEventsComponent implements OnInit {
   sortColumn: keyof Events = 'eventName';
   sortDirection: string = 'asc';
   isAddEventModalOpen: boolean = false;
-  isStatsModalOpen: boolean = false; // Ajout pour le modal des statistiques
+  isStatsModalOpen: boolean = false;
   eventToEdit: Events | null = null;
   eventToDelete: Events | null = null;
   filterForm: FormGroup;
@@ -30,6 +30,7 @@ export class AllEventsComponent implements OnInit {
   showCalendar: boolean = false;
   calendarOptions: CalendarOptions;
   showMap: { [key: number]: boolean } = {};
+  activeChartType: 'doughnut' | 'bar' | 'line' | null = null; // Nouvelle propriété pour le type de diagramme actif
 
   // Données pour le diagramme en donut (répartition par lieu)
   public doughnutChartData: ChartData<'doughnut'> = {
@@ -365,13 +366,18 @@ export class AllEventsComponent implements OnInit {
     this.showCalendar = !this.showCalendar;
   }
 
-  // Ajout des méthodes pour le modal des statistiques
   openStatsModal(): void {
     this.isStatsModalOpen = true;
+    this.activeChartType = null; // Aucun diagramme affiché par défaut
   }
 
   closeStatsModal(): void {
     this.isStatsModalOpen = false;
+    this.activeChartType = null; // Réinitialiser le type de diagramme
+  }
+
+  setActiveChartType(chartType: 'doughnut' | 'bar' | 'line'): void {
+    this.activeChartType = chartType;
   }
 
   exportToCsv(): void {
@@ -527,7 +533,21 @@ export class AllEventsComponent implements OnInit {
       console.log('PDF exported:', this.filteredEvents.length, 'events');
     };
 
-    captureCharts();
+    // Ouvre temporairement le modal pour s'assurer que tous les diagrammes sont rendus
+    this.isStatsModalOpen = true;
+    this.activeChartType = 'doughnut'; // Rendre le premier diagramme
+    setTimeout(() => {
+      this.activeChartType = 'bar'; // Rendre le deuxième
+      setTimeout(() => {
+        this.activeChartType = 'line'; // Rendre le troisième
+        setTimeout(() => {
+          captureCharts().then(() => {
+            this.isStatsModalOpen = false;
+            this.activeChartType = null; // Réinitialiser
+          });
+        }, 100);
+      }, 100);
+    }, 100);
   }
 
   exportToExcel(): void {

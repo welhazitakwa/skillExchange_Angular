@@ -151,15 +151,39 @@ div[id^="map-"] {
   z-index: 0;
 }
 
+/* Styles pour les boutons de sélection des diagrammes */
+.chart-btn {
+  background-color: #e9ecef;
+  color: #343a40;
+  border: none;
+  padding: 8px 16px;
+  font-size: 0.875rem;
+  border-radius: 4px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.chart-btn:hover {
+  background-color: #dee2e6;
+}
+
+.chart-btn.active {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.chart-btn i {
+  font-size: 1rem;
+}
+
 /* Styles pour les diagrammes */
 .chart-container {
   position: relative;
-  height: 300px;
+  height: 400px;
   width: 100%;
 }
 
 .card-body canvas {
-  max-height: 250px;
+  max-height: 350px;
 }
 
 /* Styles pour le modal des statistiques */
@@ -201,13 +225,17 @@ div[id^="map-"] {
     height: 120px !important;
   }
   .chart-container {
-    height: 200px;
+    height: 300px;
   }
   .card-body canvas {
-    max-height: 180px;
+    max-height: 250px;
   }
   .modal-lg {
     max-width: 95%;
+  }
+  .chart-btn {
+    padding: 6px 12px;
+    font-size: 0.75rem;
   }
 }
 }
