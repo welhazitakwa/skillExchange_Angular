@@ -20,9 +20,17 @@ export class PayementService {
   createStripeSession(amount: number, cartId:number): Observable<string> {
     return this.http.post(`${this.url}/payments/stripe-session?amount=${amount}&cartId=${cartId}`, {}, { responseType: 'text' });
   }
-
+  getStripeSessionInfo(sessionId: string): Observable<any> {
+    return this.http.get<any>(`${this.url}/payments/stripe/session-info?sessionId=${sessionId}`);
+  }
+  downloadStripeInvoice(paymentIntentId: string): void {
+    const url = `${this.url}/invoice/${paymentIntentId}`;
+    window.open(url, '_blank'); // Ouvre le PDF dans un nouvel onglet
+  }
+  
+  
   createPayPalPayment(amount: number, currency: string, description: string): Observable<string> {
-    const url = `/api/paypal/create`; // adapte l'URL à ton backend
+    const url = `/paypal/create`; 
     const params = new HttpParams()
       .set('amount', amount.toString())
       .set('currency', currency)

@@ -30,9 +30,7 @@ import { AddcartComponent } from './Front/GestionProduit/Cart/addcart/addcart.co
 import { ShowcartComponent } from './Front/GestionProduit/Cart/showcart/showcart.component';
 import { UpdatecartComponent } from './Front/GestionProduit/Cart/updatecart/updatecart.component';
 import { CartDetailsComponent } from './Front/GestionProduit/Cart/cart-details/cart-details.component';
-import { AddproductComponent } from './Front/GestionProduit/Product/addproduct/addproduct.component';
 import { ProductDetailsComponent } from './Front/GestionProduit/Product/product-details/product-details.component';
-import { UpdateproductComponent } from './Front/GestionProduit/Product/updateproduct/updateproduct.component';
 import { ShowproductComponent } from './Front/GestionProduit/Product/showproduct/showproduct.component';
 
 import { AllProductsComponent } from './Back/GestionProduit/Product/all-products/all-products.component';
@@ -114,9 +112,9 @@ import { SuccessComponent } from './Front/GestionProduit/success/success.compone
     ShowcartComponent,
     UpdatecartComponent,
     CartDetailsComponent,
-    AddproductComponent,
+   
     ProductDetailsComponent,
-    UpdateproductComponent,
+  
     ShowproductComponent,
     AllProductsComponent,
     AllCartsComponent,

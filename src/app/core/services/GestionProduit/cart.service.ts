@@ -38,6 +38,7 @@ export class CartService {
     this.itemCountSource.next(total);
   }
 */
+
   // Méthode pour valider le panier
   validateCart(cartId: number): Observable<any> {
     return this.http.post(`${this.url}/validate-cart`, { cartId });

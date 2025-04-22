@@ -20,10 +20,14 @@ export class CartProductsComponent  {
   @Input() cartProducts: CartProducts[] = [];
   @Input() totalTND!: number;
 @Input() totalTokens!: number;
-
+isActive: boolean = true;
 
   showPaymentModal: boolean = false;
   openPaymentModal(): void {
+    if (!this.isActive) {
+      alert('Votre panier a été désactivé.');
+      return;
+    }
     this.showPaymentModal = true;
   
     // 💡 attendre que la vue se mette à jour

@@ -32,7 +32,8 @@ export class ShowproductComponent implements OnInit {
   localStorage = localStorage;
 
   currentUser: User | null = null;
-  //imageFields: any;
+  filteredProducts: Product[] = [];
+selectedType: string = '';
   
   currentImageIndex: any;
   editImagesPreviews: any;
@@ -57,15 +58,23 @@ export class ShowproductComponent implements OnInit {
     this.loadCurrentUser();
   }
 
-
+  filterProducts() {
+    if (this.selectedType) {
+      this.filteredProducts = this.products.filter(p => p.type === this.selectedType);
+    } else {
+      this.filteredProducts = [...this.products];
+    }
+  }
 
   private loadProducts(){
-    this.productService.getProduct().subscribe(
+    this.productService.getApprovedProducts().subscribe(
       (products) => {
     
       
         this.products = products;
-        console.log(this.products); // Vérifier si les produits sont bien récupérés
+        this.filterProducts();
+       
+        console.log(this.products); 
       },
       (error) => {
         console.error('Erreur lors de la récupération des produits', error);
@@ -93,52 +102,65 @@ export class ShowproductComponent implements OnInit {
 
 
   
+  // addToCart(product: Product): void {
+  //   if (product.stock <= 0) {
+  //     alert('Stock épuisé, impossible d\'ajouter au panier.');
+  //     return;
+  //   }
+  //   if (!this.currentUser) {
+  //     alert('Vous devez être connecté');
+  //     this.router.navigate(['/login']);
+  //     return;
+  //   }
+    
+  //   const userId = this.currentUser.id;
+   
+  //   if (!userId) {
+  //     alert('Utilisateur non trouvé dans le localStorage. Vous devez être connecté.');
+  //     console.log('ID utilisateur récupéré depuis localStorage :', userId);
+  //     this.router.navigate(['/login']);  // Redirige vers la page de connexion si l'utilisateur n'est pas trouvé
+  //     return;
+  //   }
+  
+  //   this.cartId = Number(localStorage.getItem('cartId'));  // Récupère l'ID du panier (s'il existe)
+  
+  //   if (!this.cartId) {
+  //     // Si aucun panier n'existe, créer un nouveau panier pour cet utilisateur
+  //     const newCart = { user: { id: Number(userId) } };
+  
+   
+  //   //  this.cartService.getActiveCartByUser(userId)
+  //   this.cartService.addCart(newCart as Cart).subscribe({
+  //       next: (cart) => {
+  //         this.cartId = cart?.id;
+  //         localStorage.setItem('cartId', String(this.cartId));  // Sauvegarde le cartId dans le localStorage
+  //         this.addProductToCart(product);  // Ajoute le produit au panier
+  //       },
+  //       error: (err) => {
+  //         console.error('Erreur lors de la création du panier', err);
+  //         alert('Erreur lors de la création du panier');
+  //       }
+  //     });
+  //   } else {
+  //     // Si un panier existe déjà, on ajoute le produit
+  //     this.addProductToCart(product);
+  //   }
+  // }
   addToCart(product: Product): void {
     if (product.stock <= 0) {
       alert('Stock épuisé, impossible d\'ajouter au panier.');
       return;
     }
+  
     if (!this.currentUser) {
       alert('Vous devez être connecté');
       this.router.navigate(['/login']);
       return;
     }
-    
+  
     const userId = this.currentUser.id;
-   
-    if (!userId) {
-      alert('Utilisateur non trouvé dans le localStorage. Vous devez être connecté.');
-      console.log('ID utilisateur récupéré depuis localStorage :', userId);
-      this.router.navigate(['/login']);  // Redirige vers la page de connexion si l'utilisateur n'est pas trouvé
-      return;
-    }
+    
   
-    this.cartId = Number(localStorage.getItem('cartId'));  // Récupère l'ID du panier (s'il existe)
-  
-    if (!this.cartId) {
-      // Si aucun panier n'existe, créer un nouveau panier pour cet utilisateur
-      const newCart = { user: { id: Number(userId) } };
-  
-   
-    //  this.cartService.getActiveCartByUser(userId)
-    this.cartService.addCart(newCart as Cart).subscribe({
-        next: (cart) => {
-          this.cartId = cart?.id;
-          localStorage.setItem('cartId', String(this.cartId));  // Sauvegarde le cartId dans le localStorage
-          this.addProductToCart(product);  // Ajoute le produit au panier
-        },
-        error: (err) => {
-          console.error('Erreur lors de la création du panier', err);
-          alert('Erreur lors de la création du panier');
-        }
-      });
-    } else {
-      // Si un panier existe déjà, on ajoute le produit
-      this.addProductToCart(product);
-    }
-  }
-  
-  private addProductToCart(product: Product): void {
     const existingProduct = this.cartProducts.find(cartProduct => cartProduct.product.idProduct === product.idProduct);
   
     if (existingProduct) {
@@ -152,12 +174,12 @@ export class ShowproductComponent implements OnInit {
         error: err => console.error('Erreur lors de la mise à jour de la quantité', err)
       });
     } else {
-      // Ajouter un nouveau produit au panier
-      this.cartProductService.addToCart(this.cartId!, product.idProduct, 1).subscribe({
+      // 💡 Appel simplifié sans cartId
+      this.cartProductService.addProductToUserCart(userId, product.idProduct, 1).subscribe({
         next: (response) => {
           this.cartProducts.push({
             id: response.id,
-            cart: { id: this.cartId } as Cart,
+            cart: response.cart,
             product: product,
             quantity: 1
           });
@@ -168,6 +190,38 @@ export class ShowproductComponent implements OnInit {
       });
     }
   }
+  
+  
+  // private addProductToCart(product: Product): void {
+  //   const existingProduct = this.cartProducts.find(cartProduct => cartProduct.product.idProduct === product.idProduct);
+  
+  //   if (existingProduct) {
+  //     existingProduct.quantity++;
+  //     this.cartProductService.updateCartProduct(existingProduct).subscribe({
+  //       next: () => {
+  //         console.log('Quantité mise à jour');
+  //         this.updateCartCount();
+  //         this.loadCartProducts();
+  //       },
+  //       error: err => console.error('Erreur lors de la mise à jour de la quantité', err)
+  //     });
+  //   } else {
+  //     // Ajouter un nouveau produit au panier
+  //     this.cartProductService.addToCart(this.cartId!, product.idProduct, 1).subscribe({
+  //       next: (response) => {
+  //         this.cartProducts.push({
+  //           id: response.id,
+  //           cart: { id: this.cartId } as Cart,
+  //           product: product,
+  //           quantity: 1
+  //         });
+  //         this.updateCartCount();
+  //         this.loadCartProducts();
+  //       },
+  //       error: err => console.error('Erreur lors de l\'ajout au panier', err)
+  //     });
+  //   }
+  // }
   private updateCartCount() {
     const count = Number(localStorage.getItem('cartCount')) || 0;
   
@@ -177,56 +231,59 @@ export class ShowproductComponent implements OnInit {
  
   
 
-  loadCartProducts(): void {
-    this.cartProductService.getCartProducts().subscribe({
-      next: (cartProducts) => {
-        // Log pour vérifier le contenu de la réponse
-        console.log(cartProducts);
+  // loadCartProducts(): void {
+  //   this.cartProductService.getCartProducts().subscribe({
+  //     next: (cartProducts) => {
+  //       // Log pour vérifier le contenu de la réponse
+  //       console.log(cartProducts);
 
-        // Traitement des produits du panier
-        this.cartProducts = cartProducts;
-        const count  = this.cartProducts.reduce((sum, item) => sum + item.quantity, 0); // ✅ Calcul après le chargement
+  //       // Traitement des produits du panier
+  //       this.cartProducts = cartProducts;
+  //       const count  = this.cartProducts.reduce((sum, item) => sum + item.quantity, 0); // ✅ Calcul après le chargement
       
-        //this.cartCount=count;
-        this.localStorage.setItem("cartCount",String(count));
-        console.log("Panier mis à jour :", this.cartProducts);
-        console.log("CartCount mis à jour :", this.cartCount);
+  //       //this.cartCount=count;
+  //       this.localStorage.setItem("cartCount",String(count));
+  //       console.log("Panier mis à jour :", this.cartProducts);
+  //       console.log("CartCount mis à jour :", this.cartCount);
+  //     },
+  //     error: (err) => {
+  //       console.error("Erreur lors du chargement du panier :", err);
+  //       alert("Erreur lors du chargement du panier.");
+  //     }
+  //   });
+  // }
+  ///////////New/////////////////////////
+  loadCartProducts(): void {
+    const userId = Number(localStorage.getItem('userId')); // ou depuis AuthService si tu en as un
+    console.log("userId récupéré :", userId);
+  
+    this.cartService.getActiveCartByUser(userId).subscribe({
+      next: (cart) => {
+        if (cart) {
+          
+          this.cartProductService.getProductsInCart(cart.id).subscribe({
+            next: (cartProducts) => {
+              this.cartProducts = cartProducts;
+              const count = this.cartProducts.reduce((sum, item) => sum + item.quantity, 0);
+              this.localStorage.setItem("cartCount", String(count));
+              console.log("Produits du panier :", this.cartProducts);
+              console.log("CartCount mis à jour :", count);
+            },
+            error: (err) => {
+              console.error("Erreur lors du chargement des produits du panier :", err);
+            }
+          });
+        } else {
+          console.log("Aucun panier actif trouvé.");
+          this.cartProducts = [];
+          this.localStorage.setItem("cartCount", "0");
+        }
       },
       error: (err) => {
-        console.error("Erreur lors du chargement du panier :", err);
-        alert("Erreur lors du chargement du panier.");
+        console.error("Erreur lors de la récupération du panier actif :", err);
       }
     });
   }
-  // private loadCartProducts(): void {
-  //   if (!this.currentUser) {
-  //     console.log("Aucun utilisateur connecté, panier vide.");
-  //     this.cartProducts = []; // Panier vide si l'utilisateur n'est pas défini
-  //     return;
-  //   }
-  
-  //   // Si l'utilisateur est connecté, on récupère son panier
-  //   this.cartService.getActiveCartByUser(this.currentUser.id).subscribe(
-  //     (cart) => {
-  //       if (cart) {
-  //         console.log("Panier chargé :", cart);
-  //         this.cartProducts = cart.cartProducts;
-  //         const count = this.cartProducts.reduce((sum, item) => sum + item.quantity, 0);
-  //         this.localStorage.setItem("cartCount", String(count));
-  //         console.log("CartCount mis à jour :", this.cartCount);
-  //       } else {
-  //         console.log("Aucun panier actif trouvé pour cet utilisateur.");
-  //         this.cartProducts = []; // Si aucun panier n'est trouvé, on le vide
-  //       }
-  //     },
-  //     (err) => {
-  //       console.error("Erreur lors du chargement du panier :", err);
-  //       alert("Erreur lors du chargement du panier.");
-  //       this.cartProducts = []; // On vide le panier en cas d'erreur
-  //     }
-  //   );
-  // }
-  
   
   toggleCart() {
     this.isCartOpen = !this.isCartOpen;
@@ -251,7 +308,7 @@ selectedFiles: File[]=[]
         return;
       }
   
-      this.selectedFiles.push(file);
+     // this.selectedFiles.push(file);
        // Redimensionner l'image si elle est trop grande
     this.resizeImage(file, 800, 600).then((resizedFile) => {
       this.selectedFiles.push(resizedFile);
@@ -495,7 +552,7 @@ imagesToDelete: number[] = []; // celles à supprimer
     this.productService.updateProduct(productData).subscribe({
       next: () => {
         console.log('Product updated');
-        this.productService.getProduct().subscribe({
+        this.productService.getApprovedProducts().subscribe({
           next: (products) => {
             this.products = products;
             console.log(this.products);
@@ -572,7 +629,7 @@ imagesToDelete: number[] = []; // celles à supprimer
       this.productService.deleteProduct(id).subscribe(
         () => {
           console.log('Product deleted');
-          this.productService.getProduct().subscribe(
+          this.productService.getApprovedProducts().subscribe(
             (products) => {
               this.products = products;
               

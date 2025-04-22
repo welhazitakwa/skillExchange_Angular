@@ -24,6 +24,10 @@ export class ProductService {
 
     return this.http.get<Product[]>(`${this.url}/retrieve-products`);
   }
+  getApprovedProducts(): Observable<Product[]> {
+
+    return this.http.get<Product[]>(`${this.url}/Allapproved`);
+  }
 
   addProduct(prod: Product): Observable<Product> {
     return this.http.post<Product>(this.url + "/add", prod);
@@ -44,8 +48,9 @@ export class ProductService {
   }
   
   rejectProduct(id: number): Observable<any> {
-    return this.http.delete(`${this.url}/reject/${id}`); // DELETE
+    return this.http.delete(`${this.url}/reject/${id}`, { responseType: 'text' });
   }
+  
   // updateProduct(id: number, data: FormData) {
   //   return this.http.patch<Product>(`${this.url}/update/${id}`, data);
   // }

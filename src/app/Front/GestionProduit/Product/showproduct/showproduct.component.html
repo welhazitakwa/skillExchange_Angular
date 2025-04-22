@@ -42,14 +42,35 @@
             <h5 class="text-primary text-uppercase mb-3" style="letter-spacing: 5px;">Shop</h5>
             <h1>Our Products</h1>
         </div>
-        <div class="text-center mb-4">
-            <button class="btn btn-success" data-toggle="modal" data-target="#addProductModal">
-                ➕ Add New Product
-            </button>
+  
+        <div class="d-flex justify-content-between align-items-center flex-wrap mb-4">
+  
+          <!-- 🎯 Bouton Add -->
+          <button class="btn btn-orange rounded-pill fw-bold px-4 py-2 mb-2"
+                  (click)="showModalProduct = true">
+            <i class="fas fa-plus me-2"></i> Add Product
+          </button>
+        
+          <!-- 🎯 Filtrage dropdown -->
+          <div class="dropdown-wrapper mb-2">
+            
+
+            <select id="typeSelect" class="form-select filter-dropdown"
+             [(ngModel)]="selectedType"
+                    (change)="filterProducts()"
+                    class="form-select filter-dropdown">
+              <option value="">All Types</option>
+              <option value="DIGITAL">Digital 🖥️</option>
+              <option value="PHYSIQUE">Physical 📦</option>
+              <option value="TOKEN">Token 🪙</option>
+            </select>
+          </div>
+        
         </div>
         
+  
         <div class="row">
-            <div class="col-lg-4 col-md-6 mb-4" *ngFor="let product of products">
+            <div class="col-lg-4 col-md-6 mb-4" *ngFor="let product of filteredProducts">
                 <div class="rounded overflow-hidden mb-2">
                     <div *ngIf="product.imageProducts?.length">
                         <div class="product-image-container">
