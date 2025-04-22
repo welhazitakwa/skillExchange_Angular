@@ -12,13 +12,13 @@ import Swal from 'sweetalert2';
   styleUrls: ['./add-content.component.css'],
 })
 export class AddContentComponent {
-  formationId!:number;
+  formationId!: number;
   addForm = new FormGroup({
     id: new FormControl(0),
     title: new FormControl('', Validators.required),
     description: new FormControl(''),
     // contentType: new FormControl(''), // image en base64
-    order: new FormControl(''), // Champ 'image' (aucune validation)
+    order_affichage: new FormControl(''), // Champ 'image' (aucune validation)
     lnk_vid: new FormControl(''),
     course: new FormGroup({
       id: new FormControl(0),
@@ -30,17 +30,16 @@ export class AddContentComponent {
     private Rout: Router,
     private diagRef: MatDialogRef<AddContentComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
-    
   ) {}
 
   ngOnInit(): void {
-     this.formationId = this.data.id;
-     this.addForm.patchValue({
-       course: {
-         id: this.formationId,
-       },
-     });
-}
+    this.formationId = this.data.id;
+    this.addForm.patchValue({
+      course: {
+        id: this.formationId,
+      },
+    });
+  }
   C!: ContentCourse;
   SaveContent(F: FormGroup) {
     this.C = { ...F.value };

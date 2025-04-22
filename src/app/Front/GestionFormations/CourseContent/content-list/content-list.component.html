@@ -23,8 +23,8 @@
       allowfullscreen
     ></iframe>
     <p *ngIf="!sanitizedUrl">Invalid or missing YouTube URL</p>
-    <h3 class="main-vid-title">{{ firstElement?.title || 'No title' }}</h3>
-    <span>{{ firstElement?.description || 'No description' }}</span>
+    <h3 class="main-vid-title">{{ firstElement!.title || 'No title' }}</h3>
+    <span>{{ firstElement!.description || 'No description' }}</span>
   </div>
 
   <!-- Video List -->
@@ -45,7 +45,17 @@
         frameborder="0"
         allowfullscreen
       ></iframe>
-      <h3 class="list-title">{{ firstElement?.title || 'No title' }}</h3>
+      <h3 class="list-title">{{ firstElement!.title || 'No title' }}</h3>
+               <div>
+        <button
+          mat-raised-button
+          class="btn btn-danger"
+          style="height: 40px; width: 100px;"
+          
+        >
+          Delete
+        </button>
+      </div>
     </div>
 
     <!-- Second List -->
@@ -65,8 +75,18 @@
         frameborder="0"
         allowfullscreen
       ></iframe>
-      <h3 class="list-title">{{ c.title || 'No title' }}</h3>
-    </div>
+      <h3 class="list-title">{{ c.title || 'No title' }} </h3>
+         <div>
+        <button
+          mat-raised-button
+          class="btn btn-danger"
+          style="height: 40px; width: 100px;"
+          (click)="deleteContent(c.id)"
+        >
+          Delete
+        </button>
+      </div>
+    
   </div>
 </div>
 

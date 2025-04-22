@@ -5,6 +5,7 @@ import { ContentCourse } from 'src/app/core/models/GestionFormation/content-cour
 import { ContentCourseService } from 'src/app/core/services/GestionFormation/content-course.service';
 import { AddContentComponent } from '../add-content/add-content.component';
 import { MatDialog } from '@angular/material/dialog';
+import Swal from 'sweetalert2';
 
 type ContentCourseWithSanitizedUrl = ContentCourse & {
   sanitizedLnk: SafeResourceUrl;
@@ -138,4 +139,29 @@ export class ContentListComponent {
       };
     }
   }
+  deleteContent(id: number) {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'This Content will be permanently deleted! ',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'Cancel',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.courseContentService.deleteContent(id).subscribe({
+            next: (res) => {
+              Swal.fire('Deleted!', 'Your Content has been deleted', 'success');
+              this.loadContent();
+            },
+            error: (err) => {
+              Swal.fire('Error!', 'An error occurred while deleting.', 'error');
+            },
+          });
+        }
+      });
+    }
+  
 }
