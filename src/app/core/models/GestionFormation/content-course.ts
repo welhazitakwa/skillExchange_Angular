@@ -5,8 +5,7 @@ export class ContentCourse {
   title!: string;
   description!: string;
   contentType!: string;
-  order!: number;
+  order_affichage!: number;
   lnk_vid!: string;
   course!: Formation;
-  
 }

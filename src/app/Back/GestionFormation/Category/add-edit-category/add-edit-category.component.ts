@@ -31,14 +31,7 @@ export class AddEditCategoryComponent {
     private Rout: Router,
     private diagRef: MatDialogRef<AddEditCategoryComponent>
   ) {}
-  // get name() {
-  //   return this.addForm.get('name');
-  // }
-
-  // get address() {
-  //   return this.addForm.get('address');
-  // }
-
+ 
   C!: Category;
   SaveCategory(F: FormGroup) {
     this.C = { ...F.value };

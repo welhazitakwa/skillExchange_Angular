@@ -1,86 +1,81 @@
+<app-header-front></app-header-front>
+<br><br>
+<button
+  mat-raised-button
+  class="btn btn-primary"
+  style="margin-left: 1200px; height: 40px; width: 150px;"
+  (click)="OpenAddContent()"
+>
+  Add Content
+</button>
 
-<app-header-front></app-header-front> 
-<br><br>   
- <button mat-raised-button class="btn btn-primary "
-                  style="margin-left: 1200px; height: 40px; width: 150px;"
-                  >
-                  Add Content
-                </button>
- <div class="container">
+<div class="container">
+  <!-- Main Video -->
+  <div class="main-video-container">
+    <iframe
+      *ngIf="sanitizedUrl"
+      class="list-video"
+      type="text/html"
+      width="750"
+      height="405"
+      [src]="sanitizedUrl"
+      frameborder="0"
+      allowfullscreen
+    ></iframe>
+    <p *ngIf="!sanitizedUrl">Invalid or missing YouTube URL</p>
+    <h3 class="main-vid-title">{{ firstElement?.title || 'No title' }}</h3>
+    <span>{{ firstElement?.description || 'No description' }}</span>
+  </div>
 
-   <div class="main-video-container">
-      
-      <iframe 
-       class="list-video" 
-       type="text/html" 
-       width="750" 
-       height="405px"
-       [src]="sanitizedUrl"
-       frameborder="0"></iframe>
-       <h3 class="main-vid-title"> {{ firstElement.title }} </h3>
-      <span> {{ firstElement.description }} </span>
-   </div>
+  <!-- Video List -->
+  <div class="video-list-container">
+    <!-- First Element -->
+    <div
+      class="list"
+      [ngClass]="{ active: activeIndex === 0 }"
+      (click)="playVideo(0)"
+    >
+      <iframe
+        *ngIf="sanitizedUrl"
+        class="list-video"
+        type="text/html"
+        width="320"
+        height="50"
+        [src]="sanitizedUrl"
+        frameborder="0"
+        allowfullscreen
+      ></iframe>
+      <h3 class="list-title">{{ firstElement?.title || 'No title' }}</h3>
+    </div>
 
-   <div class="video-list-container">
-
-      <div class="list active">
-         <iframe 
-       class="list-video" 
-       type="text/html" 
-       width="640" height="50px"
-       [src]="sanitizedUrl"
-       frameborder="0"></iframe>
-         <h3 class="list-title"> {{ firstElement.title }}</h3>
-      </div>
-
-      <div class="list"  *ngFor="let c of secondList" >
-         <iframe class="list-video" 
-          type="text/html" width="640" height="50px"
-           [src]="c.sanitizedLnk"
-          frameborder="0"></iframe>
-    <h3 class="list-title"> {{ c.title }} </h3>
-      </div>
-
-    
-
-   </div>
-
+    <!-- Second List -->
+    <div
+      class="list"
+      *ngFor="let c of secondList; let i = index"
+      [ngClass]="{ active: activeIndex === i + 1 }"
+      (click)="playVideo(i + 1)"
+    >
+      <iframe
+        *ngIf="c.sanitizedLnk"
+        class="list-video"
+        type="text/html"
+        width="320"
+        height="50"
+        [src]="c.sanitizedLnk"
+        frameborder="0"
+        allowfullscreen
+      ></iframe>
+      <h3 class="list-title">{{ c.title || 'No title' }}</h3>
+    </div>
+  </div>
 </div>
 
-
-
-<div *ngIf="listcourseContents.length === 0">
-   <div  class="text-center py-4">
-                           <img
-                             src="https://i.pinimg.com/originals/5d/35/e3/5d35e39988e3a183bdc3a9d2570d20a9.gif"
-                             height="400px"
-                           />
-                         </div>
-
+<!-- Empty State -->
+<div *ngIf="listcourseContents.length === 0" class="text-center py-4">
+  <img
+    src="https://i.pinimg.com/originals/5d/35/e3/5d35e39988e3a183bdc3a9d2570d20a9.gif"
+    height="400px"
+  />
 </div>
-
-
-
-
-
-
-
-
-<!--  js   -->
-<script> 
- let videoList = document.querySelectorAll('.video-list-container .list');
-
-videoList.forEach(vid =>{
-   vid.onclick = () =>{
-      videoList.forEach(remove =>{remove.classList.remove('active')});
-      vid.classList.add('active');
-      let src = vid.querySelector('.list-video').src;
-      let title = vid.querySelector('.list-title').innerHTML;
-      document.querySelector('.main-video-container .main-video').src = src;
-      document.querySelector('.main-video-container .main-video').play();
-      document.querySelector('.main-video-container .main-vid-title').innerHTML = title;
-   };
-});
-</script>
 
 <app-footer-front></app-footer-front>
