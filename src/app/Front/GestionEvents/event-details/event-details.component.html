@@ -1,111 +1,124 @@
 <app-header-front></app-header-front>
 
-<!-- Header Start -->
-<div class="container-fluid page-header" style="margin-bottom: 90px;">
-  <div class="container">
-    <div class="d-flex flex-column justify-content-center" style="min-height: 300px">
-      <h3 class="display-4 text-white text-uppercase">Event Details</h3>
-      <div class="d-inline-flex text-white">
-        <p class="m-0 text-uppercase"><a class="text-white" routerLink="/events">Events</a></p>
-        <i class="fa fa-angle-double-right pt-1 px-3"></i>
-        <p class="m-0 text-uppercase">Details</p>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- Header End -->
+   <!-- Header Start -->
+   <div class="container-fluid page-header" style="margin-bottom: 90px;">
+     <div class="container">
+       <div class="d-flex flex-column justify-content-center" style="min-height: 300px">
+         <h3 class="display-4 text-white text-uppercase">Event Details</h3>
+         <div class="d-inline-flex text-white">
+           <p class="m-0 text-uppercase"><a class="text-white" routerLink="/events">Events</a></p>
+           <i class="fa fa-angle-double-right pt-1 px-3"></i>
+           <p class="m-0 text-uppercase">Details</p>
+         </div>
+       </div>
+     </div>
+   </div>
+   <!-- Header End -->
 
-<!-- Event Details Start -->
-<div class="container-fluid py-5" *ngIf="event; else loading">
-  <div class="container py-5">
-    <div class="row">
-      <!-- Image Carousel -->
-      <div class="col-lg-6 mb-4">
-        <div class="carousel-container position-relative">
-          <div class="carousel">
-            <ng-container *ngIf="event.images && event.images.length > 0; else noImage">
-              <img class="img-fluid" 
-                   [src]="event.images[carouselIndex].images.startsWith('data:image') ? 
-                           event.images[carouselIndex].images : 
-                           'data:image/jpeg;base64,' + event.images[carouselIndex].images" 
-                   alt="Event Image">
-            </ng-container>
-            <ng-template #noImage>
-              <img class="img-fluid" src="assets/assetsFront/img/course-1.jpg" alt="Default Event Image">
-            </ng-template>
-          </div>
-          <!-- Carousel Arrows -->
-          <button class="carousel-arrow left-arrow" 
-                  *ngIf="event.images && event.images.length > 1 && carouselIndex > 0" 
-                  (click)="prevImage()"
-                  aria-label="Previous Image">
-            <i class="fa fa-chevron-left"></i>
-          </button>
-          <button class="carousel-arrow right-arrow" 
-                  *ngIf="event.images && event.images.length > 1 && carouselIndex < event.images.length - 1" 
-                  (click)="nextImage()"
-                  aria-label="Next Image">
-            <i class="fa fa-chevron-right"></i>
-          </button>
-        </div>
-      </div>
-      <!-- Event Info -->
-      <div class="col-lg-6 mb-4">
-        <h1 class="mb-3">{{ event.eventName }}</h1>
-        <p class="text-muted mb-2">
-          <i class="fa fa-map-marker-alt mr-2"></i>{{ event.place }}
-        </p>
-        <p class="text-muted mb-2">
-          <i class="fa fa-calendar mr-2"></i>
-          {{ event.startDate | date: 'dd/MM/yyyy' }} - {{ event.endDate | date: 'dd/MM/yyyy' }}
-        </p>
-        <p class="text-muted mb-2">
-          <i class="fa fa-users mr-2"></i>Max Participants: {{ event.nbr_max }}
-        </p>
-        <!-- Participation Counts -->
-        <div class="d-flex mb-4">
-          <div class="participation-count mr-3">
-            <i class="fa fa-check-circle text-success mr-1"></i>
-            <span>{{ goingCount }} Going</span>
-          </div>
-          <div class="participation-count">
-            <i class="fa fa-star text-warning mr-1"></i>
-            <span>{{ interestedCount }} Interested</span>
-          </div>
-        </div>
-        <p class="mb-4">{{ event.description }}</p>
-        <!-- Status -->
-        <p class="mb-4" 
-           [ngClass]="{
-             'text-success': event.status === 'GOING',
-             'text-info': event.status === 'INTERESTED',
-             'text-muted': !event.status
-           }">
-          <i class="fa fa-info-circle mr-2"></i>
-          {{ event.status === 'GOING' ? 'Going' : 
-             event.status === 'INTERESTED' ? 'Interested' : 
-             'Not Attending' }}
-        </p>
-      </div>
-    </div>
-    <!-- Comments Section Placeholder -->
-    <div class="row mt-5">
-      <div class="col-12">
-        <h3>Comments</h3>
-        <div class="p-4 bg-light rounded">
-          <p class="text-muted">Comments section will be implemented soon.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+   <!-- Event Details Start -->
+   <div class="container-fluid py-5" *ngIf="event; else loading">
+     <div class="container py-5">
+       <div class="row">
+         <!-- Image Carousel -->
+         <div class="col-lg-6 mb-4">
+           <div class="carousel-container position-relative">
+             <div class="carousel">
+               <ng-container *ngIf="event.images && event.images.length > 0; else noImage">
+                 <img class="img-fluid" 
+                      [src]="event.images[carouselIndex].images.startsWith('data:image') ? 
+                              event.images[carouselIndex].images : 
+                              'data:image/jpeg;base64,' + event.images[carouselIndex].images" 
+                      alt="Event Image">
+               </ng-container>
+               <ng-template #noImage>
+                 <img class="img-fluid" src="assets/assetsFront/img/course-1.jpg" alt="Default Event Image">
+               </ng-template>
+             </div>
+             <!-- Carousel Arrows -->
+             <button class="carousel-arrow left-arrow" 
+                     *ngIf="event.images && event.images.length > 1 && carouselIndex > 0" 
+                     (click)="prevImage()"
+                     aria-label="Previous Image">
+               <i class="fa fa-chevron-left"></i>
+             </button>
+             <button class="carousel-arrow right-arrow" 
+                     *ngIf="event.images && event.images.length > 1 && carouselIndex < event.images.length - 1" 
+                     (click)="nextImage()"
+                     aria-label="Next Image">
+               <i class="fa fa-chevron-right"></i>
+             </button>
+           </div>
+         </div>
+         <!-- Event Info -->
+         <div class="col-lg-6 mb-4">
+           <h1 class="mb-3">{{ event.eventName }}</h1>
+           <p class="text-muted mb-2">
+             <i class="fa fa-map-marker-alt mr-2"></i>{{ event.place }}
+           </p>
+           <p class="text-muted mb-2">
+             <i class="fa fa-calendar mr-2"></i>
+             {{ event.startDate | date: 'dd/MM/yyyy' }} - {{ event.endDate | date: 'dd/MM/yyyy' }}
+           </p>
+           <p class="text-muted mb-2">
+             <i class="fa fa-users mr-2"></i>Max Participants: {{ event.nbr_max }}
+           </p>
+           <!-- Participation Counts -->
+           <div class="d-flex mb-4">
+             <div class="participation-count mr-3">
+               <i class="fa fa-check-circle text-success mr-1"></i>
+               <span>{{ goingCount }} Going</span>
+             </div>
+             <div class="participation-count">
+               <i class="fa fa-star text-warning mr-1"></i>
+               <span>{{ interestedCount }} Interested</span>
+             </div>
+           </div>
+           <p class="mb-4">{{ event.description }}</p>
+           <!-- Status -->
+           <p class="mb-4" 
+              [ngClass]="{
+                'text-success': event.status === Status.GOING,
+                'text-info': event.status === Status.INTERESTED,
+                'text-muted': event.status === Status.NOT_ATTENDING || !event.status
+              }">
+             <i class="fa fa-info-circle mr-2"></i>
+             {{ event.status === Status.GOING ? 'Going' : 
+                event.status === Status.INTERESTED ? 'Interested' : 
+                'Not Attending' }}
+           </p>
+           <!-- Action Buttons -->
+           <div class="d-flex mb-4">
+             <button class="btn btn-sm mr-2"
+                     (click)="toggleEvent(Status.GOING)"
+                     [ngClass]="{'btn-primary': event.status !== Status.GOING, 'btn-success': event.status === Status.GOING}">
+               <i class="fa fa-check mr-2"></i> {{ event.status === Status.GOING ? 'Cancel Going' : 'Going' }}
+             </button>
+             <button class="btn btn-sm"
+                     (click)="toggleEvent(Status.INTERESTED)"
+                     [ngClass]="{'btn-info': event.status !== Status.INTERESTED, 'btn-warning': event.status === Status.INTERESTED}">
+               <i class="fa fa-star mr-2"></i> {{ event.status === Status.INTERESTED ? 'Cancel Interested' : 'Interested' }}
+             </button>
+           </div>
+         </div>
+       </div>
+       <!-- Comments Section Placeholder -->
+       <div class="row mt-5">
+         <div class="col-12">
+           <h3>Comments</h3>
+           <div class="p-4 bg-light rounded">
+             <p class="text-muted">Comments section will be implemented soon.</p>
+           </div>
+         </div>
+       </div>
+     </div>
+   </div>
 
-<!-- Loading State -->
-<ng-template #loading>
-  <div class="container-fluid py-5 text-center">
-    <p>Loading event details...</p>
-  </div>
-</ng-template>
-<!-- Event Details End -->
+   <!-- Loading State -->
+   <ng-template #loading>
+     <div class="container-fluid py-5 text-center">
+       <p>Loading event details...</p>
+     </div>
+   </ng-template>
+   <!-- Event Details End -->
 
-<app-footer-front></app-footer-front>
+   <app-footer-front></app-footer-front>

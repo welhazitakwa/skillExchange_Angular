@@ -11,6 +11,8 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { forkJoin, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-showevents',
@@ -33,9 +35,8 @@ export class ShowEventsComponent implements OnInit {
   carouselIndices: { [eventId: number]: number } = {};
   showCalendar: boolean = false;
   calendarOptions: CalendarOptions;
-  userEmail: string = '';
+  userEmail: string | null = null;
   participations: ParticipationEvents[] = [];
-  // Pagination properties
   currentPage: number = 1;
   pageSize: number = 6;
   totalPages: number = 1;
@@ -73,35 +74,59 @@ export class ShowEventsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.userEmail = this.authService.getCurrentUserEmail() || '';
-    console.log('Logged-in user email:', this.userEmail);
+    this.debugAuth();
+    this.userEmail = this.authService.getCurrentUserEmail();
+    console.log('ShowEventsComponent: Logged-in user email:', this.userEmail);
+    if (!this.userEmail) {
+      console.warn('ShowEventsComponent: No user email found. User may not be authenticated.');
+      this.snackBar.open('Please log in to view your event participations.', 'Close', { duration: 5000 });
+    }
     this.loadEvents();
   }
 
+  debugAuth(): void {
+    const token = localStorage.getItem('token');
+    console.log('ShowEventsComponent: Debug: JWT token:', token);
+    if (token) {
+      try {
+        const decoded = JSON.parse(atob(token.split('.')[1]));
+        console.log('ShowEventsComponent: Debug: Decoded JWT:', decoded);
+        console.log('ShowEventsComponent: Debug: JWT sub (email):', decoded.sub);
+      } catch (error) {
+        console.error('ShowEventsComponent: Debug: Error decoding JWT:', error);
+      }
+    }
+  }
+
   loadEvents(): void {
+    console.log('ShowEventsComponent: Loading events');
     this.eventService.getEvents().subscribe({
       next: (events) => {
-        // Initialize events with default status
+        console.log('ShowEventsComponent: Loaded events:', events);
         this.events = events.map(event => ({
           ...event,
-          status: Status.NOT_ATTENDING, // Default status
           images: event.images ? event.images.map(img => ({
             ...img,
             images: img.images || ''
-          })) : []
+          })) : [],
+          status: Status.NOT_ATTENDING // Initialize status
         }));
         this.events.forEach(event => {
           this.carouselIndices[event.idEvent] = 0;
         });
-        // Update filteredEvents to ensure consistency
         this.filteredEvents = [...this.events];
+        console.log('ShowEventsComponent: Initialized events with NOT_ATTENDING:', this.events.map(e => ({ id: e.idEvent, name: e.eventName, status: e.status })));
         this.updatePlaces();
         this.updatePagination();
-        // Load user participations after events are loaded
         this.loadUserParticipations();
       },
       error: (error) => {
-        console.error('Error loading events:', error);
+        console.error('ShowEventsComponent: Error loading events:', {
+          status: error.status,
+          statusText: error.statusText,
+          message: error.message,
+          error: error.error
+        });
         this.snackBar.open('Failed to load events. Please try again later.', 'Close', { duration: 3000 });
       }
     });
@@ -109,60 +134,82 @@ export class ShowEventsComponent implements OnInit {
 
   loadUserParticipations(): void {
     if (!this.userEmail) {
-      console.warn('No authenticated user found');
+      console.warn('ShowEventsComponent: No authenticated user found. Setting all events to NOT_ATTENDING.');
       this.events = this.events.map(event => ({
         ...event,
         status: Status.NOT_ATTENDING
       }));
       this.filteredEvents = [...this.events];
+      console.log('ShowEventsComponent: No user email, events set to NOT_ATTENDING:', this.events.map(e => ({ id: e.idEvent, name: e.eventName, status: e.status })));
       this.updatePagination();
       this.filterEvents();
       this.cdr.detectChanges();
       return;
     }
 
-    this.participationService.getParticipationsByUserEmail(this.userEmail).subscribe({
-      next: (participations) => {
-        console.log('Participations loaded:', participations);
-        // Update event statuses based on participations
-        const updatedEvents = this.events.map(event => {
-          const match = participations.find(p => p.event?.idEvent === event.idEvent);
-          const status = match ? match.status : Status.NOT_ATTENDING;
-          console.log(`Event ${event.idEvent} status: ${status}`);
+    console.log('ShowEventsComponent: Fetching participations for user:', this.userEmail);
+    const requests = this.events.map(event =>
+      this.participationService.getParticipationByUserAndEvent(this.userEmail!, event.idEvent).pipe(
+        map(participation => ({
+          eventId: event.idEvent,
+          status: participation ? participation.status : Status.NOT_ATTENDING
+        })),
+        catchError(error => {
+          console.error(`ShowEventsComponent: Error fetching participation for event ${event.idEvent} (${event.eventName}):`, {
+            status: error.status,
+            statusText: error.statusText,
+            message: error.message,
+            error: error.error
+          });
+          return of({ eventId: event.idEvent, status: Status.NOT_ATTENDING });
+        })
+      )
+    );
+
+    forkJoin(requests).subscribe({
+      next: (results) => {
+        console.log('ShowEventsComponent: Participations loaded:', results);
+        this.events = this.events.map(event => {
+          const result = results.find(r => r.eventId === event.idEvent);
+          const status = result ? result.status : Status.NOT_ATTENDING;
+          console.log(`ShowEventsComponent: Event ${event.idEvent} (${event.eventName}) status: ${status}`);
           return {
             ...event,
             status
           };
         });
-
-        // Update both events and filteredEvents
-        this.events = [...updatedEvents];
-        this.filteredEvents = [...updatedEvents];
+        this.filteredEvents = [...this.events];
+        this.participations = results
+          .filter(r => r.status !== Status.NOT_ATTENDING)
+          .map(r => ({
+            event: { idEvent: r.eventId },
+            status: r.status
+          } as ParticipationEvents));
+        console.log('ShowEventsComponent: Updated events:', this.events.map(e => ({ id: e.idEvent, name: e.eventName, status: e.status })));
+        console.log('ShowEventsComponent: Updated participations:', this.participations);
         this.updatePagination();
         this.filterEvents();
         this.cdr.detectChanges();
       },
       error: (error) => {
-        console.error('Error loading user participations:', error);
-        // Log specific error details
-        console.error('Error details:', {
-          status: error.status,
-          statusText: error.statusText,
-          message: error.message,
-          url: error.url,
-          error: error.error
-        });
-        // Fallback: keep existing events without resetting statuses
+        console.error('ShowEventsComponent: Error loading participations:', error);
+        this.events = this.events.map(event => ({
+          ...event,
+          status: Status.NOT_ATTENDING
+        }));
         this.filteredEvents = [...this.events];
+        console.log('ShowEventsComponent: Error, events set to NOT_ATTENDING:', this.events.map(e => ({ id: e.idEvent, name: e.eventName, status: e.status })));
         this.updatePagination();
         this.filterEvents();
-        this.snackBar.open('Failed to load participations. Please try again.', 'Close', { duration: 5000 });
+        this.cdr.detectChanges();
+        this.snackBar.open('Failed to load your event participations.', 'Close', { duration: 5000 });
       }
     });
   }
 
   updatePlaces(): void {
     this.filteredPlaces = [...new Set(this.events.map(event => event.place).filter(place => place))] as string[];
+    console.log('ShowEventsComponent: Updated places:', this.filteredPlaces);
   }
 
   filterLocations(): void {
@@ -170,37 +217,38 @@ export class ShowEventsComponent implements OnInit {
     this.filteredPlaces = [...new Set(this.events.map(event => event.place).filter(place => 
       place && place.toLowerCase().includes(query)
     ))] as string[];
+    console.log('ShowEventsComponent: Filtered places:', this.filteredPlaces);
   }
 
   openLocationSearch(): void {
-    console.log('Opening location search panel');
+    console.log('ShowEventsComponent: Opening location search panel');
     this.showLocationSearch = true;
     this.locationSearch = '';
     this.filterLocations();
   }
 
   selectLocation(place: string): void {
-    console.log('Selected location:', place);
+    console.log('ShowEventsComponent: Selected location:', place);
     this.locationFilter = place;
     this.showLocationSearch = false;
     this.filterEvents();
   }
 
   openDatePicker(): void {
-    console.log('Opening date picker panel');
+    console.log('ShowEventsComponent: Opening date picker panel');
     this.showDatePicker = true;
     this.dateFilter = 'custom';
   }
 
   logDateChange(): void {
-    console.log('Date changed:', {
+    console.log('ShowEventsComponent: Date changed:', {
       customStartDate: this.customStartDate,
       customEndDate: this.customEndDate
     });
   }
 
   filterEvents(): void {
-    console.log('Filtering events with:', {
+    console.log('ShowEventsComponent: Filtering events with:', {
       searchQuery: this.searchQuery,
       locationFilter: this.locationFilter,
       dateFilter: this.dateFilter,
@@ -277,7 +325,7 @@ export class ShowEventsComponent implements OnInit {
             endDate = new Date(this.customEndDate);
             endDate.setHours(23, 59, 59, 999);
           } else {
-            console.warn('Invalid custom date range:', this.customStartDate, this.customEndDate);
+            console.warn('ShowEventsComponent: Invalid custom date range:', this.customStartDate, this.customEndDate);
             startDate = new Date(0);
             endDate = new Date();
           }
@@ -298,7 +346,8 @@ export class ShowEventsComponent implements OnInit {
     }
 
     this.filteredEvents = tempEvents;
-    this.currentPage = 1; // Reset to first page on filter change
+    console.log('ShowEventsComponent: Filtered events:', this.filteredEvents.map(e => ({ id: e.idEvent, name: e.eventName, status: e.status })));
+    this.currentPage = 1;
     this.updatePagination();
     this.updateCalendarEvents();
   }
@@ -306,18 +355,22 @@ export class ShowEventsComponent implements OnInit {
   updatePagination(): void {
     this.totalPages = Math.ceil(this.filteredEvents.length / this.pageSize);
     this.currentPage = Math.min(this.currentPage, this.totalPages) || 1;
+    console.log('ShowEventsComponent: Updated pagination:', { currentPage: this.currentPage, totalPages: this.totalPages });
   }
 
   get paginatedEvents(): Events[] {
     const start = (this.currentPage - 1) * this.pageSize;
     const end = start + this.pageSize;
-    return this.filteredEvents.slice(start, end);
+    const paginated = this.filteredEvents.slice(start, end);
+    console.log('ShowEventsComponent: Paginated events:', paginated.map(e => ({ id: e.idEvent, name: e.eventName, status: e.status })));
+    return paginated;
   }
 
   goToPage(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
       this.cdr.detectChanges();
+      console.log('ShowEventsComponent: Navigated to page:', page);
     }
   }
 
@@ -325,6 +378,7 @@ export class ShowEventsComponent implements OnInit {
     if (this.currentPage > 1) {
       this.currentPage--;
       this.cdr.detectChanges();
+      console.log('ShowEventsComponent: Navigated to previous page:', this.currentPage);
     }
   }
 
@@ -332,6 +386,7 @@ export class ShowEventsComponent implements OnInit {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
       this.cdr.detectChanges();
+      console.log('ShowEventsComponent: Navigated to next page:', this.currentPage);
     }
   }
 
@@ -348,11 +403,12 @@ export class ShowEventsComponent implements OnInit {
     for (let i = startPage; i <= endPage; i++) {
       pages.push(i);
     }
+    console.log('ShowEventsComponent: Page numbers:', pages);
     return pages;
   }
 
   onDateFilterChange(): void {
-    console.log('Date filter changed to:', this.dateFilter);
+    console.log('ShowEventsComponent: Date filter changed to:', this.dateFilter);
     if (this.dateFilter !== 'custom') {
       this.customStartDate = null;
       this.customEndDate = null;
@@ -362,51 +418,64 @@ export class ShowEventsComponent implements OnInit {
   }
 
   applyCustomDate(): void {
-    console.log('Applying custom date range:', this.customStartDate, this.customEndDate);
+    console.log('ShowEventsComponent: Applying custom date range:', this.customStartDate, this.customEndDate);
     if (this.customStartDate && this.customEndDate && this.customStartDate <= this.customEndDate) {
       this.showDatePicker = false;
       this.filterEvents();
     } else {
-      console.warn('Cannot apply invalid date range:', this.customStartDate, this.customEndDate);
+      console.warn('ShowEventsComponent: Cannot apply invalid date range:', this.customStartDate, this.customEndDate);
     }
   }
 
   toggleEvent(event: Events, status: Status, $event: Event): void {
     $event.stopPropagation();
-    const userEmail = this.authService.getCurrentUserEmail();
-    if (!userEmail) {
+    if (!this.userEmail) {
+      console.warn('ShowEventsComponent: No user email found for toggleEvent.');
       this.snackBar.open('You must be logged in to participate in an event.', 'Close', { duration: 3000 });
       this.router.navigate(['/login']);
       return;
     }
 
-    console.log('Current event status:', event.status);
+    console.log('ShowEventsComponent: Toggling event:', {
+      eventId: event.idEvent,
+      eventName: event.eventName,
+      currentStatus: event.status,
+      newStatus: status
+    });
     const newStatus = event.status === status ? Status.NOT_ATTENDING : status;
-    console.log(`Toggling event ${event.idEvent} from status ${event.status} to ${newStatus}`);
-
     this.participationService.participateInEvent(event.idEvent, newStatus).subscribe({
       next: (response) => {
-        console.log('Participation updated successfully:', response);
+        console.log('ShowEventsComponent: Participation response:', response);
         event.status = newStatus;
-        // Ensure filteredEvents reflects the updated status
+        this.events = this.events.map(e =>
+          e.idEvent === event.idEvent ? { ...e, status: newStatus } : e
+        );
         this.filteredEvents = this.filteredEvents.map(e =>
           e.idEvent === event.idEvent ? { ...e, status: newStatus } : e
         );
+        this.participations = this.participations.filter(p => p.event?.idEvent !== event.idEvent);
+        if (newStatus !== Status.NOT_ATTENDING) {
+          this.participations.push({ event: { idEvent: event.idEvent }, status: newStatus } as ParticipationEvents);
+        }
+        console.log('ShowEventsComponent: Updated events after toggle:', this.events.map(e => ({ id: e.idEvent, name: e.eventName, status: e.status })));
+        console.log('ShowEventsComponent: Updated participations after toggle:', this.participations);
         this.updatePagination();
         this.filterEvents();
+        this.updateCalendarEvents();
         this.cdr.detectChanges();
-        if (newStatus === Status.GOING || newStatus === Status.INTERESTED) {
-          this.snackBar.open(`Successfully registered for ${event.eventName}!`, 'Close', { duration: 5000 });
-        } else {
-          this.snackBar.open(`You have canceled your participation in ${event.eventName}.`, 'Close', { duration: 5000 });
-        }
+        this.snackBar.open(
+          newStatus === Status.NOT_ATTENDING
+            ? `You have canceled your participation in ${event.eventName}.`
+            : `Successfully registered for ${event.eventName} as ${newStatus}!`,
+          'Close',
+          { duration: 5000 }
+        );
       },
       error: (error) => {
-        console.error('Error updating participation:', {
+        console.error('ShowEventsComponent: Error updating participation:', {
           status: error.status,
           statusText: error.statusText,
           message: error.message,
-          url: error.url,
           error: error.error
         });
         let errorMessage = 'Failed to update participation. Please try again.';
@@ -426,6 +495,7 @@ export class ShowEventsComponent implements OnInit {
     const event = this.events.find(e => e.idEvent === eventId);
     if (event && event.images && event.images.length > 0) {
       this.carouselIndices[eventId] = Math.max(0, this.carouselIndices[eventId] - 1);
+      console.log('ShowEventsComponent: Previous image for event:', eventId, 'index:', this.carouselIndices[eventId]);
     }
   }
 
@@ -434,15 +504,18 @@ export class ShowEventsComponent implements OnInit {
     const event = this.events.find(e => e.idEvent === eventId);
     if (event && event.images && event.images.length > 0) {
       this.carouselIndices[eventId] = Math.min(event.images.length - 1, this.carouselIndices[eventId] + 1);
+      console.log('ShowEventsComponent: Next image for event:', eventId, 'index:', this.carouselIndices[eventId]);
     }
   }
 
   goToEventDetails(eventId: number): void {
+    console.log('ShowEventsComponent: Navigating to event details:', eventId);
     this.router.navigate(['/events', eventId]);
   }
 
   toggleCalendar(): void {
     this.showCalendar = !this.showCalendar;
+    console.log('ShowEventsComponent: Toggling calendar:', this.showCalendar);
     if (this.showCalendar) {
       this.updateCalendarEvents();
     }
@@ -462,7 +535,7 @@ export class ShowEventsComponent implements OnInit {
           idEvent: event.idEvent
         }
       }));
-
+    console.log('ShowEventsComponent: Updated calendar events:', calendarEvents);
     this.calendarOptions = {
       ...this.calendarOptions,
       events: calendarEvents
@@ -471,16 +544,17 @@ export class ShowEventsComponent implements OnInit {
 
   handleEventClick(info: any): void {
     const event = info.event;
+    console.log('ShowEventsComponent: Calendar event clicked:', event.extendedProps.idEvent);
     this.router.navigate(['/events', event.extendedProps.idEvent]);
   }
 
   handleImageError(event: Event): void {
-    console.warn('Image failed to load:', (event.target as HTMLImageElement).src);
+    console.warn('ShowEventsComponent: Image failed to load:', (event.target as HTMLImageElement).src);
     (event.target as HTMLImageElement).src = 'assets/assetsFront/img/course-1.jpg';
   }
 
   resetFilters(): void {
-    console.log('Resetting filters');
+    console.log('ShowEventsComponent: Resetting filters');
     this.searchQuery = '';
     this.locationFilter = 'all';
     this.dateFilter = 'any';

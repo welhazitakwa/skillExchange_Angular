@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 import { ParticipationEvents } from '../../models/GestionEvents/participation-events';
 import { Status } from '../../models/GestionEvents/status';
 
@@ -82,4 +82,33 @@ export class ParticipationEventsService {
       tap(response => console.log(`countByEventAndStatus response for eventId=${eventId}, status=${status}:`, response))
     );
   }
+
+  getParticipationByUserAndEvent(email: string, eventId: number): Observable<ParticipationEvents | null> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+        'Authorization': token ? `Bearer ${token}` : '',
+        'Content-Type': 'application/json'
+    });
+    return this.http.get<ParticipationEvents | null>(
+        `${this.url}/user/${email}/event/${eventId}`,
+        { headers }
+    );
+}
+
+getParticipationsByUserEmail2(email: string): Observable<ParticipationEvents[]> {
+  console.log('ParticipationEventsService: Fetching participations for email:', email);
+  const token = localStorage.getItem('token');
+  console.log('ParticipationEventsService: JWT token:', token);
+  const headers = new HttpHeaders({
+      'Authorization': token ? `Bearer ${token}` : '',
+      'Content-Type': 'application/json'
+  });
+  return this.http.get<ParticipationEvents[]>(`${this.url}/user/${email}`, { headers }).pipe(
+      tap(response => console.log('ParticipationEventsService: Participations response:', response)),
+      catchError(error => {
+          console.error('ParticipationEventsService: Error fetching participations:', error);
+          return throwError(error);
+      })
+  );
+}
 }
