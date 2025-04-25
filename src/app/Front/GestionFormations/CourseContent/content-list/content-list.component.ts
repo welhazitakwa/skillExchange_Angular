@@ -27,8 +27,6 @@ export class ContentListComponent {
 
   constructor(
     private courseContentService: ContentCourseService,
-    private route: ActivatedRoute,
-    private router: Router,
     private sanitizer: DomSanitizer,
     private dialog: MatDialog,
     

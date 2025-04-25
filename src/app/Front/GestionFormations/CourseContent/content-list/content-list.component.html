@@ -89,14 +89,17 @@
     
   </div>
 </div>
+</div>
 
 <!-- Empty State -->
-<div *ngIf="listcourseContents.length === 0"  >
+<div *ngIf="listcourseContents.length === 0"
+  style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; height: 100vh;"
+
+>
   <h1> No Content For This Course </h1>
   <img
     src="https://i.pinimg.com/originals/5d/35/e3/5d35e39988e3a183bdc3a9d2570d20a9.gif"
     height="400px"
   />
 </div>
-
 <app-footer-front></app-footer-front>
