@@ -57,6 +57,7 @@
                   <h5 class="text-white mb-3">{{ post.title }}</h5>
                   <p class="text-orange m-0">{{ post.createdAt | date:'MMM dd, yyyy' }}</p>
                 </a>
+               
           
                 <!-- Miniatures des autres images -->
                 <div *ngIf="post.imagePost?.length > 1" class="thumbnail-container">
@@ -68,6 +69,16 @@
                   </div>
                 </div>
               </div>
+<!-- Réactions emoji stylisées avec badge de comptage -->
+<div class="emoji-reactions mt-2">
+  <div class="emoji-badge" *ngFor="let emoji of emojiKeys">
+    <span class="emoji-icon">{{ emoji }}</span>
+    <span class="emoji-count">{{ getEmojiCounts(post)[emoji] }}</span>
+  </div>
+</div>
+
+    
+
           
               <!-- Bouton de suppression si l'utilisateur est l'auteur du post -->
               <div *ngIf="currentUser?.id === post.user?.id">
@@ -75,9 +86,6 @@
               </div>
             </div>
           </div>
-          
-          
-          
           
           <mat-paginator 
             [length]="totalItems" 
@@ -134,4 +142,6 @@
       </div>
     </div>
   </div>
-  <app-footer-front></app-footer-front>
+</div>
+
+<app-footer-front></app-footer-front>

@@ -16,3 +16,7 @@ export const EmojiTypeMapping: { [key in EmojiType]: string } = {
   [EmojiType.Sad]: 'SAD',
   [EmojiType.Angry]: 'ANGRY'
 };
+// export type EmojiCountMapping = {
+//   [key in EmojiType]?: number;
+// };
+

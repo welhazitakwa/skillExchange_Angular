@@ -11,6 +11,8 @@ import { EmojiCommentsService } from 'src/app/core/services/GestionForumPost/emo
 import { EmojiPostsService } from 'src/app/core/services/GestionForumPost/emoji-posts.service';
 import { PostService } from 'src/app/core/services/GestionForumPost/post.service';
 import { UserService } from 'src/app/core/services/GestionUser/user.service';
+import { MailService } from 'src/app/core/services/Mailing/mail.service';
+
 
 @Component({
   selector: 'app-post-details',
@@ -29,6 +31,10 @@ export class PostDetailsComponent {
   usersMap: { [key: string]: User } = {};
   selectedImage: File | null = null;
   currentImageIndexes: { [key: number]: number } = {}; 
+  hoveredEmojiComment: string | null = null;
+  usersByEmoji: { [emoji: string]: User[] } = {};
+
+
 
 
   constructor(
@@ -39,7 +45,8 @@ export class PostDetailsComponent {
     private emojiPostsService: EmojiPostsService,
     private route: ActivatedRoute,
     private router: Router,
-    private emojiCommentsService:EmojiCommentsService
+    private emojiCommentsService:EmojiCommentsService,
+    private mailService: MailService
   ) { }
 
   ngOnInit(): void {
@@ -49,6 +56,7 @@ export class PostDetailsComponent {
     this.getComments();
     this.loadEmojiCounts();
     this.loadEmojiCountsForComments();
+    this.getAllUsers();
     
     if (!this.post?.imagePost) {
       console.log('Le post ou imagePost est undefined');
@@ -132,16 +140,22 @@ export class PostDetailsComponent {
  getComments(): void {
   this.commentService.getCommentsByPost(this.postId).subscribe(
     (comments) => {
-      console.log("RAW created_at:", comments.map(c => typeof c.createdAt)); // Affiche avant la conversion
+      console.log("RAW comments:", comments); // Affiche les commentaires avant transformation
 
-      this.comments = comments.map(comment => ({
-        ...comment,
-        createdAt: comment.createdAt ? new Date(comment.createdAt) : null,
-    updatedAt: comment.updatedAt ? new Date(comment.updatedAt) : null,
-      })
-    );
+      // Sécuriser la transformation des dates
+      this.comments = comments.map(comment => {
+        if (comment.createdAt && comment.updatedAt) {
+          return {
+            ...comment,
+            createdAt: new Date(comment.createdAt),
+            updatedAt: new Date(comment.updatedAt),
+          };
+        } else {
+          return { ...comment, createdAt: null, updatedAt: null }; // Assurer que createdAt et updatedAt sont null si non valides
+        }
+      });
 
-      console.log("AFTER PARSE:", this.comments.map(c => c.createdAt)); // Affiche après la conversion
+      console.log("Transformed comments:", this.comments); // Vérifie après transformation
       this.loadUserDetails();
       this.loadEmojiCountsForComments();
     },
@@ -150,6 +164,7 @@ export class PostDetailsComponent {
     }
   );
 }
+
 
 
 
@@ -182,36 +197,140 @@ isValidDate(date: any): boolean {
     });
   }
 
+
+  
+  
+  notifyMentionedUsers(mentionedNames: string[]): void {
+    mentionedNames.forEach(name => {
+      this.userService.getUserByName(name).subscribe(user => {
+        if (user && this.post?.idPost) {
+          const subject = 'Vous avez été mentionné dans un commentaire';
+          const text = `Bonjour ${user.name},\n\nVous avez été mentionné dans un commentaire sur le post n°${this.post.idPost}.\n\nConnectez-vous pour le consulter.`;
+  
+          this.mailService.sendEmail(user.email, subject, text).subscribe(() => {
+            console.log(`Email de mention envoyé à ${user.email}`);
+          });
+        }
+      });
+    });
+  }
+  ///////////////////////////////////////////////
+  filteredUsers: any[] = []; // Liste des utilisateurs filtrés
+  allUsers: any[] = []; // Liste de tous les utilisateurs
+  getAllUsers(): void {
+    this.userService.getAllUsers().subscribe(
+      (users) => {
+        this.allUsers = users;
+      },
+      (error) => {
+        console.error('Error loading users:', error);
+      }
+    );
+  }
+  // Fonction appelée lors de chaque saisie dans la zone de texte
+ 
+  
+  onInputChange(event: any): void {
+    const inputText = event.target.value;
+    console.log('Texte du commentaire:', inputText);  // Vérifier ce que l'utilisateur tape
+  
+    // Trouver la mention
+    const mentionMatch = inputText.match(/@(\w*)/);
+    
+    if (mentionMatch && mentionMatch[1]) {
+      const searchTerm = mentionMatch[1].toLowerCase();  // Prendre la première lettre
+  
+      if (searchTerm === 'everyone') {
+        console.log('Mention @everyone détectée');
+        // Si c'est @everyone, récupérer tous les utilisateurs
+        this.userService.getEveryoneUsers().subscribe(users => {
+          console.log('Utilisateurs récupérés pour @everyone:', users);
+          this.filteredUsers = users;
+        });
+      } else {
+        // Filtrer les utilisateurs en fonction de la première lettre
+        this.filteredUsers = this.allUsers.filter(user =>
+          user.name.toLowerCase().startsWith(searchTerm)  // Recherche par la première lettre
+        );
+      }
+    } else {
+      // Si aucun @ n'est trouvé ou si aucune lettre n'est saisie après le @
+      this.filteredUsers = [];
+    }
+  }
+  
+
+  
+  
+   // Fonction appelée lorsque l'utilisateur sélectionne un utilisateur à mentionner
+   mentionUser(user: any): void {
+    const inputText = this.newComment.content || '';
+    const mentionMatch = inputText.match(/@(\w*)/);
+    if (mentionMatch) {
+      this.newComment.content = inputText.replace(mentionMatch[0], `@${user.name} `);
+    }
+
+    // Ajouter la classe selected pour marquer l'utilisateur sélectionné
+    this.filteredUsers.forEach(u => u.selected = false);  // Réinitialiser la sélection précédente
+    user.selected = true;  // Sélectionner l'utilisateur actuel
+
+    this.filteredUsers = []; // Vider la liste filtrée après la sélection
+}
+
+  
   addComment(): void {
     if (this.currentUser && this.post) {
-      // const commentToSend: CommentPosts = {
-      //   idComment: 0,
-        
-      //   content: this.newComment.content,
-      //   email: this.currentUser.email,
-      //   createdAt: new Date(),
-      //   updatedAt: new Date(),
-      //   post_id_post: this.post,
-      //   emojiComments: []
-      // };
+      const content = this.newComment.content;
+      const mentionedNames = this.extractMentions(content ?? ''); // Gérer les mentions
+  
+      // Créer un objet CommentPosts
       const commentToSend = new CommentPosts();
-      commentToSend.content = this.newComment.content;
+      commentToSend.content = content;
       commentToSend.email = this.currentUser.email;
+      commentToSend.post_id_post = this.post; // Assurer que le post est bien lié
+      commentToSend.email = this.currentUser.email; // Ajout de l'ID de l'utilisateur
+  
+      // Appel à l'API pour ajouter le commentaire
       this.commentService.addComment(commentToSend, this.post.idPost!).subscribe(
-        () => {
-          this.showCommentModalOpen = false;
+        (response) => {
+          console.log('Comment added successfully:', response);
+  
+          // Réinitialiser le champ de texte du commentaire et fermer la fenêtre modale
           this.newComment.content = '';
+          this.showCommentModalOpen = false;
+  
+          // Rafraîchir la liste des commentaires pour afficher le nouveau
           this.getComments();
+  
+          // Notifier les utilisateurs mentionnés
+          this.notifyMentionedUsers(mentionedNames);
         },
         (error) => {
           console.error('Error adding comment', error);
+          alert('An error occurred while adding the comment. Please try again.');
         }
       );
     } else {
       alert('You must be logged in to comment.');
     }
   }
-
+  //
+  extractMentions(content: string): string[] {
+    const mentionRegex = /@(\w+)/g;
+    const matches = content.matchAll(mentionRegex);
+    const mentionedNames: string[] = [];
+  
+    for (const match of matches) {  
+      if (match[1]) {
+        mentionedNames.push(match[1]);
+      }
+    }
+  
+    return mentionedNames;
+  }
+  
+  
+//////////////////////////////////////////////////////////
   deleteComment(commentId: number): void {
     if (!commentId) return;
 
@@ -226,6 +345,8 @@ isValidDate(date: any): boolean {
       );
     }
   }
+
+  
 
   addPost(): void {
     if (this.currentUser) {
@@ -341,7 +462,6 @@ reactToPost(selectedEmoji: string): void {
 }
 
 
-usersByEmoji: { [emoji: string]: User[] } = {};
 
 getUsersByEmoji(emoji: string): void {
   const emojiKey = EmojiTypeMapping[emoji as keyof typeof EmojiTypeMapping];
@@ -434,6 +554,7 @@ reactToComment(selectedEmoji: string, comment: CommentPosts): void {
 
 usersByEmojiForComment: { [emoji: string]: User[] } = {};
 
+
 // Fonction pour récupérer les utilisateurs ayant réagi avec un emoji sur un commentaire
 getUsersByEmojiForComment(emoji: string, commentId: number): void {
   const emojiKey = EmojiTypeMapping[emoji as keyof typeof EmojiTypeMapping];
@@ -450,7 +571,6 @@ getUsersByEmojiForComment(emoji: string, commentId: number): void {
     });
 }
 
-hoveredEmojiComment: string | null = null;
 
 // Afficher ou masquer la liste des utilisateurs réagissant à un emoji sur un commentaire
 onEmojiHoverComment(emoji: string, commentId: number): void {
@@ -482,13 +602,17 @@ loadEmojiCountsForComments(): void {
 
 
 
+getUserImage(email: string): string {
+  const user = this.usersMap[email];
+  if (user && user.image) {
+    // Si l'image semble être en base64
+    return user.image.startsWith('http') ? user.image : 'data:image/jpeg;base64,' + user.image;
+  }
+  return '/assets/assetsFront/img/user.jpg'; // fallback
+}
 
 
 
  
 
 }
-
-
-
-

@@ -9,78 +9,71 @@ import { PostService } from 'src/app/core/services/GestionForumPost/post.service
 })
 export class ListpostComponent implements OnInit {
 
-  listPosts: Posts[] = [];  // Déclaration de la liste des posts
+  // 📝 Deux listes : posts approuvés et en attente d’approbation
   approvedPosts: Posts[] = [];
   pendingPosts: Posts[] = [];
-  
-  constructor(private postService: PostService) { }
+
+  constructor(private postService: PostService) {}
 
   ngOnInit(): void {
-    // Récupérer tous les posts avec typage explicite pour éviter les erreurs
-    this.loadPosts();
+    this.loadPosts(); // 🔄 Charger tous les posts dès le démarrage
   }
 
+  // 📥 Charger tous les posts et les séparer selon le statut d'approbation
   loadPosts(): void {
     this.postService.getAllPosts().subscribe(
-      (data: Posts[]) => {  // Typage explicite pour les posts
-        // Séparer les posts approuvés et en attente
+      (data: Posts[]) => {
         this.approvedPosts = data.filter(post => post.approved === true);
         this.pendingPosts = data.filter(post => post.approved === false);
-    
-        console.log("Posts approuvés :", this.approvedPosts);
-        console.log("Posts en attente :", this.pendingPosts);
+
+        console.log("✅ Posts approuvés :", this.approvedPosts);
+        console.log("⏳ Posts en attente :", this.pendingPosts);
       },
-      (error: any) => {  // Typage explicite pour l'erreur
-        console.log("Erreur lors de la récupération des posts : ", error);
+      (error: any) => {
+        console.error(" Erreur lors de la récupération des posts :", error);
       }
     );
   }
 
+  // ✅ Approbation d’un post
   approvePost(idPost: number | undefined): void {
     if (idPost !== undefined) {
       this.postService.approvePost(idPost).subscribe(
-        (response: any) => {
-          console.log("Post approuvé avec succès", response);
-          if (response) {
-            // Mettre à jour la liste des posts approuvés
-            const postIndex = this.pendingPosts.findIndex(post => post.idPost === idPost);
-            if (postIndex !== -1) {
-              this.pendingPosts.splice(postIndex, 1);  // Retirer le post de la liste des en attente
-              this.approvedPosts.push(response);  // Ajouter le post à la liste des approuvés
-            }
+        (updatedPost: Posts) => {
+          const postIndex = this.pendingPosts.findIndex(post => post.idPost === idPost);
+          if (postIndex !== -1) {
+            this.pendingPosts.splice(postIndex, 1);      //  Retirer de la liste des en attente
+            this.approvedPosts.push(updatedPost);        //  Ajouter à la liste des approuvés
           }
+          console.log("✅ Post approuvé avec succès :", updatedPost);
         },
         (error) => {
-          console.error("Erreur lors de l'approbation du post", error);
+          console.error("❌ Erreur lors de l'approbation du post :", error);
         }
       );
     } else {
-      console.error("idPost is undefined");
+      console.error("⚠️ idPost est undefined");
     }
   }
-  
-  
+
+  //  Rejet d’un post
   rejectPost(idPost: number | undefined): void {
     if (idPost !== undefined) {
       this.postService.rejectPost(idPost).subscribe(
-        (response) => {
-          console.log("Post rejeté avec succès");
-          // Mettre à jour la liste des posts
+        () => {
           const postIndex = this.pendingPosts.findIndex(post => post.idPost === idPost);
           if (postIndex !== -1) {
-            this.pendingPosts.splice(postIndex, 1);  // Retirer le post de la liste des en attente
+            this.pendingPosts.splice(postIndex, 1);  //  Retirer de la liste des en attente
           }
+          console.log("🚫 Post rejeté avec succès");
         },
         (error) => {
-          console.error("Erreur lors du rejet du post", error);
+          console.error("❌ Erreur lors du rejet du post :", error);
         }
       );
     } else {
-      console.error("idPost is undefined");
+      console.error("⚠️ idPost est undefined");
     }
   }
-  
-  
-  
-  
+
 }

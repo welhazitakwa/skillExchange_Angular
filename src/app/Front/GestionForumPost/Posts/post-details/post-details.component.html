@@ -126,11 +126,12 @@
                     <!-- Display Post Comments -->
                     <div *ngFor="let comment of comments" class="comment-card mb-4 p-3 bg-light rounded">
                         <div class="d-flex align-items-start">
-                            <!-- User Avatar -->
-                            <div class="me-3">
-                                <img [src]="usersMap[comment!.email].image || '/assets/assetsFront/img/user.jpg'"
-                                     class="rounded-circle" width="60" height="60" alt="User avatar">
-                            </div>
+                             <!-- User Avatar -->
+<div class="me-3" *ngIf="usersMap[comment.email] as user">
+  <img [src]="user.image ? 'data:image/jpeg;base64,' + user.image : '/assets/assetsFront/img/team-3.jpg'"
+       class="rounded-circle" width="60" height="60" alt="User avatar">
+</div>
+
 
                            <!-- Comment Content -->
 <div class="flex-grow-1">
@@ -219,17 +220,20 @@
         </div>
     </div>
 
-            <div class="col-lg-4 mt-5 mt-lg-0">
-                <!-- Author Bio -->
-                <div class="d-flex flex-column text-center bg-dark rounded mb-5 py-5 px-4">
-                    <img [src]="'data:image/jpeg;base64,' + post?.user?.image" 
-                    class="img-fluid rounded-circle mx-auto mb-3" 
-                    style="width: 100px;" 
-                    alt="User Image">
-                                   <h3 class="text-primary mb-3">{{ post?.user?.name }}</h3>
-                    <h3 class="text-uppercase mb-4" style="letter-spacing: 5px;">Tag Cloud</h3>
-                    <p class="text-white m-0">{{ post?.user?.bio }}</p>
-                </div>
+    <div class="col-lg-4 mt-5 mt-lg-0">
+        <!-- Author Bio -->
+        <div class="author-bio bg-dark text-center rounded mb-5 py-5 px-4">
+          <div class="author-image-container">
+            <img [src]="'data:image/jpeg;base64,' + post?.user?.image" 
+                 class="img-fluid rounded-circle mx-auto mb-3" 
+                 alt="User Image">
+          </div>
+          <h3 class="text-primary mb-3">{{ post?.user?.name }}</h3>
+          <h3 class="tag-cloud text-uppercase mb-4">Tag Cloud</h3>
+          <p class="text-white">{{ post?.user?.bio }}</p>
+        </div>
+      </div>
+      
 
                 <!-- Sidebar Start -->
                 <div class="col-lg-4 mt-5 mt-lg-0">
@@ -246,66 +250,77 @@
                         </form>
                     </div>
 
-                    <!-- Category List 
-                    <div class="mb-5">
-                        <h3 class="text-uppercase mb-4" style="letter-spacing: 5px;">Categories</h3>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                <a href="" class="text-decoration-none h6 m-0">Web Design</a>
-                                <span class="badge badge-primary badge-pill">150</span>
-                            </li>
-                             More categories can be added here 
-                        </ul>
-                    </div>
-
-                     Recent Post 
-                    <div class="mb-5">
-                        <h3 class="text-uppercase mb-4" style="letter-spacing: 5px;">Recent Post</h3>
-                        <a class="d-flex align-items-center text-decoration-none mb-3" href="">
-                            <img class="img-fluid rounded" src="/assets/assetsFront/img/blog-80x80.jpg" alt="">
-                            <div class="pl-3">
-                                <h6 class="m-1">Diam lorem dolore justo eirmod lorem dolore</h6>
-                                <small>Jan 01, 2050</small>
-                            </div>
-                        </a>
-                    </div>
-
-                     Tag Cloud 
-                    <div class="mb-5">
-                        <h3 class="text-uppercase mb-4" style="letter-spacing: 5px;">Tag Cloud</h3>
-                        <div class="d-flex flex-wrap m-n1">
-                            <a href="" class="btn btn-outline-primary m-1">Design</a>
-                            <a href="" class="btn btn-outline-primary m-1">Development</a>
-                            <a href="" class="btn btn-outline-primary m-1">Marketing</a>
-                        </div>
-                    </div>
-                </div>
-                 Sidebar End -->
+                  
             </div>
         </div>
     </div>
 </div>
 <!-- Detail End -->
 
-<!-- Modal Ajouter Commentaire -->
+
 <div *ngIf="showCommentModalOpen" class="modal fade show d-block" tabindex="-1" role="dialog"
      style="background-color: rgba(0,0,0,0.5);">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Leave a Comment</h5>
-                <button type="button" class="btn-close" (click)="showCommentModalOpen = false"></button>
+            <div class="modal-header bg-light">
+                <h5 class="modal-title text-primary">
+                    <i class="bi bi-chat-left-text me-2"></i>Leave a Comment
+                </h5>
+                <button type="button" class="btn-close" (click)="showCommentModalOpen = false" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <textarea [(ngModel)]="newComment.content" class="form-control" placeholder="Write your comment here..." rows="4"></textarea>
+                <!-- Avertissement pour @everyone -->
+                <div *ngIf="newComment?.content?.includes('@everyone')" class="alert alert-warning d-flex align-items-center">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <div>
+                        <strong>Attention :</strong> Mentionner everyone enverra une notification à tous les utilisateurs !
+                    </div>
+                </div>
+
+                <!-- Zone de texte pour le commentaire -->
+                <div class="form-floating mb-3">
+                    <textarea [(ngModel)]="newComment.content" class="form-control" 
+                              placeholder="Write your comment here..." 
+                              id="commentTextarea" rows="5"
+                              (input)="onInputChange($event)"
+                              style="min-height: 120px; resize: vertical;"></textarea>
+                    <label for="commentTextarea">Your comment</label>
+                </div>
+
+                <!-- Liste des utilisateurs filtrés -->
+                <div *ngIf="filteredUsers.length > 0" class="mention-dropdown">
+                    <div class="dropdown-header text-muted small px-3 py-1">
+                        <i class="bi bi-at"></i> Mention a user:
+                    </div>
+                    <ul class="filtered-users-list">
+                        <li *ngFor="let user of filteredUsers" 
+                            (click)="mentionUser(user)" 
+                            [ngClass]="{'selected': user.selected}" 
+                            class="user-item d-flex align-items-center px-3 py-2">
+                            <img [src]="user.image ? 'data:image/jpeg;base64,' + user.image : 'assets/images/default-avatar.png'" 
+     class="rounded-circle me-2" 
+     width="24" height="24" 
+     alt="User avatar">
+
+                            <span> &#64;{{user.name}}</span>
+                        </li>
+                    </ul>
+                </div>
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" (click)="showCommentModalOpen = false">Close</button>
-                <button class="btn btn-primary" (click)="addComment()">Submit Comment</button>
+            <div class="modal-footer border-top-0">
+                <button class="btn btn-outline-secondary" (click)="showCommentModalOpen = false">
+                    <i class="bi bi-x-lg me-1"></i>Cancel
+                </button>
+                <button class="btn btn-primary" (click)="addComment()" [disabled]="!newComment.content?.trim()">
+                    <i class="bi bi-send-fill me-1"></i>Post Comment
+                </button>
             </div>
         </div>
     </div>
 </div>
+
+
+
 
 
 

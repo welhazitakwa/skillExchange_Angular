@@ -7,6 +7,7 @@ import { User } from 'src/app/core/models/GestionUser/User';
 import { UserService } from 'src/app/core/services/GestionUser/user.service';
 import { AuthService } from 'src/app/core/services/Auth/auth.service';
 import { Router } from '@angular/router';
+import { EmojiTypeMapping } from 'src/app/core/models/GestionForumPost/EmojiType';
 
 @Component({
   selector: 'app-show-posts',
@@ -15,27 +16,29 @@ import { Router } from '@angular/router';
 })
 export class ShowPostsComponent implements OnInit {
   posts: any[] = [];
+  emojiTypeMapping = EmojiTypeMapping;
+  emojiKeys = Object.keys(this.emojiTypeMapping) as (keyof typeof EmojiTypeMapping)[];
+
   totalItems = 0;
   page = 0;
   pageSize = 6;
+  //emojiTypeMapping = ['👍', '❤️', '😂', '😢', '😮' ,'😡'];  // Liste des emojis à afficher
 
   newPost: Posts = new Posts();
   showPostModalOpen = false;
   selectedFiles: File[] = [];
-  currentUser: User | null=null;
+  currentUser: User | null = null;
   selectedImages: string[] = [];
   imagesPreviews: any[] = [];  // ✅ Typé correctement comme tableau
 
   constructor(private postService: PostService,  private router: Router, private authService: AuthService,
-    private userService: UserService) {
-   
-  }
+    private userService: UserService) {}
 
   ngOnInit(): void {
     this.loadPosts();
+    this.emojiKeys = Object.keys(this.emojiTypeMapping) as (keyof typeof EmojiTypeMapping)[];
     this.loadCurrentUser();
     console.log('Utilisateur récupéré au ngOnInit :', this.currentUser);
-
   }
   
   loadPosts() {
@@ -46,56 +49,30 @@ export class ShowPostsComponent implements OnInit {
   }
   
   currentImageIndexes: { [key: number]: number } = {}; 
-  // currentImageIndex(post: Posts): number {
-  //   return post.imagePost?.length > 0 ? 0 : -1;
-  // }
 
-  // Fonction pour naviguer à travers les images (précédente ou suivante)
-  // navigateImage(post: Posts, direction: 'prev' | 'next'): void {
-  //   if (post.imagePost?.length) {
-  //     const currentIndex = this.currentImageIndex(post);
-  //     let newIndex = direction === 'prev' ? currentIndex - 1 : currentIndex + 1;
-
-  //     // Limiter l'index entre 0 et la longueur des images - 1
-  //     if (newIndex < 0) {
-  //       newIndex = post.imagePost.length - 1;  // Aller à la dernière image
-  //     } else if (newIndex >= post.imagePost.length) {
-  //       newIndex = 0;  // Revenir à la première image
-  //     }
-
-  //     // Mettre à jour l'image principale avec le nouvel index
-  //     post.imagePost[0] = post.imagePost[newIndex];
-  //   }
-  // }
   navigateImage(post: Posts, direction: 'prev' | 'next'): void {
     if (post.imagePost?.length && post.idPost !== undefined) {
-      // Récupérer l'index actuel de l'image du post
       let currentIndex = this.currentImageIndexes[post.idPost] || 0;
-
-      // Calculer le nouvel index
       let newIndex = direction === 'prev' ? currentIndex - 1 : currentIndex + 1;
 
-      // Limiter l'index entre 0 et la longueur des images - 1
       if (newIndex < 0) {
-        newIndex = post.imagePost.length - 1;  // Aller à la dernière image
+        newIndex = post.imagePost.length - 1;
       } else if (newIndex >= post.imagePost.length) {
-        newIndex = 0;  // Revenir à la première image
+        newIndex = 0;
       }
 
-      // Mettre à jour l'index de l'image actuelle dans l'objet currentImageIndexes
       this.currentImageIndexes[post.idPost] = newIndex;
     }
   }
-  // Fonction pour récupérer l'image actuelle d'un post
+
   currentImageIndex(post: Posts): number {
-    // S'assurer que l'index existe avant de l'utiliser
     return post.idPost !== undefined ? this.currentImageIndexes[post.idPost] || 0 : 0;
   }
 
   onPageChange(event: PageEvent) {
-    this.page = event.pageIndex;  // L'indice de la page sélectionnée
-    this.pageSize = event.pageSize;  // La taille de la page sélectionnée
-    this.loadPosts();  // Recharge les posts en fonction de la nouvelle page et taille
+    this.page = event.pageIndex; 
+    this.pageSize = event.pageSize;  
+    this.loadPosts(); 
   }
   
   transformStyle(post: any): string {
@@ -126,7 +103,6 @@ export class ShowPostsComponent implements OnInit {
           return imagePost;
         });
   
-        // 🔥 Ajout de l'utilisateur courant
         this.newPost.user = this.currentUser;
   
         this.postService.addPost(this.newPost).subscribe(() => {
@@ -135,11 +111,9 @@ export class ShowPostsComponent implements OnInit {
           this.newPost = new Posts();
           this.selectedFiles = [];
           this.imagesPreviews = [];
-          this.page = 0; // retour à la première page (optionnel)
-          this.loadPosts(); // ⬅️ Recharge la liste des posts depuis le backend
+          this.page = 0; 
+          this.loadPosts(); 
         });
-        
-  
       } catch (error) {
         console.error('Erreur lors du traitement des images:', error);
         alert('Une erreur est survenue lors du traitement des images.');
@@ -148,7 +122,6 @@ export class ShowPostsComponent implements OnInit {
       alert('Le titre et le contenu sont obligatoires!');
     }
   }
-  
 
   onFilesSelected(event: any) {
     const files: FileList = event.target.files;
@@ -177,13 +150,13 @@ export class ShowPostsComponent implements OnInit {
       reader.readAsDataURL(file);
     });
   }
+
   switchMainImage(post: Posts, index: number) {
     if (post.imagePost && post.imagePost.length > index) {
-      // Échange la première image avec celle cliquée
-      [post.imagePost[0], post.imagePost[index]] = 
-      [post.imagePost[index], post.imagePost[0]];
+      [post.imagePost[0], post.imagePost[index]] = [post.imagePost[index], post.imagePost[0]];
     }
   }
+
   private async getBase64WithoutPrefix(file: File): Promise<string> {
     return new Promise((resolve) => {
       const reader = new FileReader();
@@ -191,6 +164,7 @@ export class ShowPostsComponent implements OnInit {
       reader.readAsDataURL(file);
     });
   }
+
   private loadCurrentUser() {
     const currentUserEmail = this.authService.getCurrentUserEmail();
     if (!currentUserEmail) {
@@ -206,12 +180,24 @@ export class ShowPostsComponent implements OnInit {
       }
     );
   }
+
   deletePost(id: number): void {
     if (confirm('Êtes-vous sûr de vouloir supprimer ce post ?')) {
       this.postService.deletePost(id).subscribe(() => {
-        this.loadPosts(); // recharge les posts
+        this.loadPosts(); 
       });
     }
+  }
+
+
+  getEmojiCounts(post: Posts): { [emoji: string]: number } {
+    const counts: { [emoji: string]: number } = {};
+  
+    for (const emoji of this.emojiKeys) {
+      counts[emoji] = post.emojiPosts?.filter(e => e.emoji === this.emojiTypeMapping[emoji]).length || 0;
+    }
+  
+    return counts;
   }
   
 }

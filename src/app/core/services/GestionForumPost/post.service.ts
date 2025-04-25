@@ -35,13 +35,14 @@ export class PostService {
   deletePost(id: number): Observable<void> {
     return this.http.delete<void>(`${this.url}/deletePosts/${id}`);
   }
-  approvePost(id: number): Observable<any> {
-    return this.http.post(`${this.url}/approvePost/${id}`, {});
+  approvePost(id: number): Observable<Posts> {
+    return this.http.post<Posts>(`${this.url}/approvePost/${id}`, {});
   }
   
-  rejectPost(id: number): Observable<any> {
-    return this.http.post(`${this.url}/rejectPost/${id}`, {});
+  rejectPost(id: number): Observable<Posts> {
+    return this.http.post<Posts>(`${this.url}/rejectPost/${id}`, {});
   }
+  
   
   
   

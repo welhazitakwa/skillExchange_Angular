@@ -87,6 +87,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { PostDetailsComponent } from './Front/GestionForumPost/Posts/post-details/post-details.component';
 
 
+
 //import { ImageCropperModule } from 'ngx-image-cropper';
 
 
@@ -168,7 +169,6 @@ import { PostDetailsComponent } from './Front/GestionForumPost/Posts/post-detail
     AngularToastifyModule,
     MatPaginatorModule,
     ImageCropperComponent,
-
     //ImageCropperModule,
   ],
   providers: [ToastService],
