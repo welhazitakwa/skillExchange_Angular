@@ -6,6 +6,7 @@ import { ContentCourseService } from 'src/app/core/services/GestionFormation/con
 import { AddContentComponent } from '../add-content/add-content.component';
 import { MatDialog } from '@angular/material/dialog';
 import Swal from 'sweetalert2';
+import { EditContentComponent } from '../edit-content/edit-content.component';
 
 type ContentCourseWithSanitizedUrl = ContentCourse & {
   sanitizedLnk: SafeResourceUrl;
@@ -28,8 +29,7 @@ export class ContentListComponent {
   constructor(
     private courseContentService: ContentCourseService,
     private sanitizer: DomSanitizer,
-    private dialog: MatDialog,
-    
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -106,18 +106,18 @@ export class ContentListComponent {
   }
 
   OpenAddContent(): void {
-     const dialogRef = this.dialog.open(AddContentComponent, {
-       data: { id: this.formationId },
-       //width: '1000px',
-     });
-        dialogRef.afterClosed().subscribe({
-          next: (val) => {
-            if (val) {
-              this.loadContent();
-            }
-          },
-          error: console.log,
-        });
+    const dialogRef = this.dialog.open(AddContentComponent, {
+      data: { id: this.formationId },
+      //width: '1000px',
+    });
+    dialogRef.afterClosed().subscribe({
+      next: (val) => {
+        if (val) {
+          this.loadContent();
+        }
+      },
+      error: console.log,
+    });
   }
 
   playVideo(index: number) {
@@ -138,28 +138,41 @@ export class ContentListComponent {
     }
   }
   deleteContent(id: number) {
-      Swal.fire({
-        title: 'Are you sure?',
-        text: 'This Content will be permanently deleted! ',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!',
-        cancelButtonText: 'Cancel',
-      }).then((result) => {
-        if (result.isConfirmed) {
-          this.courseContentService.deleteContent(id).subscribe({
-            next: (res) => {
-              Swal.fire('Deleted!', 'Your Content has been deleted', 'success');
-              this.loadContent();
-            },
-            error: (err) => {
-              Swal.fire('Error!', 'An error occurred while deleting.', 'error');
-            },
-          });
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'This Content will be permanently deleted! ',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.courseContentService.deleteContent(id).subscribe({
+          next: (res) => {
+            Swal.fire('Deleted!', 'Your Content has been deleted', 'success');
+            this.loadContent();
+          },
+          error: (err) => {
+            Swal.fire('Error!', 'An error occurred while deleting.', 'error');
+          },
+        });
+      }
+    });
+  }
+  openEditContent(catId: number) {
+    const dialogRef = this.dialog.open(EditContentComponent, {
+      data: { id: catId },
+      width: '550px',
+    });
+    dialogRef.afterClosed().subscribe({
+      next: (val) => {
+        if (val) {
+          this.loadContent();
         }
-      });
-    }
-  
+      },
+      error: console.log,
+    });
+  }
 }

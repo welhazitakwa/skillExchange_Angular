@@ -106,6 +106,7 @@ import { ApprooveCourseComponent } from './Back/GestionFormation/Formation/appro
 import { NgChartsModule } from 'ng2-charts';
 import { ContentListComponent } from './Front/GestionFormations/CourseContent/content-list/content-list.component';
 import { AddContentComponent } from './Front/GestionFormations/CourseContent/add-content/add-content.component';
+import { EditContentComponent } from './Front/GestionFormations/CourseContent/edit-content/edit-content.component';
 
 
 @NgModule({
@@ -189,6 +190,7 @@ import { AddContentComponent } from './Front/GestionFormations/CourseContent/add
     ApprooveCourseComponent,
     ContentListComponent,
     AddContentComponent,
+    EditContentComponent,
   ],
   imports: [
     RouterModule,

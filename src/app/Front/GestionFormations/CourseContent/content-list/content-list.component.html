@@ -50,10 +50,18 @@
         <button
           mat-raised-button
           class="btn btn-danger"
-          style="height: 40px; width: 100px;"
+          style="height: 40px; width: 80px; margin-bottom: 10px;"
           (click)="deleteContent(firstElement.id)"
         >
           Delete
+        </button>
+        <button
+          mat-raised-button
+          class="btn btn-warning"
+          style="height: 40px; width: 80px;"
+          (click)="openEditContent(firstElement.id)"
+        >
+          Edit
         </button>
       </div>
     </div>
@@ -77,14 +85,23 @@
       ></iframe>
       <h3 class="list-title">{{ c.title || 'No title' }} </h3>
          <div>
-        <button
+           <button
           mat-raised-button
           class="btn btn-danger"
-          style="height: 40px; width: 100px;"
+          style="height: 40px; width: 80px; margin-bottom: 10px;"
           (click)="deleteContent(c.id)"
         >
           Delete
         </button>
+          <button
+          mat-raised-button
+          class="btn btn-warning"
+          style="height: 40px; width: 80px;"
+          (click)="openEditContent(c.id)"
+        >
+          Edit
+        </button>
+       
       </div>
     
   </div>
