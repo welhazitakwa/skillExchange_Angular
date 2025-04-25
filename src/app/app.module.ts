@@ -107,6 +107,7 @@ import { NgChartsModule } from 'ng2-charts';
 import { ContentListComponent } from './Front/GestionFormations/CourseContent/content-list/content-list.component';
 import { AddContentComponent } from './Front/GestionFormations/CourseContent/add-content/add-content.component';
 import { EditContentComponent } from './Front/GestionFormations/CourseContent/edit-content/edit-content.component';
+import { ListContentStudentComponent } from './Front/GestionFormations/Formation/list-content-student/list-content-student.component';
 
 
 @NgModule({
@@ -191,6 +192,7 @@ import { EditContentComponent } from './Front/GestionFormations/CourseContent/ed
     ContentListComponent,
     AddContentComponent,
     EditContentComponent,
+    ListContentStudentComponent,
   ],
   imports: [
     RouterModule,

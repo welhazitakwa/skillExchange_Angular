@@ -45,6 +45,7 @@ import { ParticipantsListComponent } from './Back/GestionFormation/Formation/par
 import { ApprooveCourseComponent } from './Back/GestionFormation/Formation/approove-course/approove-course.component';
 import { ContentListComponent } from './Front/GestionFormations/CourseContent/content-list/content-list.component';
 import { AddContentComponent } from './Front/GestionFormations/CourseContent/add-content/add-content.component';
+import { ListContentStudentComponent } from './Front/GestionFormations/Formation/list-content-student/list-content-student.component';
 
 
 const routes: Routes = [
@@ -95,6 +96,7 @@ const routes: Routes = [
   { path: 'approveCourse', component: ApprooveCourseComponent },
   { path: 'ContentList', component: ContentListComponent },
   { path: 'courses/:id/contents/add', component: AddContentComponent },
+  { path: 'sudentsContent', component: ListContentStudentComponent },
 
   { path: 'backcartProducts', component: AllCartProductsComponent },
   /***************************************************************/

@@ -176,7 +176,6 @@ export class CoursesByCatFrontComponent {
             }
           );
 
-        
           this.participationServ.getParticipationsByIdCourse(f.id).subscribe(
             (data) => {
               this.listParticipation = data;
@@ -590,4 +589,10 @@ export class CoursesByCatFrontComponent {
     return this.userService.addTransaction(recipient.id, transaction);
   }
   // ----------------------rating ---------------------------------------------
+
+  TakeCourses(idFormation: number) {
+    this.router.navigate(['/sudentsContent'], {
+      state: { formationId: idFormation },
+    });
+  }
 }
