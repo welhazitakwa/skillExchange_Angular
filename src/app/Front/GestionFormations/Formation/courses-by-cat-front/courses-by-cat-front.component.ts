@@ -229,28 +229,6 @@ export class CoursesByCatFrontComponent {
     );
   }
 
-  // checkParticipation(userId: number, formationId: number): { verif: boolean}{
-  //   console.log('🔥 Début de la méthode checkParticipation');
-  //   this.participationService.checkParticipation(userId, formationId).subscribe(
-  //     (data) => {
-  //       this.verifParticipation = data;
-  //       return { verif: this.verifParticipation };
-  //       console.log('*******************************************');
-  //       console.log('etat participation : ' + this.verifParticipation);
-  //       console.log('*******************************************');
-  //     },
-  //     (error) => {
-  //       console.log(
-  //         '****************errreeeuuuurrraaaa***************************'
-  //       );
-
-  //       console.error(error);
-  //     }
-  //   );
-  // }
-  // ------------********************boutonet************************------------------------
-  // Dans ton service de participation
-
   payer(courseId: number, prix: number, title: string, author: User) {
     const paiement = new PaiementFormation();
     //participation.idp = 0;

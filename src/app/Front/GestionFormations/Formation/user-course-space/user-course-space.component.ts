@@ -53,7 +53,7 @@ export class UserCourseSpaceComponent {
       (data) => {
         this.listFormations = data;
         this.filteredFormations = data;
-        // ahahahahahahahahahahahahahahaha
+
         this.filteredFormations.forEach((f) => {
           this.ratingService.getAverageRatingForCourse(f.id).subscribe(
             (avg) => {
@@ -82,25 +82,22 @@ export class UserCourseSpaceComponent {
             }
           );
 
-         this.participationServ.getParticipationsByIdCourse(f.id).subscribe(
-           (data) => {
-             this.listParticipation = data;
-             // Store the number of participation rows (students)
-             this.totalParticipantsMap[f.id] = this.listParticipation.length;
-           },
-           (erreur) => {
-             console.error(
-               `Error fetching participations for course ${f.id}:`,
-               erreur
-             );
-             this.totalParticipantsMap[f.id] = 0; // Fallback value
-           },
-           () => console.log(this.listParticipation)
-         );
-
-          // Fetch payment and participation status
+          this.participationServ.getParticipationsByIdCourse(f.id).subscribe(
+            (data) => {
+              this.listParticipation = data;
+              // Store the number of participation rows (students)
+              this.totalParticipantsMap[f.id] = this.listParticipation.length;
+            },
+            (erreur) => {
+              console.error(
+                `Error fetching participations for course ${f.id}:`,
+                erreur
+              );
+              this.totalParticipantsMap[f.id] = 0; // Fallback value
+            },
+            () => console.log(this.listParticipation)
+          );
         });
-        // ahahahahahahahahahahahahahahaha
       },
       (erreur) => console.log('erreur'),
       () => console.log(this.listFormations)
@@ -190,5 +187,22 @@ export class UserCourseSpaceComponent {
     this.router.navigate(['/ContentList'], {
       state: { formationId: idFormation },
     });
+  }
+
+  // Rating
+  getEmoji(value: number): string {
+    const emojis = ['😡', '😕', '😐', '🙂', '🤩'];
+    return emojis[value - 1] || '';
+  }
+  formatAverageRating(rating: number | undefined): string {
+    if (rating === undefined || rating === 0) {
+      return '0.00';
+    }
+    // Check if the rating is a whole number
+    if (Math.floor(rating) === rating) {
+      return rating.toString(); // No decimal for whole numbers (e.g., 3.0 -> '3')
+    }
+    // Show one decimal place for non-whole numbers (e.g., 2.5 -> '2.5')
+    return rating.toFixed(2);
   }
 }
