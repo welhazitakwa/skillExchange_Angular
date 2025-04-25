@@ -42,7 +42,8 @@ export class CoursesByCatFrontComponent {
   listFormations: Formation[] = [];
   currentUser: User | null = null;
   listParticipation: ParticipationFormation[] = [];
-  totalProgress: number = 0;
+  totalParticipantsMap: { [courseId: number]: number } = {};
+
   constructor(
     private catServ: CategoryService,
     private dialog: MatDialog,
@@ -175,19 +176,23 @@ export class CoursesByCatFrontComponent {
             }
           );
 
+        
           this.participationServ.getParticipationsByIdCourse(f.id).subscribe(
             (data) => {
               this.listParticipation = data;
-              this.totalProgress = this.listParticipation.reduce(
-                (sum, participation) => sum + (participation.progress || 0),
-                0
-              );
+              // Store the number of participation rows (students)
+              this.totalParticipantsMap[f.id] = this.listParticipation.length;
             },
-            (erreur) => console.log('erreur'),
+            (erreur) => {
+              console.error(
+                `Error fetching participations for course ${f.id}:`,
+                erreur
+              );
+              this.totalParticipantsMap[f.id] = 0; // Fallback value
+            },
             () => console.log(this.listParticipation)
           );
 
-          // Fetch payment and participation status
           this.payServ
             .checkPaiement(this.currentUser!.id, f.id)
             .subscribe((hasPaid) => {
@@ -246,7 +251,7 @@ export class CoursesByCatFrontComponent {
   // ------------********************boutonet************************------------------------
   // Dans ton service de participation
 
-  payer(courseId: number, prix: number, title: string , author: User) {
+  payer(courseId: number, prix: number, title: string, author: User) {
     const paiement = new PaiementFormation();
     //participation.idp = 0;
     paiement.participant = this.currentUser?.id ?? 0;
@@ -277,7 +282,6 @@ export class CoursesByCatFrontComponent {
                     console.log('balance updated');
                     this.loadCurrentUser;
                     //  --**********-------------Transaction ---------------************
-                 
 
                     //  --**********-------------Author ---------------************
 
@@ -286,7 +290,6 @@ export class CoursesByCatFrontComponent {
                       next: (val: any) => {
                         console.log('balance author updated');
                         this.loadCurrentUser;
-                                             
                       },
                       error: (err: any) => {
                         console.log('balance author not updated ');
@@ -297,49 +300,43 @@ export class CoursesByCatFrontComponent {
                     console.log('paiement non effectué');
                   },
                 });
-// tttttrrrrrrrrrrrrraaaaaaaaasssssssaaaaaaaaaaccccccccttttttttttttiiiiiiiiiioooooonnnnnnnnnnnn
-      if (this.currentUser) {
-        this.createTransaction(
-          this.currentUser,
-          -prix,
-          TransactionType.PAYMENT,
-          'Course Payment ' + title
-        ).subscribe(
-          () => {
-           // alert('Withdrawal completed successfully');
-          },
-          (error) => {
-            console.error('Withdrawal transaction failed:', error);
-            alert('Withdrawal failed');
-          }
-        );
-      }
+                // tttttrrrrrrrrrrrrraaaaaaaaasssssssaaaaaaaaaaccccccccttttttttttttiiiiiiiiiioooooonnnnnnnnnnnn
+                if (this.currentUser) {
+                  this.createTransaction(
+                    this.currentUser,
+                    -prix,
+                    TransactionType.PAYMENT,
+                    'Course Payment ' + title
+                  ).subscribe(
+                    () => {
+                      // alert('Withdrawal completed successfully');
+                    },
+                    (error) => {
+                      console.error('Withdrawal transaction failed:', error);
+                      alert('Withdrawal failed');
+                    }
+                  );
+                }
 
+                // tttttrrrrrrrrrrrrraaaaaaaaasssssssaaaaaaaaaaccccccccttttttttttttiiiiiiiiiioooooonnnnnnnnnnnn
 
-// tttttrrrrrrrrrrrrraaaaaaaaasssssssaaaaaaaaaaccccccccttttttttttttiiiiiiiiiioooooonnnnnnnnnnnn
-
-
-this.createTransaction(
-  author,
-  prix,
-  TransactionType.PAYMENT,
-  'Recu from course Payment ' + title
-).subscribe(
-  () => {
-   // alert('Withdrawal completed successfully');
-  },
-  (error) => {
-    console.error('Withdrawal transaction failed:', error);
-    alert('Withdrawal failed');
-  }
-);
-// tttttrrrrrrrrrrrrraaaaaaaaasssssssaaaaaaaaaaccccccccttttttttttttiiiiiiiiiioooooonnnnnnnnnnnn
-
-
-
+                this.createTransaction(
+                  author,
+                  prix,
+                  TransactionType.PAYMENT,
+                  'Recu from course Payment ' + title
+                ).subscribe(
+                  () => {
+                    // alert('Withdrawal completed successfully');
+                  },
+                  (error) => {
+                    console.error('Withdrawal transaction failed:', error);
+                    alert('Withdrawal failed');
+                  }
+                );
+                // tttttrrrrrrrrrrrrraaaaaaaaasssssssaaaaaaaaaaccccccccttttttttttttiiiiiiiiiioooooonnnnnnnnnnnn
               }
 
-             
               //  --**********-------------******************---------------************
               console.log('Paiement ajoutée avec succès', res);
               Swal.fire({

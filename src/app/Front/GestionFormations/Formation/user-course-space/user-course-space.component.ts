@@ -8,6 +8,9 @@ import { MatDialog } from '@angular/material/dialog';
 import Swal from 'sweetalert2';
 import { EditCourseComponent } from '../edit-course/edit-course.component';
 import { DetailsFormationComponent } from '../details-formation/details-formation.component';
+import { ParticipationFormation } from 'src/app/core/models/GestionFormation/participation-formation';
+import { ParticipationFormationService } from 'src/app/core/services/GestionFormation/participation-formation.service';
+import { RatingCourseService } from 'src/app/core/services/GestionFormation/rating-course.service';
 
 @Component({
   selector: 'app-user-course-space',
@@ -19,11 +22,19 @@ export class UserCourseSpaceComponent {
   // formationCardBodyRef!: ElementRef<HTMLInputElement>;
   searchText: string = '';
   filteredFormations: Formation[] = [];
+  totalProgress: number = 0; // total inscriptions
+  listParticipation: ParticipationFormation[] = [];
+  totalParticipantsMap: { [courseId: number]: number } = {};
+  ratingMap: { [courseId: number]: number } = {}; // Store ratings for each course
+  averageRatingMap: { [courseId: number]: number } = {}; // Store average ratings
+  ratingCountMap: { [courseId: number]: number } = {}; // Store rating counts
+
   constructor(
-    private catServ: CategoryService,
     private formServ: FormationService,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private participationServ: ParticipationFormationService,
+    private ratingService: RatingCourseService // Add this
   ) {}
   userId!: number;
   listFormations: Formation[] = [];
@@ -42,6 +53,54 @@ export class UserCourseSpaceComponent {
       (data) => {
         this.listFormations = data;
         this.filteredFormations = data;
+        // ahahahahahahahahahahahahahahaha
+        this.filteredFormations.forEach((f) => {
+          this.ratingService.getAverageRatingForCourse(f.id).subscribe(
+            (avg) => {
+              this.averageRatingMap[f.id] = Number(avg.toFixed(1)); // Round to 1 decimal place
+            },
+            (error) => {
+              console.error(
+                `Error fetching average rating for course ${f.id}:`,
+                error
+              );
+              this.averageRatingMap[f.id] = 0;
+            }
+          );
+
+          // Fetch rating count
+          this.ratingService.getRatingCountForCourse(f.id).subscribe(
+            (count) => {
+              this.ratingCountMap[f.id] = count;
+            },
+            (error) => {
+              console.error(
+                `Error fetching rating count for course ${f.id}:`,
+                error
+              );
+              this.ratingCountMap[f.id] = 0;
+            }
+          );
+
+         this.participationServ.getParticipationsByIdCourse(f.id).subscribe(
+           (data) => {
+             this.listParticipation = data;
+             // Store the number of participation rows (students)
+             this.totalParticipantsMap[f.id] = this.listParticipation.length;
+           },
+           (erreur) => {
+             console.error(
+               `Error fetching participations for course ${f.id}:`,
+               erreur
+             );
+             this.totalParticipantsMap[f.id] = 0; // Fallback value
+           },
+           () => console.log(this.listParticipation)
+         );
+
+          // Fetch payment and participation status
+        });
+        // ahahahahahahahahahahahahahahaha
       },
       (erreur) => console.log('erreur'),
       () => console.log(this.listFormations)
@@ -127,10 +186,9 @@ export class UserCourseSpaceComponent {
       (f.title + f.price + f.duration).toLowerCase().includes(this.searchText)
     );
   }
-  AssignCourseToFormation(idFormation : number){
-        this.router.navigate(['/ContentList'], {
-          state: { formationId: idFormation },
-        });
-
+  AssignCourseToFormation(idFormation: number) {
+    this.router.navigate(['/ContentList'], {
+      state: { formationId: idFormation },
+    });
   }
 }
