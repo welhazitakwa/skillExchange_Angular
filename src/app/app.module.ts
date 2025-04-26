@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
 
 import { ToastService, AngularToastifyModule } from 'angular-toastify';
 
@@ -16,7 +17,6 @@ import { BlogDetailsComponent } from './Front/blog-details/blog-details.componen
 import { CoursesComponent } from './Front/GestionFormations/Formation/courses/courses.component';
 import { ContactComponent } from './Front/contact/contact.component';
 import { ErrorComponent } from './error/error.component';
-
 import { HttpClientModule } from '@angular/common/http';
 import { AuthRegisterComponent } from './Auth/auth-register/auth-register.component';
 import { AuthLoginComponent } from './Auth/auth-login/auth-login.component';
@@ -31,17 +31,14 @@ import { UpdatecartComponent } from './Front/GestionProduit/Cart/updatecart/upda
 import { CartDetailsComponent } from './Front/GestionProduit/Cart/cart-details/cart-details.component';
 import { ProductDetailsComponent } from './Front/GestionProduit/Product/product-details/product-details.component';
 import { ShowproductComponent } from './Front/GestionProduit/Product/showproduct/showproduct.component';
-
 import { AllProductsComponent } from './Back/GestionProduit/Product/all-products/all-products.component';
 import { AllCartsComponent } from './Back/GestionProduit/Cart/all-carts/all-carts.component';
 import { AllReviewsComponent } from './Back/GestionProduit/ReviewP/all-reviews/all-reviews.component';
 import { AllImagesComponent } from './Back/GestionProduit/ImageP/all-images/all-images.component';
-
 import { ProfileComponent } from './Front/GestionUser/profile/profile.component';
 import { BalanceComponent } from './Front/GestionUser/balance/balance.component';
 import { SettingsComponent } from './Front/GestionUser/settings/settings.component';
 import { AllUsersComponent } from './Back/GestionUser/User/all-users/all-users.component';
-
 
 import { ImageCropperComponent } from 'ngx-image-cropper';
 import { UserBackDetailsComponent } from './Back/GestionUser/User/user-back-details/user-back-details.component';
@@ -73,7 +70,6 @@ import { EditCourseComponent } from './Front/GestionFormations/Formation/edit-co
 import { CertificatComponent } from './Back/GestionQUIZZ/certificat/certificat.component';
 import { QuizComponent } from './Back/GestionQUIZZ/quiz/quiz.component';
 import { QuestionComponent } from './Back/GestionQUIZZ/question/question.component';
-import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AllEventsComponent } from './Back/GestionEvents/Events/all-events/all-events.component';
 import { UpdateEventsComponent } from './Back/GestionEvents/Events/update-events/update-events.component';
@@ -87,6 +83,22 @@ import { DeleteRateEventComponent } from './Back/GestionEvents/RateEvent/delete-
 import { AllParticipationEventsComponent } from './Back/GestionEvents/ParticipationEvents/all-participation-events/all-participation-events.component';
 import { UpdateParticipationEventsComponent } from './Back/GestionEvents/ParticipationEvents/update-participation-events/update-participation-events.component';
 import { DeleteParticipationEventsComponent } from './Back/GestionEvents/ParticipationEvents/delete-participation-events/delete-participation-events.component';
+import { ShowEventsComponent } from './Front/GestionEvents/Events/show-events/show-events.component';
+import { AddEventModalComponent } from './Back/GestionEvents/Events/add-event-modal/add-event-modal.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { EventImagesComponent } from './Back/GestionEvents/event-images/event-images.component';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { EventDetailsComponent } from './Front/GestionEvents/event-details/event-details.component';
+import { FullCalendarModule } from '@fullcalendar/angular';
+import { ToastService, AngularToastifyModule } from 'angular-toastify';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { RouterModule } from '@angular/router';
 import { UpdateEventCommentComponent } from './Back/GestionEvents/EventComment/update-event-comment/update-event-comment.component';
 import { DeleteEventCommentComponent } from './Back/GestionEvents/EventComment/delete-event-comment/delete-event-comment.component';
@@ -103,6 +115,8 @@ import { SuccessComponent } from './Front/GestionProduit/success/success.compone
 
 import { DetailsFormationBackComponent } from './Back/GestionFormation/Formation/details-formation-back/details-formation-back.component';
 import { ParticipantsListComponent } from './Back/GestionFormation/Formation/participants-list/participants-list.component';
+import { ApprooveCourseComponent } from './Back/GestionFormation/Formation/approove-course/approove-course.component';
+import { NgChartsModule } from 'ng2-charts';
 
 
 
@@ -170,13 +184,17 @@ import { ParticipantsListComponent } from './Back/GestionFormation/Formation/par
     DeleteEventCommentComponent,
     AllEventImageComponent,
     UpdateEventImageComponent,
-   // DeleteEventImageComponent,
+    // DeleteEventImageComponent,
     AllRateEventComponent,
     UpdateRateEventComponent,
     DeleteRateEventComponent,
     AllParticipationEventsComponent,
     UpdateParticipationEventsComponent,
     DeleteParticipationEventsComponent,
+    ShowEventsComponent,
+    AddEventModalComponent,
+    EventImagesComponent,
+    EventDetailsComponent
     AllCartProductsComponent,
     CartProductsComponent,
     AllCommentsComponent,
@@ -186,23 +204,34 @@ import { ParticipantsListComponent } from './Back/GestionFormation/Formation/par
     SuccessComponent,
     DetailsFormationBackComponent,
     ParticipantsListComponent,
-
+    ApprooveCourseComponent,
   ],
   imports: [
     RouterModule,
     BrowserModule,
+    BrowserAnimationsModule,
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
+    RouterModule,
+    CommonModule,
     HttpClientModule,
     ImageCropperComponent,
     AngularToastifyModule,
+    MatDialogModule,
+    FullCalendarModule,
+    MatSelectModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatSnackBarModule
     BrowserAnimationsModule,
     MatDialogModule,
+    NgChartsModule, // Add NgChartsModule
   ],
   providers: [ToastService],
   bootstrap: [AppComponent],
 })
-
-export class AppModule { }
+export class AppModule {}
 

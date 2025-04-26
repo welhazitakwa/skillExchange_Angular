@@ -31,9 +31,10 @@
   <input type="file" (change)="onFileChange($event)" class="custom-file-input" id="customFile" >
   <label class="custom-file-label" for="customFile" >Choose your image</label>
 </div>
-<br>
+<br> <br>
 <div>
-    <label for="category">Category</label>
+
+    <!-- <label for="category">Category</label> -->
     <select id="category" formControlName="category_id" class="form-select">
       <option *ngFor="let category of categories" [value]="category.id" >
         {{ category.name }} 

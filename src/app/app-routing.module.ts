@@ -35,6 +35,8 @@ import { QuizComponent } from './Back/GestionQUIZZ/quiz/quiz.component';
 import { QuestionComponent } from './Back/GestionQUIZZ/question/question.component';
 import { RouterModule, Routes } from '@angular/router';
 import { AllEventsComponent } from './Back/GestionEvents/Events/all-events/all-events.component';
+import { ShowEventsComponent } from './Front/GestionEvents/Events/show-events/show-events.component';
+import { EventDetailsComponent } from './Front/GestionEvents/event-details/event-details.component';
 import { ShowproductComponent } from './Front/GestionProduit/Product/showproduct/showproduct.component';
 import { ProductDetailsComponent } from './Front/GestionProduit/Product/product-details/product-details.component';
 import { AllCartProductsComponent } from './Back/GestionProduit/CartProduct/all-cart-products/all-cart-products.component';
@@ -45,6 +47,7 @@ import { PostDetailsComponent } from './Front/GestionForumPost/Posts/post-detail
 import { SuccessComponent } from './Front/GestionProduit/success/success.component';
 
 import { ParticipantsListComponent } from './Back/GestionFormation/Formation/participants-list/participants-list.component';
+import { ApprooveCourseComponent } from './Back/GestionFormation/Formation/approove-course/approove-course.component';
 
 
 
@@ -99,6 +102,7 @@ const routes: Routes = [
   { path: 'coursescat', component: CoursesByCatFrontComponent },
   { path: 'userCourseSpace', component: UserCourseSpaceComponent },
   { path: 'participantsList', component: ParticipantsListComponent },
+  { path: 'approveCourse', component: ApprooveCourseComponent },
 
   { path: 'backcartProducts', component: AllCartProductsComponent },
   /***************************************************************/
@@ -123,6 +127,10 @@ const routes: Routes = [
   { path: 'teachers', component: TeachersComponent/*, canActivate: [UserGuard]*/ },
   { path: 'contact', component: ContactComponent/*, canActivate: [UserGuard]*/ },
 
+  // Gestion des événements Front
+  { path: 'events', component: ShowEventsComponent, canActivate: [UserGuard] },
+  { path: 'events/:id', component: EventDetailsComponent, canActivate: [UserGuard] }, 
+  
   // Auth
   { path: 'register', component: AuthRegisterComponent },
   { path: 'login', component: AuthLoginComponent },

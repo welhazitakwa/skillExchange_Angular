@@ -41,4 +41,10 @@ export class ParticipationFormationService {
   getParticipationsByIdCourse(id: number): Observable<any> {
     return this.http.post(this.url + '/findById/', id);
   }
+
+  checkParticipation(participantId: number, courseId: number) : Observable<boolean> {
+    return this.http.get<boolean>(
+      this.url+`/check?participantId=${participantId}&courseId=${courseId}`
+    );
+  }
 }
