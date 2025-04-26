@@ -230,7 +230,7 @@ export class CoursesByCatFrontComponent {
 
   payer(courseId: number, prix: number, title: string, author: User) {
     const paiement = new PaiementFormation();
-    //participation.idp = 0;
+    paiement.paid = prix;
     paiement.participant = this.currentUser?.id ?? 0;
     const course = new Formation();
     course.id = courseId;
