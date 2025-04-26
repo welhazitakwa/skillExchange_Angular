@@ -4,7 +4,7 @@ import { Formation } from "./formation";
 
 export class ContentSelection {
   id!: number;
-  isChecked!: boolean;
-  courseContent!: ContentCourse;
-  date_participation!: Date;
+  isChecked!: number;
+  courseContent!: number;
+  user!: number;
 }

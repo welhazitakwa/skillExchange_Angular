@@ -27,7 +27,7 @@
       [ngClass]="{ active: activeIndex === 0 }"
       (click)="playVideo(0)"
     >
-      <input type="checkbox"  />
+      <input type="checkbox"  (change)="onCheckboxChange($event, firstElement.id)"  />
       <iframe
         *ngIf="sanitizedUrl"
         class="list-video"
@@ -57,7 +57,7 @@
       [ngClass]="{ active: activeIndex === i + 1 }"
       (click)="playVideo(i + 1)"
     >
-      <input type="checkbox"  />
+      <input type="checkbox" (change)="onCheckboxChange($event, c.id)" />
       <iframe
         *ngIf="c.sanitizedLnk"
         class="list-video"

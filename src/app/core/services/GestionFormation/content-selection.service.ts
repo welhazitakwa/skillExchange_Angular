@@ -34,6 +34,10 @@ export class ContentSelectionService {
   }
 
   getUserSelections(id: number): Observable<any> {
-    return this.http.get<ContentSelection[]>(this.url + '/user/'+ id);
+    return this.http.get<ContentSelection[]>(this.url + '/user/' + id);
+  }
+  getSelectionByUserAndContent(userId: number, contentCurseId: number): Observable<any> {
+    return this.http.get<ContentSelection[]>
+    (this.url + '/user/' + userId + '/content/' + contentCurseId);
   }
 }
