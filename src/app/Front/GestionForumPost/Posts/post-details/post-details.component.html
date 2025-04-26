@@ -15,14 +15,39 @@
 </div>
 <!-- Header End -->
 
+
 <!-- Detail Start -->
 <div class="container-fluid py-5">
     <div class="container py-5">
         <div class="row">
             <div class="col-lg-8">
                 <div class="mb-5">
+             
+                  
                     <!-- Affichage de la date du post -->
-                    <h6 class="text-primary mb-3">{{ post?.createdAt | date: 'MMM dd, yyyy' }}</h6>
+                    <h6 class="text-primary mb-3">{{ post?.createdAt | date: 'MMM dd, yyyy' }}
+                      <ng-container *ngIf="currentUser?.email === post?.user?.email; else notOwner">
+                        <div class="post-menu-container" style="margin-left: 700px; display: inline-block;">                          <button class="menu-icon-btn" (click)="toggleMenu()" aria-label="Afficher les options">
+                            ⋮
+                          </button>
+                      
+                          <div class="custom-menu" *ngIf="showMenu">
+                            <!--<button (click)="openEditPostModal()">✏️ Modifier</button>-->
+                            <button (click)="onEditPostClicked($event)">✏️ Modifier</button>
+
+                            <button (click)="deletePost(post?.idPost)" *ngIf="post?.idPost">🗑️ Supprimer</button>
+                          </div>
+                        </div>
+                      </ng-container>
+                      
+                      
+                      
+                      <ng-template #notOwner>
+                        <p>Non propriétaire du post</p> <!-- pour debug -->
+                      </ng-template>
+                    </h6>
+                             
+                   
                     <!-- Affichage du titre du post -->
                     <h1 class="mb-5">{{ post?.title }}</h1>
                     <!-- Affichage de l'image du post -->
@@ -55,27 +80,18 @@
                           </div>
                         </div>
                       </div>
-           
-                      
-
-
-
-
-
-                     
-                     
-                     
-                     
-                     
-                     
-                     
+          
                      
                       <ng-template #noImage>
                         <p class="text-muted">Aucune image disponible pour ce post.</p>
                       </ng-template>
+                     
+
                       
                                           <!-- Affichage du contenu du post -->
                     <p>{{ post?.content }}</p>
+           
+                    
                 </div>
 <!-- Emoji Reactions Section -->
 <div class="emoji-reactions-container">
@@ -136,7 +152,7 @@
                            <!-- Comment Content -->
 <div class="flex-grow-1">
     <div class="d-flex justify-content-between align-items-center mb-2">
-      <h5 class="mb-0 fw-bold">{{ usersMap[comment!.email].name || 'Anonymous' }}</h5>
+      <h5 class="mb-0 fw-bold">{{ usersMap[comment!.email]?.name || 'Anonymous' }}</h5>
       <small class="text-muted">
         <i *ngIf="isValidDate(comment.createdAt)">
           Posted At: {{ comment.createdAt | date: 'dd/MM/yyyy à HH:mm' }}
@@ -318,6 +334,52 @@
         </div>
     </div>
 </div>
+<!-- Modal Modifier Post -->
+<div *ngIf="showPostModalOpen" class="modal fade show d-block" tabindex="-1" role="dialog"
+  style="background-color: rgba(0,0,0,0.5);">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Modifier un Post</h5>
+        <button type="button" class="btn-close" (click)="showPostModalOpen = false"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label class="form-label">Titre</label>
+            <input type="text" class="form-control" [(ngModel)]="editingPost!.title" name="title">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Contenu</label>
+            <textarea class="form-control" rows="4" [(ngModel)]="editingPost!.content" name="content"></textarea>
+          </div>
+         <!-- Affichage des images dans le modal -->
+<div *ngIf="editImagesPreviews.length > 0" class="thumbnail-container">
+  <div *ngFor="let img of editImagesPreviews; let i = index">
+    <img [src]="'data:image/jpeg;base64,' + img.image"
+         class="img-thumbnail thumbnail-image"
+         alt="Image {{i + 1}}">
+  </div>
+</div>
+<div *ngIf="editImagesPreviews?.length === 0" class="no-images-message">
+  Aucune image prévisualisée.
+</div>
+ <!-- Upload nouvelles images -->
+ <div class="form-group">
+  <label>Post Images</label>
+  <input type="file" class="form-control-file" (change)="onFilesSelected($event)" accept="image/*" multiple>
+  <small class="form-text text-muted">JPEG, PNG - Max 5MB each</small>
+</div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="showPostModalOpen = false">Fermer</button>
+        <button class="btn btn-primary" (click)="submitEditPost()">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 
 

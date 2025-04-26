@@ -3,15 +3,18 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommentPosts } from 'src/app/core/models/GestionForumPost/CommentPosts';
 import { EmojiPosts } from 'src/app/core/models/GestionForumPost/EmojiPosts';
 import { EmojiType, EmojiTypeMapping } from 'src/app/core/models/GestionForumPost/EmojiType';
+import { ImagePosts } from 'src/app/core/models/GestionForumPost/image-posts';
 import { Posts } from 'src/app/core/models/GestionForumPost/Posts';
 import { User } from 'src/app/core/models/GestionUser/User';
 import { AuthService } from 'src/app/core/services/Auth/auth.service';
 import { CommentPostsService } from 'src/app/core/services/GestionForumPost/comment-posts.service';
 import { EmojiCommentsService } from 'src/app/core/services/GestionForumPost/emoji-comments.service';
 import { EmojiPostsService } from 'src/app/core/services/GestionForumPost/emoji-posts.service';
+import { ImagePostService } from 'src/app/core/services/GestionForumPost/image-post.service';
 import { PostService } from 'src/app/core/services/GestionForumPost/post.service';
 import { UserService } from 'src/app/core/services/GestionUser/user.service';
 import { MailService } from 'src/app/core/services/Mailing/mail.service';
+import Swal from 'sweetalert2';
 
 
 @Component({
@@ -29,11 +32,13 @@ export class PostDetailsComponent {
   newPost: Posts = new Posts();
   currentUser: User | null = null;
   usersMap: { [key: string]: User } = {};
-  selectedImage: File | null = null;
+  //selectedImage: File | null = null;
   currentImageIndexes: { [key: number]: number } = {}; 
   hoveredEmojiComment: string | null = null;
   usersByEmoji: { [emoji: string]: User[] } = {};
 
+  showMenu: boolean = false;
+  editImagesPreviews: any[] = [];
 
 
 
@@ -46,7 +51,9 @@ export class PostDetailsComponent {
     private route: ActivatedRoute,
     private router: Router,
     private emojiCommentsService:EmojiCommentsService,
-    private mailService: MailService
+    private mailService: MailService,
+    private imagePostService: ImagePostService
+
   ) { }
 
   ngOnInit(): void {
@@ -75,10 +82,10 @@ export class PostDetailsComponent {
 
   }
 
-  currentImageIndex(post: Posts): number {
-    return post.idPost !== undefined ? this.currentImageIndexes[post.idPost] || 0 : 0;
-    console.log("llliiissssssssstttttttttt : "+ this.currentImageIndexes)
-  }
+  // currentImageIndex(post: Posts): number {
+  //   return post.idPost !== undefined ? this.currentImageIndexes[post.idPost] || 0 : 0;
+    
+  // }
 
     
   
@@ -91,6 +98,7 @@ export class PostDetailsComponent {
     this.postService.getPostByID(this.postId).subscribe(
       (post: Posts) => {
         this.post = post;
+        this.editImagesPreviews = post?.imagePost || [];
         console.log(post);
       },
       (error) => {
@@ -98,26 +106,17 @@ export class PostDetailsComponent {
       }
     );
   }
-  // currentImageIndex(post: Posts): number {
-  //   // S'assurer que l'index existe avant de l'utiliser
-  //   //return post.idPost !== undefined ? this.currentImageIndexes[post.idPost] || 0 : 0;
+  
+  
+  //   getImageSrc(post?: Posts): string | null {
+  //     if (!post?.imagePost || post.imagePost.length === 0) {
+  //       return null;
+  //     }
     
-  //     return post.idPost !== undefined ? this.currentImageIndexes[post.idPost] ?? 0 : 0;
+  //     const index = this.currentImageIndex(post); // Ici post est garanti non undefined
+  //     const imageObj = post.imagePost[index];
+  //     return imageObj?.image ? 'data:image/jpeg;base64,' + imageObj.image : null;
   //   }
-  // currentImageIndex(post: Posts): number {
-  //   // Vérifie si l'ID du post est défini et renvoie l'index pour ce post
-  //   return post.idPost !== undefined ? this.currentImageIndexes[post.idPost] || 0 : 0;
-
-  // }
-    getImageSrc(post?: Posts): string | null {
-      if (!post?.imagePost || post.imagePost.length === 0) {
-        return null;
-      }
-    
-      const index = this.currentImageIndex(post); // Ici post est garanti non undefined
-      const imageObj = post.imagePost[index];
-      return imageObj?.image ? 'data:image/jpeg;base64,' + imageObj.image : null;
-    }
     
   private loadCurrentUser() {
     const currentUserEmail = this.authService.getCurrentUserEmail();
@@ -133,6 +132,22 @@ export class PostDetailsComponent {
         console.error(error);
       }
     );
+  }
+  getImageSrc(post?: Posts): string | null {
+    if (!post || !post.imagePost || post.imagePost.length === 0) {
+      return null;
+    }
+  
+    const index = this.currentImageIndex(post); // Here, post is guaranteed to be non-null/undefined
+    const imageObj = post.imagePost[index];
+    return imageObj?.image ? 'data:image/jpeg;base64,' + imageObj.image : null;
+  }
+  
+  currentImageIndex(post: Posts): number {
+    if (!post || !post.idPost) {
+      return 0;  // or a fallback value
+    }
+    return this.currentImageIndexes[post.idPost] || 0;
   }
 
   
@@ -366,6 +381,141 @@ isValidDate(date: any): boolean {
       alert('Vous devez être connecté pour publier un post.');
     }
   }
+  
+  selectedFiles: File[] = [];
+
+openEditPostModal() {
+  this.showPostModalOpen = true;
+}
+onEditPostClicked(event: MouseEvent) {
+  event.stopPropagation(); // Empêche la fermeture du menu
+  if (!this.post) {
+    console.error('Le post est indéfini');
+    return; // Si le post est indéfini, on ne fait rien
+  }
+  console.log('Modifier cliqué', this.post);
+
+  // Charge le post à éditer
+  this.editingPost = { ...this.post }; // Copie le post pour pouvoir le modifier
+  this.editImagesPreviews = this.post?.imagePost|| []; // Si le post contient des images, les afficher
+
+  this.openEditPostModal(); // Ouvre le modal de modification
+}
+
+onFilesSelected(event: Event): void {
+  const input = event.target as HTMLInputElement;
+  if (input.files) {
+    this.selectedFiles = Array.from(input.files);
+  }
+}
+/////////////////////////////////////////////////
+editingPost?: Posts; 
+//editImagesPreviews: any;
+imagesToDelete: number[] = [];
+
+
+onImageSelected(event: any) {
+  const files: FileList = event.target.files;
+  this.selectedImage = Array.from(files); // ✅ convertit en tableau
+}
+selectedImage: File[] = [];
+
+
+fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      const base64 = (reader.result as string).split(',')[1]; // enlever "data:image/jpeg;base64,"
+      resolve(base64);
+    };
+    reader.onerror = error => reject(error);
+  });
+}
+async prepareImages(): Promise<string[]> {
+  return Promise.all(this.selectedImage.map(file => this.fileToBase64(file)));
+}
+
+async submitEditPost() {
+  if (!this.editingPost) return;
+
+  const base64Images = await this.prepareImages(); // conversion ici
+
+  const newImages: ImagePosts[] = base64Images.map(base64 => ({
+    id: 0,
+    image: base64,
+    post: this.editingPost! // ← ici, le "!" règle l'erreur
+  }));
+  
+
+  const postToUpdate = {
+    ...this.editingPost,
+    imagePost: [
+      ...this.editingPost.imagePost,
+      ...newImages
+    ]
+  };
+
+  this.postService.updatePostWithFormData(this.editingPost.idPost!, postToUpdate)
+    .subscribe({
+      next: (updatedPost) => {
+        this.editingPost = updatedPost;
+        console.log('✅ Post mis à jour', updatedPost);
+        console.log('🖼️ Images mises à jour:', updatedPost.imagePost); //
+this.editImagesPreviews = updatedPost.imagePost; // Très important !!
+
+       
+        this.afterPostUpdate();
+      },
+      error: (err) => {
+        console.error('❌ Erreur lors de la mise à jour du post', err);
+      }
+    });
+}
+
+
+
+
+private resetEditForm(): void {
+  this.editImagesPreviews = [];
+  this.selectedFiles = [];
+  this.imagesToDelete = [];
+}
+private afterPostUpdate() {
+  this.getPostDetails(); // ou refresh
+  this.resetEditForm();
+  this.showPostModalOpen = false;
+  this.imagesToDelete = [];
+  Swal.fire({
+    icon: 'success',
+    title: 'Post updated!',
+    showConfirmButton: false,
+    timer: 1500
+  });
+}
+toggleMenu() {
+  this.showMenu = !this.showMenu;
+  console.log('showMenu:', this.showMenu); 
+}
+
+deletePost(id: number| undefined): void {
+  if (id == null) {
+    console.warn('Id du post non valide');
+    return; // Si l'id est null ou undefined, on arrête l'exécution de la méthode
+  }
+
+  if (confirm('Êtes-vous sûr de vouloir supprimer ce post ?')) {
+    this.postService.deletePost(id).subscribe(() => {
+      this.getPostDetails(); // Recharge les détails du post après suppression
+    });
+  }
+}
+
+
+
+
+
+
 ////////////////Emojis/////////////////////////
 EmojiTypeMapping = EmojiTypeMapping;
   

@@ -42,6 +42,13 @@ export class PostService {
   rejectPost(id: number): Observable<Posts> {
     return this.http.post<Posts>(`${this.url}/rejectPost/${id}`, {});
   }
+  // updatePostWithFormData(postId: number, formData: FormData): Observable<any> {
+  //   return this.http.patch(`${this.url}/updatePosts/${postId}`, formData);
+  // }
+  updatePostWithFormData(postId: number, post: Posts): Observable<Posts> {
+    return this.http.patch<Posts>(`${this.url}/update-post/${postId}`, post);
+  }
+  
   
   
   
