@@ -4,6 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { ParticipationEvents } from '../../models/GestionEvents/participation-events';
 import { Status } from '../../models/GestionEvents/status';
+import { Events } from '../../models/GestionEvents/events';
 
 @Injectable({
   providedIn: 'root'
@@ -110,5 +111,10 @@ getParticipationsByUserEmail2(email: string): Observable<ParticipationEvents[]> 
           return throwError(error);
       })
   );
+}
+
+
+getUserEventsByStatus(email: string, status: string): Observable<Events[]> {
+  return this.http.get<Events[]>(`${this.url}/user/${encodeURIComponent(email)}/events?status=${status}`);
 }
 }
