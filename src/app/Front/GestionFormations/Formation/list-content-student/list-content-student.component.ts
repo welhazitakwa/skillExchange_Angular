@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { ContentCourse } from 'src/app/core/models/GestionFormation/content-course';
 import { ContentSelection } from 'src/app/core/models/GestionFormation/content-selection';
 import { User } from 'src/app/core/models/GestionUser/User';
@@ -13,6 +14,7 @@ import { UserService } from 'src/app/core/services/GestionUser/user.service';
 type ContentCourseWithSanitizedUrl = ContentCourse & {
   sanitizedLnk: SafeResourceUrl;
 };
+
 @Component({
   selector: 'app-list-content-student',
   templateUrl: './list-content-student.component.html',
@@ -27,6 +29,8 @@ export class ListContentStudentComponent {
   sanitizedRemainingUrls: SafeResourceUrl[] = [];
   activeIndex: number = 0; // Track active video
   currentUser: User | null = null;
+  checkedContents: Set<number> = new Set(); // Store checked content IDs
+  isLoading: boolean = true; // Control rendering until data is loaded
 
   constructor(
     private courseContentService: ContentCourseService,
@@ -44,12 +48,44 @@ export class ListContentStudentComponent {
       this.formationId = navigationState.formationId;
       console.log('ID de formation depuis navigation:', this.formationId);
     }
-    this.courseContentService.getContentByCourseId(this.formationId).subscribe(
-      (data) => {
-        this.listcourseContents = data;
-        console.log('list of contents :' + this.listcourseContents[0]);
+    this.loadCurrentUser();
+  }
+
+  private loadCurrentUser() {
+    const currentUserEmail = this.authService.getCurrentUserEmail();
+    if (!currentUserEmail) {
+      this.router.navigate(['/login']);
+      return;
+    }
+    console.log(currentUserEmail);
+    this.userService.getUserByEmail(currentUserEmail).subscribe(
+      (user: User) => {
+        this.currentUser = user;
+        this.loadContentAndSelections(); // Load content and selections after user is loaded
+      },
+      (error) => {
+        console.error(error);
+        this.isLoading = false; // Stop loading on error
+      }
+    );
+  }
+
+  loadContentAndSelections() {
+    if (!this.currentUser) {
+      this.isLoading = false;
+      return;
+    }
+
+    // Use forkJoin to load content and selections simultaneously
+    forkJoin([
+      this.courseContentService.getContentByCourseId(this.formationId),
+      this.contSelectionService.getUserSelections(this.currentUser.id),
+    ]).subscribe({
+      next: ([contents, selections]: [ContentCourse[], ContentSelection[]]) => {
+        // Process content
+        this.listcourseContents = contents;
         if (this.listcourseContents && this.listcourseContents.length > 0) {
-          this.firstElement = data[0];
+          this.firstElement = contents[0];
           this.sanitizedUrl = this.sanitizeYouTubeUrl(
             this.firstElement.lnk_vid
           );
@@ -58,10 +94,27 @@ export class ListContentStudentComponent {
             sanitizedLnk: this.sanitizeYouTubeUrl(content.lnk_vid),
           }));
         }
+
+        // Process selections
+        selections.forEach((selection) => {
+          if (selection.isChecked && selection.courseContent) {
+            this.checkedContents.add(selection.courseContent);
+          }
+        });
+        console.log('Checked contents:', this.checkedContents);
+
+        // Data is fully loaded, allow rendering
+        this.isLoading = false;
       },
-      (erreur) => console.log('erreur dans le chargement de content')
-    );
-    this.loadCurrentUser();
+      error: (err) => {
+        console.log('Erreur lors du chargement des données', err);
+        this.isLoading = false; // Stop loading on error
+      },
+    });
+  }
+
+  isChecked(contentId: number): boolean {
+    return this.checkedContents.has(contentId);
   }
 
   sanitizeUrl(url: string): SafeResourceUrl | null {
@@ -92,26 +145,6 @@ export class ListContentStudentComponent {
     return match && match[1] ? match[1] : '';
   }
 
-  loadContent() {
-    this.courseContentService.getContentByCourseId(this.formationId).subscribe(
-      (data) => {
-        this.listcourseContents = data;
-        console.log('list of contents :' + this.listcourseContents[0]);
-        if (this.listcourseContents && this.listcourseContents.length > 0) {
-          this.firstElement = data[0];
-          this.sanitizedUrl = this.sanitizeYouTubeUrl(
-            this.firstElement.lnk_vid
-          );
-          this.secondList = this.listcourseContents.slice(1).map((content) => ({
-            ...content,
-            sanitizedLnk: this.sanitizeYouTubeUrl(content.lnk_vid),
-          }));
-        }
-      },
-      (erreur) => console.log('erreur dans le chargement de content')
-    );
-  }
-
   playVideo(index: number) {
     this.activeIndex = index;
     const allItems: (ContentCourse | ContentCourseWithSanitizedUrl)[] = [
@@ -134,96 +167,62 @@ export class ListContentStudentComponent {
     const checked = (event.target as HTMLInputElement).checked;
 
     if (checked) {
-       console.log('Checkbox is checked');
-       console.log('iddd item selected', itemSelectedId);
-       console.log('idd current user ', this.currentUser?.id);
-       const selection = new ContentSelection();
-       selection.isChecked = 1;
-      //  const user = new User();
-      //  user.id = this.currentUser!.id;
-       selection.user = this.currentUser!.id;
+      console.log('Checkbox is checked');
+      console.log('iddd item selected', itemSelectedId);
+      console.log('idd current user ', this.currentUser?.id);
+      const selection = new ContentSelection();
+      selection.isChecked = 1;
+      selection.user = this.currentUser!.id;
+      selection.courseContent = itemSelectedId;
 
-      //  const courseContent = new ContentCourse();
-      //  courseContent.id = itemSelectedId;
-       selection.courseContent = itemSelectedId;
+      console.log('Données à envoyer :', selection);
 
-       console.log('Données à envoyer :', selection);
-
-       this.contSelectionService.addSelection(selection).subscribe({
-         next: (res) => {
-           console.log('Données envoyées checked avec succès', res);
-         },
-         error: (err) => {
-           console.error(
-             "Erreur lors de l'ajout Données envoyées checked avec succès",
-             err
-           );
-         },
-       });
+      this.contSelectionService.addSelection(selection).subscribe({
+        next: (res) => {
+          console.log('Données envoyées checked avec succès', res);
+          this.checkedContents.add(itemSelectedId); // Update checked state
+        },
+        error: (err) => {
+          console.error(
+            "Erreur lors de l'ajout Données envoyées checked avec succès",
+            err
+          );
+        },
+      });
     } else {
-      // this.contSelectionService.deleteSelection(itemSelectedId).subscribe({
-      //           next: (res) => {
-      //             console.log("contenu été unchecked", itemSelectedId);
-      //             console.log("contenu été unchecked")
-
-      //             this.loadContent();
-      //           },
-      //           error: (err) => {
-      //             console.log("Erreur lors de la suppression de l'élément", err);
-      //           },
-      //         });
-       this.contSelectionService
-         .getSelectionByUserAndContent(this.currentUser!.id, itemSelectedId)
-         .subscribe({
-           next: (selection: ContentSelection) => {
-             if (selection && selection.id) {
-               this.contSelectionService
-                 .deleteSelection(selection.id)
-                 .subscribe({
-                   next: (res) => {
-                     console.log('Contenu été unchecked', itemSelectedId);
-                     this.loadContent();
-                   },
-                   error: (err) => {
-                     console.log(
-                       "Erreur lors de la suppression de l'élément",
-                       err
-                     );
-                   },
-                 });
-             } else {
-               console.log('Aucune sélection trouvée pour suppression');
-             }
-           },
-           error: (err) => {
-             console.log('Erreur lors de la récupération de la sélection', err);
-           },
-         });
+      this.contSelectionService
+        .getSelectionByUserAndContent(this.currentUser!.id, itemSelectedId)
+        .subscribe({
+          next: (selection: ContentSelection) => {
+            if (selection && selection.id) {
+              this.contSelectionService
+                .deleteSelection(selection.id)
+                .subscribe({
+                  next: (res) => {
+                    console.log('Contenu été unchecked', itemSelectedId);
+                    this.checkedContents.delete(itemSelectedId); // Update checked state
+                  },
+                  error: (err) => {
+                    console.log(
+                      "Erreur lors de la suppression de l'élément",
+                      err
+                    );
+                  },
+                });
+            } else {
+              console.log('Aucune sélection trouvée pour suppression');
+            }
+          },
+          error: (err) => {
+            console.log('Erreur lors de la récupération de la sélection', err);
+          },
+        });
     }
   }
-  private loadCurrentUser() {
-    const currentUserEmail = this.authService.getCurrentUserEmail();
-    if (!currentUserEmail) {
-      this.router.navigate(['/login']);
-      return;
-    }
-    console.log(currentUserEmail);
-    this.userService.getUserByEmail(currentUserEmail).subscribe(
-      (user: User) => {
-        this.currentUser = user;
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
-  }
 
-  onChecked(itemSelectedId: number): void {
-  
-  }
+  onChecked(itemSelectedId: number): void {}
 
   onUnchecked(): void {
     console.log('Checkbox is unchecked');
-    // ta méthode quand c'est décoché
   }
 }

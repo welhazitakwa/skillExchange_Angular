@@ -1,7 +1,13 @@
 <app-header-front></app-header-front>
 <br><br>
 
-<div class="container" *ngIf="listcourseContents.length > 0">
+<!-- Show loading state while data is being fetched -->
+<div *ngIf="isLoading" style="text-align: center; padding: 50px;">
+  <h2>Loading content...</h2>
+</div>
+
+<!-- Render content only when not loading -->
+<div class="container" *ngIf="!isLoading && listcourseContents.length > 0">
   <!-- Main Video -->
   <div class="main-video-container">
     <iframe
@@ -27,7 +33,11 @@
       [ngClass]="{ active: activeIndex === 0 }"
       (click)="playVideo(0)"
     >
-      <input type="checkbox"  (change)="onCheckboxChange($event, firstElement.id)"  />
+      <input
+        type="checkbox"
+        [checked]="isChecked(firstElement.id)"
+        (change)="onCheckboxChange($event, firstElement.id)"
+      />
       <iframe
         *ngIf="sanitizedUrl"
         class="list-video"
@@ -39,15 +49,8 @@
         allowfullscreen
       ></iframe>
       <h3 class="list-title">{{ firstElement!.title || 'No title' }}</h3>
-      <div>
-        <button
-          mat-raised-button
-          class="btn btn-danger"
-          style="height: 40px; width: 80px; margin-bottom: 10px;"
-        >
-          Delete
-        </button>
-      </div>
+     
+      
     </div>
 
     <!-- Second List -->
@@ -57,7 +60,11 @@
       [ngClass]="{ active: activeIndex === i + 1 }"
       (click)="playVideo(i + 1)"
     >
-      <input type="checkbox" (change)="onCheckboxChange($event, c.id)" />
+      <input
+        type="checkbox"
+        [checked]="isChecked(c.id)"
+        (change)="onCheckboxChange($event, c.id)"
+      />
       <iframe
         *ngIf="c.sanitizedLnk"
         class="list-video"
@@ -69,22 +76,15 @@
         allowfullscreen
       ></iframe>
       <h3 class="list-title">{{ c.title || 'No title' }}</h3>
-      <div>
-        <button
-          mat-raised-button
-          class="btn btn-danger"
-          style="height: 40px; width: 80px; margin-bottom: 10px;"
-        >
-          Delete
-        </button>
-      </div>
+      
+      
     </div>
   </div>
 </div>
 
 <!-- Empty State -->
 <div
-  *ngIf="listcourseContents.length === 0"
+  *ngIf="!isLoading && listcourseContents.length === 0"
   style="
     display: flex;
     flex-direction: column;
