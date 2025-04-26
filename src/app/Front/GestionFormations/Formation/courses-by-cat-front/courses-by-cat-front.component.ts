@@ -14,9 +14,15 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { catchError, map, Observable, of } from 'rxjs';
 import { PaiementFormationService } from 'src/app/core/services/GestionFormation/paiement-formation.service';
 import { PaiementFormation } from 'src/app/core/models/GestionFormation/paiement-formation';
-import { HistoricTransactions, TransactionType } from 'src/app/core/models/GestionUser/HistoricTransactions';
+import {
+  HistoricTransactions,
+  TransactionType,
+} from 'src/app/core/models/GestionUser/HistoricTransactions';
 import { RatingCourseService } from 'src/app/core/services/GestionFormation/rating-course.service';
 import { Rating } from 'src/app/core/models/GestionFormation/rating';
+import { FormationService } from 'src/app/core/services/GestionFormation/formation.service';
+import { QuizService } from 'src/app/core/services/GestionQuizz/quiz.service';
+import { Quiz } from 'src/app/core/models/QuestionQuizz/quiz';
 
 @Component({
   selector: 'app-courses-by-cat-front',
@@ -52,7 +58,9 @@ export class CoursesByCatFrontComponent {
     private router: Router,
     private participationServ: ParticipationFormationService,
     private payServ: PaiementFormationService,
-    private ratingService: RatingCourseService // Add this
+    private formationService: FormationService,
+    private ratingService: RatingCourseService,
+    private quizService: QuizService// Add this
   ) {}
 
   ngOnInit() {
@@ -107,7 +115,7 @@ export class CoursesByCatFrontComponent {
   paimentMap: { [courseId: number]: boolean } = {};
 
   getCoursesOfCategory() {
-    this.catServ.getCoursesOfCategorie(this.categoryId).subscribe(
+    this.catServ.getCoursesOfCategorie(this.categoryId,).subscribe(
       (data) => {
         this.listFormations = data.filter(
           (f: Formation) => f.state === 1 && f.approoved === 1
@@ -246,7 +254,7 @@ export class CoursesByCatFrontComponent {
   // ------------********************boutonet************************------------------------
   // Dans ton service de participation
 
-  payer(courseId: number, prix: number, title: string , author: User) {
+  payer(courseId: number, prix: number, title: string, author: User) {
     const paiement = new PaiementFormation();
     //participation.idp = 0;
     paiement.participant = this.currentUser?.id ?? 0;
@@ -277,7 +285,6 @@ export class CoursesByCatFrontComponent {
                     console.log('balance updated');
                     this.loadCurrentUser;
                     //  --**********-------------Transaction ---------------************
-                 
 
                     //  --**********-------------Author ---------------************
 
@@ -286,7 +293,6 @@ export class CoursesByCatFrontComponent {
                       next: (val: any) => {
                         console.log('balance author updated');
                         this.loadCurrentUser;
-                                             
                       },
                       error: (err: any) => {
                         console.log('balance author not updated ');
@@ -297,49 +303,43 @@ export class CoursesByCatFrontComponent {
                     console.log('paiement non effectué');
                   },
                 });
-// tttttrrrrrrrrrrrrraaaaaaaaasssssssaaaaaaaaaaccccccccttttttttttttiiiiiiiiiioooooonnnnnnnnnnnn
-      if (this.currentUser) {
-        this.createTransaction(
-          this.currentUser,
-          -prix,
-          TransactionType.PAYMENT,
-          'Course Payment ' + title
-        ).subscribe(
-          () => {
-           // alert('Withdrawal completed successfully');
-          },
-          (error) => {
-            console.error('Withdrawal transaction failed:', error);
-            alert('Withdrawal failed');
-          }
-        );
-      }
+                // tttttrrrrrrrrrrrrraaaaaaaaasssssssaaaaaaaaaaccccccccttttttttttttiiiiiiiiiioooooonnnnnnnnnnnn
+                if (this.currentUser) {
+                  this.createTransaction(
+                    this.currentUser,
+                    -prix,
+                    TransactionType.PAYMENT,
+                    'Course Payment ' + title
+                  ).subscribe(
+                    () => {
+                      // alert('Withdrawal completed successfully');
+                    },
+                    (error) => {
+                      console.error('Withdrawal transaction failed:', error);
+                      alert('Withdrawal failed');
+                    }
+                  );
+                }
 
+                // tttttrrrrrrrrrrrrraaaaaaaaasssssssaaaaaaaaaaccccccccttttttttttttiiiiiiiiiioooooonnnnnnnnnnnn
 
-// tttttrrrrrrrrrrrrraaaaaaaaasssssssaaaaaaaaaaccccccccttttttttttttiiiiiiiiiioooooonnnnnnnnnnnn
-
-
-this.createTransaction(
-  author,
-  prix,
-  TransactionType.PAYMENT,
-  'Recu from course Payment ' + title
-).subscribe(
-  () => {
-   // alert('Withdrawal completed successfully');
-  },
-  (error) => {
-    console.error('Withdrawal transaction failed:', error);
-    alert('Withdrawal failed');
-  }
-);
-// tttttrrrrrrrrrrrrraaaaaaaaasssssssaaaaaaaaaaccccccccttttttttttttiiiiiiiiiioooooonnnnnnnnnnnn
-
-
-
+                this.createTransaction(
+                  author,
+                  prix,
+                  TransactionType.PAYMENT,
+                  'Recu from course Payment ' + title
+                ).subscribe(
+                  () => {
+                    // alert('Withdrawal completed successfully');
+                  },
+                  (error) => {
+                    console.error('Withdrawal transaction failed:', error);
+                    alert('Withdrawal failed');
+                  }
+                );
+                // tttttrrrrrrrrrrrrraaaaaaaaasssssssaaaaaaaaaaccccccccttttttttttttiiiiiiiiiioooooonnnnnnnnnnnn
               }
 
-             
               //  --**********-------------******************---------------************
               console.log('Paiement ajoutée avec succès', res);
               Swal.fire({
@@ -383,10 +383,7 @@ this.createTransaction(
     });
   }
 
-  passerExam() {
-    console.log('🟠 Bouton Exam cliqué');
-    // logique pour accéder au quiz
-  }
+ 
 
   // ------------********************************************---------------------------
   convertDuration(duration: number): string {
@@ -417,57 +414,132 @@ this.createTransaction(
   }
 
   addParticipation(courseId: number) {
-    const participation = new ParticipationFormation();
-    //participation.idp = 0;
-    participation.progress = 1;
-    participation.participant = this.currentUser?.id ?? 0;
-    participation.date_participation = new Date();
-    // Crée des objets Formation et Quiz partiels avec uniquement l'id
-    const course = new Formation();
-    course.id = courseId;
-    participation.course = course;
+  const participation = new ParticipationFormation();
+  participation.progress = 1;
+  participation.participant = this.currentUser?.id ?? 0;
+  participation.date_participation = new Date();
+  
+  const course = new Formation();
+  course.id = courseId;
+  participation.course = course;
+  let targetQuiz : Quiz | null = null; // Initialize targetQuiz to null
+  // Find course in cached list with type safety
+  this.quizService.getquizbycourse(courseId).subscribe(
+    (quiz : Quiz) => {
+      console.log('Quiz fetched:', quiz);
+      targetQuiz = quiz; // Assign fetched quiz to targetQuiz
+    },
+    (err) => {
+      alert('Error fetching quiz data. Please try again later.');
+      console.error('Error fetching quiz:', err);
+    },
+  );
 
-    // const quiz = new Quiz();
-    // quiz.id = 0; // ou l'ID réel du quiz
-    // participation.quiz = quiz;
-
-    console.log('Données à envoyer :', participation);
-
-    this.participationService.addParticipation(participation).subscribe({
-      next: (res) => {
-        // //precharger paiements
-        // this.listFormations.forEach((f) => {
-        //   this.payServ
-        //     .checkPaiement(this.currentUser!.id, f.id)
-        //     .subscribe((exists) => (this.paimentMap[f.id] = exists));
-        // });
-        // // Rafraîchir l'état du bouton après l'ajout
-        this.listFormations.forEach((f) => {
-          this.participationService
-            .checkParticipation(this.currentUser!.id, f.id)
-            .subscribe((exists) => (this.participationMap[f.id] = exists));
-        });
-        this.getCoursesOfCategory();
-        console.log('Participation ajoutée avec succès', res);
+  this.participationService.addParticipation(participation).subscribe({
+    next: (res) => {
+      // Update local participation state
+      this.participationMap[courseId] = true;
+      
+      // Handle quiz assignment with proper null checks
+      if (targetQuiz?.id) {
+        const quizId = targetQuiz.id;
+        this.participationService.assignQuizToParticipation(res.idp, quizId)
+          .subscribe({
+            next: (response) => {
+              console.log('Quiz assigned:', response);
+              // Update participation list with type-safe quiz data
+              this.listParticipation = [...this.listParticipation, {
+                ...res,
+                quiz: { id: quizId } // Use extracted quizId
+              }];
+              
+              Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                html: 'Participation recorded!<br/>Quiz assigned successfully!',
+                confirmButtonText: 'OK',
+              });
+            },
+            error: (err) => {
+              console.error('Quiz assignment failed:', err);
+              Swal.fire({
+                icon: 'warning',
+                title: 'Participation Recorded',
+                html: 'Quiz exists but assignment failed!<br/>Contact support.',
+                confirmButtonText: 'OK',
+              });
+            }
+          });
+      } else {
+        // Handle case with no quiz
+        this.listParticipation = [...this.listParticipation, res];
         Swal.fire({
           icon: 'success',
-          title: 'Participation Added',
-          text: 'Your participation has been successfully recorded!',
+          title: 'Participation Recorded',
+          text: 'No quiz available for this course',
           confirmButtonText: 'OK',
         });
+      }
+      
+      // Optional delayed refresh
+      setTimeout(() => this.getCoursesOfCategory(), 500);
+    },
+    error: (err) => {
+      console.error('Participation creation failed:', err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Failed to create participation',
+        confirmButtonText: 'Close',
+      });
+    }
+  });
+}
+  
+  // Updated getParticipationId method
+  getParticipationId(courseId: number): number | null {
+    if (!this.listParticipation || !this.currentUser) return null;
+    
+    const participation = this.listParticipation.find(
+      p => p.course?.id === courseId && 
+           p.participant === this.currentUser?.id
+    );
+    
+    return participation?.idp || null;
+  }
+  passerExam(participationId: number | null) {
+    if (!participationId || participationId <= 0) {
+      Swal.fire('Error', 'Invalid participation ID', 'error');
+      return;
+    }
+  
+    // First check if we have the participation data locally
+    const localParticipation = this.listParticipation.find(p => p.idp === participationId);
+    
+    if (localParticipation?.quiz?.id) {
+      this.router.navigate(['/quiz', localParticipation.quiz.id, participationId]);
+      return;
+    }
+  
+    // If not found locally, fetch from API
+    this.participationService.getParticipationById(participationId).subscribe({
+      next: (participation) => {
+        if (participation.quiz?.id) {
+          // Update local state
+          this.listParticipation = this.listParticipation.map(p => 
+            p.idp === participationId ? participation : p
+          );
+          this.router.navigate(['/quiz', participation.quiz.id, participationId]);
+        } else {
+          Swal.fire('Error', 'No quiz assigned to this course yet', 'error');
+        }
       },
       error: (err) => {
-        console.error("Erreur lors de l'ajout", err);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Failed to add participation. Please try again.',
-          confirmButtonText: 'Close',
-        });
-      },
+        console.error('Error fetching participation:', err);
+        Swal.fire('Error', 'Failed to load quiz details', 'error');
+      }
     });
   }
-
   // emojis *******************************************
   ratingMap: { [courseId: number]: number } = {}; // Store ratings for each course
   averageRatingMap: { [courseId: number]: number } = {}; // Store average ratings
