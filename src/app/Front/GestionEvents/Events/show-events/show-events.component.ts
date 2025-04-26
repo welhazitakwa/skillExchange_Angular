@@ -40,6 +40,9 @@ export class ShowEventsComponent implements OnInit {
   currentPage: number = 1;
   pageSize: number = 6;
   totalPages: number = 1;
+  recommendedEventIds: number[] = [];
+  showRecommendedOnly: boolean = false;
+  isLoadingRecommendations: boolean = false;
 
   constructor(
     private eventService: EventsService,
@@ -109,7 +112,7 @@ export class ShowEventsComponent implements OnInit {
             ...img,
             images: img.images || ''
           })) : [],
-          status: Status.NOT_ATTENDING // Initialize status
+          status: Status.NOT_ATTENDING
         }));
         this.events.forEach(event => {
           this.carouselIndices[event.idEvent] = 0;
@@ -119,6 +122,7 @@ export class ShowEventsComponent implements OnInit {
         this.updatePlaces();
         this.updatePagination();
         this.loadUserParticipations();
+        this.loadRecommendations();
       },
       error: (error) => {
         console.error('ShowEventsComponent: Error loading events:', {
@@ -128,6 +132,49 @@ export class ShowEventsComponent implements OnInit {
           error: error.error
         });
         this.snackBar.open('Failed to load events. Please try again later.', 'Close', { duration: 3000 });
+      }
+    });
+  }
+
+  loadRecommendations(): void {
+    console.log('ShowEventsComponent: Starting loadRecommendations');
+    if (!this.userEmail) {
+      console.warn('ShowEventsComponent: No user email for recommendations');
+      this.isLoadingRecommendations = false;
+      this.recommendedEventIds = [];
+      this.filterEvents();
+      return;
+    }
+    this.isLoadingRecommendations = true;
+    console.log('ShowEventsComponent: Fetching user history for:', this.userEmail);
+    this.eventService.getUserHistory(this.userEmail).subscribe({
+      next: (userEvents) => {
+        console.log('ShowEventsComponent: User history loaded:', userEvents);
+        this.eventService.getRecommendedEvents(this.events, userEvents).subscribe({
+          next: (recommendedIds) => {
+            console.log('ShowEventsComponent: Recommended event IDs:', recommendedIds);
+            this.recommendedEventIds = recommendedIds;
+            this.isLoadingRecommendations = false;
+            this.cdr.detectChanges();
+            this.filterEvents();
+          },
+          error: (error) => {
+            console.error('ShowEventsComponent: Error fetching recommended events:', error);
+            this.isLoadingRecommendations = false;
+            this.recommendedEventIds = [];
+            this.snackBar.open('Failed to load recommended events.', 'Close', { duration: 5000 });
+            this.cdr.detectChanges();
+            this.filterEvents();
+          }
+        });
+      },
+      error: (error) => {
+        console.error('ShowEventsComponent: Error fetching user history:', error);
+        this.isLoadingRecommendations = false;
+        this.recommendedEventIds = [];
+        this.snackBar.open('Failed to load user history.', 'Close', { duration: 5000 });
+        this.cdr.detectChanges();
+        this.filterEvents();
       }
     });
   }
@@ -253,7 +300,9 @@ export class ShowEventsComponent implements OnInit {
       locationFilter: this.locationFilter,
       dateFilter: this.dateFilter,
       customStartDate: this.customStartDate,
-      customEndDate: this.customEndDate
+      customEndDate: this.customEndDate,
+      showRecommendedOnly: this.showRecommendedOnly,
+      recommendedEventIds: this.recommendedEventIds
     });
 
     let tempEvents = [...this.events];
@@ -265,12 +314,24 @@ export class ShowEventsComponent implements OnInit {
          event.place?.toLowerCase().includes(query) ||
          event.description?.toLowerCase().includes(query))
       );
+      console.log('ShowEventsComponent: After search filter:', tempEvents.map(e => ({ id: e.idEvent, name: e.eventName })));
     }
 
     if (this.locationFilter !== 'all' && this.locationFilter !== 'search') {
       tempEvents = tempEvents.filter(event => 
         event.place?.toLowerCase() === this.locationFilter.toLowerCase()
       );
+      console.log('ShowEventsComponent: After location filter:', tempEvents.map(e => ({ id: e.idEvent, name: e.eventName })));
+    }
+
+    if (this.showRecommendedOnly) {
+      if (this.recommendedEventIds.length === 0) {
+        console.warn('ShowEventsComponent: No recommended event IDs available');
+        tempEvents = [];
+      } else {
+        tempEvents = tempEvents.filter(e => this.recommendedEventIds.includes(e.idEvent));
+      }
+      console.log('ShowEventsComponent: After recommended filter:', tempEvents.map(e => ({ id: e.idEvent, name: e.eventName })));
     }
 
     if (this.dateFilter !== 'any') {
@@ -343,13 +404,15 @@ export class ShowEventsComponent implements OnInit {
         }
         return false;
       });
+      console.log('ShowEventsComponent: After date filter:', tempEvents.map(e => ({ id: e.idEvent, name: e.eventName })));
     }
 
     this.filteredEvents = tempEvents;
-    console.log('ShowEventsComponent: Filtered events:', this.filteredEvents.map(e => ({ id: e.idEvent, name: e.eventName, status: e.status })));
+    console.log('ShowEventsComponent: Final filtered events:', this.filteredEvents.map(e => ({ id: e.idEvent, name: e.eventName, status: e.status })));
     this.currentPage = 1;
     this.updatePagination();
     this.updateCalendarEvents();
+    this.cdr.detectChanges();
   }
 
   updatePagination(): void {
@@ -470,6 +533,8 @@ export class ShowEventsComponent implements OnInit {
           'Close',
           { duration: 5000 }
         );
+        // Reload recommendations after participation change
+        this.loadRecommendations();
       },
       error: (error) => {
         console.error('ShowEventsComponent: Error updating participation:', {
@@ -562,6 +627,7 @@ export class ShowEventsComponent implements OnInit {
     this.customEndDate = null;
     this.showLocationSearch = false;
     this.showDatePicker = false;
+    this.showRecommendedOnly = false;
     this.currentPage = 1;
     this.filterEvents();
   }

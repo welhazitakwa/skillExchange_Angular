@@ -111,6 +111,8 @@ import { DetailsFormationBackComponent } from './Back/GestionFormation/Formation
 import { ParticipantsListComponent } from './Back/GestionFormation/Formation/participants-list/participants-list.component';
 import { ApprooveCourseComponent } from './Back/GestionFormation/Formation/approove-course/approove-course.component';
 import { NgChartsModule } from 'ng2-charts';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './core/interceptors/auth.interceptor'; // <-- adapte le chemin si nécessaire
 
 
 
@@ -226,7 +228,14 @@ import { NgChartsModule } from 'ng2-charts';
   ],
 
   
-  providers: [ToastService],
+  providers: [
+    ToastService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
