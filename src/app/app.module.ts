@@ -105,6 +105,8 @@ import { AllEventImageComponent } from './Back/GestionEvents/EventImage/all-even
 import { TeachersComponent } from './Front/teachers/teachers.component';
 import { UpdateEventImageComponent } from './Back/GestionEvents/EventImage/update-event-image/update-event-image.component';
 import { CartProductsComponent } from './Front/GestionProduit/cart-products/cart-products.component';
+import { FrontQuizComponent } from './Front/GestionQuizz/quiz/quiz.component';
+
 import { AllCommentsComponent } from './Back/GestionForumPost/CommentPost/all-comments/all-comments.component';
 import { ShowPostsComponent } from './Front/GestionForumPost/Posts/show-posts/show-posts.component';
 import { PostDetailsComponent } from './Front/GestionForumPost/Posts/post-details/post-details.component';
@@ -115,8 +117,12 @@ import { DetailsFormationBackComponent } from './Back/GestionFormation/Formation
 import { ParticipantsListComponent } from './Back/GestionFormation/Formation/participants-list/participants-list.component';
 import { ApprooveCourseComponent } from './Back/GestionFormation/Formation/approove-course/approove-course.component';
 import { NgChartsModule } from 'ng2-charts';
+
 import { AllCartProductsComponent } from './Back/GestionProduit/CartProduct/all-cart-products/all-cart-products.component';
 import { AllbadgesComponent } from './Back/GestionUser/Badge/allbadges/allbadges.component';
+
+import { CertificateComponent } from './Front/GestionQuizz/quiz/certificate/certificate.component';
+
 
 
 
@@ -138,6 +144,7 @@ import { AllbadgesComponent } from './Back/GestionUser/Badge/allbadges/allbadges
     ContactComponent,
     AuthRegisterComponent,
     AuthLoginComponent,
+    FrontQuizComponent,
     ListpostComponent,
     ListaddComponent,
     ProfileComponent,
@@ -205,6 +212,7 @@ import { AllbadgesComponent } from './Back/GestionUser/Badge/allbadges/allbadges
     DetailsFormationBackComponent,
     ParticipantsListComponent,
     ApprooveCourseComponent,
+    CertificateComponent,
   ],
   imports: [
     RouterModule,

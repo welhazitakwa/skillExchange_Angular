@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Formation } from '../../models/GestionFormation/formation';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
+import { map } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root',
 })
@@ -22,8 +22,13 @@ export class FormationService {
     return this.http.delete(this.url + '/remove-course/' + id);
   }
 
-  getFormationById(id: number) {
-    return this.http.get<Formation>(this.url + '/retrieve-course/' + id);
+  getFormationById(id: number): Observable<Formation> {
+    return this.http.get<Formation>(`${this.url}/retrieve-course/${id}`).pipe(
+      map((response: any) => ({
+        ...response,
+        quiz: response.quiz || null  // Ensure quiz object is properly mapped
+      }))
+    );
   }
   updateFormation(course: Formation) {
     return this.http.put(this.url + '/modify-course', course);

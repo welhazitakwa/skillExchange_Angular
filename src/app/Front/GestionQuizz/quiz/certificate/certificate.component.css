@@ -1,0 +1,38 @@
+.certificate-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+  }
+  
+  .passed {
+    background-color: #f0fff0;
+    border: 2px solid #4CAF50;
+  }
+  
+  .failed {
+    background-color: #fff0f0;
+    border: 2px solid #f44336;
+  }
+  
+  .score {
+    font-size: 2rem;
+    font-weight: bold;
+  }
+  
+  .success {
+    color: #4CAF50;
+    font-weight: bold;
+  }
+  
+  .failure {
+    color: #f44336;
+    font-weight: bold;
+  }
+  
+  .score-display {
+    margin: 1.5rem 0;
+    font-size: 1.2rem;
+  }
