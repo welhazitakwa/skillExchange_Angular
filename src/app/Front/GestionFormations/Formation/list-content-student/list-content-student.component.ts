@@ -5,10 +5,12 @@ import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { ContentCourse } from 'src/app/core/models/GestionFormation/content-course';
 import { ContentSelection } from 'src/app/core/models/GestionFormation/content-selection';
+import { Video } from 'src/app/core/models/GestionFormation/video';
 import { User } from 'src/app/core/models/GestionUser/User';
 import { AuthService } from 'src/app/core/services/Auth/auth.service';
 import { ContentCourseService } from 'src/app/core/services/GestionFormation/content-course.service';
 import { ContentSelectionService } from 'src/app/core/services/GestionFormation/content-selection.service';
+import { YouTubeServiceService } from 'src/app/core/services/GestionFormation/you-tube-service.service';
 import { UserService } from 'src/app/core/services/GestionUser/user.service';
 
 type ContentCourseWithSanitizedUrl = ContentCourse & {
@@ -31,6 +33,8 @@ export class ListContentStudentComponent {
   currentUser: User | null = null;
   checkedContents: Set<number> = new Set(); // Store checked content IDs
   isLoading: boolean = true; // Control rendering until data is loaded
+  videoRecommendations: { [key: string]: Video[] } = {};//api
+  loadingVideos: { [key: string]: boolean } = {};//api
 
   constructor(
     private courseContentService: ContentCourseService,
@@ -39,7 +43,8 @@ export class ListContentStudentComponent {
     private dialog: MatDialog,
     private userService: UserService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private youTubeService: YouTubeServiceService
   ) {}
 
   ngOnInit(): void {
@@ -224,5 +229,19 @@ export class ListContentStudentComponent {
 
   onUnchecked(): void {
     console.log('Checkbox is unchecked');
+  }
+
+  getVideoRecommendations(content: any) {
+    this.loadingVideos[content.id] = true;
+    this.youTubeService.getVideos(content.title).subscribe({
+      next: (videos) => {
+        this.videoRecommendations[content.id] = videos;
+        this.loadingVideos[content.id] = false;
+      },
+      error: () => {
+        this.videoRecommendations[content.id] = [];
+        this.loadingVideos[content.id] = false;
+      },
+    });
   }
 }
