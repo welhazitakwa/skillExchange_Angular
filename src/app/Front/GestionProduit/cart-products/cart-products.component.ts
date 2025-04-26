@@ -1,15 +1,18 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Observable } from 'rxjs';
 import { Cart } from 'src/app/core/models/GestionProduit/cart';
 import { CartProducts } from 'src/app/core/models/GestionProduit/cart-products';
 import { CurrencyType } from 'src/app/core/models/GestionProduit/currency-type';
 import { Payment, PaymentMethod, PaymentStatus } from 'src/app/core/models/GestionProduit/payment';
+import { HistoricTransactions, TransactionType } from 'src/app/core/models/GestionUser/HistoricTransactions';
 import { User } from 'src/app/core/models/GestionUser/User';
 import { AuthService } from 'src/app/core/services/Auth/auth.service';
 import { CartProductService } from 'src/app/core/services/GestionProduit/cart-product.service';
 import { CartService } from 'src/app/core/services/GestionProduit/cart.service';
 import { PayementService } from 'src/app/core/services/GestionProduit/payement.service';
 import { UserService } from 'src/app/core/services/GestionUser/user.service';
+import Swal from 'sweetalert2';
 declare var paypal: any;
 @Component({
   selector: 'app-cart-products',
@@ -20,10 +23,14 @@ export class CartProductsComponent  {
   @Input() cartProducts: CartProducts[] = [];
   @Input() totalTND!: number;
 @Input() totalTokens!: number;
-
+isActive: boolean = true;
 
   showPaymentModal: boolean = false;
   openPaymentModal(): void {
+    if (!this.isActive) {
+      alert('Votre panier a été désactivé.');
+      return;
+    }
     this.showPaymentModal = true;
   
     // 💡 attendre que la vue se mette à jour
@@ -59,13 +66,16 @@ export class CartProductsComponent  {
       console.warn("Aucun cartId trouvé dans le localStorage.");
     }
   
+    this.loadCartProducts();
+    this.loadCurrentUser();
+    
+   
+  }
+  loadCartProducts(){
     this.cartProductService.getCartProducts().subscribe((products) => {
       console.log("Produits du panier récupérés :", products);
       this.cartProducts = products;
     });
-    this.loadCurrentUser();
-    
-   
   }
   // loadCartId() {
   //   const storedCartId = localStorage.getItem('cartId');
@@ -174,7 +184,41 @@ increaseQuantity(cartProduct: CartProducts): void {
     
     alert("Panier validé avec succès !");
   }
- 
+  validateCartAfterPayment(): void {
+    const cartId = this.cartProducts[0]?.cart?.id;
+  
+    if (!cartId) {
+      console.error("⚠️ Cart ID not found for validation.");
+      return;
+    }
+  
+    this.cartProductService.validateCart(cartId).subscribe({
+      next: () => {
+        console.log("✅ Cart validated successfully.");
+        localStorage.removeItem("cartId");
+        Swal.fire({
+          icon: 'success',
+          title: 'Cart validated!',
+          showConfirmButton: false,
+          timer: 1500
+        }).then(() => {
+          // Recharge proprement : nouvelle session vide
+          window.location.reload();
+        });
+  
+       // this.loadCartProducts(); // Recharge panier vide
+      },
+      error: (err) => {
+        console.error('❌ Error validating cart:', err);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error validating cart!',
+          text: 'Please try again later.'
+        });
+      }
+    });
+  }
+  
 
 
  
@@ -202,9 +246,10 @@ increaseQuantity(cartProduct: CartProducts): void {
         }
       );
     }
+
     payerAvecSolde(): void {
       const cartId = this.cartProducts[0]?.cart?.id;
-      const email = localStorage.getItem('userEmail'); // assure-toi qu'il est stocké après le login
+      const email = localStorage.getItem('userEmail'); 
       const amount = this.totalTokens;
       console.log("💬 PAY WITH BALANCE DEBUG", { cartId, email, amount });
       if (!cartId || !email || amount<=0) {
@@ -226,7 +271,26 @@ increaseQuantity(cartProduct: CartProducts): void {
         next: res => {
           alert("✅ Payment completed using balance.");
           localStorage.removeItem('cartProducts');
+          if (this.currentUser) {
+            this.createTransaction(
+              this.currentUser,
+              -amount,
+              TransactionType.PAYMENT,
+              'Product  Payment '
+                        ).subscribe(
+              () => {
+               // alert('Withdrawal completed successfully');
+               this.validateCartAfterPayment();
+              },
+              (error) => {
+                console.error('Withdrawal transaction failed:', error);
+                alert('Withdrawal failed');
+              }
+            );
+          }
           location.reload();
+         
+    
         },
         error: err => {
           console.error("❌ Error during balance payment:", err);
@@ -249,13 +313,29 @@ increaseQuantity(cartProduct: CartProducts): void {
         (user: User) => {
           this.currentUser = user;
     
-          // ✅ Sauvegarder l'email pour le paiement
           localStorage.setItem("userEmail", user.email);
         },
         (error) => {
           console.error(error);
         }
       );
+    }
+    ///////////////////////////////////////////////Transaction////////////////////////////////////////////////////////////////
+    private createTransaction(
+      recipient: User,
+      amount: number,
+      transactionType: TransactionType,
+      description: string
+    ): Observable<any> {
+      const transaction: HistoricTransactions = {
+        id: null,
+        type: transactionType,
+        amount: amount,
+        description: description,
+        date: new Date(),
+      };
+  
+      return this.userService.addTransaction(recipient.id, transaction);
     }
   //////////////////////////
   loadPayPalScript(): Promise<void> {
@@ -320,6 +400,8 @@ increaseQuantity(cartProduct: CartProducts): void {
     this.payService.notifyPaypalSuccess(payload).subscribe({
       next: () => {
         alert("📧 Invoice sent and payment saved!");
+        this.validateCartAfterPayment();
+
         localStorage.removeItem("cartProducts");
         window.location.href = "/payment/success";
       },

@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CurrencyType } from 'src/app/core/models/GestionProduit/currency-type';
 import { Payment, PaymentMethod } from 'src/app/core/models/GestionProduit/payment';
 import { PayementService } from 'src/app/core/services/GestionProduit/payement.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-success',
@@ -44,8 +45,9 @@ export class SuccessComponent  implements OnInit{
   //     error: (err) => console.error('❌ Erreur lors de l’enregistrement Stripe', err)
   //   });
   // }
-  ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
+  paymentIntentId: string = '';
+  //ngOnInit(): void {
+   /* this.route.queryParams.subscribe(params => {
       const sessionId = params['session_id'];
       if (!sessionId) {
         console.warn("⚠️ Aucun session_id fourni.");
@@ -71,10 +73,77 @@ export class SuccessComponent  implements OnInit{
           console.log("📤 Enregistrement paiement Stripe :", payment);
 
           this.paymentService.createPayment2(payment).subscribe({
-            next: () => console.log("✅ Paiement enregistré en base"),
+            next: (res) =>{ console.log("✅ Paiement enregistré en base"),
+            alert("📧 Facture envoyée par mail !");},
             error: err => console.error("❌ Erreur enregistrement :", err)
           });
         });
-    });
-  }
-}
+    });}*/ 
+    ngOnInit(): void {
+      this.route.queryParams.subscribe((params) => {
+        const sessionId = params['session_id'];
+    
+        if (!sessionId) {
+          console.warn("⚠️ Aucun session_id trouvé dans l’URL.");
+          return;
+        }
+    
+        this.paymentService.getStripeSessionInfo(sessionId).subscribe({
+          next: (session) => {
+            console.log('✅ Session Stripe récupérée:', session);
+    
+            const email = session.customer_details?.email || 'unknown@example.com';
+            const amount = session.amount_total / 100;
+            const cartId = Number(session.metadata?.cartId || 0);
+            const currencyStr = session.metadata?.currencyType || 'USD';
+            const currencyType = CurrencyType[currencyStr as keyof typeof CurrencyType];
+    
+            const paymentIntentId = session.payment_intent;
+    
+            const payment: Payment = {
+              userEmail: email,
+              montant: amount,
+              methodePaiement: PaymentMethod.STRIPE,
+              currencyType: currencyType,
+              cart: { id: cartId }
+            };
+    
+            console.log("📤 Enregistrement du paiement :", payment);
+    
+            this.paymentService.createPayment2(payment).subscribe({
+              next: (res) => {
+                console.log("✅ Payment successfully recorded !");
+                alert("📧 Votre facture vous a été envoyée par e-mail.");
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Payment Confirmed',
+                  text: '📧 Your invoice has been sent to your email.',
+                  confirmButtonColor: '#f97316'
+                });
+              
+              
+                if (paymentIntentId) {
+                  this.paymentService.downloadStripeInvoice(paymentIntentId);
+                }
+              },
+              error: (err) => {
+                console.error("❌ Error:", err);
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Oops!',
+                  text: 'Something went wrong during payment.',
+                  confirmButtonColor: '#d33'
+                });
+              }
+            
+            });
+          },
+          error: (err) => {
+            console.error("❌ Erreur de récupération de la session Stripe :", err);
+          }
+        });
+      });
+    }
+  }    
+
+
