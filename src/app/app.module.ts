@@ -198,7 +198,7 @@ import { NgChartsModule } from 'ng2-charts';
     SuccessComponent,
     DetailsFormationBackComponent,
     ParticipantsListComponent,
-    ApprooveCourseComponent,
+    ApprooveCourseComponent
     
   ],
   imports: [

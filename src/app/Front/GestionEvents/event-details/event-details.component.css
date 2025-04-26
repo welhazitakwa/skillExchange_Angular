@@ -11,7 +11,7 @@
 
 .carousel img {
   width: 100%;
-  height: 400px; /* Larger for details page */
+  height: 400px;
   object-fit: cover;
   border-radius: 0.5rem;
   transition: opacity 0.3s ease;
@@ -68,7 +68,7 @@ h1 {
 }
 
 .text-muted i {
-  color: #f28c38; /* Orange theme */
+  color: #f28c38;
 }
 
 p {
@@ -100,12 +100,128 @@ p {
 }
 
 .participation-count span {
-  color: #f28c38; /* Orange theme */
+  color: #f28c38;
 }
 
-/* Comments section */
-.bg-light {
-  background-color: #f8f9fa !important;
+/* Star rating */
+.star-rating .fa-star {
+  color: #ccc;
+}
+
+.star-rating .fa-star.checked {
+  color: #f28c38;
+}
+
+/* Review section */
+.review {
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.review:hover {
+  transform: translateY(-2px);
+}
+
+.review p {
+  margin-bottom: 0;
+}
+
+/* Modal styles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #fff;
+  width: 100%;
+  max-width: 500px;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #e9ecef;
+  background-color: #f8f9fa;
+}
+
+.modal-header h4 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #2d3436;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #636e72;
+}
+
+.close-btn:hover {
+  color: #2d3436;
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: #2d3436;
+}
+
+.form-control {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.form-control:focus {
+  border-color: #f28c38;
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(242, 140, 56, 0.25);
+}
+
+.text-danger {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 5px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 15px 20px;
+  border-top: 1px solid #e9ecef;
+  background-color: #f8f9fa;
+}
+
+.modal-footer .btn {
+  margin-left: 10px;
 }
 
 /* Responsive adjustments */
@@ -121,6 +237,10 @@ p {
   .participation-count {
     padding: 6px 10px;
     font-size: 0.9rem;
+  }
+
+  .modal-content {
+    max-width: 90%;
   }
 }
 
@@ -162,4 +282,23 @@ p {
   .participation-count i {
     margin-right: 4px;
   }
+
+  .star-rating .fa-star {
+    font-size: 1.2rem;
+  }
+
+  .modal-content {
+    max-width: 95%;
+  }
+
+  .modal-header h4 {
+    font-size: 1.1rem;
+  }
+
+  .form-control {
+    font-size: 0.9rem;
+  }
+
+
+  
 }
