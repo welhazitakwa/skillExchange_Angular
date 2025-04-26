@@ -13,6 +13,8 @@ import { UserService } from 'src/app/core/services/GestionUser/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ImageProduct } from 'src/app/core/models/GestionProduit/image-product';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import Swal from 'sweetalert2';
+import { ImageProductService } from 'src/app/core/services/GestionProduit/image-product.service';
 @Component({
   selector: 'app-showproduct',
   templateUrl: './showproduct.component.html',
@@ -41,7 +43,7 @@ selectedType: string = '';
  
   constructor(private router: Router, private authService: AuthService,
     private userService: UserService,
-    private route: ActivatedRoute, private productService: ProductService, private cartProductService: CartProductService, private cartService: CartService) { }
+    private route: ActivatedRoute, private productService: ProductService, private cartProductService: CartProductService, private cartService: CartService,private imageProductService:ImageProductService) { }
     
    
   ngOnInit() {
@@ -59,10 +61,10 @@ selectedType: string = '';
   }
 
   filterProducts() {
-    if (this.selectedType) {
-      this.filteredProducts = this.products.filter(p => p.type === this.selectedType);
+    if (!this.selectedType || this.selectedType === '') {
+      this.filteredProducts = this.products;
     } else {
-      this.filteredProducts = [...this.products];
+      this.filteredProducts = this.products.filter(p => p.type === this.selectedType);
     }
   }
 
@@ -292,36 +294,36 @@ selectedFiles: File[]=[]
 
   selectedImages: string[] = [];
 
-  onFilesSelected(event: any) {
-    const files: FileList = event.target.files;
-    if (!files) return;
-  
-    Array.from(files).forEach((file: File) => {
-      // Validation des fichiers image
-      if (!file.type.match(/image\/(jpeg|png|jpg)/)) {
-        alert("Le fichier ${file.name} n'est pas une image valide (JPEG/PNG requis)");
-        return;
-      }
-  
-      if (file.size > 5 * 1024 * 1024) { // Limite à 5MB
-        alert("L'image ${file.name} est trop volumineuse (5MB maximum)");
-        return;
-      }
-  
-     // this.selectedFiles.push(file);
-       // Redimensionner l'image si elle est trop grande
+
+onFilesSelected(event: any) {
+  const files: FileList = event.target.files;
+  if (!files) return;
+
+  Array.from(files).forEach((file: File) => {
+    if (!file.type.match(/image\/(jpeg|png|jpg)/)) {
+      alert(`Le fichier ${file.name} n'est pas une image valide (JPEG/PNG requis)`);
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert(`L'image ${file.name} est trop volumineuse (5MB maximum)`);
+      return;
+    }
+
     this.resizeImage(file, 800, 600).then((resizedFile) => {
       this.selectedFiles.push(resizedFile);
 
-  
       const reader = new FileReader();
       reader.onload = (e: any) => {
+        const base64String = e.target.result;
+        const base64Data = base64String.split(',')[1];
+
         this.imagesPreviews.push({
-          url: e.target.result, // Stocker l'URL en base64
-         // file: file,
+          url: base64String,
           file: resizedFile
         });
-     
+
+        this.selectedImages.push(base64Data); // ✅ essentiel
       };
 
       reader.readAsDataURL(resizedFile);
@@ -330,6 +332,7 @@ selectedFiles: File[]=[]
     });
   });
 }
+
   resizeImage(file: File, maxWidth: number, maxHeight: number): Promise<File> {
     return new Promise((resolve, reject) => {
       const img = new Image();
@@ -380,7 +383,7 @@ imagesToDelete: number[] = []; // celles à supprimer
 
 
   
- 
+showModalProductAdd = false;
   async submitNewProduct() {
     
     if (!this.currentUser) {
@@ -405,12 +408,17 @@ imagesToDelete: number[] = []; // celles à supprimer
         currencyType: this.newProduct.currencyType || 'TND'
       };
   
-      console.log('Envoi final:', JSON.parse(JSON.stringify(productToSend)));
   
       this.productService.addProduct(productToSend as Product).subscribe({
         next: () => {
-          alert('Produit ajouté avec succès!');
-          this.resetForm();
+          Swal.fire({
+            icon: 'success',
+            title: 'Product added!',
+            showConfirmButton: false,
+            timer: 1500
+          });
+          
+          this.showModalProductAdd = false;
         },
         error: (err) => {
           console.error('Erreur complète:', err);
@@ -430,13 +438,7 @@ imagesToDelete: number[] = []; // celles à supprimer
       reader.readAsDataURL(file);
     });
   }
-  // private async getBase64WithPrefix(file: File): Promise<string> {
-  //   return new Promise((resolve) => {
-  //     const reader = new FileReader();
-  //     reader.onload = (e: any) => resolve(e.target.result); // Ne pas splitter le résultat
-  //     reader.readAsDataURL(file);
-  //   });
-  // }
+
   switchMainImage(product: Product, index: number) {
     if (product.imageProducts && product.imageProducts.length > index) {
       // Échange la première image avec celle cliquée
@@ -450,17 +452,25 @@ imagesToDelete: number[] = []; // celles à supprimer
       this.updateImagePreviews();
     }
   }
+ 
   removeImage(index: number): void {
-    if (confirm('Are you sure you want to remove this image?')) {
-      this.imagesPreviews.splice(index, 1);
-      this.selectedImages.splice(index, 1);
-      this.imagesToDelete.push(index);
+    const img = this.editingProduct?.imageProducts[index];
+  
+    // Si l'image est déjà en BDD (a un id), on marque pour suppression
+    if (img?.idImage && !this.imagesToDelete.includes(img.idImage)) {
+      this.imagesToDelete.push(img.idImage);
     }
-    // else {
-    //   const actualIndex = index - this.imagesPreviews.length;
-    //   this.markImageForDeletion(actualIndex);
-    // }
+  
+    // Supprimer du tableau visuel aussi
+    if (this.editingProduct?.imageProducts) {
+      this.editingProduct.imageProducts.splice(index, 1);
+    }
+  
+    // Rafraîchir les aperçus
+    this.updateImagePreviews();
   }
+  
+  
   imageError: string | null = null;
   onFileChange(event: any): void {
   const files = event.target.files;
@@ -487,17 +497,25 @@ imagesToDelete: number[] = []; // celles à supprimer
     }
   }
 }
+
   private updateImagePreviews(): void {
-    this.imagesPreviews = [
-      ...this.editingProduct!.imageProducts
-        .filter((_, i) => !this.imagesToDelete.includes(i))
-        .map(img => ({ url: img.image, file: null })),
-      ...this.selectedFiles.map(file => ({ 
-        url: URL.createObjectURL(file), 
-        file 
-      }))
-    ];
+    this.imagesPreviews = [];
+  
+    const existingImages = (this.editingProduct?.imageProducts || [])
+      .filter(img => !this.imagesToDelete.includes(img.idImage || -1)) // exclure les supprimées
+      .map(img => ({
+        url: 'data:image/jpeg;base64,' + img.image,
+        file: null
+      }));
+  
+    const newImagePreviews = this.selectedFiles.map(file => ({
+      url: URL.createObjectURL(file),
+      file
+    }));
+  
+    this.imagesPreviews = [...existingImages, ...newImagePreviews];
   }
+  
   showModalProduct = false;
   
   onImageSelected(event: any) {
@@ -516,114 +534,59 @@ imagesToDelete: number[] = []; // celles à supprimer
     this.showModalProduct = false;
   }
   editingProduct?: Product;
+  //imagesToDelete: number[] = []; // contiendra les ID des images à supprimer
+
 //fonctionnel
-  // submitEditProduct() {
-  //   if (!this.editingProduct) return;
-  
-  //   this.productService.updateProduct(this.editingProduct).subscribe({
-  //     next: () => {
-  //       console.log('Product updated');
-  //       this.productService.getProduct().subscribe({
-  //         next: (products) => {
-  //           this.products = products;
-  //           console.log(this.products);
-  //         },
-  //         error: (error) => {
-  //           console.error('Erreur lors de la récupération des produits', error);
-  //         }
-  //       });
-  //       this.showModalProduct = false;
-  //       this.editingProduct = undefined;
-  //     },
-  //     error: (error) => {
-  //       console.error('Error updating product', error);
-  //     }
-  //   });
-  // }
-  submitEditProduct() {
-    if (!this.editingProduct) return;
-  
-    // Inclure les indices des images à supprimer dans le produit
-    const productData = {
-      ...this.editingProduct,
-      imagesToDelete: this.imagesToDelete
-    };
-  
-    this.productService.updateProduct(productData).subscribe({
-      next: () => {
-        console.log('Product updated');
-        this.productService.getApprovedProducts().subscribe({
-          next: (products) => {
-            this.products = products;
-            console.log(this.products);
-          },
-          error: (error) => {
-            console.error('Error retrieving products', error);
-          }
-        });
-        this.showModalProduct = false;
-        this.editingProduct = undefined;
-      },
-      error: (error) => {
-        console.error('Error updating product', error);
-      }
+submitEditProduct() {
+  if (!this.editingProduct) return;
+
+  const newImages = this.selectedImages.map(base64 => ({
+    image: base64
+  }));
+
+  // 🔥 Si l'utilisateur n'a pas d'imageProducts (cas edge)
+  this.editingProduct.imageProducts = this.editingProduct.imageProducts || [];
+
+  if (this.imagesToDelete.length > 0) {
+    this.imagesToDelete.forEach(id => {
+      this.imageProductService.deleteImageProduct(id).subscribe({
+        next: () => console.log(`🗑️ Image ${id} supprimée côté serveur.`),
+        error: err => console.error('❌ Échec suppression image:', err)
+      });
     });
   }
   
-  removeExistingImage(imageId: number) {
-    if (!this.imagesToDelete.includes(imageId)) {
-      this.imagesToDelete.push(imageId);
+  // ✅ Ajoute les nouvelles images converties
+  this.editingProduct.imageProducts = [
+    ...this.editingProduct.imageProducts,
+    ...newImages
+  ];
+
+  this.productService.updateProduct(this.editingProduct).subscribe({
+    next: () => {
+      console.log('✅ Produit mis à jour');
+      this.afterProductUpdate();
+    },
+    error: (error) => {
+      console.error('❌ Erreur lors de la mise à jour du produit', error);
     }
-  
-    // Supprimer visuellement l'image
-    this.editingProduct!.imageProducts = this.editingProduct!.imageProducts.filter(img => img.idImage !== imageId);
+  });
+}
+
+ 
+  private afterProductUpdate() {
+    this.loadProducts(); // ou refresh
+    this.resetEditForm();
+    this.showModalProduct = false;
+    this.imagesToDelete = [];
+    Swal.fire({
+      icon: 'success',
+      title: 'Product updated!',
+      showConfirmButton: false,
+      timer: 1500
+    });
   }
-  
-  // async submitEditProduct() {
-  //   const formData = new FormData();
-  
-  //   const productToSend = {
-  //     productName: this.editingProduct?.productName,
-  //     type: this.editingProduct?.type,
-  //     price: this.editingProduct?.price,
-  //     stock: this.editingProduct?.stock,
-  //     currencyType: this.editingProduct?.currencyType
-  //   };
-  
-  //   formData.append('product', new Blob([JSON.stringify(productToSend)], { type: 'application/json' }));
-  
-  //   // Ajouter les nouvelles images
-  //   for (let file of this.selectedFiles) {
-  //     formData.append('newImages', file);
-  //   }
-  
-  //   // Ajouter les ids des images à supprimer
-  //   for (let id of this.imagesToDelete) {
-  //     formData.append('imagesToDelete', id.toString());
-  //   }
-  //   console.log("Images à supprimer :", this.imagesToDelete);
-  //   for (const [key, value] of (formData as any).entries()) {
-  //     console.log(`${key}:`, value);
-  //   }
-
-  
-  //   this.productService.updateProduct(this.editingProduct!.idProduct!, formData).subscribe({
-  //     next: () => {
-  //       alert("Produit modifié avec succès !");
-  //       this.showModalProduct = false;
-  //       this.loadProducts(); // ou toute méthode pour rafraîchir
-  //     },
-  //     error: (err) => {
-  //       console.error('Erreur update:', err);
-  //       alert('Erreur lors de la mise à jour');
-  //     }
-  //   });
-  // }
-  
-  
-  
-  
-
+    
   deleteProduct(id: number) {
     if (confirm('Are you sure you want to delete this product?')) {
       this.productService.deleteProduct(id).subscribe(
@@ -661,19 +624,7 @@ newImages: { url: string, file: File | null }[] = [];
 
 
 
-// Fonction pour supprimer les références circulaires
-private removeCircularReferences(obj: any, seen: Set<any> = new Set()): any {
-  if (obj && typeof obj === 'object') {
-    if (seen.has(obj)) {
-      return undefined; // Si on a déjà vu cet objet, on l'ignore
-    }
-    seen.add(obj);
-    for (const key of Object.keys(obj)) {
-      obj[key] = this.removeCircularReferences(obj[key], seen); // Appel récursif
-    }
-  }
-  return obj;
-}
+
 
 private resetEditForm(): void {
   this.editImagesPreviews = [];

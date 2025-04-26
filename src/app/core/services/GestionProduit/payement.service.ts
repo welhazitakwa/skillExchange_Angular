@@ -12,7 +12,7 @@ export class PayementService {
   constructor(private http: HttpClient) {}
  
   createPayment2(payment: Payment): Observable<Payment> {
-    return this.http.post<Payment>(this.url, payment);
+    return this.http.post<Payment>(`${this.url}/payments`, payment);
   }
   // createStripeSession(amount: number, productName: string): Observable<string> {
   //   return this.http.post(`${this.url}/stripe-session?amount=${amount}&productName=${productName}`, {}, { responseType: 'text' });

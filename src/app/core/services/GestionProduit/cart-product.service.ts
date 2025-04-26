@@ -17,8 +17,8 @@ listCartProducts: CartProducts[] = [];
 
  getProductsInCart(cartId: number): Observable<CartProducts[]> {
   return this.http.get<CartProducts[]>(`${this.url}/cart/${cartId}/products`);
-}
-
+ }
+ 
    getCartProducts() : Observable<CartProducts[]> 
    {
     

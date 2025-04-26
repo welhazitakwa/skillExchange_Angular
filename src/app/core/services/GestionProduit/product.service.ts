@@ -44,7 +44,7 @@ export class ProductService {
 
   }
   approveProduct(id: number): Observable<any> {
-    return this.http.put(`${this.url}/approve/${id}`, null, { responseType: 'text' }); // PUT vide, pas PATCH
+    return this.http.put(`${this.url}/approve/${id}`, null, { responseType: 'text' }); 
   }
   
   rejectProduct(id: number): Observable<any> {
