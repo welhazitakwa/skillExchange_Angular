@@ -1,6 +1,5 @@
 export interface UserAnswer {
+  id?: number;
   question: { id: number };
-  participationCourse: { idp: number };
-  quiz: { id: number };
   userAnswer: string;
 }

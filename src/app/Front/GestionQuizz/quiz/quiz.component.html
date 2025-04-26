@@ -1,3 +1,25 @@
+<app-header-front></app-header-front>    
+    <!-- Header Start -->
+    <div class="container-fluid page-header" style="margin-bottom: 90px;">
+        <div class="container">
+            <div class="d-flex flex-column justify-content-center" style="min-height: 300px">
+                <h3 class="display-4 text-white text-uppercase">Quiz</h3>
+                <div class="d-inline-flex text-white">
+                    <p class="m-0 text-uppercase"><a class="text-white" 
+                                      routerLink="/Quizz"
+>Home</a></p>
+                    <i class="fa fa-angle-double-right pt-1 px-3"></i>
+                    <p class="m-0 text-uppercase">Quiz</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Header End -->
+
+
+
+
+
 <!-- quiz.component.html -->
 <div class="container">
   <!-- Error State -->
@@ -51,11 +73,18 @@
       <!-- Navigation Controls -->
       <div class="card-footer d-flex justify-content-between">
         <button class="btn btn-outline-secondary" 
-                (click)="previousQuestion()"
-                [disabled]="currentQuestionIndex === 0">
-          <i class="fas fa-chevron-left"></i> Previous
-        </button>
-        
+        (click)="previousQuestion()"
+        [disabled]="currentQuestionIndex === 0">
+  <i class="fas fa-chevron-left"></i> <span style="color: black;">Previous</span>
+</button>
+         <button class="btn btn-outline-info" 
+          (click)="getHint()"
+          [disabled]="gettingHint || !currentQuestion">
+    <i class="fas fa-lightbulb"></i> Get Hint
+    <span *ngIf="gettingHint" class="ml-2">
+      <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+    </span>
+  </button>
         <div>
           <button *ngIf="currentQuestionIndex < totalQuestions - 1"
                   class="btn btn-primary ml-2"
@@ -65,11 +94,11 @@
           </button>
           
           <button *ngIf="currentQuestionIndex === totalQuestions - 1"
-                  class="btn btn-success ml-2"
-                  (click)="submitResult()"
-                  [disabled]="!selectedOption">
-            <i class="fas fa-check"></i> Submit Quiz
-          </button>
+          class="btn btn-success ml-2"
+          (click)="submitResult()"
+          [disabled]="!(currentQuestion && currentQuestion.id && selectedAnswers[currentQuestion.id])">
+      <i class="fas fa-check"></i> Submit Quiz
+  </button>
         </div>
       </div>
     </div>
@@ -80,3 +109,22 @@
     </div>
   </div>
 </div>
+<div *ngIf="showHintModal" class="modal fade show" style="display: block; background-color: rgba(0,0,0,0.5);" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Question Hint</h5>
+        <button type="button" class="close" (click)="closeHint()">
+          <span>&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>{{ currentHint }}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeHint()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<app-footer-front></app-footer-front>

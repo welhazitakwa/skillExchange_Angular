@@ -1,38 +1,147 @@
-/* Keep these styles but enhance them */
 .progress {
-    height: 30px;  /* Makes progress bar more visible */
-    border-radius: 15px; /* Matches the height for pill shape */
-    overflow: hidden; /* Ensures inner bar respects border radius */
-  }
+  height: 30px;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  transition: width 0.3s ease;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Keep original button styles */
+.list-group-item {
+  transition: all 0.2s ease;
+  cursor: pointer;
   
-  .progress-bar {
-    transition: width 0.3s ease;
-    font-size: 14px; /* Better text visibility */
-    font-weight: 500;
-  }
-  
-  .list-group-item {
-    transition: all 0.2s ease;
-    cursor: pointer;
-    
-    /* Better hover state */
-    &:hover:not(.active) {
+  &:hover:not(.active) {
       background-color: #f8f9fa;
       transform: translateX(5px);
-    }
-    
-    &.active {
-      background-color: #007bff !important; /* Override Bootstrap */
+  }
+  
+  &.active {
+      background-color: #007bff !important;
       border-color: #007bff !important;
       box-shadow: 0 2px 8px rgba(0,123,255,0.3);
       
       &:hover {
-        background-color: #0069d9 !important;
+          background-color: #0069d9 !important;
       }
-    }
+  }
+}
+
+/* Keep original button icon spacing */
+.btn i {
+  margin: 0 0.5rem;
+}
+
+/* Enhanced Modal Styles - Centered with Orange Header */
+.modal {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-dialog {
+  margin: 0 auto;
+  max-width: 500px;
+  width: 90%;
+}
+
+.modal-content {
+  border: none;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  background-color: #fd7e14; /* Orange header */
+  color: white;
+  border-bottom: none;
+  padding: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-title {
+  font-weight: 600;
+  font-size: 1.3rem;
+  margin: 0;
+}
+
+.modal-body {
+  padding: 1.5rem;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  background-color: #fff;
+}
+
+.modal-footer {
+  border-top: 1px solid #eee;
+  padding: 1rem 1.5rem;
+  background-color: #f8f9fa;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.close {
+  color: white;
+  text-shadow: none;
+  opacity: 0.8;
+  font-size: 1.5rem;
+  line-height: 1;
+  
+  &:hover {
+      color: white;
+      opacity: 1;
+  }
+}
+
+/* Keep original hint button styles */
+.btn-outline-info {
+  border-color: #17a2b8;
+  color: #17a2b8;
+  
+  &:hover {
+      background-color: #17a2b8;
+      color: white;
   }
   
-  /* Add this if using Font Awesome icons */
-  .btn i {
-    margin: 0 0.5rem;
+  &:disabled {
+      color: #6c757d;
+      border-color: #6c757d;
   }
+}
+
+/* Loading spinner - keep original color */
+.spinner-border {
+  color: #17a2b8;
+}
+
+/* Modal animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.modal.fade.show {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .modal-dialog {
+      width: 95%;
+  }
+  
+  .modal-header {
+      padding: 1rem;
+  }
+  
+  .modal-body {
+      padding: 1.25rem;
+  }
+}

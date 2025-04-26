@@ -5,14 +5,18 @@ import { QuestionService } from 'src/app/core/services/GestionQuizz/question.ser
 import { ActivatedRoute, Router } from '@angular/router';
 import { Quiz } from 'src/app/core/models/QuestionQuizz/quiz';
 import { Question } from 'src/app/core/models/QuestionQuizz/question';
+import { FormationService } from 'src/app/core/services/GestionFormation/formation.service';
+import { Formation } from 'src/app/core/models/GestionFormation/formation';
+import { ToastService } from 'angular-toastify';
 
 @Component({
   selector: 'app-quiz',
   templateUrl: './quiz.component.html',
-  styleUrls: ['./quiz.component.css']
+  styleUrls: ['./quiz.component.css'],
 })
 export class QuizComponent implements OnInit {
   quizForm!: FormGroup;
+  asignCourseForm!: FormGroup;
   quizzes: Quiz[] = []; // To store all quizzes
   questions: Question[] = []; // To store all available questions
   selectedQuestions: Question[] = []; // To store selected questions for the quiz
@@ -20,12 +24,18 @@ export class QuizComponent implements OnInit {
   selectedFile: File | null = null; // To store the selected file
   imageUrl: string | null = null; // To store the existing image URL (or preview URL)
 
+  quizToAsign: number|null = null;
+  courses: Formation[] = [];
+  isAssignCourseModalOpen: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private quizService: QuizService,
     private questionService: QuestionService,
+    private formationService: FormationService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+     private toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -47,22 +57,26 @@ export class QuizComponent implements OnInit {
       this.questions = data;
     });
   }
-
-  // Initialize the form for quiz creation or editing.
-  // Note: We remove the "image" control because we handle file input separately.
+  
+  
   initForm(): void {
     this.quizForm = this.fb.group({
       title: ['', Validators.required],
-      questions: [[]] // Store selected questions
+      questions: [[]], // Store selected questions
+    });
+    this.asignCourseForm = this.fb.group({
+      course: ['', Validators.required],
+      
     });
   }
 
   // Load quiz data for editing (when quizId is provided)
   loadQuiz(): void {
     this.quizService.getQuizById(this.quizId!).subscribe((quiz) => {
+
       this.quizForm.patchValue({
         title: quiz.title,
-        questions: quiz.questions || []
+        questions: quiz.questions || [],
       });
       this.selectedQuestions = quiz.questions || []; // Preselect questions for the quiz
       // Set the imageUrl from the quiz data so that it displays in the template
@@ -91,7 +105,7 @@ export class QuizComponent implements OnInit {
     } else {
       console.error('No file selected');
     }
-    
+
     // Append selected questions as JSON, if your backend expects them.
     formData.append('questions', JSON.stringify(this.selectedQuestions));
 
@@ -135,11 +149,14 @@ export class QuizComponent implements OnInit {
   // Delete a quiz
   deleteQuiz(quizId: number | undefined): void {
     if (quizId !== undefined) {
-      this.quizService.deleteQuiz(quizId).subscribe(() => {
-        this.quizzes = this.quizzes.filter((quiz) => quiz.id !== quizId); // Remove the deleted quiz from the array
-      }, (error) => {
-        console.error('Error deleting quiz:', error);
-      });
+      this.quizService.deleteQuiz(quizId).subscribe(
+        () => {
+          this.quizzes = this.quizzes.filter((quiz) => quiz.id !== quizId); // Remove the deleted quiz from the array
+        },
+        (error) => {
+          console.error('Error deleting quiz:', error);
+        }
+      );
     } else {
       console.error('Quiz ID is undefined.');
     }
@@ -149,8 +166,45 @@ export class QuizComponent implements OnInit {
     this.quizForm.patchValue({
       title: quiz.title,
     });
-  
+
     this.imageUrl = 'data:image/jpeg;base64,' + quiz.image;
   }
-  
+
+  openModal(quizId: number| undefined){
+    if(!quizId)
+    {
+      this.toast.error("quiz not selected")
+      return;
+    }
+    this.formationService.getCourses().subscribe((data) => {
+      this.quizToAsign = quizId;
+      this.courses = data;
+      this.isAssignCourseModalOpen = true;
+    }, (error) => {
+      console.error('Error fetching courses:', error);
+    })
+
+  }
+
+  closeModal(){
+    this.isAssignCourseModalOpen = false;
+    this.quizToAsign = null;
+  }
+
+  asignCourse(){    
+    if(!this.quizToAsign){
+      this.toast.error("Quiz not selected")
+      return;
+    }
+    const courseId = this.asignCourseForm.get('course')!.value;
+    this.quizService.affectCourse(this.quizToAsign,courseId).subscribe(
+      () => {
+        this.toast.success("quiz affecte au cours")
+        this.closeModal();
+      },
+      (error) => {
+        console.error('Error affectation:', error);
+      }
+    )
+  }
 }

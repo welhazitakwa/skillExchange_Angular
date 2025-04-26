@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Quiz } from 'src/app/core/models/QuestionQuizz/quiz';
 import { UserAnswer } from 'src/app/core/models/QuestionQuizz/userAnswer';
@@ -12,7 +12,7 @@ import { Question } from 'src/app/core/models/QuestionQuizz/question'; // Add Qu
 })
 export class QuizService {
   private apiUrl = 'http://localhost:8084/skillExchange/api/quizzes';
-
+  private participationCourseId?: number; 
   constructor(private http: HttpClient) {}
 
   getAllQuizzes(): Observable<Quiz[]> {
@@ -40,13 +40,49 @@ export class QuizService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
   submitAnswer(quizId: number, userAnswer: UserAnswer): Observable<UserAnswer> {
-    return this.http.post<UserAnswer>(`${this.apiUrl}/${quizId}/answers`, userAnswer);
+    return this.http.post<UserAnswer>(
+      `${this.apiUrl}/${quizId}/answers`,
+      {
+        ...userAnswer,
+        participationCourse: { idp: this.participationCourseId } // Add this
+      }
+    );
   }
 
-  // Submit the final result for the quiz
-  submitResult(quizId: number, participationCourseId: number): Observable<Result> {
-    return this.http.post<Result>(`${this.apiUrl}/${quizId}/results`, null, {
-      params: { participationCourseId: participationCourseId.toString() },
+  submitResult(
+    quizId: number, 
+    participationId: number,
+    userAnswers: UserAnswer[]
+  ): Observable<Result> {
+    return this.http.post<Result>(
+      `${this.apiUrl}/${quizId}/results`,
+      userAnswers.map(answer => ({
+        question: { id: answer.question.id },
+        userAnswer: answer.userAnswer
+      })),
+      {
+        params: { participationCourseId: participationId.toString() }
+      }
+    );
+  }
+
+
+
+  affectCourse(quizId: number, courseid: number): Observable<Result> {
+    return this.http.post<Result>(`${this.apiUrl}/${quizId}/course/${courseid}`, null);
+  }
+  
+  getquizbycourse( courseid: number): Observable<Quiz> {
+    return this.http.get<Quiz>(`${this.apiUrl}/course/${courseid}`);
+  }
+  getQuizWithQuestions(id: number): Observable<Quiz> {
+    return this.http.get<Quiz>(`${this.apiUrl}/${id}`);
+  }
+  generateQuizImage(title: string): Observable<string> {
+    const params = new HttpParams().set('title', title);
+    return this.http.post('/generate-quiz-image', null, {
+      params,
+      responseType: 'text',
     });
   }
 }

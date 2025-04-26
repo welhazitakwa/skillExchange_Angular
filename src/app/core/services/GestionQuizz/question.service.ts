@@ -68,6 +68,14 @@ export class QuestionService {
       })
     );
   }
-  
+  getAiSuggestions(title: string): Observable<Question[]> {
+    return this.http.get<Question[]>(`/api/ai/suggest-question${encodeURIComponent(title)}`);
+  }
+  getQuestionHint(questionId: number): Observable<{hint: string}> {
+ 
+    return this.http.get<{hint: string}>(
+      `${this.apiUrl}/hint/${questionId}`  
+    );
+  }
   
 }

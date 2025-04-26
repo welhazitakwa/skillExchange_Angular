@@ -109,6 +109,7 @@ import { DetailsFormationBackComponent } from './Back/GestionFormation/Formation
 import { ParticipantsListComponent } from './Back/GestionFormation/Formation/participants-list/participants-list.component';
 import { ApprooveCourseComponent } from './Back/GestionFormation/Formation/approove-course/approove-course.component';
 import { NgChartsModule } from 'ng2-charts';
+import { CertificateComponent } from './Front/GestionQuizz/quiz/certificate/certificate.component';
 
 
 
@@ -194,6 +195,7 @@ import { NgChartsModule } from 'ng2-charts';
     DetailsFormationBackComponent,
     ParticipantsListComponent,
     ApprooveCourseComponent,
+    CertificateComponent,
   ],
   imports: [
     RouterModule,

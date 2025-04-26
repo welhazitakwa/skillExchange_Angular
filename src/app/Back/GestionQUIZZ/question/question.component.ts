@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { QuestionService } from 'src/app/core/services/GestionQuizz/question.service';
 import { Question } from 'src/app/core/models/QuestionQuizz/question';
+import { ToastService } from 'angular-toastify';
 
 
 @Component({
@@ -27,7 +28,8 @@ export class QuestionComponent implements OnInit {
   constructor(
     private questionService: QuestionService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -61,7 +63,7 @@ export class QuestionComponent implements OnInit {
   // Add new question
   addQuestion(): void {
     if (!this.newQuestion.question.trim()) {
-      alert('Question cannot be empty.');
+      this.toast.error('Question cannot be empty.');
       return;
     }
   
@@ -71,7 +73,7 @@ export class QuestionComponent implements OnInit {
         console.log('Added Question:', data); // Check if the response structure is correct
         this.questions.push(data); // This should push the correctly structured data
         this.resetForm();
-        alert('Question added successfully');
+        this.toast.success('Question added successfully');
       },
       error: (error) => {
         console.error('Error adding question:', error);
@@ -96,7 +98,7 @@ export class QuestionComponent implements OnInit {
           this.questions[index] = updatedQuestion;
         }
         this.resetForm();
-        alert('Question updated successfully');
+        this.toast.success('Question updated successfully');
       },
       error: (error) => {
         console.error('Error updating question:', error);
@@ -111,7 +113,7 @@ export class QuestionComponent implements OnInit {
       this.questionService.deleteQuestion(id).subscribe({
         next: () => {
           this.questions = this.questions.filter((q) => q.id !== id);
-          alert('Question deleted successfully');
+          this.toast.success('Question deleted successfully');
 /*************  ✨ Windsurf Command ⭐  *************/
         /**
 /*******  ce7199dd-1319-4f6b-8ff7-99cd002d3430  *******/        },
