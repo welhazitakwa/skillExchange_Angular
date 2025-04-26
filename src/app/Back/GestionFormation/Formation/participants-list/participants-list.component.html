@@ -1,0 +1,161 @@
+<div id="main-wrapper"
+  data-theme="light"
+  data-layout="vertical"
+  data-navbarbg="skin6"
+  data-sidebartype="full"
+  data-sidebar-position="fixed"
+  data-header-position="fixed"
+  data-boxed-layout="full"
+>
+   <app-nav></app-nav>
+   <app-side-bar></app-side-bar>
+   <div class="page-wrapper" style="display: block">
+    <div class="page-breadcrumb">
+      <div class="row">
+        <div class="col-8 align-self-center">
+          <h4
+            class="page-title text-truncate text-dark font-weight-medium mb-1"
+          >
+            Participations Management
+          </h4>
+          <div class="d-flex align-items-center">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb m-0 p-0">
+                <li class="breadcrumb-item">
+                  <a routerLink="/back" class="text-muted">Dashboard</a>
+                </li>
+                <li
+                  class="breadcrumb-item text-muted active"
+                  aria-current="page"
+                >
+                  Participations
+                </li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+   
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <div class="card shadow-sm border-0">
+            <div class="card-body">
+              <div
+                class="d-flex justify-content-between align-items-center mb-4"
+              >
+                <h2 class="card-title mb-0 text-primary fw-semibold">
+                  Participations Management of : {{ formation?.title }}
+                </h2>
+                <!-- <button class="btn btn-sm btn-outline-primary">
+                  <i class="fas fa-download me-2"></i>Export CSV
+                </button> -->
+              </div>
+
+              <!-- Search and Filter Row -->
+              <div class="row mb-4">
+                <div class="col-md-6">
+                  <div class="input-group">
+                    <span class="input-group-text"
+                      ><i class="fas fa-search"></i
+                    ></span>
+                    <input
+                      #searchInput
+                      type="text"
+                      class="form-control"
+                      placeholder="Search Courses..."
+                      (keyup)="filterTable(searchInput.value)"                             />
+
+                    <!-- /> -->
+                  </div>
+                </div>
+                
+              </div>
+
+              <div class="table-responsive rounded-3">
+                <table class="table table-hover align-middle mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th class="ps-4 fw-medium text-muted cursor-pointer"> Participant
+                      </th>
+                      
+                      <th class="fw-medium text-muted cursor-pointer"> Participation Date
+                      </th>
+                      
+                      <th class="fw-medium text-muted cursor-pointer" >
+                        Progress 
+                      </th>
+                     
+                      <th class="fw-medium text-muted cursor-pointer" >
+                        Operations <i class="fas fa-sort ms-1"></i>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody  #formationTableBody>
+                    <tr *ngFor="let p of listParticipation" >
+                      <td class="ps-4">
+                        <div class="d-flex align-items-center">
+                          <img
+                             [src]="
+                getUserById(p.participant).avatar
+                  ? 'data:image/*;base64,' + getUserById(p.participant).avatar
+                  : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
+              "
+                            class="rounded-circle me-3"
+                            width="40"
+                            height="40"
+                            alt="Category"
+                          />   
+      {{ getUserById(p.participant).name }}
+                        </div> 
+                      
+                      </td>
+                      <td class="text-muted">
+                       {{ p.date_participation| date }}
+                      </td>
+                      <td> {{p.progress}} </td>
+ <td  style="text-align: center;"  >
+                                         <!-- <button mat-raised-button type="button" class="btn btn-sm btn-square btn-neutral text-danger-hover"
+                                          (click)="openDetailsCourse(f.id)"> 
+                                            <i class="text-info fa fa-eye"></i> 
+                                        </button>
+                 
+
+
+  -->
+
+                                        <button style="width: 100px;" type="button" class="btn btn-sm btn-square btn-neutral text-danger-hover" (click)="deleteParticipation(p.idp)"> 
+                                            <i class="text-danger fa fa-trash"> delete Participation</i>
+                                        </button> 
+                                
+                                    </td>                      
+                    </tr>
+                
+                    
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Container fluid  -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- footer -->
+    <!-- ============================================================== -->
+    <footer class="footer text-center text-muted">
+      All Rights Reserved by Freedash. Designed and Developed by
+      <a href="https://adminmart.com/">Adminmart</a>.
+    </footer>
+    <!-- ============================================================== -->
+    <!-- End footer -->
+    <!-- ============================================================== -->
+  </div>
+  <!-- ============================================================== -->
+  <!-- End Page wrapper  -->
+  <!-- ============================================================== -->
+</div>

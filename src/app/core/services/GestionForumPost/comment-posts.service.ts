@@ -1,19 +1,30 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { CommentPosts } from '../../models/GestionForumPost/CommentPosts';
 import { Observable } from 'rxjs';
+import { CommentPosts } from 'src/app/core/models/GestionForumPost/CommentPosts';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CommentPostsService {
 
-  
-  url = 'http://localhost:8084/skillExchange/commentPosts';
-  
-    constructor(private http: HttpClient) {}
-  
-    getAllCommentPosts(): Observable<any> {
-      return this.http.get<CommentPosts[]>(this.url+"/retrieveCommentPosts");
-    }
+  private url = 'http://localhost:8084/skillExchange/commentPosts';
+
+  constructor(private http: HttpClient) {}
+
+  getAllCommentPosts(): Observable<CommentPosts[]> {
+    return this.http.get<CommentPosts[]>(`${this.url}/retrieveCommentPosts`);
+  }
+
+  addComment(comment: CommentPosts, postId: number): Observable<CommentPosts> {
+    return this.http.post<CommentPosts>(`${this.url}/addComPosts?postId=${postId}`, comment);
+  }
+
+  getCommentsByPost(postId: number): Observable<CommentPosts[]> {
+    return this.http.get<CommentPosts[]>(`${this.url}/retrieveCommentPostsByPost/${postId}`);
+  }
+
+  deleteComment(commentId: number): Observable<void> {
+    return this.http.delete<void>(`${this.url}/deleteComPosts/${commentId}`);
+  }
 }
