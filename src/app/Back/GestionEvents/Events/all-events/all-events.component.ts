@@ -30,7 +30,11 @@ export class AllEventsComponent implements OnInit {
   showCalendar: boolean = false;
   calendarOptions: CalendarOptions;
   showMap: { [key: number]: boolean } = {};
-  activeChartType: 'doughnut' | 'bar' | 'line' | null = null; // Nouvelle propriété pour le type de diagramme actif
+  activeChartType: 'doughnut' | 'bar' | 'line' | null = null;
+  // Propriétés de pagination
+  currentPage: number = 1;
+  pageSize: number = 6; // Même taille que ShowEventsComponent
+  totalPages: number = 1;
 
   // Données pour le diagramme en donut (répartition par lieu)
   public doughnutChartData: ChartData<'doughnut'> = {
@@ -280,9 +284,62 @@ export class AllEventsComponent implements OnInit {
 
     this.filteredEvents = filteredEvents;
     console.log('Filtered events:', this.filteredEvents.length);
-
+    this.currentPage = 1; // Réinitialiser à la première page lors du filtrage
+    this.updatePagination();
     this.updateCalendarEvents();
     this.updateChartData();
+  }
+
+  updatePagination(): void {
+    this.totalPages = Math.ceil(this.filteredEvents.length / this.pageSize);
+    this.currentPage = Math.min(this.currentPage, this.totalPages) || 1;
+    console.log('Updated pagination:', { currentPage: this.currentPage, totalPages: this.totalPages });
+  }
+
+  get paginatedEvents(): Events[] {
+    const start = (this.currentPage - 1) * this.pageSize;
+    const end = start + this.pageSize;
+    const paginated = this.filteredEvents.slice(start, end);
+    console.log('Paginated events:', paginated.map(e => ({ id: e.idEvent, name: e.eventName })));
+    return paginated;
+  }
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      console.log('Navigated to page:', page);
+    }
+  }
+
+  prevPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      console.log('Navigated to previous page:', this.currentPage);
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      console.log('Navigated to next page:', this.currentPage);
+    }
+  }
+
+  get pageNumbers(): number[] {
+    const pages: number[] = [];
+    const maxPagesToShow = 5;
+    let startPage = Math.max(1, this.currentPage - Math.floor(maxPagesToShow / 2));
+    let endPage = Math.min(this.totalPages, startPage + maxPagesToShow - 1);
+
+    if (endPage - startPage + 1 < maxPagesToShow) {
+      startPage = Math.max(1, endPage - maxPagesToShow + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+    console.log('Page numbers:', pages);
+    return pages;
   }
 
   updateChartData(): void {
@@ -368,12 +425,12 @@ export class AllEventsComponent implements OnInit {
 
   openStatsModal(): void {
     this.isStatsModalOpen = true;
-    this.activeChartType = null; // Aucun diagramme affiché par défaut
+    this.activeChartType = null;
   }
 
   closeStatsModal(): void {
     this.isStatsModalOpen = false;
-    this.activeChartType = null; // Réinitialiser le type de diagramme
+    this.activeChartType = null;
   }
 
   setActiveChartType(chartType: 'doughnut' | 'bar' | 'line'): void {
@@ -535,15 +592,15 @@ export class AllEventsComponent implements OnInit {
 
     // Ouvre temporairement le modal pour s'assurer que tous les diagrammes sont rendus
     this.isStatsModalOpen = true;
-    this.activeChartType = 'doughnut'; // Rendre le premier diagramme
+    this.activeChartType = 'doughnut';
     setTimeout(() => {
-      this.activeChartType = 'bar'; // Rendre le deuxième
+      this.activeChartType = 'bar';
       setTimeout(() => {
-        this.activeChartType = 'line'; // Rendre le troisième
+        this.activeChartType = 'line';
         setTimeout(() => {
           captureCharts().then(() => {
             this.isStatsModalOpen = false;
-            this.activeChartType = null; // Réinitialiser
+            this.activeChartType = null;
           });
         }, 100);
       }, 100);
@@ -612,6 +669,7 @@ export class AllEventsComponent implements OnInit {
       hasImages: false
     });
     this.searchText = '';
+    this.currentPage = 1; // Réinitialiser la page
     this.applyFilters();
   }
 

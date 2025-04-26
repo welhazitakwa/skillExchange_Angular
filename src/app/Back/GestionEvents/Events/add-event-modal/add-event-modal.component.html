@@ -43,7 +43,6 @@
       <div *ngIf="eventForm.get('place')?.invalid && eventForm.get('place')?.touched" class="text-danger">
         Place is required (min 3 characters).
       </div>
-      <!-- Carte Leaflet -->
       <div #map style="height: 300px; width: 100%; margin-top: 10px;"></div>
     </div>
 
@@ -57,10 +56,19 @@
 
     <div class="mb-3">
       <label class="form-label">Event Images</label>
-      <input type="file" class="form-control" multiple accept="image/*" (change)="onFileChange($event)" />
+      <div class="input-group mb-2">
+        <input type="file" class="form-control" multiple accept="image/*" (change)="onFileChange($event)" />
+      </div>
+      <div class="mb-2">
+        <button class="btn btn-primary" type="button" (click)="generateAIImage()"
+                [disabled]="!eventForm.get('description')?.value || isGeneratingImage">
+          <span *ngIf="isGeneratingImage" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          Generate Image with AI
+        </button>
+      </div>
       <div *ngIf="imageError" class="text-danger">{{ imageError }}</div>
-      <div *ngIf="imagePreviews.length" class="mt-2">
-        <div *ngFor="let preview of imagePreviews" class="d-inline-block me-2">
+      <div *ngIf="imagePreviews.length" class="mt-2 image-preview-container">
+        <div *ngFor="let preview of imagePreviews" class="image-preview">
           <img [src]="preview" alt="Preview" style="max-width: 100px; max-height: 100px;" />
           <button type="button" class="btn btn-sm btn-danger" (click)="removeImage(preview)">Remove</button>
         </div>

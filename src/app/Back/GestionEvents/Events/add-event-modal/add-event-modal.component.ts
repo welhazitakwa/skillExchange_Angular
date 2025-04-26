@@ -2,7 +2,9 @@ import { Component, EventEmitter, Output, AfterViewInit, ViewChild, ElementRef }
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import * as L from 'leaflet';
 import { HttpClient } from '@angular/common/http';
-import { Status } from 'src/app/core/models/GestionEvents/status';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-add-event-modal',
@@ -21,8 +23,13 @@ export class AddEventModalComponent implements AfterViewInit {
   imageError: string | null = null;
   map!: L.Map;
   marker: L.Marker | null = null;
+  isGeneratingImage: boolean = false;
 
-  constructor(private fb: FormBuilder, private http: HttpClient) {
+  constructor(
+    private fb: FormBuilder,
+    private http: HttpClient,
+    private snackBar: MatSnackBar
+  ) {
     this.eventForm = this.fb.group({
       eventName: ['', [Validators.required, Validators.minLength(3)]],
       description: ['', [Validators.required, Validators.minLength(10)]],
@@ -56,12 +63,11 @@ export class AddEventModalComponent implements AfterViewInit {
     });
     L.Marker.prototype.options.icon = iconDefault;
 
-    // Typage explicite pour defaultLocation
-    const defaultLocation: L.LatLngTuple = [36.8065, 10.1815]; // Tunis, Tunisie
+    const defaultLocation: L.LatLngTuple = [36.8065, 10.1815]; // Tunis, Tunisia
     this.map = L.map(this.mapElement.nativeElement).setView(defaultLocation, 12);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(this.map);
 
     this.marker = L.marker(defaultLocation, { draggable: true }).addTo(this.map);
@@ -108,6 +114,7 @@ export class AddEventModalComponent implements AfterViewInit {
       },
       (error) => {
         console.error('Error searching address:', error);
+        this.snackBar.open('Failed to search address.', 'Close', { duration: 5000 });
       }
     );
   }
@@ -151,14 +158,13 @@ export class AddEventModalComponent implements AfterViewInit {
   onFileChange(event: any): void {
     const files = event.target.files;
     this.imageError = null;
-    this.imagePreviews = [];
-    this.imageBase64s = [];
 
     if (files.length > 0) {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         if (!file.type.startsWith('image/')) {
           this.imageError = 'Only image files are allowed.';
+          this.snackBar.open(this.imageError, 'Close', { duration: 5000 });
           return;
         }
 
@@ -182,6 +188,39 @@ export class AddEventModalComponent implements AfterViewInit {
     }
   }
 
+  generateAIImage(): void {
+    const description = this.eventForm.get('description')?.value;
+    if (!description) {
+        this.imageError = 'Please enter a description to generate an image.';
+        this.snackBar.open(this.imageError, 'Close', { duration: 5000 });
+        return;
+    }
+
+    this.isGeneratingImage = true;
+    this.imageError = null;
+
+    const enhancedPrompt = `A vibrant poster for an event described as: ${description}`;
+    console.log('Sending request to generate image with prompt:', enhancedPrompt);
+
+    this.http.post<{ imageBase64: string }>('http://localhost:8084/skillExchange/events/generate-image', { prompt: enhancedPrompt }).pipe(
+        map(response => response.imageBase64),
+        catchError(error => {
+            console.error('Error generating image:', error);
+            this.imageError = 'Failed to generate image. Please try again.';
+            this.isGeneratingImage = false;
+            this.snackBar.open(this.imageError, 'Close', { duration: 5000 });
+            return throwError(error);
+        })
+    ).subscribe(
+        (base64String) => {
+            const fullBase64 = `data:image/png;base64,${base64String}`;
+            this.imagePreviews.push(fullBase64);
+            this.imageBase64s.push(base64String);
+            this.isGeneratingImage = false;
+            this.snackBar.open('Image generated successfully!', 'Close', { duration: 5000 });
+        }
+    );
+}
   submit(): void {
     if (this.eventForm.valid) {
       const eventData = {
@@ -191,6 +230,7 @@ export class AddEventModalComponent implements AfterViewInit {
       this.onSubmit.emit(eventData);
     } else {
       this.eventForm.markAllAsTouched();
+      this.snackBar.open('Please correct the errors in the form.', 'Close', { duration: 5000 });
     }
   }
 

@@ -1,38 +1,93 @@
-/* AddEventModalComponent CSS */
-mat-dialog-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-  }
-  
+.container-fluid {
+  padding: 20px;
+}
 
-  form {
-    width: 100%;
-  }
-  
-  form .form-label {
-    margin-bottom: 0.5rem;
-  }
-  
-  .form-control {
-    margin-bottom: 1rem;
-  }
-  
-  .text-danger {
-    font-size: 0.875rem;
-    color: #dc3545;
-  }
-  
-  .d-flex {
-    margin-top: 20px;
-  }
-  
-  button {
-    min-width: 100px;
-  }
-  
-  /* Style pour la carte maps*/
+h2 {
+  color: #f28c38;
+  font-weight: bold;
+}
+
+.form-label {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.form-control {
+  margin-bottom: 1rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  padding: 8px;
+}
+
+.text-danger {
+  font-size: 0.875rem;
+  color: #dc3545;
+}
+
+.btn-primary {
+  background-color: #f28c38;
+  border-color: #f28c38;
+  color: #fff;
+  padding: 8px 16px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: #d97a30;
+  border-color: #d97a30;
+  transform: translateY(-2px);
+}
+
+.btn-primary:disabled {
+  background-color: #f28c38;
+  border-color: #f28c38;
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  color: #fff;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+  border-color: #5a6268;
+}
+
+.spinner-border {
+  width: 1rem;
+  height: 1rem;
+  vertical-align: middle;
+}
+
+.image-preview-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.image-preview {
+  position: relative;
+  display: inline-block;
+}
+
+.image-preview img {
+  max-width: 100px;
+  max-height: 100px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.image-preview .btn-danger {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  font-size: 0.75rem;
+  padding: 2px 6px;
+}
+
 #map {
   border: 1px solid #ccc;
   border-radius: 4px;

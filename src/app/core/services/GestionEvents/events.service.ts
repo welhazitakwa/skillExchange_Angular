@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, map, Observable, of } from 'rxjs';
 import { Events } from '../../models/GestionEvents/events';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -97,5 +97,10 @@ export class EventsService {
         return of([]);
       })
     );
+  }
+
+  generateImage(prompt: string): Observable<any> {
+    const headers = new HttpHeaders().set('Content-Type', 'application/json');
+    return this.http.post<any>(`${this.url}/generate-image`, { prompt }, { headers });
   }
 }
