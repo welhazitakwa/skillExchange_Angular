@@ -7,27 +7,32 @@ import { EventImage } from '../../models/GestionEvents/event-image';
   providedIn: 'root'
 })
 export class EventImageService {
-  private url = 'http://localhost:8084/skillExchange/eventImages';
+  private baseUrl = 'http://localhost:8084/skillExchange/eventImage';
 
   constructor(private http: HttpClient) { }
 
-  getImages(): Observable<EventImage[]> {
-    return this.http.get<EventImage[]>(this.url);
+  getAllImages(): Observable<EventImage[]> {
+    return this.http.get<EventImage[]>(`${this.baseUrl}/retrieve-EventImage`);
   }
 
-  addImage(image: EventImage): Observable<EventImage> {
-    return this.http.post<EventImage>(this.url, image);
+  getImagesByEventId(eventId: number): Observable<EventImage[]> {
+    return this.http.get<EventImage[]>(`${this.baseUrl}/byEvent/${eventId}`);
+  }
+
+  getImageById(id: number): Observable<EventImage> {
+    return this.http.get<EventImage>(`${this.baseUrl}/retrieveEventImage/${id}`);
+  }
+
+  addImage(eventImage: EventImage): Observable<EventImage> {
+    return this.http.post<EventImage>(`${this.baseUrl}/add-EventImage`, eventImage);
+  }
+
+  updateImage(eventImage: EventImage): Observable<EventImage> {
+    return this.http.patch<EventImage>(`${this.baseUrl}/modify-EventImage`, eventImage);
   }
 
   deleteImage(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.url}/${id}`);
+    return this.http.delete<void>(`${this.baseUrl}/removeEventImage/${id}`);
   }
 
-  getImageByID(id: number): Observable<EventImage> {
-    return this.http.get<EventImage>(`${this.url}/${id}`);
-  }
-
-  updateImage(image: EventImage): Observable<EventImage> {
-    return this.http.put<EventImage>(`${this.url}/${image.idImage}`, image);
-  }
 }
