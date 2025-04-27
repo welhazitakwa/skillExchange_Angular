@@ -304,6 +304,6 @@ private sendWhatsAppNotification() {
       alert('Failed to send WhatsApp notification. Check console for details.');
     }
   });
-}
+} 
 
 }
