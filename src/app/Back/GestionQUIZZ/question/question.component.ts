@@ -13,6 +13,7 @@ import { ToastService } from 'angular-toastify';
 export class QuestionComponent implements OnInit {
   quizId!: number;
   questions: Question[] = [];
+  generating: boolean = false;
   loading: boolean = true;
   errorMessage: string = '';
   newQuestion: Question = {
@@ -138,4 +139,43 @@ export class QuestionComponent implements OnInit {
       quiz: { id: this.quizId },
     };
   }
+  generateOptions(): void {
+    // Validate inputs
+    if (!this.newQuestion.question.trim()) {
+      this.toast.error('Please enter a question first');
+      return;
+    }
+  
+    if (!this.newQuestion.reponse.trim()) {
+      this.toast.error('Please enter the correct answer first');
+      return;
+    }
+  
+    // Set loading state
+    this.generating = true;
+  
+    this.questionService.generateOptions(
+      this.newQuestion.question,
+      this.newQuestion.reponse
+    ).subscribe({
+      next: (data) => {
+        // Update the form with generated options
+        this.newQuestion.option1 = data.option1;
+        this.newQuestion.option2 = data.option2;
+        this.newQuestion.option3 = data.option3;
+        this.newQuestion.option4 = data.correctAnswer;
+        this.newQuestion.reponse = data.correctAnswer;
+        this.toast.success('Options generated successfully');
+      },
+      error: (error) => {
+        console.error('Error generating options:', error);
+        this.toast.error('Failed to generate options. Please try again.');
+      },
+      complete: () => {
+        // Reset loading state when complete (whether success or error)
+        this.generating = false;
+      }
+    });
+  }
+  
 }
