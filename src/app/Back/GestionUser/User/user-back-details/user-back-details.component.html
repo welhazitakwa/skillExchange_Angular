@@ -1,0 +1,729 @@
+<!-- ============================================================== -->
+<!-- Main wrapper - style you can find in pages.scss -->
+<!-- ============================================================== -->
+<div
+  id="main-wrapper"
+  data-theme="light"
+  data-layout="vertical"
+  data-navbarbg="skin6"
+  data-sidebartype="full"
+  data-sidebar-position="fixed"
+  data-header-position="fixed"
+  data-boxed-layout="full"
+>
+  <!-- ============================================================== -->
+  <!-- Topbar header - style you can find in pages.scss -->
+  <!-- ============================================================== -->
+  <app-nav></app-nav>
+  <!-- ============================================================== -->
+  <!-- End Topbar header -->
+  <!-- ============================================================== -->
+  <!-- ============================================================== -->
+  <!-- Left Sidebar - style you can find in sidebar.scss  -->
+  <!-- ============================================================== -->
+  <app-side-bar></app-side-bar>
+  <div class="page-wrapper" style="display: block">
+    <!-- ============================================================== -->
+    <!-- Bread crumb and right sidebar toggle -->
+    <!-- ============================================================== -->
+
+    <!-- ============================================================== -->
+    <!-- End Bread crumb and right sidebar toggle -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- Container fluid  -->
+    <!-- ============================================================== -->
+    <div class="container-fluid">
+      <!-- Page Header -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="fw-bold mb-0">User Management</h2>
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <a routerLink="/back">Dashboard</a>
+              </li>
+              <li class="breadcrumb-item">
+                <a routerLink="/backusers">Users</a>
+              </li>
+              <li class="breadcrumb-item active" aria-current="page">
+                {{ user.name }}
+                <svg
+                  *ngIf="user.verified"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  class="bi bi-patch-check-fill text-primary ml-2"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708"
+                  />
+                </svg>
+              </li>
+            </ol>
+          </nav>
+        </div>
+        <div class="d-flex gap-2">
+          <button
+            class="btn btn-danger"
+            (click)="showBanModal = true"
+            *ngIf="!user.ban"
+          >
+            <i class="fas fa-ban fa-fw me-2 fa-sm"></i>
+            Ban User
+          </button>
+          <button
+            class="btn btn-warning"
+            (click)="unbanUser()"
+            *ngIf="user.ban"
+          >
+            <i class="fas fa-lock-open fa-fw me-2 fa-sm"></i>
+            Unban User
+          </button>
+          <button class="btn btn-secondary" (click)="showBadgeModal = true">
+            <i class="fas fa-shield-alt fa-fw me-2 fa-sm"></i>
+            Asign Badge
+          </button>
+          <button
+            class="btn btn-primary"
+            *ngIf="user.role == 'USER'"
+            (click)="showPromoteModal = true"
+          >
+            <i class="fas fa-user-tie fa-fw me-2 fa-sm"></i>
+            Promote Admin
+          </button>
+          <button
+            class="btn btn-primary"
+            *ngIf="user.role == 'ADMIN'"
+            (click)="showPromoteModal = true"
+          >
+            <i class="fas fa-user-tie fa-fw me-2 fa-sm"></i>
+            Demote Admin
+          </button>
+          <button class="btn btn-success" (click)="showGiftModal = true">
+            <i class="fas fa-coins fa-fw me-2 fa-sm"></i>
+            Gift Tokens
+          </button>
+        </div>
+      </div>
+
+      <!-- Profile Section -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <!-- Avatar Column -->
+            <div class="col-md-3 text-center border-end">
+              <div class="position-relative d-inline-block">
+                <img
+                  [src]="
+                    user.image
+                      ? 'data:image/*;base64,' + user.image
+                      : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
+                  "
+                  class="rounded-circle mb-3"
+                  width="150"
+                  height="150"
+                  alt="User avatar"
+                />
+                <div
+                  class="badge bg-{{
+                    user.verified ? 'success' : 'secondary'
+                  }} rounded-pill position-absolute top-0 end-0"
+                >
+                  <i class="fas fa-{{ user.verified ? 'check' : 'clock' }}"></i>
+                </div>
+              </div>
+              <h4 class="fw-bold mb-1">
+                {{ user.name }}
+                <svg
+                  *ngIf="user.verified"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  class="bi bi-patch-check-fill text-primary ml-2"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708"
+                  />
+                </svg>
+              </h4>
+              <div class="text-muted mb-3">ID: {{ user.id }}</div>
+              <span class="badge bg-primary bg-opacity-10 py-2 px-3">
+                {{ user.role }}
+              </span>
+            </div>
+
+            <!-- Details Column -->
+            <div class="col-md-9">
+              <div class="row">
+                <!-- Personal Info -->
+                <div class="col-md-6">
+                  <h5 class="fw-bold mb-3">
+                    <i class="fas fa-user-circle me-2"></i>Personal Information
+                  </h5>
+                  <dl class="row">
+                    <dt class="col-sm-4">Email</dt>
+                    <dd class="col-sm-8">{{ user.email }}</dd>
+                  </dl>
+                </div>
+
+                <!-- Account Info -->
+                <div class="col-md-6">
+                  <h5 class="fw-bold mb-3">
+                    <i class="fas fa-shield-alt me-2"></i>Account Details
+                  </h5>
+                  <dl class="row">
+                    <dt class="col-sm-4">Status</dt>
+                    <dd class="col-sm-8">
+                      <span
+                        class="badge bg-{{ user.ban ? 'danger' : 'success' }}"
+                      >
+                        {{ user.ban ? "Banned" : "Active" }}
+                      </span>
+                    </dd>
+
+                    <dt class="col-sm-4">Balance</dt>
+                    <dd class="col-sm-8">
+                      🪙 {{ user.balance | number : "1.2-2" }}
+                    </dd>
+                  </dl>
+                </div>
+              </div>
+
+              <!-- Additional Sections -->
+              <div class="row mt-3">
+                <div class="col-12">
+                  <h5 class="fw-bold mb-3">
+                    <i class="fas fa-network-wired me-2"></i>Activity
+                  </h5>
+                  <div class="row">
+                    <div class="col-md-3">
+                      <div class="card border-0 bg-light">
+                        <div class="card-body text-center">
+                          <div class="h4 mb-0">24</div>
+                          <small class="text-muted">Total Logins</small>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="card border-0 bg-light">
+                        <div class="card-body text-center">
+                          <div class="h4 mb-0">8</div>
+                          <small class="text-muted">Active Sessions</small>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="card border-0 bg-light">
+                        <div class="card-body text-center">
+                          <div class="h4 mb-0">142</div>
+                          <small class="text-muted">Total Actions</small>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="card border-0 bg-light">
+                        <div class="card-body text-center">
+                          <div class="h4 mb-0">3</div>
+                          <small class="text-muted">Reports</small>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs Section -->
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <ul class="nav nav-tabs mb-4">
+            <li class="nav-item">
+              <a class="nav-link active" href="#activity" data-bs-toggle="tab"
+                >Transaction History</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#achievements" data-bs-toggle="tab"
+                >Achievements</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#sociallinks" data-bs-toggle="tab"
+                >Social Media Links</a
+              >
+            </li>
+            <li class="nav-item" *ngIf="user.ban">
+              <a class="nav-link" href="#baninfo" data-bs-toggle="tab"
+                >Ban Info</a
+              >
+            </li>
+          </ul>
+
+          <div class="tab-content">
+            <!-- Activity Log -->
+            <div class="tab-pane active" id="activity">
+              <div class="transaction-list">
+                <div
+                  *ngFor="let transaction of transactions"
+                  class="transaction-item"
+                >
+                  <div class="transaction-icon">
+                    <i [class]="getTransactionIcon(transaction.type)"></i>
+                  </div>
+                  <div class="transaction-details">
+                    <h5>{{ transaction.description }}</h5>
+                    <small class="text-muted">{{
+                      transaction.date | date : "medium"
+                    }}</small>
+                  </div>
+                  <div
+                    class="transaction-amount"
+                    [class.income]="transaction.amount > 0"
+                  >
+                    {{ transaction.amount > 0 ? "+" : "" }}🪙{{
+                      transaction.amount
+                    }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Social Links -->
+            <div class="tab-pane" id="sociallinks">
+              <div class="card shadow-sm border-0">
+                <div class="card-body">
+                  <h5 class="card-title mb-4">Social Profiles</h5>
+
+                  <div class="row g-3">
+                    <!-- Facebook -->
+                    <div class="col-md-4" *ngIf="user.facebook">
+                      <div class="social-card bg-facebook p-3 rounded-3 h-100">
+                        <div class="d-flex align-items-center">
+                          <div class="social-icon me-3">
+                            <i class="fab fa-facebook-f fs-4 text-white"></i>
+                          </div>
+                          <div>
+                            <h6 class="mb-0 text-white">Facebook</h6>
+                            <a
+                              [href]="'https://facebook.com/' + user.facebook"
+                              target="_blank"
+                              class="text-white-50 small text-truncate d-block"
+                            >
+                              {{ user.facebook }}
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- GitHub -->
+                    <div class="col-md-4" *ngIf="user.github">
+                      <div class="social-card bg-dark p-3 rounded-3 h-100">
+                        <div class="d-flex align-items-center">
+                          <div class="social-icon me-3">
+                            <i class="fab fa-github fs-4 text-white"></i>
+                          </div>
+                          <div>
+                            <h6 class="mb-0 text-white">GitHub</h6>
+                            <a
+                              [href]="'https://github.com/' + user.github"
+                              target="_blank"
+                              class="text-white-50 small text-truncate d-block"
+                            >
+                              {{ user.github }}
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- LinkedIn -->
+                    <div class="col-md-4" *ngIf="user.linkedin">
+                      <div class="social-card bg-linkedin p-3 rounded-3 h-100">
+                        <div class="d-flex align-items-center">
+                          <div class="social-icon me-3">
+                            <i class="fab fa-linkedin-in fs-4 text-white"></i>
+                          </div>
+                          <div>
+                            <h6 class="mb-0 text-white">LinkedIn</h6>
+                            <a
+                              [href]="
+                                'https://linkedin.com/in/' + user.linkedin
+                              "
+                              target="_blank"
+                              class="text-white-50 small text-truncate d-block"
+                            >
+                              {{ user.linkedin }}
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Empty State -->
+                  <div
+                    class="text-center py-5"
+                    *ngIf="!user.facebook && !user.github && !user.linkedin"
+                  >
+                    <i class="fas fa-share-alt fs-1 text-muted mb-3"></i>
+                    <h5 class="text-muted">No social profiles added</h5>
+                    <p class="text-muted small">
+                      This user hasn't added any social links yet
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- baninfo -->
+            <div class="tab-pane" id="baninfo">
+              <div class="card shadow-lg">
+                <div
+                  class="card-header bg-danger text-white d-flex flex-row align-items-center justify-content-between"
+                >
+                  <div class="d-flex align-items-center gap-3">
+                    <i class="fas fa-ban fs-4"></i>
+                    <h3 class="mb-0" style="color: white">
+                      Account Restricted
+                    </h3>
+                  </div>
+                  <img
+                    src="https://media0.giphy.com/media/ZqoseUzUZKQbOlHoga/200w.gif?cid=6c09b952qubbbafx49lzys7tppaqoog4j4o2yi0e58ydyvnz&ep=v1_stickers_search&rid=200w.gif"
+                    class="ban-header-image flex-shrink-0"
+                    style="height: 100px; width: 100px; object-fit: cover"
+                  />
+                </div>
+                <div class="card-body">
+                  <div class="alert alert-danger" role="alert">
+                    <h4 class="alert-heading">This account was restricted</h4>
+                    <p>
+                      Due to violations of our terms of service, this account
+                      access has been limited.
+                    </p>
+                    <hr />
+                    <div class="row">
+                      <div class="col-md-6">
+                        <p class="mb-1"><strong>Reason:</strong></p>
+                        <p class="text-muted">{{ user.ban?.reason }}</p>
+                      </div>
+                      <div class="col-md-6">
+                        <p class="mb-1"><strong>Restriction By:</strong></p>
+                        <p class="text-muted">{{ user.ban?.bannedBy }}</p>
+                      </div>
+                    </div>
+
+                    <div class="row mt-3">
+                      <div class="col-md-6">
+                        <p class="mb-1">
+                          <strong>Restriction End Date:</strong>
+                        </p>
+                        <p class="text-muted">
+                          {{ user.ban?.endDate | date : "longDate" }}
+                        </p>
+                      </div>
+                      <div class="col-md-6">
+                        <p class="mb-1"><strong>Time Remaining:</strong></p>
+                        <p class="text-muted">{{ 10 }}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Achievements -->
+            <div class="tab-pane" id="achievements">
+              <div
+                class="text-center"
+                *ngIf="!user?.badges || user.badges.length === 0"
+              >
+                <img
+                  src="https://i.pinimg.com/originals/5d/35/e3/5d35e39988e3a183bdc3a9d2570d20a9.gif"
+                  height="400px"
+                />
+              </div>
+              <div class="row g-4">
+                <div
+                  *ngFor="let badge of user.badges"
+                  class="col-12 col-md-6 col-lg-4 col-xl-3"
+                >
+                  <div class="card badge-card shadow-sm h-100">
+                    <div class="card-body">
+                      <div class="d-flex align-items-start">
+                        <!-- Badge Image -->
+                        <div class="badge-image-container me-3">
+                          <div
+                            *ngIf="badge.image"
+                            class="badge-icon-placeholder bg-primary"
+                            style="width: 48px; height: 48px"
+                          >
+                            <i
+                              class="text-white fs-4"
+                              [ngClass]="badge.image"
+                            ></i>
+                          </div>
+                          <div
+                            *ngIf="!badge.image"
+                            class="badge-icon-placeholder bg-primary"
+                            style="width: 48px; height: 48px"
+                          >
+                            <i class="fas fa-award text-white fs-4"></i>
+                          </div>
+                        </div>
+
+                        <!-- Badge Content -->
+                        <div class="flex-grow-1">
+                          <h5 class="fw-semibold mb-1">{{ badge.title }}</h5>
+                          <p class="text-muted mb-0 small">
+                            {{ badge.description }}
+                          </p>
+                        </div>
+
+                        <div class="ms-auto">
+                          <button
+                            class="btn btn-sm btn-link text-danger"
+                            (click)="removeBadgeFromUser(badge)"
+                          >
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- modal focus-->
+      <div
+        *ngIf="
+          showBanModal || showGiftModal || showBadgeModal || showPromoteModal
+        "
+        class="modal-backdrop fade show"
+        (click)="closeModals()"
+      ></div>
+
+      <!-- Ban User Modal -->
+      <div
+        class="modal fade"
+        [class.show]="showBanModal"
+        style="display: block"
+        *ngIf="showBanModal"
+      >
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Ban User</h5>
+              <button
+                type="button"
+                class="btn-close"
+                (click)="showBanModal = false"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label class="form-label">Reason</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="banInfo.reason"
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">End Date</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  [(ngModel)]="banInfo.endDate"
+                />
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                (click)="showBanModal = false"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                class="btn btn-danger"
+                (click)="banUser(); showBanModal = false"
+              >
+                Ban
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Assign Badge Modal -->
+      <div
+        class="modal fade"
+        [class.show]="showBadgeModal"
+        style="display: block"
+        *ngIf="showBadgeModal"
+      >
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Assign Badge</h5>
+              <button
+                type="button"
+                class="btn-close"
+                (click)="showBadgeModal = false"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <select class="form-select" [(ngModel)]="selectedBadgeId">
+                <option
+                  *ngFor="let badge of availableBadges"
+                  [value]="badge.id"
+                >
+                  {{ badge.title }} ({{ badge.description }})
+                </option>
+              </select>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                (click)="showBadgeModal = false"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                (click)="assignBadge(); showBadgeModal = false"
+              >
+                Assign
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Promote Admin Modal -->
+      <div
+        class="modal fade"
+        [class.show]="showPromoteModal"
+        style="display: block"
+        *ngIf="showPromoteModal"
+      >
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" *ngIf="user.role == 'USER'">
+                Promote to Admin
+              </h5>
+              <h5 class="modal-title" *ngIf="user.role == 'ADMIN'">
+                Demote Admin
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                (click)="showPromoteModal = false"
+              ></button>
+            </div>
+            <div class="modal-body" *ngIf="user.role == 'USER'">
+              Are you sure you want to promote this user to admin?
+            </div>
+            <div class="modal-body" *ngIf="user.role == 'ADMIN'">
+              Are you sure you want to promote this admin to user?
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                (click)="showPromoteModal = false"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                *ngIf="user.role == 'USER'"
+                (click)="promoteToAdmin(); showPromoteModal = false"
+              >
+                Confirm
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                *ngIf="user.role == 'ADMIN'"
+                (click)="demoteToUser(); showPromoteModal = false"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gift Tokens Modal -->
+      <div
+        class="modal fade"
+        [class.show]="showGiftModal"
+        style="display: block"
+        *ngIf="showGiftModal"
+      >
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Gift Tokens</h5>
+              <button
+                type="button"
+                class="btn-close"
+                (click)="showGiftModal = false"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <div class="input-group">
+                <span class="input-group-text">🪙</span>
+                <input
+                  type="number"
+                  class="form-control"
+                  [(ngModel)]="tokenAmount"
+                  name="amount"
+                  placeholder="0.00"
+                  step="0.01"
+                  required
+                />
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                (click)="showGiftModal = false"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                class="btn btn-success"
+                (click)="giftTokens(); showGiftModal = false"
+              >
+                Gift
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

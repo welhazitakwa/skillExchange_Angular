@@ -1,0 +1,550 @@
+<app-header-front></app-header-front>
+
+<!-- Header Start -->
+
+<div class="container-fluid page-header" style="margin-bottom: 90px">
+  <div class="container">
+    <div
+      class="d-flex flex-column justify-content-center"
+      style="min-height: 300px"
+    >
+      <h3 class="display-4 text-white text-uppercase">Settings</h3>
+      <div class="d-inline-flex text-white">
+        <p class="m-0 text-uppercase"><a class="text-white" href="">Home</a></p>
+        <i class="fa fa-angle-double-right pt-1 px-3"></i>
+        <p class="m-0 text-uppercase">Settings</p>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Header End -->
+
+<!-- Main Content -->
+<div class="container-fluid py-5">
+  <div class="container">
+    <div class="row g-4">
+      <!-- Navigation -->
+      <div class="col-lg-3">
+        <div class="settings-nav card">
+          <div class="card-body">
+            <div class="user-profile text-center mb-4">
+              <div class="avatar-upload">
+                <img
+                  [src]="
+                    currentUser.image
+                      ? 'data:image/*;base64,' + currentUser.image
+                      : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
+                  "
+                  class="avatar"
+                  alt="Profile picture"
+                />
+                <label class="avatar-edit">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                  </svg>
+                  <input
+                    type="file"
+                    (change)="onFileSelected($event)"
+                    accept="image/*"
+                  />
+                </label>
+              </div>
+              <h5 class="mt-3 mb-0">
+                {{ currentUser.name }}
+                <svg
+                  *ngIf="currentUser.verified"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  class="bi bi-patch-check-fill text-primary ml-2"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708"
+                  />
+                </svg>
+              </h5>
+              <small class="text-muted">{{ currentUser.email }}</small>
+            </div>
+            <div class="nav flex-column nav-pills">
+              <a
+                class="nav-link"
+                [class.active]="activeTab === 'profile'"
+                (click)="activeTab = 'profile'"
+              >
+                <i class="fas fa-user me-2"></i>Profile
+              </a>
+              <a
+                class="nav-link"
+                [class.active]="activeTab === 'security'"
+                (click)="activeTab = 'security'"
+              >
+                <i class="fas fa-shield-alt me-2"></i>Security
+              </a>
+              <a
+                class="nav-link"
+                [class.active]="activeTab === 'notifications'"
+                (click)="activeTab = 'notifications'"
+              >
+                <i class="fas fa-bell me-2"></i>Notifications
+              </a>
+              <a
+                class="nav-link"
+                [class.active]="activeTab === 'social'"
+                (click)="activeTab = 'social'"
+              >
+                <i class="fas fa-link me-2"></i>Social Links
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="col-lg-9">
+        <!-- Profile Settings -->
+        <div
+          class="card settings-content"
+          [class.show]="activeTab === 'profile'"
+        >
+          <div class="card-body">
+            <h4 class="card-title mb-4">
+              <i class="fas fa-user me-2"></i>Profile Information
+            </h4>
+
+            <form (submit)="saveProfile()">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label">Name</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="currentUser.name"
+                    name="firstName"
+                  />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Email</label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    [(ngModel)]="currentUser.email"
+                    name="email"
+                    disabled
+                  />
+                </div>
+                <div class="col-12">
+                  <label class="form-label">Bio</label>
+                  <textarea
+                    class="form-control"
+                    rows="4"
+                    name="bio"
+                    [(ngModel)]="currentUser.bio"
+                  ></textarea>
+                </div>
+                <div class="col-12 text-end">
+                  <button type="submit" class="btn btn-primary">
+                    Save Changes
+                  </button>
+                </div>
+              </div>
+            </form>
+            <div *ngIf="currentUser.verified">
+              <label class="form-label">Electronic Signature</label>
+
+              <img
+                *ngIf="currentUser.signature"
+                [src]="currentUser.signature"
+                alt="Signature"
+                class="signature-preview img-fluid"
+              />
+              <div class="signature-section">
+                <button
+                  type="button"
+                  class="btn btn-outline-primary mb-3"
+                  (click)="showSignatureModal = true"
+                >
+                  <i class="fas fa-signature me-2"></i>
+                  {{
+                    currentUser.signature ? "Update Signature" : "Add Signature"
+                  }}
+                </button>
+              </div>
+            </div>
+
+            <!-- Signature Modal -->
+            <div
+              class="modal fade"
+              [class.show]="showSignatureModal"
+              style="display: block"
+              *ngIf="showSignatureModal"
+            >
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Draw Your Signature</h5>
+                    <button
+                      type="button"
+                      class="btn-close"
+                      (click)="showSignatureModal = false"
+                    ></button>
+                  </div>
+                  <div class="modal-body">
+                    <app-signature-pad
+                      (signatureSaved)="handleSignatureSave($event)"
+                    >
+                    </app-signature-pad>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Security Settings -->
+        <div
+          class="card settings-content"
+          [class.show]="activeTab === 'security'"
+        >
+          <div class="card-body">
+            <h4 class="card-title mb-4">
+              <i class="fas fa-shield-alt me-2"></i>Security Settings
+            </h4>
+
+            <div class="security-item mb-4">
+              <h6>Change Password</h6>
+              <form (submit)="changePassword()" #passwordForm="ngForm">
+                <div class="row g-3">
+                  <div class="col-12">
+                    <label class="form-label">Current Password</label>
+                    <input
+                      type="password"
+                      class="form-control"
+                      [(ngModel)]="password.current"
+                      name="currentPassword"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">New Password</label>
+                    <input
+                      type="password"
+                      class="form-control"
+                      [(ngModel)]="password.new"
+                      name="newPassword"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Confirm Password</label>
+                    <input
+                      type="password"
+                      class="form-control"
+                      [(ngModel)]="password.confirm"
+                      name="confirmPassword"
+                      required
+                    />
+                  </div>
+                  <div class="col-12 text-end">
+                    <button
+                      type="submit"
+                      class="btn btn-primary"
+                      [disabled]="
+                        passwordForm.invalid ||
+                        password.new !== password.confirm
+                      "
+                    >
+                      Update Password
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <div class="security-item">
+              <h6>Verified Email</h6>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="text-muted"
+                  >Status:
+                  {{ currentUser.verified ? "Verified" : "Not verified" }}</span
+                >
+                <button
+                  *ngIf="!currentUser.verified"
+                  class="btn btn-sm btn-success"
+                  (click)="verifyEmail()"
+                >
+                  Verify
+                </button>
+              </div>
+            </div>
+
+            <div class="security-item">
+              <h6>Two-Factor Authentication</h6>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="text-muted"
+                  >Status: {{ twoFactorEnabled ? "Enabled" : "Disabled" }}</span
+                >
+                <button
+                  class="btn btn-sm"
+                  [class.btn-success]="!twoFactorEnabled"
+                  [class.btn-danger]="twoFactorEnabled"
+                  (click)="toggleTwoFactor()"
+                >
+                  {{ twoFactorEnabled ? "Disable" : "Enable" }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notifications Settings -->
+        <div
+          class="card settings-content"
+          [class.show]="activeTab === 'notifications'"
+        >
+          <div class="card-body">
+            <h4 class="card-title mb-4">
+              <i class="fas fa-bell me-2"></i>Notification Preferences
+            </h4>
+
+            <div class="notification-item">
+              <div class="form-check form-switch">
+                <label class="form-check-label" for="emailNotifications"
+                  >Email Notifications</label
+                >
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="emailNotifications"
+                  [(ngModel)]="notifications.email"
+                />
+              </div>
+              <small class="text-muted"
+                >Receive important updates via email</small
+              >
+            </div>
+
+            <div class="notification-item">
+              <div class="form-check form-switch">
+                <label class="form-check-label" for="pushNotifications"
+                  >Push Notifications</label
+                >
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="pushNotifications"
+                  [(ngModel)]="notifications.push"
+                />
+              </div>
+              <small class="text-muted"
+                >Get real-time updates on your device</small
+              >
+            </div>
+
+            <div class="notification-item">
+              <div class="form-check form-switch">
+                <label class="form-check-label" for="smsNotifications"
+                  >SMS Alerts</label
+                >
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="smsNotifications"
+                  [(ngModel)]="notifications.sms"
+                />
+              </div>
+              <small class="text-muted"
+                >Receive text message notifications</small
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Social Links -->
+        <div
+          class="card settings-content"
+          [class.show]="activeTab === 'social'"
+        >
+          <div class="card-body">
+            <h4 class="card-title mb-4">
+              <i class="fas fa-link me-2"></i>Social Media Links
+            </h4>
+
+            <form (submit)="saveProfile()">
+              <div class="row g-3">
+                <div class="col-12">
+                  <label class="form-label">Github Profile</label>
+                  <div class="input-group">
+                    <span class="input-group-text"
+                      ><i class="fab fa-github"></i>
+                      <span style="padding-left: 5px"
+                        >https://github.com/</span
+                      ></span
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="username"
+                      [(ngModel)]="currentUser.github"
+                      name="github"
+                    />
+                  </div>
+                </div>
+                <div class="col-12">
+                  <label class="form-label">Linkedin Profile</label>
+                  <div class="input-group">
+                    <span class="input-group-text"
+                      ><i class="fab fa-linkedin"></i>
+                      <span style="padding-left: 5px"
+                        >https://linkedin.com/</span
+                      ></span
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="username"
+                      [(ngModel)]="currentUser.linkedin"
+                      name="linkedin"
+                    />
+                  </div>
+                </div>
+                <div class="col-12">
+                  <label class="form-label">Facebook Profile</label>
+                  <div class="input-group">
+                    <span class="input-group-text"
+                      ><i class="fab fa-facebook"></i>
+                      <span style="padding-left: 5px"
+                        >https://facebook.com/</span
+                      ></span
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="username"
+                      [(ngModel)]="currentUser.facebook"
+                      name="facebook"
+                    />
+                  </div>
+                </div>
+                <div class="col-12 text-end">
+                  <button type="submit" class="btn btn-primary">
+                    Save Links
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="showCropperModal" class="modal-overlay">
+  <div class="cropper-modal">
+    <div class="modal-header">
+      <h3>Crop your image</h3>
+    </div>
+    <div class="modal-body">
+      <image-cropper
+        [imageChangedEvent]="imageChangedEvent"
+        [maintainAspectRatio]="true"
+        [aspectRatio]="1"
+        format="png"
+        (imageCropped)="imageCropped($event)"
+        (loadImageFailed)="loadImageFailed()"
+      ></image-cropper>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="cancelCrop()">Cancel</button>
+      <button class="btn btn-primary" (click)="saveCrop()">Save</button>
+    </div>
+  </div>
+</div>
+
+<app-footer-front></app-footer-front>
+
+<!-- modal focus-->
+<div
+  *ngIf="showVerificationModal"
+  class="modal-backdrop fade show"
+  (click)="showVerificationModal = false"
+></div>
+<div
+  class="modal fade"
+  [class.show]="showVerificationModal"
+  style="display: block"
+  *ngIf="showVerificationModal"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Email Verification</h5>
+        <button
+          type="button"
+          class="close"
+          (click)="showVerificationModal = false"
+        >
+          <span>&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>
+          We've sent a 6-digit verification code to your email address. Please
+          check your inbox.
+        </p>
+
+        <div class="form-group">
+          <label>Verification Code</label>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="userEnteredCode"
+            placeholder="Enter code"
+            maxlength="6"
+          />
+        </div>
+
+        <div class="text-center mt-3">
+          <button
+            class="btn btn-link"
+            (click)="resendVerificationCode()"
+            [disabled]="!canResend"
+          >
+            Resend Code
+            <span *ngIf="!canResend">({{ resendCooldown }}s)</span>
+          </button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="showVerificationModal = false"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="handleVerification()"
+        >
+          Verify
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

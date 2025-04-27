@@ -1,0 +1,114 @@
+<app-header-front></app-header-front>
+
+<!-- Wallet Header -->
+<div class="container-fluid page-header wallet-header">
+  <div class="container">
+    <div class="header-content">
+      <h1 class="text-white">My Balance</h1>
+      <div class="balance-card">
+        <div class="balance-content">
+          <h3>Available Balance</h3>
+          <h2>🪙{{currentUser?.balance}}</h2>
+          <div class="balance-actions">
+            <button class="btn-action transfer" (click)="showSection('transfer')">
+              <i class="fas fa-exchange-alt"></i>
+              Transfer
+            </button>
+            <button class="btn-action withdraw" (click)="showSection('withdraw')">
+              <i class="fas fa-wallet"></i>
+              Withdraw
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Wallet Main Content -->
+<div class="container-fluid py-5 wallet-main">
+  <div class="container">
+    <div class="row">
+      <!-- Transaction Form -->
+      <div class="col-lg-4 mb-4">
+        <div class="wallet-card operation-form" [class.active]="activeSection">
+          <div class="form-header">
+            <h4>{{ activeSection?.toUpperCase() || 'SELECT OPERATION' }}</h4>
+          </div>
+          
+          <form *ngIf="activeSection" (submit)="submitTransaction()">
+            <div class="form-group">
+              <label>Amount</label>
+              <div class="input-group">
+                <span class="input-group-text">🪙</span>
+                <input type="number" class="form-control" 
+                       [(ngModel)]="transactionAmount" 
+                       name="amount" 
+                       placeholder="0.00"
+                       step="0.01"
+                       required>
+              </div>
+            </div>
+
+            <div *ngIf="activeSection === 'transfer'" class="form-group">
+              <label>Recipient Email</label>
+              <input type="email" class="form-control" 
+                     [(ngModel)]="recipientEmail" 
+                     name="email"
+                     placeholder="name@example.com"
+                     required>
+            </div>
+
+            <div class="form-group">
+              <label>Description</label>
+              <textarea class="form-control" 
+                        [(ngModel)]="transactionDescription" 
+                        name="description"
+                        rows="2"
+                        placeholder="Add note"></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit">
+              Confirm {{ activeSection }}
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Transaction History -->
+      <div class="col-lg-8">
+        <div class="wallet-card transaction-history">
+          <div class="history-header">
+            <h4>Transaction History</h4>
+            <div class="history-controls">
+              <input type="text" placeholder="Search transactions..." class="form-control search">
+              <select class="form-select filter">
+                <option>All</option>
+                <option>Transfers</option>
+                <option>Withdrawals</option>
+                <option>Deposits</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="transaction-list">
+            <div *ngFor="let transaction of transactions" class="transaction-item">
+              <div class="transaction-icon">
+                <i [class]="getTransactionIcon(transaction.type)"></i>
+              </div>
+              <div class="transaction-details">
+                <h5>{{ transaction.description }}</h5>
+                <small class="text-muted">{{ transaction.date | date:'medium' }}</small>
+              </div>
+              <div class="transaction-amount" [class.income]="transaction.amount > 0">
+                {{ transaction.amount > 0 ? '+' : '' }}🪙{{ transaction.amount }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-footer-front></app-footer-front>

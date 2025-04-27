@@ -1,0 +1,50 @@
+<div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card shadow-sm border-0">
+          <div class="card-body">
+            <!-- Header Section (from first template) -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <div>
+                <h4 class="card-title text-primary fw-semibold">
+                  Replies for: {{ originalReclamation.title }}
+                </h4>
+                <small class="text-muted">Reclamation ID: #{{ reclamationId }}</small>
+              </div>
+              <button class="btn btn-sm btn-outline-secondary" routerLink="/back/reclamations">
+                <i class="fas fa-arrow-left me-1"></i> Back
+              </button>
+            </div>
+  
+            <!-- Reply Form (from second template) -->
+            <div class="mb-4">
+              <textarea class="form-control" [(ngModel)]="newReply.reply" 
+                       placeholder="Enter your reply..."></textarea>
+              <button class="btn btn-primary mt-2" (click)="addReply()" [disabled]="isSaving">
+                <span *ngIf="!isSaving">Add Reply</span>
+                <span *ngIf="isSaving">
+                  <i class="fas fa-spinner fa-spin"></i> Processing...
+                </span>
+              </button>
+            </div>
+  
+            <!-- Replies List (from second template) -->
+            <div class="reply-list">
+              <div *ngFor="let reply of replies" class="reply-item mb-3 p-3 border rounded">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <p class="mb-1">{{ reply.reply }}</p>
+                    <small class="text-muted">{{ reply.date | date:'medium' }}</small>
+                  </div>
+                  <button class="btn btn-sm btn-outline-danger" 
+                          (click)="deleteReply(reply.idReply)">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
