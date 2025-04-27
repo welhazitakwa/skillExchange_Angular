@@ -1,6 +1,6 @@
 <div class="cart-sidebar">
   <!-- Message si le panier est vide -->
-  <p *ngIf="!cartProducts || cartProducts.length === 0">Votre panier est vide.</p>
+  <p *ngIf="!cartProducts || cartProducts.length === 0">Your cart is empty.</p>
 
   <!-- Affichage des produits si le panier contient des articles -->
   <app-cart-products *ngIf="cartProducts && cartProducts.length > 0" [cartProducts]="cartProducts"

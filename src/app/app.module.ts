@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
-import { ToastService, AngularToastifyModule } from 'angular-toastify';
+
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -29,9 +29,7 @@ import { AddcartComponent } from './Front/GestionProduit/Cart/addcart/addcart.co
 import { ShowcartComponent } from './Front/GestionProduit/Cart/showcart/showcart.component';
 import { UpdatecartComponent } from './Front/GestionProduit/Cart/updatecart/updatecart.component';
 import { CartDetailsComponent } from './Front/GestionProduit/Cart/cart-details/cart-details.component';
-import { AddproductComponent } from './Front/GestionProduit/Product/addproduct/addproduct.component';
 import { ProductDetailsComponent } from './Front/GestionProduit/Product/product-details/product-details.component';
-import { UpdateproductComponent } from './Front/GestionProduit/Product/updateproduct/updateproduct.component';
 import { ShowproductComponent } from './Front/GestionProduit/Product/showproduct/showproduct.component';
 import { AllProductsComponent } from './Back/GestionProduit/Product/all-products/all-products.component';
 import { AllCartsComponent } from './Back/GestionProduit/Cart/all-carts/all-carts.component';
@@ -45,15 +43,18 @@ import { AllUsersComponent } from './Back/GestionUser/User/all-users/all-users.c
 import { ImageCropperComponent } from 'ngx-image-cropper';
 import { UserBackDetailsComponent } from './Back/GestionUser/User/user-back-details/user-back-details.component';
 import { AuthBanComponent } from './Auth/auth-ban/auth-ban.component';
-import { AllbadgesComponent } from './Back/GestionUser/Badge/allbadges/allbadges.component';
 import { SignaturePadComponent } from './components/signature-pad/signature-pad.component';
 
 import { CategoriesComponent } from './Back/GestionFormation/Category/categories/categories.component';
 import { AddEditCategoryComponent } from './Back/GestionFormation/Category/add-edit-category/add-edit-category.component';
 
 //
-import { MatDialogModule } from '@angular/material/dialog';
+
 import { MatButtonModule } from '@angular/material/button';
+
+
+
+
 
 
 import { EditCategoryComponent } from './Back/GestionFormation/Category/edit-category/edit-category.component';
@@ -98,7 +99,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { UpdateEventCommentComponent } from './Back/GestionEvents/EventComment/update-event-comment/update-event-comment.component';
@@ -106,7 +107,6 @@ import { DeleteEventCommentComponent } from './Back/GestionEvents/EventComment/d
 import { AllEventImageComponent } from './Back/GestionEvents/EventImage/all-event-image/all-event-image.component';
 import { TeachersComponent } from './Front/teachers/teachers.component';
 import { UpdateEventImageComponent } from './Back/GestionEvents/EventImage/update-event-image/update-event-image.component';
-import { AllCartProductsComponent } from './Back/GestionProduit/CartProduct/all-cart-products/all-cart-products.component';
 import { CartProductsComponent } from './Front/GestionProduit/cart-products/cart-products.component';
 import { FrontQuizComponent } from './Front/GestionQuizz/quiz/quiz.component';
 
@@ -120,7 +120,12 @@ import { DetailsFormationBackComponent } from './Back/GestionFormation/Formation
 import { ParticipantsListComponent } from './Back/GestionFormation/Formation/participants-list/participants-list.component';
 import { ApprooveCourseComponent } from './Back/GestionFormation/Formation/approove-course/approove-course.component';
 import { NgChartsModule } from 'ng2-charts';
+
+import { AllCartProductsComponent } from './Back/GestionProduit/CartProduct/all-cart-products/all-cart-products.component';
+import { AllbadgesComponent } from './Back/GestionUser/Badge/allbadges/allbadges.component';
+
 import { CertificateComponent } from './Front/GestionQuizz/quiz/certificate/certificate.component';
+
 
 
 
@@ -153,9 +158,9 @@ import { CertificateComponent } from './Front/GestionQuizz/quiz/certificate/cert
     ShowcartComponent,
     UpdatecartComponent,
     CartDetailsComponent,
-    AddproductComponent,
+   
     ProductDetailsComponent,
-    UpdateproductComponent,
+  
     ShowproductComponent,
     AllProductsComponent,
     AllCartsComponent,
@@ -219,7 +224,7 @@ import { CertificateComponent } from './Front/GestionQuizz/quiz/certificate/cert
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    RouterModule,
+    
     CommonModule,
     HttpClientModule,
     ImageCropperComponent,
@@ -232,8 +237,13 @@ import { CertificateComponent } from './Front/GestionQuizz/quiz/certificate/cert
     MatDatepickerModule,
     MatNativeDateModule,
     MatSnackBarModule,
+
     BrowserAnimationsModule,
     MatDialogModule,
+
+   
+  
+
     NgChartsModule, // Add NgChartsModule
   ],
   providers: [ToastService],
