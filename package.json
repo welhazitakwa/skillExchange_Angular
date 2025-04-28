@@ -10,7 +10,9 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "^16.2.0",
+
+    "@angular/animations": "^16.2.12",
+
     "@angular/cdk": "^16.2.14",
     "@angular/common": "^16.2.0",
     "@angular/compiler": "^16.2.0",
@@ -34,13 +36,20 @@
     "jspdf": "^3.0.1",
     "jspdf-autotable": "^5.0.2",
     "jwt-decode": "^4.0.0",
+
+    "mixpanel-browser": "^2.64.0",
+
     "ng2-charts": "^5.0.4",
+
     "ngx-image-cropper": "^8.1.1",
+    "ngx-owl-carousel-o": "^0.0.5",
     "rxjs": "~7.8.0",
     "signature_pad": "^5.0.7",
+
     "skill-xchange": "file:",
 
     "sweetalert2": "^11.19.1",
+
 
     "tslib": "^2.3.0",
     "xlsx": "^0.18.5",

@@ -44,6 +44,7 @@ import { FrontQuizComponent } from './Front/GestionQuizz/quiz/quiz.component';
 import { AllCommentsComponent } from './Back/GestionForumPost/CommentPost/all-comments/all-comments.component';
 import { ShowPostsComponent } from './Front/GestionForumPost/Posts/show-posts/show-posts.component';
 import { PostDetailsComponent } from './Front/GestionForumPost/Posts/post-details/post-details.component';
+import { AnalyticsDashboardComponent } from './Back/GestionForumPost/analytics-dashboard/analytics-dashboard.component';
 
 import { SuccessComponent } from './Front/GestionProduit/success/success.component';
 
@@ -61,6 +62,7 @@ const routes: Routes = [
   { path:"backpost", component: ListpostComponent},
   
   { path:"backCommentpost", component: AllCommentsComponent},
+  {path: "analytics-dashboard", component: AnalyticsDashboardComponent},
   
 
   { path: 'back', component: MainBackComponent /*,canActivate: [AdminGuard]*/ },
