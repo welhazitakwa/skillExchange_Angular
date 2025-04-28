@@ -1,0 +1,73 @@
+<app-header-front></app-header-front>
+
+<!-- Header Start -->
+<div class="container-fluid page-header" style="margin-bottom: 90px;">
+    <div class="container">
+        <div class="d-flex flex-column justify-content-center" style="min-height: 300px">
+            <h3 class="display-4 text-white text-uppercase">Quiz Results</h3>
+            <div class="d-inline-flex text-white">
+                <p class="m-0 text-uppercase"><a class="text-white" routerLink="/Quizz">Home</a></p>
+                <i class="fa fa-angle-double-right pt-1 px-3"></i>
+                <p class="m-0 text-uppercase">Quiz</p>
+                <i class="fa fa-angle-double-right pt-1 px-3"></i>
+                <p class="m-0 text-uppercase">Results</p>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Header End -->
+
+<!-- Certificate Content -->
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-5">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Your Quiz Results</h3>
+                </div>
+                
+                <div class="card-body text-center py-5">
+                    <div class="mb-4" [ngClass]="{'text-success': passed, 'text-danger': !passed}">
+                        <i class="fas fa-5x" 
+                           [class.fa-check-circle]="passed" 
+                           [class.fa-times-circle]="!passed"></i>
+                        <h2 class="mt-3">
+                            {{ passed ? 'Congratulations!' : 'Keep Trying!' }}
+                        </h2>
+                    </div>
+                    
+                    <div class="score-display mb-4">
+                        <h4>Your score:</h4>
+                        <div class="display-4 font-weight-bold" 
+                             [ngClass]="{'text-success': passed, 'text-danger': !passed}">
+                            {{ score }}%
+                        </div>
+                    </div>
+                    
+                    <div class="result-message mb-4">
+                        <ng-container *ngIf="passed; else failed">
+                            <p class="lead">You've successfully passed the quiz!</p>
+                            <p>Your certificate has been generated and will be emailed to you shortly.</p>
+                        </ng-container>
+                        
+                        <ng-template #failed>
+                            <p class="lead">You didn't pass this time, but don't give up!</p>
+                            <p>The passing score is 70%. You can try again whenever you're ready.</p>
+                        </ng-template>
+                    </div>
+                    
+                    <div class="mt-5">
+                        <button class="btn btn-primary mr-3" routerLink="/Quizz">
+                            <i class="fas fa-home"></i> Back to Home
+                        </button>
+                        <button *ngIf="!passed" class="btn btn-outline-primary" (click)="retryQuiz()">
+                            <i class="fas fa-redo"></i> Try Again
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<app-footer-front></app-footer-front>

@@ -72,11 +72,16 @@
                 <h4 class="card-title mb-0 text-primary fw-semibold">
                   Product Management
                 </h4>
-                <button class="btn btn-sm btn-outline-primary">
-                  <i class="fas fa-download me-2"></i>Export CSV
-                </button>
+                <div class="d-flex align-items-center gap-1"> <!-- Modifié ici -->
+                  <button class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#addProductModal">
+                    <i class="fas fa-plus me-2"></i>Add Token
+                  </button>
+                  
+                  <button class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-download me-2"></i>Export CSV
+                  </button>
+                </div>
               </div>
-
               <!-- Search and Filter Row -->
               <div class="row mb-4">
                 <div class="col-md-4">
@@ -197,14 +202,27 @@
                           }"
                         ></i>
                       </th>
+                      <th class="fw-medium text-muted">
+                        Status
+                      </th>
+                      
+                      <th
+                        class="fw-medium text-muted cursor-pointer"
+                        
+                      >
+                       Action
+                        
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr
                       *ngFor="let product of filteredproduct"
+                      
                       style="cursor: pointer"
-                      [routerLink]="['/backproductdetail', product.idProduct]"
+                      (click)="openProductDetail(product)"
                     >
+                 
                       <td>
                         <!-- Affichage de l'image du produit avec le nom et type -->
                         <div class="d-flex align-items-center">
@@ -225,13 +243,13 @@
                           </div>
                         </div>
                       </td>
-                      <td>{{ product.postedBy.name }}</td>
+                      <td>{{ product.postedBy!.name }}</td>
                       <td class="text-primary font-weight-bold">
-                        <ng-container *ngIf="product.type === 'tokens'">
+                        <ng-container *ngIf="product.type === 'TOKENS'">
                           {{ product.price }} tokens
                         </ng-container>
-                        <ng-container *ngIf="product.type !== 'tokens'">
-                          {{ product.price | currency:'TND' }}
+                        <ng-container *ngIf="product.type !== 'TOKENS'">
+                          {{ product.price  }}
                         </ng-container>
                       </td>
                       <td>
@@ -243,8 +261,65 @@
                         </span>
                       </td>
                       <td>{{ product.type }}</td>
+                      <td>
+                        <span *ngIf="product.isApproved == 1" class="badge bg-success text-white px-3 py-2 rounded-pill">
+                          <i class="fas fa-check-circle me-1"></i> Approved
+                        </span>
+                        <span *ngIf="product.isApproved == 0" class="badge bg-warning text-dark px-3 py-2 rounded-pill">
+                          <i class="fas fa-hourglass-half me-1"></i> Pending
+                        </span>
+                      </td>
+                      
+                          
+<!-- ✅ Nouvelle cellule "Actions" -->
+<td class="text-center">
+  <!-- Bouton Edit : uniquement pour TOKENS -->
+  <button
+    *ngIf="product.type === 'TOKENS'"
+    class="btn btn-sm btn-outline-primary me-2"
+    (click)="startEditProduct(product)"
+    title="Edit"
+  >
+    <i class="fas fa-edit"></i>
+  </button>
+
+  <!-- Bouton Delete : uniquement pour TOKENS -->
+  <button
+    *ngIf="product.type === 'TOKENS'"
+    class="btn btn-sm btn-outline-danger me-2"
+    (click)="deleteProduct(product.idProduct)"
+    title="Delete"
+  >
+    <i class="fas fa-trash"></i>
+  </button>
+
+  <!-- Bouton Approve : seulement pour PHYSICAL/DIGITAL -->
+  <button
+    *ngIf="product.type !== 'TOKENS' && !product.isApproved"
+    class="btn btn-sm btn-success me-2"
+    (click)="approveProduct(product.idProduct); $event.stopPropagation()"
+    title="Approve"
+  >
+    <i class="fas fa-check"></i>
+  </button>
+
+  <!-- Bouton Reject : seulement pour PHYSICAL/DIGITAL -->
+  <button
+    *ngIf="product.type !== 'TOKENS'"
+    class="btn btn-sm btn-secondary"
+    (click)="rejectProduct(product.idProduct); $event.stopPropagation()"
+    title="Reject"
+  >
+    <i class="fas fa-times"></i>
+  </button>
+</td>
+
+
+ 
+
                     </tr>
                     <tr *ngIf="filteredproduct.length === 0">
+                      
                       <td colspan="5" class="text-center py-4">
                         <img
                           src="https://i.pinimg.com/originals/5d/35/e3/5d35e39988e3a183bdc3a9d2570d20a9.gif"
@@ -278,3 +353,117 @@
   <!-- End Page wrapper  -->
   <!-- ============================================================== -->
 </div>
+<!-- Add Product Modal -->
+<div class="modal fade" id="addProductModal" tabindex="-1" role="dialog" aria-labelledby="addProductModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content rounded">
+          <div class="modal-header bg-primary text-white">
+              <h5 class="modal-title" id="addProductModalLabel">Add New Product</h5>
+              <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <div class="modal-body">
+              <form (ngSubmit)="submitNewProduct()">
+                  <div class="form-group">
+                      <label for="productName">Product Name</label>
+                      <input type="text" id="productName" class="form-control" required [(ngModel)]="newProduct.productName" name="productName">
+                  </div>
+      
+                  <div class="form-group">
+                      <label for="type">Type</label>
+                      <select id="type" class="form-control" required [(ngModel)]="newProduct.type" name="type">
+                          <option value="TOKENS">Tokens</option>
+                          <option value="DIGITAL">Digital</option>
+                          <option value="PHYSICAL">Physical</option>
+                        </select>
+                  </div>
+      
+                  <div class="form-group">
+                      <label>Price</label>
+                      <div class="d-flex">
+                          <input type="number" class="form-control" required [(ngModel)]="newProduct.price" name="price">
+                          <select class="form-control ml-2" [(ngModel)]="newProduct.currencyType" name="currencyType">
+                              <option value="TND">TND</option>
+                             
+                          </select>
+                      </div>
+                  </div>
+      
+                  <div class="form-group">
+                      <label for="stock">Stock</label>
+                      <input type="number" id="stock" class="form-control" required [(ngModel)]="newProduct.stock" name="stock">
+                  </div>
+                  
+                  <label>Product Images</label>
+                  <input type="file" class="form-control-file" (change)="onFilesSelected($event)" accept="image/*" multiple #fileInput>
+                  <small class="form-text text-muted">Select multiple images (JPEG, PNG) - Max 5MB each</small>
+              
+                  <div class="image-previews mt-3">
+                      <div *ngFor="let preview of imagesPreviews; let i = index" class="image-preview-item">
+                          <img [src]="preview.url" alt="Preview" class="img-thumbnail">
+                          <button type="button" class="btn btn-sm btn-danger remove-btn" (click)="removeImage(i)">
+                              &times;
+                          </button>
+                      </div>
+                  </div>
+                  
+                  <div class="text-right">
+                      <button type="submit" class="btn btn-primary">Save Product</button>
+                      <button type="button" class="btn btn-secondary ml-2" data-dismiss="modal">Cancel</button>
+                  </div>
+              </form>
+          </div>
+      </div>
+  </div>
+</div>
+<!-- Product Detail Modal -->
+<div *ngIf="isProductDetailModalOpen" class="custom-modal-overlay">
+  <div class="custom-modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title">{{ selectedProduct?.productName }}</h5>
+      <button type="button" class="close" (click)="closeProductDetail()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div *ngIf="selectedProduct">
+        <!-- Images -->
+        <div class="row">
+          <div *ngFor="let img of selectedProduct.imageProducts" class="col-md-4 mb-3">
+            <img
+              [src]="'data:image/*;base64,' + img.image"
+              class="img-fluid rounded shadow"
+              alt="Product Image"
+            />
+          </div>
+        </div>
+
+        <!-- Informations générales -->
+        <p><strong>Type:</strong> {{ selectedProduct.type }}</p>
+
+        <p><strong>Price:</strong> 
+          <ng-container *ngIf="selectedProduct.type === 'TOKENS'">
+            {{ selectedProduct.price }} tokens
+          </ng-container>
+          <ng-container *ngIf="selectedProduct.type !== 'TOKENS'">
+            {{ selectedProduct.price }} {{ selectedProduct.currencyType }}
+          </ng-container>
+        </p>
+
+        <p><strong>Stock:</strong> {{ selectedProduct.stock }}</p>
+
+        <p><strong>Status:</strong> 
+          <span *ngIf="selectedProduct.isApproved == 1" class="badge bg-success">
+            Approved
+          </span>
+          <span *ngIf="selectedProduct.isApproved == 0" class="badge bg-warning text-dark">
+            Pending
+          </span>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+

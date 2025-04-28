@@ -1,0 +1,98 @@
+
+
+
+
+/* Quiz List Styles */
+h3 {
+    margin-top: 40px;
+    font-size: 1.5rem;
+    color: #2c3e50;
+    font-weight: 600;
+    border-bottom: 2px solid #34495e;
+    padding-bottom: 10px;
+}
+
+/* Wrapper for horizontally scrolling quizzes */
+.quiz-list {
+    display: flex;
+    overflow-x: auto;
+    gap: 20px;
+    padding-bottom: 20px;
+    scroll-snap-type: x mandatory;
+}
+
+/* Quiz item container */
+.quiz-item {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    width: 220px;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    text-align: center;
+}
+
+/* Hover effect for quiz items */
+.quiz-item:hover {
+    background-color: #ecf0f1;
+    transform: translateY(-5px);
+}
+
+/* Quiz title */
+.quiz-item h4 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #34495e;
+}
+
+/* Button Styles */
+.quiz-item button {
+    margin-top: 10px;
+    padding: 8px 16px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+/* Edit button with light orange color */
+.quiz-item button.btn-edit {
+    background-color: #f39c12;
+    color: white;
+}
+
+/* Delete button with light orange color */
+.quiz-item button.btn-delete {
+    background-color: #e67e22;
+    color: white;
+}
+
+/* Hover effect for buttons */
+.quiz-item button:hover {
+    opacity: 0.9;
+}
+
+/* Quiz item image */
+.quiz-item img {
+    margin-top: 10px;
+    border-radius: 8px;
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+/* Scrollbar Styles */
+.quiz-list::-webkit-scrollbar {
+    height: 8px;
+}
+
+.quiz-list::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 10px;
+}
+
+.quiz-list::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+}
