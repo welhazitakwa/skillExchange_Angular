@@ -590,9 +590,9 @@ export class CoursesByCatFrontComponent {
   }
   // ----------------------rating ---------------------------------------------
 
-  TakeCourses(idFormation: number) {
+  TakeCourses(idFormation: number, title: string) {
     this.router.navigate(['/sudentsContent'], {
-      state: { formationId: idFormation },
+      state: { formationId: idFormation , title: title },
     });
   }
 }

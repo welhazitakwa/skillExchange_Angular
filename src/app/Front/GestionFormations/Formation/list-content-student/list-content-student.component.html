@@ -3,10 +3,27 @@
 <div *ngIf="isLoading" style="text-align: center; padding: 50px;">
   <h2>Loading content...</h2>
 </div>
-
+<div class="course-generator">
 <!-- Show loading state while data is being fetched -->
 <div *ngIf="isLoading" style="text-align: center; padding: 50px;">
   <h2>Loading content...</h2>
+</div>
+<button
+  mat-raised-button
+  class="btn btn-primary"
+  style="margin-left: 1200px; height: 50px; width: 220px;"
+  (click)="generateCourse()" [disabled]="loading"
+>
+  Generate Course with AI
+</button>
+<div *ngIf="loading">
+    <p>Chargement...</p>
+  </div>
+
+  <div *ngIf="generatedContent" class="generated-content" style="margin: 30px;">
+    <h3>Contenu généré :</h3>
+    <div [innerHTML]="formatContent(generatedContent)"></div>
+  </div>
 </div>
 
 <!-- Render content only when not loading -->
@@ -36,7 +53,7 @@
         <p><a [href]="video.videoUrl" target="_blank">{{ video.title }}</a> by {{ video.channel }}</p>
       </div>
     </div>
-    <!-- smalllaaa********************************************** -->
+    <!-- ********************************************** -->
   </div>
 
   <!-- Video List -->

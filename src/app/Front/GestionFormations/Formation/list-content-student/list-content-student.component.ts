@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { DomSanitizer, SafeHtml, SafeResourceUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { ContentCourse } from 'src/app/core/models/GestionFormation/content-course';
@@ -10,6 +10,7 @@ import { User } from 'src/app/core/models/GestionUser/User';
 import { AuthService } from 'src/app/core/services/Auth/auth.service';
 import { ContentCourseService } from 'src/app/core/services/GestionFormation/content-course.service';
 import { ContentSelectionService } from 'src/app/core/services/GestionFormation/content-selection.service';
+import { OllamaResponse, OllamaService } from 'src/app/core/services/GestionFormation/ollama.service';
 import { YouTubeServiceService } from 'src/app/core/services/GestionFormation/you-tube-service.service';
 import { UserService } from 'src/app/core/services/GestionUser/user.service';
 
@@ -27,14 +28,19 @@ export class ListContentStudentComponent {
   secondList: ContentCourseWithSanitizedUrl[] = [];
   firstElement!: ContentCourse;
   formationId!: number;
+  formationTitle!: string;
   sanitizedUrl: SafeResourceUrl | null = null;
   sanitizedRemainingUrls: SafeResourceUrl[] = [];
   activeIndex: number = 0; // Track active video
   currentUser: User | null = null;
   checkedContents: Set<number> = new Set(); // Store checked content IDs
   isLoading: boolean = true; // Control rendering until data is loaded
-  videoRecommendations: { [key: string]: Video[] } = {};//api
-  loadingVideos: { [key: string]: boolean } = {};//api
+  videoRecommendations: { [key: string]: Video[] } = {}; //api
+  loadingVideos: { [key: string]: boolean } = {}; //api
+  // -------------------- AI generated course ---------------------
+  prompt: string = '';
+  generatedContent: string | null = null;
+  loading: boolean = false;
 
   constructor(
     private courseContentService: ContentCourseService,
@@ -44,7 +50,8 @@ export class ListContentStudentComponent {
     private userService: UserService,
     private authService: AuthService,
     private router: Router,
-    private youTubeService: YouTubeServiceService
+    private youTubeService: YouTubeServiceService,
+    private ollamaServ: OllamaService
   ) {}
 
   ngOnInit(): void {
@@ -52,6 +59,10 @@ export class ListContentStudentComponent {
     if (navigationState && navigationState.formationId) {
       this.formationId = navigationState.formationId;
       console.log('ID de formation depuis navigation:', this.formationId);
+    }
+    if (navigationState && navigationState.title) {
+      this.formationTitle = navigationState.title;
+      console.log('titre de formation depuis navigation:', this.formationTitle);
     }
     this.loadCurrentUser();
   }
@@ -225,12 +236,6 @@ export class ListContentStudentComponent {
     }
   }
 
-  onChecked(itemSelectedId: number): void {}
-
-  onUnchecked(): void {
-    console.log('Checkbox is unchecked');
-  }
-
   getVideoRecommendations(content: any) {
     this.loadingVideos[content.id] = true;
     this.youTubeService.getVideos(content.title).subscribe({
@@ -243,5 +248,70 @@ export class ListContentStudentComponent {
         this.loadingVideos[content.id] = false;
       },
     });
+  }
+  // -------------------- AI generated course ---------------------
+  generateCourse(): void {
+    this.loading = true;
+    this.generatedContent = null; // Réinitialiser le contenu
+    this.ollamaServ.generateCourse(this.formationTitle).subscribe({
+      next: (response: OllamaResponse) => {
+        this.generatedContent = response.response;
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error generating course:', error);
+        this.loading = false;
+      },
+    });
+  }
+  // formatContent(content: string): SafeHtml {
+  //   // Remplacer les sections par des balises HTML
+  //   let formattedContent = content
+  //     .replace(/TITLE: (.*)/, '<h2>$1</h2>')
+  //     .replace(/INTRODUCTION: (.*)/, '<h3>Introduction</h3><p>$1</p>')
+  //     .replace(
+  //       /CHAPTER (\d+): (.*?)(?=\nCHAPTER|\nCONCLUSION|\nAUDIENCE)/gs,
+  //       (match, num, title) => {
+  //         return `<h4>Chapter ${num}: ${title.split(' - ')[0]}</h4><ul>${title
+  //           .split(' - ')
+  //           .slice(1)
+  //           .map((item: string) => `<li>${item.trim()}</li>`)
+  //           .join('')}</ul>`;
+  //       }
+  //     )
+  //     .replace(/CONCLUSION: (.*)/, '<h3>Conclusion</h3><p>$1</p>')
+  //     .replace(/AUDIENCE: (.*)/, '<h3>Audience</h3><p>$1</p>')
+  //     .replace(/\n/g, '<br>');
+
+  //   // Sécuriser le HTML pour éviter les problèmes XSS
+  //   return this.sanitizer.bypassSecurityTrustHtml(formattedContent);
+  // }
+  formatContent(content: string): SafeHtml {
+    let formattedContent = content
+      .replace(/title: (.*)/i, '<h2 class="main-title">$1</h2><hr>')
+      .replace(
+        /welcome: (.*)/i,
+        '<h3 class="section-title">Welcome</h3><p class="section-content">$1</p>'
+      )
+      .replace(
+        /chapter outlines:/i,
+        '<h3 class="section-title">Chapter Outlines</h3>'
+      )
+      .replace(
+        /chapter (\d+): (.*?)(?=\nchapter|\n$)/gis,
+        (match, num, title) => {
+          const chapterTitle = title.split('\n')[0].trim();
+          const chapterItems = title
+            .split('\n')
+            .slice(1)
+            .filter((item: string) => item.trim() !== '')
+            .map((item : string ) => `<li>${item.trim()}</li>`)
+            .join('');
+          return `<h4 class="chapter-title">Chapter ${num}: ${chapterTitle}</h4><ul class="chapter-list">${chapterItems}</ul>`;
+        }
+      )
+      .replace(/\n/g, '<br>');
+
+    return this.sanitizer.bypassSecurityTrustHtml(formattedContent);
   }
 }

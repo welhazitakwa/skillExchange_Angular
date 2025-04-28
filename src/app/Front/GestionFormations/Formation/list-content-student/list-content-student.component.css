@@ -127,7 +127,117 @@ body{
       font-size: 15px;
       text-align: center;
    }
-/* -**-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-* API VIDEOS-*-*-*-*-*-***--*-* */
+/* -**-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-* AI  -*-*-*-*-*-***--*-* */
+.course-generator {
+  max-width: 800px;
+  margin: 100px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
 
+.course-generator h2 {
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 24px;
+  text-transform: capitalize;
+}
+
+.course-generator button {
+  background-color: #ff6200;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  text-transform: capitalize;
+}
+
+.course-generator button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.course-generator .generated-content {
+  padding: 20px;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.course-generator .main-title {
+  color: #1e88e5;
+  font-size: 28px;
+  margin-bottom: 20px;
+  text-align: center;
+  text-transform: capitalize;
+}
+
+.course-generator .section-title {
+  color: #2e7d32;
+  font-size: 22px;
+  margin-top: 30px;
+  margin-bottom: 10px;
+  text-transform: capitalize;
+}
+
+.course-generator .chapter-title {
+  color: #d81b60;
+  font-size: 20px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  text-transform: capitalize;
+}
+
+.course-generator .section-content {
+  font-size: 16px;
+  color: #444;
+  margin-bottom: 15px;
+  line-height: 1.6;
+}
+
+.course-generator .chapter-list {
+  padding-left: 20px;
+  margin-bottom: 15px;
+}
+
+.course-generator .chapter-list li {
+  margin-bottom: 8px;
+  color: #555;
+  text-transform: none;
+}
+
+.course-generator hr {
+  border: 0;
+  border-top: 1px solid #ddd;
+  margin: 20px 0;
+}
+
+@media (max-width: 450px) {
+  .course-generator {
+    margin: 20px auto;
+    padding: 10px;
+  }
+
+  .course-generator .main-title {
+    font-size: 24px;
+  }
+
+  .course-generator .section-title {
+    font-size: 20px;
+  }
+
+  .course-generator .chapter-title {
+    font-size: 18px;
+  }
+
+  .course-generator .section-content {
+    font-size: 14px;
+  }
+}  
  
 }
