@@ -21,9 +21,9 @@ export class AddEditCategoryComponent {
       Validators.minLength(20),
       Validators.maxLength(50),
     ]),
-    image: new FormControl(''), // image en base64
+    image: new FormControl('', Validators.required), // image en base64
     imageType: new FormControl(''), // Champ 'image' (aucune validation)
-    status: new FormControl(''),
+    status: new FormControl('', [Validators.required]),
   });
 
   constructor(
@@ -31,7 +31,7 @@ export class AddEditCategoryComponent {
     private Rout: Router,
     private diagRef: MatDialogRef<AddEditCategoryComponent>
   ) {}
- 
+
   C!: Category;
   SaveCategory(F: FormGroup) {
     this.C = { ...F.value };
@@ -50,7 +50,11 @@ export class AddEditCategoryComponent {
       },
 
       error: (err: any) => {
-        Swal.fire('Erreur!', 'An error occurred while Adding the Category', 'error');
+        Swal.fire(
+          'Erreur!',
+          'An error occurred while Adding the Category',
+          'error'
+        );
       },
 
       complete: () => {
@@ -74,6 +78,4 @@ export class AddEditCategoryComponent {
       reader.readAsDataURL(file);
     }
   }
-
-  
 }
