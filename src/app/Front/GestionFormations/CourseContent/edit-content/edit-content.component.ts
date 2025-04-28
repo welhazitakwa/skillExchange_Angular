@@ -24,24 +24,18 @@ export class EditContentComponent {
   content?: ContentCourse;
 
   updateForm = new FormGroup({
-     id: new FormControl(0),
-     title: new FormControl('', Validators.required),
-     description: new FormControl(''),
-     order_affichage: new FormControl(0), // Champ 'image' (aucune validation)
-     lnk_vid: new FormControl(''),
-        course: new FormGroup({
-          id: new FormControl(0),
-        })
-    // id: new FormControl(0),
-    // name: new FormControl('', Validators.required),
-    // description: new FormControl('', [
-    //   Validators.required,
-    //   Validators.minLength(20),
-    //   Validators.maxLength(50),
-    // ]),
-    // image: new FormControl(''),
-    // imageType: new FormControl(''), // Ajouté
-    // status: new FormControl<number | null>(null),
+    id: new FormControl(0),
+    title: new FormControl('', Validators.required),
+    description: new FormControl('', [
+      Validators.required,
+      Validators.minLength(20),
+      Validators.maxLength(50),
+    ]),
+    order_affichage: new FormControl(0, Validators.required), // Champ 'image' (aucune validation)
+    lnk_vid: new FormControl('', Validators.required),
+    course: new FormGroup({
+      id: new FormControl(0),
+    }),
   });
   ngOnInit() {
     console.log('cccccccccccccccc');
