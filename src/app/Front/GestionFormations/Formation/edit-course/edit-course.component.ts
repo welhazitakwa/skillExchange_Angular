@@ -33,12 +33,12 @@ export class EditCourseComponent {
       Validators.minLength(20),
       Validators.maxLength(50),
     ]),
-    image: new FormControl(''),
+    image: new FormControl('', Validators.required),
     imageType: new FormControl(''),
-    price: new FormControl<number | null>(null),
+    price: new FormControl<number | null>(null, Validators.required),
     date_ajout: new FormControl(),
-    duration: new FormControl<number | null>(null),
-    state: new FormControl<number | null>(null),
+    duration: new FormControl<number | null>(null, Validators.required),
+    state: new FormControl<number | null>(null, Validators.required),
     author: new FormGroup({
       id: new FormControl(0),
     }),
@@ -55,32 +55,7 @@ export class EditCourseComponent {
     private dialogRef: MatDialogRef<EditCategoryComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
-  // ngOnInit() {
-  //   // if (this.data && this.data.id) {
-  //   this.userId = this.data.userId;
-  //   console.log('ID de user connecté:', this.userId);
-  //   // id de Formation
-  //   this.id = this.data.id;
 
-  //   console.log('**********ID de la formation à modifier:************', this.id);
-  //   // Appelle ici le service pour récupérer la catégorie par ID
-  //   // }
-  //   // ****************************---------------------------************************
-  //   this.formServ.getFormationById(this.id).subscribe((donne) => {
-  //     this.formation = donne;
-  //     this.updateForm.patchValue(this.formation);
-  //   });
-  //   this.getCategoriesList();
-  //     this.updateForm.patchValue({
-  //       author: {
-  //         id: this.userId,
-  //       },
-  //     });
-  //     this.updateForm.patchValue({
-  //       ...this.formation,
-  //       category_id: this.formation?.category?.id,
-  //     });
-  // }
   ngOnInit() {
     this.id = this.data.id;
     this.userId = this.data.userId;
