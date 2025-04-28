@@ -1,0 +1,83 @@
+<h1 mat-dialog-title>Edit Category</h1>
+<form style="margin: 40px;" [formGroup]="updateForm" (ngSubmit)="updateCategory()">
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <input
+        type="text"
+        class="form-control"
+        [ngClass]="{'is-invalid': updateForm.get('name')?.invalid && updateForm.get('name')?.touched}"
+        id="title"
+        placeholder="title"
+        formControlName="name"
+      >
+      <div *ngIf="updateForm.get('name')?.invalid && updateForm.get('name')?.touched" class="invalid-feedback">
+        <div *ngIf="updateForm.get('name')?.errors?.['required']">Title is required.</div>
+      </div>
+    </div>
+    <div class="form-check form-check-inline">
+      <input
+        class="form-check-input"
+        type="radio"
+        name="status"
+        id="inlineRadio1"
+        [value]="1"
+        style="border: 1px solid #696969"
+        formControlName="status"
+      >
+      <label class="form-check-label" for="inlineRadio1">public</label>
+    </div>
+    <div class="form-check form-check-inline">
+      <input
+        class="form-check-input"
+        type="radio"
+        name="status"
+        id="inlineRadio2"
+        [value]="0"
+        style="border: 1px solid #696969"
+        formControlName="status"
+      >
+      <label class="form-check-label" for="inlineRadio2">private</label>
+    </div>
+    <div *ngIf="updateForm.get('status')?.invalid && updateForm.get('status')?.touched" class="text-danger">
+      <small *ngIf="updateForm.get('status')?.errors?.['required']">Please select a status.</small>
+    </div>
+  </div>
+
+  <div class="custom-file">
+    <input
+      type="file"
+      accept="image/*"
+      (change)="onFileChange($event)"
+      class="custom-file-input"
+      [ngClass]="{'is-invalid': updateForm.get('image')?.invalid && updateForm.get('image')?.touched}"
+      id="customFile"
+    >
+    <label class="custom-file-label" for="customFile">Choose your image</label>
+    <div *ngIf="updateForm.get('image')?.invalid && updateForm.get('image')?.touched" class="invalid-feedback">
+      <div *ngIf="updateForm.get('image')?.errors?.['required']">Image is required.</div>
+    </div>
+  </div>
+
+
+  <div class="form-group">
+    <label for="description">Description</label>
+    <textarea
+      class="form-control"
+      [ngClass]="{'is-invalid': updateForm.get('description')?.invalid && updateForm.get('description')?.touched}"
+      id="description"
+      rows="5"
+      formControlName="description"
+    ></textarea>
+    <div *ngIf="updateForm.get('description')?.invalid && updateForm.get('description')?.touched" class="invalid-feedback">
+      <div *ngIf="updateForm.get('description')?.errors?.['required']">Description is required.</div>
+      <div *ngIf="updateForm.get('description')?.errors?.['minlength']">
+        Description must be at least 20 characters long.
+      </div>
+      <div *ngIf="updateForm.get('description')?.errors?.['maxlength']">
+        Description cannot exceed 50 characters.
+      </div>
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-primary" [disabled]="updateForm.invalid">Submit</button>
+</form>

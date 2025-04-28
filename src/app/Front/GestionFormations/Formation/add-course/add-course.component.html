@@ -1,0 +1,209 @@
+<!-- <h1 mat-dialog-title>Add Course</h1>
+<form style="margin: 40px;" [formGroup]="addForm" (ngSubmit)="SaveCourse(addForm)">
+<input type="hidden" id="author_id" [value]="userId">
+
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <input type="text" class="form-control" id="title" placeholder="title" formControlName="title">
+    </div>
+    <div class="form-check form-check-inline"> &nbsp;&nbsp;&nbsp;
+      <input  class="form-check-input" type="radio" name="state" 
+      id="inlineRadio1" value="1" style="border: 1px solid #696969" formControlName="state">
+  <label class="form-check-label" for="inlineRadio1">public</label>
+</div>
+
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="state" id="inlineRadio2" value="0" style="border: 1px solid #696969" formControlName="state" >
+  <label class="form-check-label" for="inlineRadio2">private</label>
+</div>
+
+  </div>
+  
+
+
+
+
+
+
+ <div class="custom-file">
+  <input type="file" (change)="onFileChange($event)" class="custom-file-input" id="customFile" >
+  <label class="custom-file-label" for="customFile" >Choose your image</label>
+</div>
+<br><br>
+<div>
+    <select id="category" formControlName="category_id" class="form-select"
+>
+      <option [value]="0" disabled selected>Select a category</option>
+      <option *ngFor="let category of categories" [value]="category.id | json">
+        {{ category.name }} 
+      </option>
+    </select>
+  </div>
+<br><br>
+ <div class="row">
+    <div class="col">
+      <input type="number" formControlName="price" class="form-control" placeholder="price">
+    </div>
+    <div class="col">
+      <input type="number"  formControlName="duration"  class="form-control" placeholder="duration in minutes">
+    </div>
+
+  </div>
+  <br>
+   <div class="form-group">
+    <label for="description" >Description</label>
+    <textarea class="form-control" id="description" rows="3" formControlName="description"></textarea>
+  </div>
+   <div class="form-group">
+    <label for="description" >Required skills</label>
+    <textarea class="form-control" id="description" rows="3" formControlName="requiredSkills" ></textarea>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form> -->
+<h1 mat-dialog-title>Add Course</h1>
+<form style="margin: 40px;" [formGroup]="addForm" (ngSubmit)="SaveCourse(addForm)">
+<input type="hidden" id="author_id" [value]="userId">
+
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <input
+        type="text"
+        class="form-control"
+        [ngClass]="{'is-invalid': addForm.get('title')?.invalid && addForm.get('title')?.touched}"
+        id="title"
+        placeholder="title"
+        formControlName="title"
+      >
+      <div *ngIf="addForm.get('title')?.invalid && addForm.get('title')?.touched" class="invalid-feedback">
+        <div *ngIf="addForm.get('title')?.errors?.['required']">Title is required.</div>
+      </div>
+    </div>
+    <div class="form-check form-check-inline">
+      <input
+        class="form-check-input"
+        type="radio"
+        name="state"
+        id="inlineRadio1"
+        value="1"
+        style="border: 1px solid #696969"
+        formControlName="state"
+      >
+      <label class="form-check-label" for="inlineRadio1">public</label>
+    </div>
+    <div class="form-check form-check-inline">
+      <input
+        class="form-check-input"
+        type="radio"
+        name="state"
+        id="inlineRadio2"
+        value="0"
+        style="border: 1px solid #696969"
+        formControlName="state"
+      >
+      <label class="form-check-label" for="inlineRadio2">private</label>
+    </div>
+    <div *ngIf="addForm.get('state')?.invalid && addForm.get('state')?.touched" class="text-danger">
+      <small *ngIf="addForm.get('state')?.errors?.['required']">Please select a state.</small>
+    </div>
+  </div>
+
+  <div class="custom-file">
+    <input
+      type="file"
+      (change)="onFileChange($event)"
+      class="custom-file-input"
+      [ngClass]="{'is-invalid': addForm.get('image')?.invalid && addForm.get('image')?.touched}"
+      id="customFile"
+    >
+    <label class="custom-file-label" for="customFile">Choose your image</label>
+    <div *ngIf="addForm.get('image')?.invalid && addForm.get('image')?.touched" class="invalid-feedback">
+      <div *ngIf="addForm.get('image')?.errors?.['required']">Image is required.</div>
+    </div>
+  </div>
+  <br><br>
+  <div>
+    <select
+      id="category"
+      formControlName="category_id"
+      class="form-select"
+      [ngClass]="{'is-invalid': addForm.get('category_id')?.invalid && addForm.get('category_id')?.touched}"
+    >
+      <option [value]="0" disabled selected>Select a category</option>
+      <option *ngFor="let category of categories" [value]="category.id | json">
+        {{ category.name }}
+      </option>
+    </select>
+    <div *ngIf="addForm.get('category_id')?.invalid && addForm.get('category_id')?.touched" class="invalid-feedback">
+      <div *ngIf="addForm.get('category_id')?.errors?.['required']">Category is required.</div>
+    </div>
+  </div>
+  <br><br>
+  <div class="row">
+    <div class="col">
+      <input
+        type="number"
+        formControlName="price"
+        class="form-control"
+        [ngClass]="{'is-invalid': addForm.get('price')?.invalid && addForm.get('price')?.touched}"
+        placeholder="price"
+      >
+      <div *ngIf="addForm.get('price')?.invalid && addForm.get('price')?.touched" class="invalid-feedback">
+        <div *ngIf="addForm.get('price')?.errors?.['required']">Price is required.</div>
+      </div>
+    </div>
+    <div class="col">
+      <input
+        type="number"
+        formControlName="duration"
+        class="form-control"
+        [ngClass]="{'is-invalid': addForm.get('duration')?.invalid && addForm.get('duration')?.touched}"
+        placeholder="duration in minutes"
+      >
+      <div *ngIf="addForm.get('duration')?.invalid && addForm.get('duration')?.touched" class="invalid-feedback">
+        <div *ngIf="addForm.get('duration')?.errors?.['required']">Duration is required.</div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="form-group">
+    <label for="description">Description</label>
+    <textarea
+      class="form-control"
+      [ngClass]="{'is-invalid': addForm.get('description')?.invalid && addForm.get('description')?.touched}"
+      id="description"
+      rows="3"
+      formControlName="description"
+    ></textarea>
+    <div *ngIf="addForm.get('description')?.invalid && addForm.get('description')?.touched" class="invalid-feedback">
+      <div *ngIf="addForm.get('description')?.errors?.['required']">Description is required.</div>
+      <div *ngIf="addForm.get('description')?.errors?.['minlength']">
+        Description must be at least 20 characters long.
+      </div>
+      <div *ngIf="addForm.get('description')?.errors?.['maxlength']">
+        Description cannot exceed 50 characters.
+      </div>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="requiredSkills">Required skills</label>
+    <textarea
+      class="form-control"
+      [ngClass]="{'is-invalid': addForm.get('requiredSkills')?.invalid && addForm.get('requiredSkills')?.touched}"
+      id="requiredSkills"
+      rows="3"
+      formControlName="requiredSkills"
+    ></textarea>
+    <div *ngIf="addForm.get('requiredSkills')?.invalid && addForm.get('requiredSkills')?.touched" class="invalid-feedback">
+      <div *ngIf="addForm.get('requiredSkills')?.errors?.['required']">Required skills are required.</div>
+      <div *ngIf="addForm.get('requiredSkills')?.errors?.['minlength']">
+        Required skills must be at least 20 characters long.
+      </div>
+      <div *ngIf="addForm.get('requiredSkills')?.errors?.['maxlength']">
+        Required skills cannot exceed 50 characters.
+      </div>
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-primary" [disabled]="addForm.invalid">Submit</button>
+</form>

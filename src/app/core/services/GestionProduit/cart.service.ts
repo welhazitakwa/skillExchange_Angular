@@ -7,6 +7,7 @@ import { BehaviorSubject, catchError, Observable, of, tap } from 'rxjs';
 })
 export class CartService {
  listCarts: Cart[] = [];
+ 
  url = 'http://localhost:8084/skillExchange/cart';
   constructor(private http: HttpClient) { this.initializeCartCount();}
   
@@ -18,10 +19,12 @@ export class CartService {
       this.listCarts = carts;
     //  this.updateItemCount();
     });
+   
   }
-
+  getActiveCartByUser(userId: number): Observable<Cart | null> {
+    return this.http.get<Cart>(`${this.url}/user-cart/${userId}`);
+  }
   
-
 
   // Mettre à jour le compteur
  /* private updateItemCount(): void {
@@ -35,6 +38,7 @@ export class CartService {
     this.itemCountSource.next(total);
   }
 */
+
   // Méthode pour valider le panier
   validateCart(cartId: number): Observable<any> {
     return this.http.post(`${this.url}/validate-cart`, { cartId });
@@ -64,8 +68,9 @@ export class CartService {
 }
 
 addCart(cart: Cart): Observable<Cart> {
- return this.http.post<Cart>(this.url, cart);
+  return this.http.post<Cart>(this.url+"/add-cart", cart);
 }
+
 
 deleteCart(id:number){
  return this.http.delete(this.url+'/'+id);
@@ -76,7 +81,7 @@ getCartByID(id:number){
 updateCart(cart:Cart){
  return this.http.patch(this.url+'/'+cart.id,cart);
 }
- // ✅ Rafraîchir manuellement le panier après une action
+
  refreshCart(): void {
   this.getCarts().subscribe();
 }

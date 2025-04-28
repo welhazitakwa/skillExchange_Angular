@@ -1,0 +1,159 @@
+<app-header-front></app-header-front>    
+    <!-- Header Start -->
+    <div class="container-fluid page-header" style="margin-bottom: 90px;">
+
+        <div class="container">
+            <div class="d-flex flex-column justify-content-center" style="min-height: 300px">
+                <h3 class="display-4 text-white text-uppercase">Courses</h3>
+                
+                <div class="d-inline-flex text-white">
+                    <p class="m-0 text-uppercase"><a class="text-white"  routerLink="/courses">Home</a></p>
+                    <i class="fa fa-angle-double-right pt-1 px-3"></i>
+                    <p class="m-0 text-uppercase">Courses</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header End -->
+                  <input
+    #searchInput
+    type="text"
+    class="form-control me-2"
+    placeholder="Search Courses..."
+    (keyup)="filterTable(searchInput.value)"
+    style="width: 300px; margin-left: 70%;"
+  />
+    <!-- Courses Start -->
+    <div class="container-fluid py-5">
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <h5 class="text-primary text-uppercase mb-3" style="letter-spacing: 5px;">Courses</h5>
+                <h1>Our  Courses       </h1>
+            </div>
+           
+            <div class="row">
+                <div *ngFor="let f of filteredFormations" class="col-lg-4 col-md-6 mb-4">
+                    <div class="rounded overflow-hidden mb-2 course-card">
+                        <img class="img-fluid" 
+                          [src]="'data:' + f.imageType + ';base64,' + f.image"
+                          alt="">
+                        <div class="bg-secondary p-4">
+                            <div class="d-flex justify-content-between mb-3">
+                               <small class="m-0">
+    <i class="fa fa-users text-primary mr-2"></i>
+    {{ totalParticipantsMap[f.id] || 0  }} Students
+  </small>
+                             <h6 class="m-0">
+                <i class="fa fa-star text-primary mr-2"></i>
+                {{ formatAverageRating(averageRatingMap[f.id] || 0) }} {{ getEmoji(averageRatingMap[f.id]) }}
+                <small>{{ ratingCountMap[f.id] ? '(' + ratingCountMap[f.id] + ')' : '(0)' }}</small>
+              </h6>
+            
+              <small class="m-0"><i class="far fa-clock text-primary mr-2"></i>{{ convertDuration(f.duration) }}</small>
+                            </div>
+                            <a class="h5" style="cursor: pointer;" (click)="openDetailsCourse(f.id)"> {{f.title}} </a>
+
+
+
+
+            
+
+
+
+<!-- courses to study -->
+
+                            <div class="border-top mt-4 pt-4">
+             <ng-container [ngSwitch]="getButtonState(f)">
+        <div *ngSwitchCase="'exam'"> 
+                                        <div class="d-grid gap-2">
+
+    <button  (click)="TakeCourses(f.id, f.title)" class="btn btn-outline-info">  Take the courses 🎓📚 </button>
+    </div>
+                                  </div>
+
+  </ng-container>
+                  
+  <!-- courses to study -->
+
+  <br>
+
+                                <div class="d-flex justify-content-between">
+                                                                        <h5 class="m-0"> {{f.price}} 💰 </h5>
+
+                                    <!-- <div>
+                                          <button type="button" class="btn btn-sm btn-square btn-neutral text-danger-hover" >
+                                            <i class="text-success fas fa-cart-plus"></i>
+                                        </button>
+                                          <button (click)="addParticipation(f.id)" type="button" class="btn btn-sm" >
+                                            <i class="text-danger fas fa-tasks"> Participer</i>
+                                        </button>
+                                    </div> -->
+                         
+
+
+
+
+
+
+
+ <ng-container [ngSwitch]="getButtonState(f)">
+ 
+ <div *ngSwitchCase="'exam'">
+              <!-- ******************************************* -->
+     
+<!-- Star Rating -->
+    <div class="star-rating" (mouseleave)="resetHover()">
+      <ng-container *ngFor="let star of stars; let i = index">
+        <i
+          class="star"
+          [class.filled]="i < ratingMap[f.id] || (hoverRating !== null && i < hoverRating)"
+          (mouseover)="hover(i + 1, f.id)"
+          (click)="selectRating(i + 1, f.id)"
+        >
+          ★
+        </i>
+      </ng-container>
+    </div>
+    <br />
+    <!-- Emoji shown on hover -->
+    <div class="emoji-hover" *ngIf="hoverRating && !showEmoji">
+      {{ getEmoji(hoverRating) }}
+    </div>
+    <!-- Emoji that blinks then disappears after click -->
+    <div class="emoji-popup" *ngIf="showEmoji" [@blink]>
+      {{ getEmoji(ratingMap[f.id]) }}
+    </div>
+              
+            <!-- ******************************************* -->
+ 
+    </div>
+</ng-container>
+ <div>
+  <ng-container [ngSwitch]="getButtonState(f)">
+    
+    <button *ngSwitchCase="'pay'" (click)="payer(f.id, f.price, f.title, f.author)" class="btn btn-warning"> 💰 Pay</button>
+    <button *ngSwitchCase="'participate'" (click)="addParticipation(f.id)" class="btn btn-success">Participate</button>
+    <div *ngSwitchCase="'exam'"> 
+      <div *ngSwitchCase="'exam'"> 
+        <button *ngSwitchCase="'exam'" (click)="passerExam(getParticipationId(f.id))" class="btn btn-info">
+          📝 Exam
+        </button>
+      </div>
+    </div>
+  </ng-container>
+
+
+</div>
+
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+               
+            </div>
+        </div>
+    </div>
+<app-footer-front></app-footer-front>

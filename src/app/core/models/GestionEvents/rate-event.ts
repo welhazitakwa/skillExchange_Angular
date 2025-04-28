@@ -1,11 +1,12 @@
 import { Events } from "./events";
+import { User } from "../GestionUser/User";
 
 export class RateEvent {
-    idRate!: number; 
+    idRate?: number; // Nullable for new ratings, non-null after saving
     content!: string;
-    createdAt!: Date;
-    updatedAt!: Date;
+    createdAt!: Date; // Always non-null, set by backend
+    updatedAt!: Date; // Always non-null, set by backend
     rating!: number;
-    idUser!: number;
+    user!: User;
     event!: Events;
 }

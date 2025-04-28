@@ -474,14 +474,14 @@
       <h3>Crop your image</h3>
     </div>
     <div class="modal-body">
-      <image-cropper
+       <image-cropper
         [imageChangedEvent]="imageChangedEvent"
         [maintainAspectRatio]="true"
         [aspectRatio]="1"
         format="png"
         (imageCropped)="imageCropped($event)"
         (loadImageFailed)="loadImageFailed()"
-      ></image-cropper>
+      ></image-cropper> 
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" (click)="cancelCrop()">Cancel</button>

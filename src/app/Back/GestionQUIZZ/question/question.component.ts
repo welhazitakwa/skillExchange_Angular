@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { QuestionService } from 'src/app/core/services/GestionQuizz/question.service';
 import { Question } from 'src/app/core/models/QuestionQuizz/question';
+import { ToastService } from 'angular-toastify';
+
 
 @Component({
   selector: 'app-question',
@@ -11,6 +13,7 @@ import { Question } from 'src/app/core/models/QuestionQuizz/question';
 export class QuestionComponent implements OnInit {
   quizId!: number;
   questions: Question[] = [];
+  generating: boolean = false;
   loading: boolean = true;
   errorMessage: string = '';
   newQuestion: Question = {
@@ -26,7 +29,8 @@ export class QuestionComponent implements OnInit {
   constructor(
     private questionService: QuestionService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -60,7 +64,7 @@ export class QuestionComponent implements OnInit {
   // Add new question
   addQuestion(): void {
     if (!this.newQuestion.question.trim()) {
-      alert('Question cannot be empty.');
+      this.toast.error('Question cannot be empty.');
       return;
     }
   
@@ -70,7 +74,7 @@ export class QuestionComponent implements OnInit {
         console.log('Added Question:', data); // Check if the response structure is correct
         this.questions.push(data); // This should push the correctly structured data
         this.resetForm();
-        alert('Question added successfully');
+        this.toast.success('Question added successfully');
       },
       error: (error) => {
         console.error('Error adding question:', error);
@@ -95,7 +99,7 @@ export class QuestionComponent implements OnInit {
           this.questions[index] = updatedQuestion;
         }
         this.resetForm();
-        alert('Question updated successfully');
+        this.toast.success('Question updated successfully');
       },
       error: (error) => {
         console.error('Error updating question:', error);
@@ -110,8 +114,11 @@ export class QuestionComponent implements OnInit {
       this.questionService.deleteQuestion(id).subscribe({
         next: () => {
           this.questions = this.questions.filter((q) => q.id !== id);
-          alert('Question deleted successfully');
-        },
+          this.toast.success('Question deleted successfully');
+/*************  ✨ Windsurf Command ⭐  *************/
+        /**
+/*******  ce7199dd-1319-4f6b-8ff7-99cd002d3430  *******/        },
+
         error: (error) => {
           console.error('Error deleting question:', error);
           this.errorMessage = 'Failed to delete question';
@@ -132,4 +139,43 @@ export class QuestionComponent implements OnInit {
       quiz: { id: this.quizId },
     };
   }
+  generateOptions(): void {
+    // Validate inputs
+    if (!this.newQuestion.question.trim()) {
+      this.toast.error('Please enter a question first');
+      return;
+    }
+  
+    if (!this.newQuestion.reponse.trim()) {
+      this.toast.error('Please enter the correct answer first');
+      return;
+    }
+  
+    // Set loading state
+    this.generating = true;
+  
+    this.questionService.generateOptions(
+      this.newQuestion.question,
+      this.newQuestion.reponse
+    ).subscribe({
+      next: (data) => {
+        // Update the form with generated options
+        this.newQuestion.option1 = data.option1;
+        this.newQuestion.option2 = data.option2;
+        this.newQuestion.option3 = data.option3;
+        this.newQuestion.option4 = data.correctAnswer;
+        this.newQuestion.reponse = data.correctAnswer;
+        this.toast.success('Options generated successfully');
+      },
+      error: (error) => {
+        console.error('Error generating options:', error);
+        this.toast.error('Failed to generate options. Please try again.');
+      },
+      complete: () => {
+        // Reset loading state when complete (whether success or error)
+        this.generating = false;
+      }
+    });
+  }
+  
 }

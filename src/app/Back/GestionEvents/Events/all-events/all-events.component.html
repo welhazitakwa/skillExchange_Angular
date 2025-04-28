@@ -8,33 +8,19 @@
   data-header-position="fixed"
   data-boxed-layout="full"
 >
-  <!-- ============================================================== -->
-  <!-- Topbar header - style you can find in pages.scss -->
-  <!-- ============================================================== -->
+  <!-- Hidden logo for PDF rendering -->
+  <div id="pdf-logo" style="display: none;">
+    <h3 class="m-0"><span class="text-primary">Skill</span>Exchange</h3>
+  </div>
+
   <app-nav></app-nav>
-  <!-- ============================================================== -->
-  <!-- End Topbar header -->
-  <!-- ============================================================== -->
-  <!-- ============================================================== -->
-  <!-- Left Sidebar - style you can find in sidebar.scss  -->
-  <!-- ============================================================== -->
   <app-side-bar></app-side-bar>
-  <!-- ============================================================== -->
-  <!-- End Left Sidebar - style you can find in sidebar.scss  -->
-  <!-- ============================================================== -->
-  <!-- ============================================================== -->
-  <!-- Page wrapper  -->
-  <!-- ============================================================== -->
+
   <div class="page-wrapper" style="display: block">
-    <!-- ============================================================== -->
-    <!-- Bread crumb and right sidebar toggle -->
-    <!-- ============================================================== -->
     <div class="page-breadcrumb">
       <div class="row">
         <div class="col-8 align-self-center">
-          <h4
-            class="page-title text-truncate text-dark font-weight-medium mb-1"
-          >
+          <h4 class="page-title text-truncate text-dark font-weight-medium mb-1">
             Event Management
           </h4>
           <div class="d-flex align-items-center">
@@ -43,10 +29,7 @@
                 <li class="breadcrumb-item">
                   <a routerLink="/back" class="text-muted">Dashboard</a>
                 </li>
-                <li
-                  class="breadcrumb-item text-muted active"
-                  aria-current="page"
-                >
+                <li class="breadcrumb-item text-muted active" aria-current="page">
                   Events
                 </li>
               </ol>
@@ -55,16 +38,8 @@
         </div>
       </div>
     </div>
-    <!-- ============================================================== -->
-    <!-- End Bread crumb and right sidebar toggle -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- Container fluid  -->
-    <!-- ============================================================== -->
+
     <div class="container-fluid">
-      <!-- ============================================================== -->
-      <!-- Start Page Content -->
-      <!-- ============================================================== -->
       <div class="row">
         <div class="col-12">
           <div class="card shadow-sm border-0">
@@ -73,12 +48,121 @@
                 <h4 class="card-title mb-0 text-primary fw-semibold">
                   Event Management
                 </h4>
-                <button class="btn btn-sm btn-outline-primary">
-                  <i class="fas fa-download me-2"></i>Export to CSV
+                <div class="d-flex gap-2">
+                  <button class="btn btn-sm export-csv-btn" (click)="exportToCsv()">
+                    <i class="fas fa-file-csv me-2"></i>Export CSV
+                  </button>
+                  <button class="btn btn-sm export-pdf-btn" (click)="exportToPdf()">
+                    <i class="fas fa-file-pdf me-2"></i>Export PDF
+                  </button>
+                  <button class="btn btn-sm export-excel-btn" (click)="exportToExcel()">
+                    <i class="fas fa-file-excel me-2"></i>Export Excel
+                  </button>
+                  <button class="btn btn-sm stats-btn" (click)="openStatsModal()">
+                    <i class="fas fa-chart-bar me-2"></i>Statistiques
+                  </button>
+                  <button class="btn btn-sm btn-primary" (click)="openAddEventModal()">
+                    <i class="fas fa-plus me-2"></i>Add Event
+                  </button>
+                </div>
+              </div>
+
+              <!-- Filter Panel Toggle -->
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <button
+                  class="btn btn-sm btn-outline-secondary"
+                  (click)="toggleFilters()"
+                >
+                  {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+                </button>
+                <button
+                  class="btn btn-sm btn-outline-secondary"
+                  (click)="clearFilters()"
+                >
+                  Clear Filters
                 </button>
               </div>
 
-              <!-- Search and Filter Row -->
+              <!-- Filter Panel -->
+              <div class="card mb-4" *ngIf="showFilters">
+                <div class="card-header bg-light">
+                  <h6 class="mb-0">Filter Events</h6>
+                </div>
+                <div class="card-body">
+                  <form [formGroup]="filterForm" (ngSubmit)="applyFilters()">
+                    <div class="row g-3">
+                      <!-- Place Filter -->
+                      <div class="col-md-3">
+                        <label class="form-label">Place</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="place"
+                          placeholder="e.g., Tunis"
+                          (input)="applyFilters()"
+                        />
+                      </div>
+                      <!-- Max Participants Filter -->
+                      <div class="col-md-3">
+                        <label class="form-label">Max Participants</label>
+                        <div class="input-group">
+                          <input
+                            type="number Guggen: number"
+                            class="form-control"
+                            formControlName="minParticipants"
+                            placeholder="Min"
+                            min="0"
+                            (input)="applyFilters()"
+                          />
+                          <input
+                            type="number"
+                            class="form-control"
+                            formControlName="maxParticipants"
+                            placeholder="Max"
+                            min="0"
+                            (input)="applyFilters()"
+                          />
+                        </div>
+                      </div>
+                      <!-- Date Range Filter -->
+                      <div class="col-md-3">
+                        <label class="form-label">Date Range</label>
+                        <div class="input-group">
+                          <input
+                            type="date"
+                            class="form-control"
+                            formControlName="startDate"
+                            (change)="applyFilters()"
+                          />
+                          <input
+                            type="date"
+                            class="form-control"
+                            formControlName="endDate"
+                            (change)="applyFilters()"
+                          />
+                        </div>
+                      </div>
+                      <!-- Images Filter -->
+                      <div class="col-md-3 align-self-end">
+                        <div class="form-check">
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            formControlName="hasImages"
+                            id="hasImages"
+                            (change)="applyFilters()"
+                          />
+                          <label class="form-check-label" for="hasImages">
+                            Events with Images
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              <!-- Search Row -->
               <div class="row mb-4">
                 <div class="col-md-6">
                   <div class="input-group">
@@ -88,118 +172,131 @@
                     <input
                       type="text"
                       class="form-control"
-                      placeholder="Search for an event..."
+                      placeholder="Search events by name, description, place, etc..."
                       [(ngModel)]="searchText"
                       (input)="applyFilters()"
                     />
                   </div>
                 </div>
-                <div class="col-md-3">
-                  <select
-                    class="form-select"
-                    [(ngModel)]="statusFilter"
-                    (change)="applyFilters()"
-                  >
-                    <option value="">All Statuses</option>
-                    <option value="GOING">Going</option>
-                    <option value="INTRESTED">Interested</option>
-                  </select>
-                </div>
+              </div>
+
+              <!-- Calendar View -->
+              <div *ngIf="showCalendar" class="mb-4">
+                <full-calendar [options]="calendarOptions"></full-calendar>
               </div>
 
               <!-- Table -->
-              <div class="table-responsive rounded-3">
+              <div class="table-responsive rounded-3" *ngIf="!showCalendar">
                 <table class="table table-hover align-middle mb-0">
                   <thead class="table-light">
                     <tr>
-                      <th
-                        class="fw-medium text-muted cursor-pointer"
-                        (click)="sort('eventName')"
-                      >
+                      <th class="fw-medium text-muted cursor-pointer" (click)="sort('eventName')">
                         Event Name
-                        <i
-                          class="fas fa-sort ms-1"
+                        <i class="fas fa-sort ms-1"
                           [ngClass]="{
-                            'fa-sort-up':
-                              sortColumn === 'eventName' && sortDirection === 'asc',
-                            'fa-sort-down':
-                              sortColumn === 'eventName' && sortDirection === 'desc'
-                          }"
-                        ></i>
+                            'fa-sort-up': sortColumn === 'eventName' && sortDirection === 'asc',
+                            'fa-sort-down': sortColumn === 'eventName' && sortDirection === 'desc'
+                          }"></i>
                       </th>
-                      <th
-                        class="fw-medium text-muted cursor-pointer"
-                        (click)="sort('startDate')"
-                      >
+                      <th class="fw-medium text-muted cursor-pointer" (click)="sort('startDate')">
                         Start Date
-                        <i
-                          class="fas fa-sort ms-1"
+                        <i class="fas fa-sort ms-1"
                           [ngClass]="{
-                            'fa-sort-up':
-                              sortColumn === 'startDate' && sortDirection === 'asc',
-                            'fa-sort-down':
-                              sortColumn === 'startDate' && sortDirection === 'desc'
-                          }"
-                        ></i>
+                            'fa-sort-up': sortColumn === 'startDate' && sortDirection === 'asc',
+                            'fa-sort-down': sortColumn === 'startDate' && sortDirection === 'desc'
+                          }"></i>
                       </th>
-                      <th
-                        class="fw-medium text-muted cursor-pointer"
-                        (click)="sort('endDate')"
-                      >
+                      <th class="fw-medium text-muted cursor-pointer" (click)="sort('endDate')">
                         End Date
+                        <i class="fas fa-sort ms-1"
+                          [ngClass]="{
+                            'fa-sort-up': sortColumn === 'endDate' && sortDirection === 'asc',
+                            'fa-sort-down': sortColumn === 'endDate' && sortDirection === 'desc'
+                          }"></i>
                       </th>
-                      <th
-                        class="fw-medium text-muted cursor-pointer"
-                        (click)="sort('place')"
-                      >
+                      <th class="fw-medium text-muted cursor-pointer" (click)="sort('place')">
                         Place
+                        <i class="fas fa-sort ms-1"
+                          [ngClass]="{
+                            'fa-sort-up': sortColumn === 'place' && sortDirection === 'asc',
+                            'fa-sort-down': sortColumn === 'place' && sortDirection === 'desc'
+                          }"></i>
                       </th>
-                      <th
-                        class="fw-medium text-muted cursor-pointer"
-                        (click)="sort('nbr_max')"
-                      >
+                      <th class="fw-medium text-muted cursor-pointer" (click)="sort('nbr_max')">
                         Max Participants
+                        <i class="fas fa-sort ms-1"
+                          [ngClass]="{
+                            'fa-sort-up': sortColumn === 'nbr_max' && sortDirection === 'asc',
+                            'fa-sort-down': sortColumn === 'nbr_max' && sortDirection === 'desc'
+                          }"></i>
                       </th>
-                      <th
-                        class="fw-medium text-muted cursor-pointer"
-                        (click)="sort('description')"
-                      >
+                      <th class="fw-medium text-muted cursor-pointer" (click)="sort('description')">
                         Description
+                        <i class="fas fa-sort ms-1"
+                          [ngClass]="{
+                            'fa-sort-up': sortColumn === 'description' && sortDirection === 'asc',
+                            'fa-sort-down': sortColumn === 'description' && sortDirection === 'desc'
+                          }"></i>
                       </th>
-                      <th
-                        class="fw-medium text-muted cursor-pointer"
-                        (click)="sort('status')"
-                      >
-                        Status
+                      <th class="fw-medium text-muted">
+                        Images
+                      </th>
+                      <th class="fw-medium text-muted">
+                        Actions
                       </th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr
-                      *ngFor="let event of events"
-                      style="cursor: pointer"
-                    >
+                    <tr *ngFor="let event of paginatedEvents" style="cursor: pointer">
                       <td>{{ event.eventName }}</td>
                       <td>{{ event.startDate | date: 'dd/MM/yyyy' }}</td>
                       <td>{{ event.endDate | date: 'dd/MM/yyyy' }}</td>
-                      <td>{{ event.place }}</td>
+                      <td>
+                        {{ event.place }}
+                        <button
+                          class="btn btn-sm btn-info ms-2"
+                          (click)="toggleMap(event.idEvent)"
+                          *ngIf="event.latitude != null && event.longitude != null"
+                        >
+                          {{ showMap[event.idEvent] ? 'Hide Map' : 'Show Map' }}
+                        </button>
+                        <div
+                          *ngIf="showMap[event.idEvent]"
+                          [id]="'map-' + event.idEvent"
+                          style="height: 150px; width: 100%; margin-top: 10px; border: 1px solid #ccc; border-radius: 4px;"
+                        ></div>
+                      </td>
                       <td>{{ event.nbr_max }}</td>
                       <td>{{ event.description }}</td>
                       <td>
-                        <span
-                          class="badge rounded-pill"
-                          [ngClass]="
-                            event.status === 'GOING'
-                              ? 'bg-success'
-                              : 'bg-info'
-                          "
-                        >
-                          {{ event.status === 'GOING' ? 'Going' : 'Interested' }}
-                        </span>
+                        <div class="d-flex flex-wrap gap-2" *ngIf="event.images && event.images.length > 0; else noImages">
+                          <img *ngFor="let img of event.images"
+                               [src]="img.images.startsWith('data:image') ? img.images : 'data:image/jpeg;base64,' + img.images"
+                               alt="Event Image"
+                               class="img-thumbnail"
+                               style="width: 60px; height: 60px; object-fit: cover;"
+                               (error)="handleImageError($event)">
+                        </div>
+                        <ng-template #noImages>
+                          <span class="text-muted">No images</span>
+                        </ng-template>
+                      </td>
+                      <td>
+                        <button class="btn btn-sm btn-warning me-2" (click)="openEditEventModal(event)">
+                          <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" (click)="openDeleteEventModal(event)">
+                          <i class="fas fa-trash-alt"></i>
+                        </button>
                       </td>
                     </tr>
-                    <tr *ngIf="events.length === 0">
-                      <td colspan="7" class="text-center py-4">
+                    <tr *ngIf="paginatedEvents.length === 0 && filteredEvents.length > 0">
+                      <td colspan="8" class="text-center py-4">
+                        <p class="text-muted">No events on this page</p>
+                      </td>
+                    </tr>
+                    <tr *ngIf="filteredEvents.length === 0">
+                      <td colspan="8" class="text-center py-4">
                         <img
                           src="https://i.pinimg.com/originals/5d/35/e3/5d35e39988e3a183bdc3a9d2570d20a9.gif"
                           height="400px"
@@ -209,16 +306,172 @@
                   </tbody>
                 </table>
               </div>
+
+              <!-- Pagination -->
+              <div *ngIf="filteredEvents.length > 0 && !showCalendar" class="col-12 d-flex justify-content-center mt-4">
+                <nav aria-label="Event pagination">
+                  <ul class="pagination">
+                    <li class="page-item" [ngClass]="{'disabled': currentPage === 1}">
+                      <button class="page-link" (click)="prevPage()" aria-label="Previous">
+                        <span aria-hidden="true">« Previous</span>
+                      </button>
+                    </li>
+                    <li class="page-item" *ngFor="let page of pageNumbers" [ngClass]="{'active': currentPage === page}">
+                      <button class="page-link" (click)="goToPage(page)">{{ page }}</button>
+                    </li>
+                    <li class="page-item" [ngClass]="{'disabled': currentPage === totalPages}">
+                      <button class="page-link" (click)="nextPage()" aria-label="Next">
+                        <span aria-hidden="true">Next »</span>
+                      </button>
+                    </li>
+                  </ul>
+                </nav>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <!-- ============================================================== -->
-    <!-- End Container fluid  -->
-    <!-- ============================================================== -->
+
+    <!-- Add Event Modal -->
+    <div *ngIf="isAddEventModalOpen" class="modal fade show" style="display: block;">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="card-header">
+            <h5 class="modal-title">Add New Event</h5>
+            <button type="button" class="btn-close" (click)="closeAddEventModal()"></button>
+          </div>
+          <div class="modal-body">
+            <app-add-event-modal
+              (onCancel)="closeAddEventModal()"
+              (onSubmit)="handleAddEvent($event)">
+            </app-add-event-modal>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Event Modal -->
+    <div *ngIf="eventToEdit" class="modal fade show" style="display: block;">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Edit Event</h5>
+            <button type="button" class="btn-close" (click)="closeEditModal()"></button>
+          </div>
+          <div class="modal-body">
+            <app-update-event
+              [eventData]="eventToEdit"
+              (onCancel)="closeEditModal()"
+              (onUpdate)="handleEventUpdate($event)">
+            </app-update-event>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Event Modal -->
+    <div *ngIf="eventToDelete" class="modal fade show" style="display: block;">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-body">
+            <app-delete-event
+              [eventToDelete]="eventToDelete"
+              (onCancel)="closeDeleteModal()"
+              (onDelete)="handleEventDelete()">
+            </app-delete-event>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistics Modal -->
+    <div *ngIf="isStatsModalOpen" class="modal fade show" style="display: block;">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Event Statistics</h5>
+            <button type="button" class="btn-close" (click)="closeStatsModal()"></button>
+          </div>
+          <div class="modal-body">
+            <!-- Boutons de sélection des diagrammes -->
+            <div class="d-flex justify-content-center mb-4">
+              <button
+                class="btn chart-btn me-2"
+                [ngClass]="{'active': activeChartType === 'doughnut'}"
+                (click)="setActiveChartType('doughnut')"
+              >
+                <i class="fas fa-chart-pie me-2"></i>Donut
+              </button>
+              <button
+                class="btn chart-btn me-2"
+                [ngClass]="{'active': activeChartType === 'bar'}"
+                (click)="setActiveChartType('bar')"
+              >
+                <i class="fas fa-chart-bar me-2"></i>Histogramme
+              </button>
+              <button
+                class="btn chart-btn"
+                [ngClass]="{'active': activeChartType === 'line'}"
+                (click)="setActiveChartType('line')"
+              >
+                <i class="fas fa-chart-line me-2"></i>Ligne
+              </button>
+            </div>
+
+            <!-- Message si aucun diagramme n'est sélectionné -->
+            <div *ngIf="!activeChartType" class="text-center text-muted">
+              Select a chart type above to view statistics.
+            </div>
+
+            <!-- Diagrammes conditionnels -->
+            <div *ngIf="activeChartType === 'doughnut'" class="card shadow-sm border-0">
+              <div class="card-header bg-light">
+                <h6 class="mb-0">Distribution of events by location</h6>
+              </div>
+              <div class="card-body chart-container">
+                <canvas
+                  baseChart
+                  [data]="doughnutChartData"
+                  [type]="doughnutChartType"
+                  [options]="doughnutChartOptions"
+                ></canvas>
+              </div>
+            </div>
+
+            <div *ngIf="activeChartType === 'bar'" class="card shadow-sm border-0">
+              <div class="card-header bg-light">
+                <h6 class="mb-0">Maximum number of participants</h6>
+              </div>
+              <div class="card-body chart-container">
+                <canvas
+                  baseChart
+                  [data]="barChartData"
+                  [type]="barChartType"
+                  [options]="barChartOptions"
+                ></canvas>
+              </div>
+            </div>
+
+            <div *ngIf="activeChartType === 'line'" class="card shadow-sm border-0">
+              <div class="card-header bg-light">
+                <h6 class="mb-0">Evolution of events by month</h6>
+              </div>
+              <div class="card-body chart-container">
+                <canvas
+                  baseChart
+                  [data]="lineChartData"
+                  [type]="lineChartType"
+                  [options]="lineChartOptions"
+                ></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Backdrops -->
+    <div *ngIf="eventToEdit || eventToDelete || isAddEventModalOpen || isStatsModalOpen" class="modal-backdrop fade show"></div>
   </div>
-  <!-- ============================================================== -->
-  <!-- End Page wrapper  -->
-  <!-- ============================================================== -->
 </div>

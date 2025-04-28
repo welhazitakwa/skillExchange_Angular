@@ -1,139 +1,147 @@
 <app-header-front></app-header-front>
 
-    <!-- Header Start -->
-    <div class="container-fluid page-header" style="margin-bottom: 90px;">
-        <div class="container">
-            <div class="d-flex flex-column justify-content-center" style="min-height: 300px">
-                <h3 class="display-4 text-white text-uppercase">Posts</h3>
-                <div class="d-inline-flex text-white">
-                    <p class="m-0 text-uppercase"><a class="text-white" routerLink="">Home</a></p>
-                    <i class="fa fa-angle-double-right pt-1 px-3"></i>
-                    <p class="m-0 text-uppercase">Post</p>
-                </div>
-            </div>
-        </div>
+<div class="container-fluid page-header" style="margin-bottom: 90px;">
+  <div class="container">
+    <div class="d-flex flex-column justify-content-center" style="min-height: 300px">
+      <h3 class="display-4 text-white text-uppercase">Posts</h3>
+      <div class="d-inline-flex text-white">
+        <p class="m-0 text-uppercase"><a class="text-white" routerLink="/">Home</a></p>
+        <i class="fa fa-angle-double-right pt-1 px-3"></i>
+        <p class="m-0 text-uppercase">Post</p>
+      </div>
     </div>
-    <!-- Header End -->
+  </div>
+</div>
 
+<div class="container my-4">
+  <div class="mb-4">
+    <button class="btn btn-success" (click)="showPostModalOpen = true">Ajouter un Post</button>
+  </div>
 
-    <!-- Blog Start -->
-    <div class="container-fluid py-5">
-        <div class="container py-5">
-            <div class="row">
-                <div class="col-lg-8">
-                    <div class="row pb-3">
-                        <div class="col-lg-6 mb-4 "*ngFor="let post of posts">
-                            <div class="blog-item position-relative overflow-hidden rounded mb-2">
-                                <img class="img-fluid" src="assets/assetsFront/img/blog-1.jpg" alt="">
-                                <a class="blog-overlay text-decoration-none" [routerLink]="['/posts', post.idPost]">
-                                    <h5 class="text-white mb-3">{{ post.title }}</h5>
-                                    <p class="text-orange m-0">{{ post.createdAt | date:'MMM dd, yyyy' }}</p>
-                                </a>
-                            </div>
-                        </div>
-                        <!-- Blog End -->
-                        
-                        
-                        <div class="col-12">
-                            <nav aria-label="Page navigation">
-                                <ul class="pagination pagination-lg justify-content-center mb-0">
-                                  <li class="page-item disabled">
-                                    <a class="page-link" routerLink="#" aria-label="Previous">
-                                      <span aria-hidden="true">&laquo;</span>
-                                      <span class="sr-only">Previous</span>
-                                    </a>
-                                  </li>
-                                  <li class="page-item active"><a class="page-link" routerLink="/bloglist">1</a></li>
-                                  <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                  <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                  <li class="page-item">
-                                    <a class="page-link" routerLink="#" aria-label="Next">
-                                      <span aria-hidden="true">&raquo;</span>
-                                      <span class="sr-only">Next</span>
-                                    </a>
-                                  </li>
-                                </ul>
-                              </nav>
-                        </div>
-                    </div>
-                </div>
-    
-                <div class="col-lg-4 mt-5 mt-lg-0">
+  <div class="container-fluid py-5">
+    <div class="container py-5">
+      <div class="row">
+        <div class="col-lg-8">
+          <div class="row pb-3">
+            <div class="col-lg-6 mb-4" *ngFor="let post of posts">
+              <div class="blog-item position-relative overflow-hidden rounded mb-2">
+                
+                <!-- Conteneur pour l'image principale -->
+                <div class="carousel-container">
+                  <!-- Flèche gauche -->
+                  <button class="carousel-control-prev" (click)="navigateImage(post, 'prev')" aria-label="Previous">
+                    <span class="carousel-control-prev-icon"></span>
+                  </button>
                   
-    
-                    <!-- Search Form -->
-                    <div class="mb-5">
-                        <form action="">
-                            <div class="input-group">
-                                <input type="text" class="form-control form-control-lg" placeholder="Keyword">
-                                <div class="input-group-append">
-                                    <span class="input-group-text bg-transparent text-primary"><i
-                                            class="fa fa-search"></i></span>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-    
-                    <!-- Category List -->
-                    <div class="mb-5">
-                        <h3 class="text-uppercase mb-4" style="letter-spacing: 5px;">Categories</h3>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                <a href="" class="text-decoration-none h6 m-0">Web Design</a>
-                                <span class="badge badge-primary badge-pill">150</span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                <a href="" class="text-decoration-none h6 m-0">Web Development</a>
-                                <span class="badge badge-primary badge-pill">131</span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                <a href="" class="text-decoration-none h6 m-0">Online Marketing</a>
-                                <span class="badge badge-primary badge-pill">78</span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                <a href="" class="text-decoration-none h6 m-0">Keyword Research</a>
-                                <span class="badge badge-primary badge-pill">56</span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                <a href="" class="text-decoration-none h6 m-0">Email Marketing</a>
-                                <span class="badge badge-primary badge-pill">98</span>
-                            </li>
-                        </ul>
-                    </div>
-    
-                    <!-- Recent Post -->
-                    <div class="mb-5">
-                        <h3 class="text-uppercase mb-4" style="letter-spacing: 5px;">Recent Post</h3>
-                        <a class="d-flex align-items-center text-decoration-none mb-3" href="">
-                            <img class="img-fluid rounded" src="assets/assetsFront/img/blog-80x80.jpg" alt="">
-                            <div class="pl-3">
-                                <h6 class="m-1">Diam lorem dolore justo eirmod lorem dolore</h6>
-                                <small>Jan 01, 2050</small>
-                            </div>
-                        </a>
-                        <a class="d-flex align-items-center text-decoration-none mb-3" href="">
-                            <img class="img-fluid rounded" src="assets/assetsFront/img/blog-80x80.jpg" alt="">
-                            <div class="pl-3">
-                                <h6 class="m-1">Diam lorem dolore justo eirmod lorem dolore</h6>
-                                <small>Jan 01, 2050</small>
-                            </div>
-                        </a>
-                        <a class="d-flex align-items-center text-decoration-none mb-3" href="">
-                            <img class="img-fluid rounded" src="assets/assetsFront/img/blog-80x80.jpg" alt="">
-                            <div class="pl-3">
-                                <h6 class="m-1">Diam lorem dolore justo eirmod lorem dolore</h6>
-                                <small>Jan 01, 2050</small>
-                            </div>
-                        </a>
-                    </div>
-    
-                 
+                  <!-- Image principale avec routerLink pour redirection -->
+                  <a [routerLink]="['/posts', post.idPost]">
+                    <img *ngIf="post.imagePost?.length > 0; else defaultImage"
+                         [src]="'data:image/jpeg;base64,' + post.imagePost[currentImageIndex(post)]?.image"
+                         class="img-fluid main-image"
+                         alt="Image du post {{ post.title }}">
+                  </a>
+          
+                  <!-- Template alternatif si aucune image n'est disponible -->
+                  <ng-template #defaultImage>
+                    <img class="img-fluid main-image" src="/assets/assetsFront/img/blog-1.jpg" alt="Image par défaut">
+                  </ng-template>
+          
+                  <!-- Flèche droite -->
+                  <button class="carousel-control-next" (click)="navigateImage(post, 'next')" aria-label="Next">
+                    <span class="carousel-control-next-icon"></span>
+                  </button>
                 </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Blog End -->
+          
+                <!-- Titre et date du post -->
+                <a [routerLink]="['/posts', post.idPost]" class="blog-overlay text-decoration-none">
+                  <h5 class="text-white mb-3">{{ post.title }}</h5>
+                  <p class="text-orange m-0">{{ post.createdAt | date:'MMM dd, yyyy' }}</p>
+                </a>
+               
+          
+                <!-- Miniatures des autres images -->
+                <div *ngIf="post.imagePost?.length > 1" class="thumbnail-container">
+                  <div *ngFor="let image of post.imagePost.slice(1); let i = index">
+                    <img [src]="'data:image/jpeg;base64,' + image.image"
+                         class="img-thumbnail thumbnail-image"
+                         (click)="switchMainImage(post, i+1)"
+                         alt="Thumbnail {{i+1}}">
+                  </div>
+                </div>
+              </div>
+<!-- Réactions emoji stylisées avec badge de comptage -->
+<div class="emoji-reactions mt-2">
+  <div class="emoji-badge" *ngFor="let emoji of emojiKeys">
+    <span class="emoji-icon">{{ emoji }}</span>
+    <span class="emoji-count">{{ getEmojiCounts(post)[emoji] }}</span>
+  </div>
+</div>
 
+    
+
+          
+              <!-- Bouton de suppression si l'utilisateur est l'auteur du post -->
+              <div *ngIf="currentUser?.id === post.user?.id">
+                <button class="btn btn-sm btn-danger mt-2" (click)="deletePost(post.idPost)">Supprimer</button>
+              </div>
+            </div>
+          </div>
+          
+          <mat-paginator 
+            [length]="totalItems" 
+            [pageSize]="pageSize" 
+            [pageIndex]="page" 
+            (page)="onPageChange($event)">
+          </mat-paginator>
+        </div>
+
+        <!-- Sidebar droite inchangée -->
+        <div class="col-lg-4 mt-5 mt-lg-0">
+          <!-- ... reste du contenu sidebar ... -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Ajouter Post -->
+  <div *ngIf="showPostModalOpen" class="modal fade show d-block" tabindex="-1" role="dialog"
+    style="background-color: rgba(0,0,0,0.5);">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Créer un Post</h5>
+          <button type="button" class="btn-close" (click)="showPostModalOpen = false"></button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="mb-3">
+              <label class="form-label">Titre</label>
+              <input type="text" class="form-control" [(ngModel)]="newPost.title" name="title">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Contenu</label>
+              <textarea class="form-control" rows="4" [(ngModel)]="newPost.content" name="content"></textarea>
+            </div>
+            <div>
+              <label>Images</label>
+              <input type="file" multiple (change)="onFilesSelected($event)">
+              <div *ngIf="imagesPreviews && imagesPreviews.length > 0">
+                <div class="row mt-2">
+                  <div class="col-6 col-sm-4 col-md-3 mb-2" *ngFor="let image of imagesPreviews">
+                    <img class="img-fluid rounded border" [src]="image.url" alt="preview" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" (click)="showPostModalOpen = false">Fermer</button>
+          <button class="btn btn-primary" (click)="addPost()">Publier</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <app-footer-front></app-footer-front>

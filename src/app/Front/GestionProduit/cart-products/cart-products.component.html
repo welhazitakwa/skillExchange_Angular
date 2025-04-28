@@ -1,7 +1,7 @@
 <div class="cart-item" *ngFor="let cartProduct of cartProducts">
   <div class="cart-item-info">
     <h5>{{ cartProduct.product.productName }}</h5>
-    <p>{{ cartProduct.product.price | currency: 'TND' }}</p>
+    <p>{{ cartProduct.product.price  }}</p>
   </div>
 
   <div class="cart-item-controls">
@@ -19,5 +19,97 @@
 <!-- Boutons supplémentaires -->
 <div class="cart-actions">
   <button (click)="clearCart()" class="clear-cart">Clear cart</button>
-  <button (click)="validateCart()" class="validate-cart">Validate cart</button>
+<!--<button class="btn btn-success" (click)="showPaymentModal = true">Validate Cart</button>-->
+<button class="btn btn-success" (click)="openPaymentModal()">Validate Cart</button>
+
 </div>
+
+<!-- Modal Stripe stylé -->
+<div class="modal fade show d-block" *ngIf="showPaymentModal" style="background: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 480px;">
+
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">🧾 Cart Payment</h5>
+        <button type="button" class="btn-close btn-close-white" (click)="showPaymentModal = false"></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-12 col-md-11 col-lg-10 mx-auto">
+
+            <div class="card shadow-lg mb-4">
+              <div class="card-body">
+                <h5 class="card-title text-center text-uppercase mb-4">Order Summary</h5>
+
+                <!-- 🛒 Product list -->
+                <div *ngFor="let item of cartProducts" class="d-flex justify-content-between mb-2">
+                  <span>{{ item.product.productName }} × {{ item.quantity }}</span>
+                  <span>{{ item.product.price * item.quantity }} {{ item.product.currencyType }}</span>
+                </div>
+                
+
+                <hr>
+
+                <!-- 💰 Totals -->
+                <div class="d-flex justify-content-between fw-bold">
+                  <span>Total (TND):</span>
+                  <span>{{ totalTND }} DT</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <span>Total (Tokens):</span>
+                  <span>{{ totalTokens }} 🪙</span>
+                </div>
+
+                <hr>
+
+                <!-- 💳 Payment options -->
+                <div class="text-center my-3">
+                  <h6 class="text-muted">Payment Options</h6>
+                  <div class="d-flex justify-content-center gap-3">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png" alt="Visa" height="24">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png" alt="Mastercard" height="24">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/PayPal_logo.svg" alt="PayPal" height="24">
+                    <img src="https://stripe.com/img/v3/home/twitter.png" alt="Stripe" height="24">
+                  </div>
+                </div>
+
+                <!-- ✅ Stripe payment -->
+                <div class="d-grid mt-4">
+                  <button class="btn btn-success btn-lg"
+                  [disabled]="totalTND === 0"
+                  (click)="payerAvecStripe()">
+                    <i class="fas fa-lock me-2"></i>Pay with Stripe
+                  </button>
+                </div>
+                <!-- ✅ PayPal button container -->
+<div class="d-grid mt-3">
+  <div id="paypal-button-container"></div>
+
+</div>
+
+
+                <!-- OR -->
+                <div class="text-center my-3">
+                  <span class="text-muted">────────── or ──────────</span>
+                </div>
+
+                <!-- 💸 Balance payment -->
+                <div class="d-grid">
+                  <button class="btn btn-outline-secondary" 
+                  [disabled]="totalTokens === 0"
+                  (click)="payerAvecSolde()">
+                    <i class="fas fa-wallet me-2"></i>Pay with Balance
+                  </button>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+

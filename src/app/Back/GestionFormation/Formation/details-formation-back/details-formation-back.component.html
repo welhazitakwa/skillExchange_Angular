@@ -1,0 +1,77 @@
+<html>
+
+<body>
+  <main>
+    <div class="card">
+         <div class="card__body">
+        <div class="half">
+          <div class="featured_text">
+            <h1>{{ formation?.title }}</h1>
+            <!-- <p class="sub">{{ formation?.title }}</p> -->
+          </div>
+          </div>
+      </div>
+      <div class="card__body">
+        <div class="half">
+          <div class="featured_text">
+            <!-- <h1>{{ formation?.title }}</h1> -->
+            <p class="sub">Duration : {{ convertDuration(formation?.duration ?? 0) }}</p>
+            <p class="price"> {{ formation?.price }} dt </p>
+          </div>
+          <div class="image">
+            <img 
+             [src]="'data:' + formation?.imageType + ';base64,' + formation?.image"
+            alt="">
+          </div>
+        </div>
+        <div class="half">
+          <div class="description">
+            <h1>Description</h1>
+            <p> {{ formation?.description }} </p>
+          </div>
+          <div class="description">
+            <h1>Required Skills</h1>
+            <p> {{ formation?.requiredSkills }} </p>
+          </div>
+            <b> 
+            <span  [ngStyle]="{ color: formation?.state === 0 ? 'red' : 'green' }" >
+              {{ formation?.state === 0 ? 'private' : 'public' }}
+            </span>
+            </b>         
+         <div class="reviews">
+          <ul class="stars">
+            <ng-container *ngFor="let i of [1, 2, 3, 4, 5]">
+              <li>
+                <i
+                  class="fa"
+                  [ngClass]="{
+                    'fa-star': averageRating >= i,
+                    'fa-star-o': averageRating < i
+                  }"
+                ></i>
+              </li>
+            </ng-container>
+          </ul>
+          <span>{{ formatAverageRating(averageRating) }} {{ getEmoji(averageRating) }} ({{ ratingCount }} reviews)</span>
+        </div>
+        </div>
+      </div>
+      <div class="card__footer">
+        <div class="recommend">
+          <p>Added At</p>
+          <h3> {{ formation?.date_ajout | date }} </h3>
+        </div>
+        <div class="recommend">
+          <p>Category</p>
+          <h3> {{ category?.name }} </h3>
+        </div>
+        <!-- Add Share Button -->
+                        <button type="button" class="btn btn-sm btn-square btn-neutral text-danger-hover" (click)="shareCourse()">
+                          <i class="text-primary fas fa-share-alt"></i>
+                        </button>
+      </div>
+    </div>
+  </main>
+</body>
+
+</html>

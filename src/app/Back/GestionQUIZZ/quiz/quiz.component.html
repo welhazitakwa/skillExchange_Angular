@@ -1,16 +1,8 @@
 <!-- ============================================================== -->
 <!-- Main wrapper - style you can find in pages.scss -->
 <!-- ============================================================== -->
-<div
-  id="main-wrapper"
-  data-theme="light"
-  data-layout="vertical"
-  data-navbarbg="skin6"
-  data-sidebartype="full"
-  data-sidebar-position="fixed"
-  data-header-position="fixed"
-  data-boxed-layout="full"
->
+<div id="main-wrapper" data-theme="light" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+  data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="full">
   <!-- ============================================================== -->
   <!-- Topbar header - style you can find in pages.scss -->
   <!-- ============================================================== -->
@@ -24,57 +16,136 @@
   <app-side-bar></app-side-bar>
 
   <!-- Main content area -->
-  <div class="page-wrapper"style="display: block">
-    <h2>{{ quizId ? 'Edit Quiz' : 'Create Quiz' }}</h2>
-
-    <form [formGroup]="quizForm" (ngSubmit)="onSubmit()">
-      <!-- Title Field -->
-      <div class="form-group">
-        <label for="title">Title</label>
-        <input id="title" formControlName="title" class="form-control" required placeholder="Enter quiz title" />
-        <div *ngIf="quizForm.get('title')?.invalid && quizForm.get('title')?.touched" class="text-danger">
-          Title is required.
+  <div class="page-wrapper" style="display: block">
+    <div class="page-breadcrumb">
+      <div class="row">
+        <div class="col-8 align-self-center">
+          <h4 class="page-title text-truncate text-dark font-weight-medium mb-1">
+            Manage Quizzes
+          </h4>
+          <div class="d-flex align-items-center">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb m-0 p-0">
+                <li class="breadcrumb-item">
+                  <a routerLink="/back" class="text-muted">Dashboard</a>
+                </li>
+                <li class="breadcrumb-item text-muted active" aria-current="page">
+                  Quizzes
+                </li>
+              </ol>
+            </nav>
+          </div>
         </div>
       </div>
-
-      <!-- Image File Upload Field -->
-      <div class="form-group">
-        <label for="image">Upload Image</label>
-        <input id="image" type="file" (change)="onFileSelected($event)" class="form-control" />
-        
-        <!-- Show selected file name -->
-        <div *ngIf="selectedFile">
-          Selected file: {{ selectedFile.name }}
-        </div>
-
-        <!-- Show existing image when editing or preview of selected file -->
-        <div *ngIf="imageUrl">
-          <p>Current Image:</p>
-          <img [src]="imageUrl" alt="Quiz Image" width="200" height="150">
-        </div>
-      </div>
-
-      <!-- Submit Button -->
-      <button type="submit" class="btn btn-primary" [disabled]="quizForm.invalid">
-        {{ quizId ? 'Update' : 'Create' }} Quiz
-      </button>
-    </form>
-
-    <!-- Display All Quizzes -->
-   <!-- Display All Quizzes -->
-<h3>All Quizzes</h3>
-<div class="quiz-list">
-  <div *ngFor="let quiz of quizzes" (click)="navigateToQuestions(quiz.id)" class="quiz-item">
-    <h4>{{ quiz.title }}</h4>
-
-    <!-- Display quiz image if available -->
-    <div *ngIf="quiz.image">
-      <img [src]="'data:image/jpeg;base64,' + quiz.image" alt="Quiz Image">
     </div>
 
-    <!-- Edit and Delete Buttons -->
-    <button class="btn-edit">Edit</button>
-    <button class="btn-delete" (click)="deleteQuiz(quiz.id); $event.stopPropagation()">Delete</button>
+    <!-- ============================================================== -->
+    <!-- Container fluid  -->
+    <!-- ============================================================== -->
+    <div class="container-fluid">
+      <!-- ============================================================== -->
+      <!-- Manage Quizzes Section -->
+      <!-- ============================================================== -->
+      <div class="container">
+        <h2 class="mb-4">{{ quizId ? 'Edit Quiz' : 'Create Quiz' }}</h2>
+
+        <form [formGroup]="quizForm" (ngSubmit)="onSubmit()">
+          <!-- Title Field -->
+          <div class="form-group mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input id="title" formControlName="title" class="form-control" required placeholder="Enter quiz title" />
+            <div *ngIf="quizForm.get('title')?.invalid && quizForm.get('title')?.touched" class="text-danger">
+              Title is required.
+            </div>
+          </div>
+         
+          <div class="form-group mb-4">
+            <label for="image" class="form-label">Upload Image</label>
+            <input id="image" type="file" (change)="onFileSelected($event)" class="form-control" />
+
+            <div *ngIf="selectedFile" class="mt-2">
+              <small>Selected file: {{ selectedFile.name }}</small>
+            </div>
+
+            <div *ngIf="imageUrl" class="mt-3">
+              <p>Current Image:</p>
+              <img [src]="imageUrl" alt="Quiz Image" class="img-thumbnail" width="200" height="150">
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="btn btn-primary" [disabled]="quizForm.invalid">
+            {{ quizId ? 'Update' : 'Create' }} Quiz
+          </button>
+        </form>
+
+        <!-- Quizzes List -->
+        <h3 class="mt-5 mb-3">All Quizzes</h3>
+        
+        <div class="list-group">
+          <div *ngFor="let quiz of quizzes" class="list-group-item list-group-item-action">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h5 class="mb-1">{{ quiz.title }}</h5>
+                <div *ngIf="quiz.image" class="mt-2">
+                  <img [src]="'data:image/jpeg;base64,' + quiz.image" alt="Quiz Image" class="img-thumbnail" width="150" height="100">
+                </div>
+              </div>
+              <div class="btn-group">
+                <button *ngIf="!quiz.courses?.length" 
+                  class="btn btn-outline-primary btn-sm me-2" 
+                  (click)="openModal(quiz.id)">
+                  Assign Course
+                </button>
+                <button class="btn btn-outline-primary btn-sm me-2" (click)="loadQuizForEdit(quiz)">Edit</button>
+                <button class="btn btn-outline-dark btn-sm me-2" (click)="navigateToQuestions(quiz.id)">Questions</button>
+                <button class="btn btn-outline-danger btn-sm" (click)="deleteQuiz(quiz.id)">Delete</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Assign Course Modal -->
+        <div *ngIf="isAssignCourseModalOpen" class="modal-backdrop fade show" (click)="closeModal()"></div>
+        <div class="modal fade" [class.show]="isAssignCourseModalOpen" style="display: block"
+          *ngIf="isAssignCourseModalOpen">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title fw-semibold">Assign Course To Quiz</h5>
+                <button type="button" class="btn-close" (click)="closeModal()"></button>
+              </div>
+              <div class="modal-body">
+                <form [formGroup]="asignCourseForm">
+                  <div class="mb-3">
+                    <label class="form-label">Course</label>
+                    <select formControlName="course" class="form-control">
+                      <option value="">Select a course</option>
+                      <option *ngFor="let course of courses" [value]="course.id">
+                        {{ course.title }}
+                      </option>
+                    </select>
+                    <div *ngIf="asignCourseForm.get('course')?.invalid && asignCourseForm.get('course')?.touched"
+                      class="text-danger">
+                      Course is required
+                    </div>
+                  </div>
+
+                  <div class="d-flex justify-content-end gap-2">
+                    <button type="button" class="btn btn-light" (click)="closeModal()">
+                      Cancel
+                    </button>
+                    <button type="button" (click)="asignCourse()" class="btn btn-primary"
+                      [disabled]="asignCourseForm.invalid">
+                      Assign Course
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
-

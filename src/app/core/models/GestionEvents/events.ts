@@ -14,10 +14,15 @@ export class Events {
     endDate!: Date;
     place!: string;
     nbr_max!: number;
-    status!: Status;
+    status?: Status; // Changed from status!: Status to allow undefined
     user!: User;
-    participationEvents!: ParticipationEvents[];
+    participationEvents?: ParticipationEvents[];
     rateEvents!: RateEvent[];
     eventComments!: EventComment[];
-    images!: EventImage[];
+    images?: { idImage?: number; images: string }[];
+
+    latitude?: number; // Nouvelle propriété pour la latitude
+    longitude?: number; // Nouvelle propriété pour la longitude
+    
+
 }

@@ -1,5 +1,6 @@
 @import "~src/assets/assetsFront/lib/owlcarousel/assets/owl.carousel.min.css";
 @import "~src/assets/assetsFront/css/style.css";
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
 /* @import "~src/assets/assetsFront/css/bootstrap.css";
 @import "~src/assets/assetsFront/css/magnific-popup.css";
 @import "~src/assets/assetsFront/css/owl.carousel.css";
@@ -7,6 +8,41 @@
 @import "~src/assets/assetsFront/css/hexagons.min.css";
 @import "~src/assets/assetsFront/css/main.css"; */
 
-
-   
-   
+.modal-dialog {
+    max-width: 70vw; /* Largeur max responsive */
+    width: 100%;
+    margin: auto;
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 1050;
+  }
+  
+  .modal-content {
+    max-height: 90vh; /* Hauteur max pour éviter scroll du body */
+    overflow-y: auto;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Fond sombre */
+  .modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  
+  /* Boutons bien espacés même sur petits écrans */
+  .d-flex.justify-content-end.gap-2 {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  /* Évite que les inputs dépassent */
+  .modal-body .form-control,
+  .modal-body .form-select {
+    width: 100%;
+  }
+  
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
