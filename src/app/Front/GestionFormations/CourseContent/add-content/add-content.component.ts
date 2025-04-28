@@ -16,7 +16,11 @@ export class AddContentComponent {
   addForm = new FormGroup({
     id: new FormControl(0),
     title: new FormControl('', Validators.required),
-    description: new FormControl(''),
+    description: new FormControl('', [
+      Validators.required,
+      Validators.minLength(20),
+      Validators.maxLength(50),
+    ]),
     // contentType: new FormControl(''), // image en base64
     order_affichage: new FormControl('', Validators.required), // Champ 'image' (aucune validation)
     lnk_vid: new FormControl('', Validators.required),
