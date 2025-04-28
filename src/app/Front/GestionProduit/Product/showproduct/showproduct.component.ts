@@ -91,7 +91,8 @@ this.updatePagination();
       (products) => {
     
       
-        this.products = products;
+        this.products = products.filter(p => p.postedBy?.id !== this.currentUser?.id);
+        
         this.filterProducts();
        
         console.log(this.products); 
@@ -629,7 +630,7 @@ submitEditProduct() {
     image: base64
   }));
 
-  // 🔥 Si l'utilisateur n'a pas d'imageProducts (cas edge)
+ 
   this.editingProduct.imageProducts = this.editingProduct.imageProducts || [];
 
   if (this.imagesToDelete.length > 0) {

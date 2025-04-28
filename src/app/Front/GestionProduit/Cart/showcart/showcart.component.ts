@@ -30,7 +30,8 @@ export class ShowcartComponent  implements OnChanges  {
     if (changes['cartProducts']) {
       console.log("Cart Products updated:", changes['cartProducts'].currentValue);
       this.calculateTotalPrice();
-    }
+       }
+       
   }
 
   currentUser: User | null = null;
