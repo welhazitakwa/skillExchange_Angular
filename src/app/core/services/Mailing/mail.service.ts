@@ -30,4 +30,17 @@ export class MailService {
       code: code,
     });
   }
+
+  sendEventConfirmationEmail(email: string, userName: string, eventName: string, startDate: string, endDate: string, place: string, status: string, eventId: number) {
+    return this.http.post(`${this.url}/send-event-confirmation`, {
+      to: email,
+      userName,
+      eventName,
+      startDate,
+      endDate,
+      place,
+      status,
+      eventId
+    });
+  }
 }

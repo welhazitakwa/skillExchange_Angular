@@ -8,4 +8,4 @@ export class RateEvent {
     rating!: number;
     idUser!: number;
     event!: Events;
-}
+    }

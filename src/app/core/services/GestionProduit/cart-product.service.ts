@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { CartProducts } from '../../models/GestionProduit/cart-products';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { catchError, Observable, tap } from 'rxjs';
+import { Cart } from '../../models/GestionProduit/cart';
 
 @Injectable({
   providedIn: 'root'
@@ -14,16 +15,30 @@ listCartProducts: CartProducts[] = [];
 
  constructor(private http: HttpClient) { }
 
-
-
+ getProductsInCart(cartId: number): Observable<CartProducts[]> {
+  return this.http.get<CartProducts[]>(`${this.url}/cart/${cartId}/products`);
+ }
+ 
    getCartProducts() : Observable<CartProducts[]> 
    {
     
     return this.http.get<CartProducts[]>(`${this.url}/allCartProducts`);
     }
    
+   
+  
+    // Add product to a user's cart
+    addProductToUserCart(userId: number, productId: number, quantity: number): Observable<CartProducts> {
+      return this.http.post<CartProducts>(`${this.url}/add-to-user-cart?userId=${userId}&productId=${productId}&quantity=${quantity}`, null);
+    }
+  
+    // validateCart(cartId: number): Observable<any> {
+    //   return this.http.post(`${this.url}/validate-cart`, { cartId });
+    // }
+    validateCart(cartId: number): Observable<any> {
+      return this.http.post(`${this.url}/validate-cart?cartId=${cartId}`, null, { responseType: 'text' });
+    }
     
- 
    // Récupérer un produit spécifique du panier par ID
   getCartProductById(cartPId: number): Observable<CartProducts> {
     return this.http.get<CartProducts>(`${this.url}/${cartPId}`);
@@ -66,8 +81,15 @@ listCartProducts: CartProducts[] = [];
   getCartProductByID(id:number){
   return this.http.get<CartProducts>(this.url+'/'+id);
  }
- updateCartProduct(cartp:CartProducts){
-  return this.http.patch(this.url+'/'+cartp.id,cartp);
- }
+//  updateCartProduct(cartp:CartProducts){
+//   return this.http.patch(this.url+'/'+cartp.id,cartp);
+//  }
+updateCartProduct(cartp: CartProducts): Observable<CartProducts | null> {
+  return this.http.patch<CartProducts | null>(
+    `${this.url}/update/${cartp.id}?quantity=${cartp.quantity}`,
+    null  // pas besoin de body
+  );
+}
+
 
 }

@@ -112,4 +112,51 @@
   .cart-actions button:hover {
     opacity: 0.8;
   }
-  
+  /* payment*/
+  /* Styles supplémentaires */
+.payment-method-card {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.payment-method-card.active {
+  border-color: #0d6efd;
+  background-color: #f0f7ff;
+}
+
+.payment-method-card:hover {
+  transform: translateY(-2px);
+}
+
+.divider {
+  display: inline-block;
+  position: relative;
+  color: #6c757d;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 50px;
+  height: 1px;
+  background: #dee2e6;
+}
+
+.divider::before {
+  left: -60px;
+}
+
+.divider::after {
+  right: -60px;
+}
+
+.payment-summary {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+}

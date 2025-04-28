@@ -4,7 +4,7 @@ import { MainFrontComponent } from './Front/main-front/main-front.component';
 import { AboutComponent } from './Front/about/about.component';
 import { BlogListComponent } from './Front/blog-list/blog-list.component';
 import { BlogDetailsComponent } from './Front/blog-details/blog-details.component';
-import { CoursesComponent } from './Front/courses/courses.component';
+import { CoursesComponent } from './Front/GestionFormations/Formation/courses/courses.component';
 import { TeachersComponent } from './Front/teachers/teachers.component';
 import { ContactComponent } from './Front/contact/contact.component';
 import { AuthRegisterComponent } from './Auth/auth-register/auth-register.component';
@@ -25,18 +25,33 @@ import { AllUsersComponent } from './Back/GestionUser/User/all-users/all-users.c
 import { UserBackDetailsComponent } from './Back/GestionUser/User/user-back-details/user-back-details.component';
 import { AuthBanComponent } from './Auth/auth-ban/auth-ban.component';
 import { AllbadgesComponent } from './Back/GestionUser/Badge/allbadges/allbadges.component';
+import { CategoriesComponent } from './Back/GestionFormation/Category/categories/categories.component';
+import { FormationsComponent } from './Back/GestionFormation/Formation/formations/formations.component';
+import { CousesByCategoryComponent } from './Back/GestionFormation/Category/couses-by-category/couses-by-category.component';
+import { CoursesByCatFrontComponent } from './Front/GestionFormations/Formation/courses-by-cat-front/courses-by-cat-front.component';
+import { UserCourseSpaceComponent } from './Front/GestionFormations/Formation/user-course-space/user-course-space.component';
 import { CertificatComponent } from './Back/GestionQUIZZ/certificat/certificat.component';
 import { QuizComponent } from './Back/GestionQUIZZ/quiz/quiz.component';
 import { QuestionComponent } from './Back/GestionQUIZZ/question/question.component';
 import { RouterModule, Routes } from '@angular/router';
 import { AllEventsComponent } from './Back/GestionEvents/Events/all-events/all-events.component';
+import { ShowEventsComponent } from './Front/GestionEvents/Events/show-events/show-events.component';
+import { EventDetailsComponent } from './Front/GestionEvents/event-details/event-details.component';
 import { ShowproductComponent } from './Front/GestionProduit/Product/showproduct/showproduct.component';
 import { ProductDetailsComponent } from './Front/GestionProduit/Product/product-details/product-details.component';
 import { AllCartProductsComponent } from './Back/GestionProduit/CartProduct/all-cart-products/all-cart-products.component';
+import { FrontQuizComponent } from './Front/GestionQuizz/quiz/quiz.component';
 import { AllCommentsComponent } from './Back/GestionForumPost/CommentPost/all-comments/all-comments.component';
 import { ShowPostsComponent } from './Front/GestionForumPost/Posts/show-posts/show-posts.component';
 import { PostDetailsComponent } from './Front/GestionForumPost/Posts/post-details/post-details.component';
 import { AnalyticsDashboardComponent } from './Back/GestionForumPost/analytics-dashboard/analytics-dashboard.component';
+
+import { SuccessComponent } from './Front/GestionProduit/success/success.component';
+
+import { ParticipantsListComponent } from './Back/GestionFormation/Formation/participants-list/participants-list.component';
+import { ApprooveCourseComponent } from './Back/GestionFormation/Formation/approove-course/approove-course.component';
+import { CertificateComponent } from './Front/GestionQuizz/quiz/certificate/certificate.component'; 
+
 
 const routes: Routes = [
   //canActivate: [AdminGuard] to lock for admin
@@ -82,11 +97,29 @@ const routes: Routes = [
   { path: 'backcarts', component: AllCartsComponent },
   { path: 'backreviews', component: AllReviewsComponent },
   { path: 'backimagesP', component: AllImagesComponent },
+
+  /********************Back Gestion Formations****************************************/
+  { path: 'categories', component: CategoriesComponent },
+  { path: 'backcourses', component: FormationsComponent },
+  { path: 'backcoursescat', component: CousesByCategoryComponent },
+  { path: 'coursescat', component: CoursesByCatFrontComponent },
+  { path: 'userCourseSpace', component: UserCourseSpaceComponent },
+  { path: 'participantsList', component: ParticipantsListComponent },
+  { path: 'approveCourse', component: ApprooveCourseComponent },
+
   { path: 'backcartProducts', component: AllCartProductsComponent },
   /***************************************************************/
 
 
   // Front Office
+  { 
+    path: 'quiz/:quizId', 
+    component: FrontQuizComponent },
+       {path: 'certificate', component: CertificateComponent },
+    
+  
+  // Add this if you need a direct participation link
+  { path: 'quiz/:quizId/:participationId', component: FrontQuizComponent },
   { path: '', component: MainFrontComponent/*, canActivate: [UserGuard] */},
   { path: 'bloglist', component: BlogListComponent/*, canActivate: [UserGuard] */},
   {
@@ -98,11 +131,17 @@ const routes: Routes = [
     { path: 'products', component: ShowproductComponent/*, canActivate: [UserGuard]*/ },
 
    { path: 'productD/:idProduct', component: ProductDetailsComponent/*, canActivate: [UserGuard]*/ },
+   { path: 'success', component: SuccessComponent },
+   ///////////////////////////////////////////////////////////////
   { path: 'about', component: AboutComponent/*, canActivate: [UserGuard] */},
   { path: 'courses', component: CoursesComponent/*, canActivate: [UserGuard] */},
   { path: 'teachers', component: TeachersComponent/*, canActivate: [UserGuard]*/ },
   { path: 'contact', component: ContactComponent/*, canActivate: [UserGuard]*/ },
 
+  // Gestion des événements Front
+  { path: 'events', component: ShowEventsComponent, canActivate: [UserGuard] },
+  { path: 'events/:id', component: EventDetailsComponent, canActivate: [UserGuard] }, 
+  
   // Auth
   { path: 'register', component: AuthRegisterComponent },
   { path: 'login', component: AuthLoginComponent },
