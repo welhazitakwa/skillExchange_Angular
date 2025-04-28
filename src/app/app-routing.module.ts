@@ -57,6 +57,11 @@ import { ListContentStudentComponent } from './Front/GestionFormations/Formation
 import { CertificateComponent } from './Front/GestionQuizz/quiz/certificate/certificate.component'; 
 import { UserProductSpaceComponent } from './Front/GestionProduit/user-product-space/user-product-space.component';
 
+import { AllReclamationsComponent } from './Back/GestionReclamation/Reclamation/all-reclamations/all-reclamations.component';
+import { HelpComponent } from './Front/GestionReclamation/help/help.component';
+import { AllReclamationReplyComponent } from './Back/GestionReclamation/ReclamationReply/all-reclamation-reply/all-reclamation-reply.component';
+
+
 
 const routes: Routes = [
   //canActivate: [AdminGuard] to lock for admin
@@ -172,6 +177,10 @@ const routes: Routes = [
     path: 'posts/:id',
     component: PostDetailsComponent /*, canActivate: [UserGuard]*/,
   },
+  //Reclamation
+  { path: 'reclamationback', component: AllReclamationsComponent },
+  { path: 'help', component: HelpComponent },
+  { path: 'reclamationreplyback/:id', component: AllReclamationReplyComponent },
   { path: '**', redirectTo: '' },
 ];
 

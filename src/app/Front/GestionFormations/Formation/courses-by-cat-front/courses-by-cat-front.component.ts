@@ -11,7 +11,7 @@ import { ParticipationFormation } from 'src/app/core/models/GestionFormation/par
 import { ParticipationFormationService } from 'src/app/core/services/GestionFormation/participation-formation.service';
 import Swal from 'sweetalert2';
 import { animate, style, transition, trigger } from '@angular/animations';
-import { catchError, map, Observable, of } from 'rxjs';
+import { catchError, map, Observable, of, switchMap } from 'rxjs';
 import { PaiementFormationService } from 'src/app/core/services/GestionFormation/paiement-formation.service';
 import { PaiementFormation } from 'src/app/core/models/GestionFormation/paiement-formation';
 import {
@@ -397,129 +397,82 @@ export class CoursesByCatFrontComponent {
   }
 
   addParticipation(courseId: number) {
-  const participation = new ParticipationFormation();
-  participation.progress = 1;
-  participation.participant = this.currentUser?.id ?? 0;
-  participation.date_participation = new Date();
+    const participation = new ParticipationFormation();
+    participation.progress = 1;
+    participation.participant = this.currentUser?.id ?? 0;
+    
+    const course = new Formation();
+    course.id = courseId;
+    participation.course = course;
   
-  const course = new Formation();
-  course.id = courseId;
-  participation.course = course;
-  let targetQuiz : Quiz | null = null; // Initialize targetQuiz to null
-  // Find course in cached list with type safety
-  this.quizService.getquizbycourse(courseId).subscribe(
-    (quiz : Quiz) => {
-      console.log('Quiz fetched:', quiz);
-      targetQuiz = quiz; // Assign fetched quiz to targetQuiz
-    },
-    (err) => {
-      alert('Error fetching quiz data. Please try again later.');
-      console.error('Error fetching quiz:', err);
-    },
-  );
-
-  this.participationService.addParticipation(participation).subscribe({
-    next: (res) => {
-      // Update local participation state
-      this.participationMap[courseId] = true;
-      
-      // Handle quiz assignment with proper null checks
-      if (targetQuiz?.id) {
-        const quizId = targetQuiz.id;
-        this.participationService.assignQuizToParticipation(res.idp, quizId)
-          .subscribe({
-            next: (response) => {
-              console.log('Quiz assigned:', response);
-              // Update participation list with type-safe quiz data
-              this.listParticipation = [...this.listParticipation, {
-                ...res,
-                quiz: { id: quizId } // Use extracted quizId
-              }];
-              
-              Swal.fire({
-                icon: 'success',
-                title: 'Success!',
-                html: 'Participation recorded!<br/>Quiz assigned successfully!',
-                confirmButtonText: 'OK',
-              });
-            },
-            error: (err) => {
-              console.error('Quiz assignment failed:', err);
-              Swal.fire({
-                icon: 'warning',
-                title: 'Participation Recorded',
-                html: 'Quiz exists but assignment failed!<br/>Contact support.',
-                confirmButtonText: 'OK',
-              });
-            }
-          });
-      } else {
-        // Handle case with no quiz
-        this.listParticipation = [...this.listParticipation, res];
-        Swal.fire({
-          icon: 'success',
-          title: 'Participation Recorded',
-          text: 'No quiz available for this course',
-          confirmButtonText: 'OK',
-        });
+    this.participationService.addParticipation(participation).pipe(
+      switchMap((newParticipation) => {
+        // Immediately update local state with API response
+        this.participationMap[courseId] = true;
+        this.listParticipation = [...this.listParticipation, newParticipation];
+  
+        return this.quizService.getquizbycourse(courseId).pipe(
+          catchError(() => of(null))
+        );
+      }),
+      switchMap((quiz: Quiz | null) => {
+        if (quiz?.id) {
+          // Access newParticipation from the parent scope
+          return this.participationService.assignQuizToParticipation(
+            this.listParticipation[this.listParticipation.length - 1].idp,
+            quiz.id
+          ).pipe(catchError(() => of(null)));
+        }
+        return of(null);
+      })
+    ).subscribe({
+      next: () => {
+        // Force refresh participation data
+        this.participationServ.getParticipationsByIdCourse(courseId).subscribe(
+          data => this.listParticipation = data
+        );
+        Swal.fire('Success', 'Participation recorded', 'success');
+      },
+      error: (err) => {
+        console.error('Error:', err);
+        Swal.fire('Error', 'Participation failed', 'error');
       }
-      
-      // Optional delayed refresh
-      setTimeout(() => this.getCoursesOfCategory(), 500);
-    },
-    error: (err) => {
-      console.error('Participation creation failed:', err);
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Failed to create participation',
-        confirmButtonText: 'Close',
-      });
-    }
-  });
-}
-  
-  // Updated getParticipationId method
-  getParticipationId(courseId: number): number | null {
-    if (!this.listParticipation || !this.currentUser) return null;
-    
-    const participation = this.listParticipation.find(
-      p => p.course?.id === courseId && 
-           p.participant === this.currentUser?.id
-    );
-    
-    return participation?.idp || null;
+    });
   }
-  passerExam(participationId: number | null) {
-    if (!participationId || participationId <= 0) {
-      Swal.fire('Error', 'Invalid participation ID', 'error');
-      return;
-    }
   
-    // First check if we have the participation data locally
-    const localParticipation = this.listParticipation.find(p => p.idp === participationId);
+  // Update getParticipationId to ensure fresh data
+  getParticipationId(courseId: number): number | null {
+    if (!this.currentUser) return null;
     
-    if (localParticipation?.quiz?.id) {
-      this.router.navigate(['/quiz', localParticipation.quiz.id, participationId]);
+    // Find MOST RECENT participation
+    const participations = this.listParticipation
+      .filter(p => 
+        p.course?.id === courseId && 
+        p.participant === this.currentUser?.id
+      )
+      .sort((a, b) => b.idp! - a.idp!);
+  
+    return participations[0]?.idp || null;
+  }
+  
+  // Enhanced exam button handler
+  passerExam(participationId: number | null) {
+    if (!participationId) {
+      Swal.fire('Error', 'Please participate in the course first', 'error');
       return;
     }
   
-    // If not found locally, fetch from API
     this.participationService.getParticipationById(participationId).subscribe({
       next: (participation) => {
         if (participation.quiz?.id) {
-          // Update local state
-          this.listParticipation = this.listParticipation.map(p => 
-            p.idp === participationId ? participation : p
-          );
           this.router.navigate(['/quiz', participation.quiz.id, participationId]);
         } else {
-          Swal.fire('Error', 'No quiz assigned to this course yet', 'error');
+          Swal.fire('Info', 'No quiz available for this course yet', 'info');
         }
       },
       error: (err) => {
-        console.error('Error fetching participation:', err);
-        Swal.fire('Error', 'Failed to load quiz details', 'error');
+        console.error('Error:', err);
+        Swal.fire('Error', 'Failed to load exam details', 'error');
       }
     });
   }

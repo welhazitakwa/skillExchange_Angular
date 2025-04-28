@@ -80,7 +80,9 @@ export class SettingsComponent {
   }
 
   loadImageFailed() {
-    alert('Image load failed');
+    this._toastService.error(
+      'Image load failed'
+    );
     this.showCropperModal = false;
   }
 
@@ -93,43 +95,103 @@ export class SettingsComponent {
   async saveCrop() {
     if (!this.croppedImage) return;
 
-    // Convert blob to File
-    const file = new File([this.croppedImage], 'profile-image.png', {
-      type: 'image/png',
-      lastModified: Date.now(),
-    });
+    try {
 
-    const formData = new FormData();
-    formData.append('file', file);
+      const containsFace = await this.detectHumanFace(this.croppedImage);
 
-    this.userService.updateUserImage(this.currentUser, formData).subscribe(
-      (updatedUser: User) => {
-        this.currentUser = updatedUser;
+      if (!containsFace) {
+        this._toastService.error(
+          'Please upload an image with a clear human face'
+        );
         this.showCropperModal = false;
-      },
-      (error) => {
-        console.error('Error uploading image:', error);
-        this.showCropperModal = false;
+        return;
       }
-    );
+
+      const file = new File([this.croppedImage], 'profile-image.png', {
+        type: 'image/png',
+        lastModified: Date.now(),
+      });
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      this.userService.updateUserImage(this.currentUser, formData).subscribe(
+        (updatedUser: User) => {
+          this.currentUser = updatedUser;
+          this._toastService.success(
+            'Profile photo changed successfully'
+          );
+          this.showCropperModal = false;
+        },
+        (error) => {
+          console.error('Error uploading image:', error);
+          this._toastService.error(
+            'Error uploading image'
+          );
+          this.showCropperModal = false;
+        }
+      );
+    } catch (error) {
+      console.error('Face detection error:', error);
+      this._toastService.error(
+        'Error verifying image. Please try again.'
+      );
+    }
+  }
+
+  private async detectHumanFace(imageBlob: Blob): Promise<boolean> {
+    const endpoint = 'https://api-us.faceplusplus.com/facepp/v3/detect';
+    const apiKey = 'I0GufPISdZ8KDNi-KYP6ZOKlA9CwOykW'; // Replace with your actual API key
+    const apiSecret = 'vkWZGZIaQ07b43c7P_lcgNyEhhy-pQRm'; // Replace with your actual API secret
+  
+    const formData = new FormData();
+    formData.append('api_key', apiKey);
+    formData.append('api_secret', apiSecret);
+    formData.append('image_file', new File([imageBlob], 'face-image.jpg', { type: 'image/jpeg' }));
+    formData.append('return_attributes', 'none'); // We only need face detection
+  
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        body: formData
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Face++ API error:', errorData);
+        throw new Error(`Face detection failed: ${errorData.error_message || 'Unknown error'}`);
+      }
+  
+      const result = await response.json();
+      return result.faces && result.faces.length > 0;
+    } catch (error) {
+      console.error('Face detection error:', error);
+      throw error;
+    }
   }
 
   saveProfile() {
     this.userService.updateUser(this.currentUser).subscribe(
       (response) => {
         console.log('Profile updated successfully:', response);
-        alert('Profile updated successfully!');
+        this._toastService.success(
+          'Profile updated successfully!'
+        );
       },
       (error) => {
         console.error('Error updating profile:', error);
-        alert('Failed to update profile. Please try again.');
+        this._toastService.error(
+          'Failed to update profile. Please try again.'
+        );
       }
     );
   }
 
   changePassword() {
     if (this.password.new !== this.password.confirm) {
-      alert('New password and confirmation do not match');
+      this._toastService.error(
+        'New password and confirmation do not match'
+      );
       return;
     }
 
@@ -137,11 +199,15 @@ export class SettingsComponent {
       .changeUserPassword(this.password.current, this.password.new)
       .subscribe({
         next: () => {
-          alert('Password changed successfully');
+          this._toastService.success(
+            'Password changed successfully'
+          );
           this.authService.logout();
         },
         error: (err) => {
-          alert(err.error.message || 'Failed to change password');
+          this._toastService.error(
+            err.error.message || 'Failed to change password'
+          );
         },
       });
   }

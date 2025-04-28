@@ -1,0 +1,155 @@
+<app-header-front></app-header-front>
+
+<!-- Header Start -->
+<div class="container-fluid page-header" style="margin-bottom: 90px;">
+    <div class="container">
+        <div class="d-flex flex-column justify-content-center" style="min-height: 300px">
+            <h3 class="display-4 text-white text-uppercase">Help</h3>
+            <div class="d-inline-flex text-white">
+                <p class="m-0 text-uppercase"><a class="text-white" href="">Home</a></p>
+                <i class="fa fa-angle-double-right pt-1 px-3"></i>
+                <p class="m-0 text-uppercase">Help</p>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Header End -->
+
+<!-- Help Start -->
+<div class="container-fluid py-5">
+    <div class="container py-5">
+        <!-- View Toggle Button -->
+        <div class="text-center mb-4">
+            <button class="btn btn-outline-primary" (click)="toggleReclamationsView()">
+                {{ showReclamationsList ? 'Add a Reclamation' : 'View My Previous Reclamations' }}
+            </button>
+        </div>
+
+        <!-- Title Selection View (Default) -->
+        <div *ngIf="!showReclamationsList && !selectedTitle" class="text-center mb-5">
+            <h1>Besoin d'aide ?</h1>
+            <p class="lead">Sélectionnez le type de problème que vous rencontrez</p>
+            <div class="row g-4">
+                <div *ngFor="let item of predefinedTitles" class="col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm" (click)="selectTitle(item.title)">
+                        <div class="card-body text-center">
+                            <i [class]="item.icon + ' fa-3x text-primary mb-3'"></i>
+                            <h5 class="card-title">{{ item.title }}</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- My Reclamations List -->
+        <div *ngIf="showReclamationsList && !selectedTitle" class="reclamation-list">
+            <div class="list-item" *ngFor="let rec of userReclamations">
+                <div class="d-flex justify-content-between align-items-center mb-3 p-3 border rounded">
+                    <div>
+                        <h5>{{ rec.title }}</h5>
+                        <p class="text-muted small mb-0">{{ rec.description | slice:0:50 }}...</p>
+                        <span class="badge" [ngClass]="{
+                            'bg-warning': rec.status === 'Pending',
+                            'bg-success': rec.status === 'Resolved',
+                            'bg-danger': rec.status === 'Rejected'
+                        }">
+                            {{ rec.status }}
+                        </span>
+                    </div>
+                    <div>
+                        <button class="btn btn-sm btn-outline-primary me-2" 
+                                (click)="loadForEdit(rec)">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Help Form View -->
+        <div *ngIf="selectedTitle" class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="contact-form bg-secondary rounded p-5">
+                    <form #contactForm="ngForm" (ngSubmit)="onSubmit(contactForm)">
+                        <div class="control-group">
+                            <input type="text" class="form-control border-0 p-4" 
+                                   name="title" 
+                                   [value]="selectedTitle" 
+                                   disabled>
+                        </div>
+                        
+                        <div class="control-group">
+                            <textarea class="form-control border-0 py-3 px-4" rows="5" 
+                                      name="description" 
+                                      [(ngModel)]="reclamation.description" 
+                                      (input)="onDescriptionInput()"
+                                      placeholder="Describe your issue..." 
+                                      required></textarea>
+                            
+                            <div *ngIf="contactForm.controls['description']?.invalid && (contactForm.controls['description']?.dirty || contactForm.controls['description']?.touched)"
+                                 class="invalid-feedback">
+                                Please describe your issue
+                            </div>
+                            
+                            <div *ngIf="showSuggestions" class="ai-suggestions mt-2 p-3 border rounded">
+                                <h6>Suggested Solutions:</h6>
+                                <div *ngFor="let suggestion of aiSuggestions" 
+                                     class="suggestion-item p-2 mb-2 bg-light rounded"
+                                     (click)="applySuggestion(suggestion)">
+                                    {{ suggestion }}
+                                </div>
+                                <div *ngIf="loadingSuggestions" class="text-muted">
+                                    <i class="fas fa-spinner fa-spin"></i> Generating suggestions...
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Status Field (Only visible when editing) -->
+                        <div *ngIf="isEditing" class="control-group">
+                            <label class="text-white">Status</label>
+                            <select class="form-control border-0 p-4" 
+                                    [(ngModel)]="reclamation.status" 
+                                    name="status"
+                                    required>
+                                <option value="Pending">Pending</option>
+                                <option value="Resolved">Resolved</option>
+                                <option value="Rejected">Rejected</option>
+                            </select>
+                        </div>
+
+                        <div class="control-group">
+                            <input type="file" class="form-control border-0 p-4" 
+                                   name="image" 
+                                   (change)="onFileSelected($event)"
+                                   accept="image/*"
+                                   #fileInput>
+                            <small class="form-text text-muted">Supported formats: JPG, PNG, GIF</small>
+                            <div *ngIf="reclamation.image" class="mt-3">
+                                <img [src]="reclamation.image.startsWith('data:image') ? reclamation.image : 'data:image/*;base64,' + reclamation.image" 
+                                     class="img-thumbnail"
+                                     style="max-height: 200px;">
+                                <button type="button" class="btn btn-sm btn-danger mt-2" 
+                                        (click)="reclamation.image = ''; fileInput.value = ''">
+                                    Remove Image
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center">
+                            <button class="btn btn-primary py-3 px-5" type="submit">
+                                {{ isEditing ? 'Update' : 'Send' }} Message
+                            </button>
+                            <button type="button" class="btn btn-secondary py-3 px-5 ml-2" 
+                                    (click)="cancelEdit()">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Help End -->
+
+<app-footer-front></app-footer-front>

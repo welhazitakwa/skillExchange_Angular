@@ -152,20 +152,32 @@
                            <!-- Comment Content -->
 <div class="flex-grow-1">
     <div class="d-flex justify-content-between align-items-center mb-2">
+     
       <h5 class="mb-0 fw-bold">{{ usersMap[comment!.email]?.name || 'Anonymous' }}</h5>
       <small class="text-muted">
         <i *ngIf="isValidDate(comment.createdAt)">
           Posted At: {{ comment.createdAt | date: 'dd/MM/yyyy à HH:mm' }}
         </i>
+        <button *ngIf="currentUser?.email === comment.email" class="btn btn-link" (click)="toggleReviewOptions(comment)">
+          <i class="fas fa-ellipsis-h"></i>
+        </button>
+        <!-- Actions -->
+<div *ngIf="selectedComment === comment" class="review-options mt-2">
+  <button class="btn btn-warning btn-sm me-2" (click)="startEditComment(comment)">Edit</button>
+  <button class="btn btn-danger btn-sm" (click)="deleteComment(comment.idComment)">Delete</button>
+</div>
+
         <i *ngIf="!isValidDate(comment.createdAt)">
           Posted At: Date invalide - {{ comment.createdAt }}
         </i>
         <br />
         <i>Posted By: {{ comment.email }}</i>
+       
       </small>
     </div>
   
     <p class="mb-2">{{ comment.content }}</p>
+
   
   <!-- Emoji Reactions -->
 <div class="d-flex align-items-center gap-2 flex-wrap mb-2">
@@ -217,6 +229,8 @@
     >
       Delete
     </button>
+ 
+          
   </div>
   
 
@@ -320,7 +334,7 @@
 
 
 
-
+            
 
 
 
@@ -401,6 +415,44 @@
   </div>
 </div>
 
+<!-- Modal d'édition -->
+<div *ngIf="showEditCommentModalOpen" class="modal fade show d-block" tabindex="-1" role="dialog"
+    style="background-color: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title text-primary">
+                    <i class="bi bi-pencil-square me-2"></i>Edit Comment
+                </h5>
+                <button type="button" class="btn-close" (click)="closeEditModal()" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Affichage de la date de mise à jour -->
+                <div *ngIf="selectedComment?.updatedAt" class="alert alert-info mb-3">
+                    <strong>Updated At:</strong> {{ selectedComment?.updatedAt| date: 'dd/MM/yyyy à HH:mm' }}
+                </div>
+
+                <!-- Zone de texte pour le commentaire -->
+                <div class="form-floating mb-3" *ngIf="selectedComment">
+                    <textarea [(ngModel)]="selectedComment.content" 
+                              class="form-control" 
+                              placeholder="Edit your comment here..." 
+                              id="editCommentTextarea" 
+                              rows="5"></textarea>
+                    <label for="editCommentTextarea">Your comment</label>
+                </div>
+            </div>
+            <div class="modal-footer border-top-0">
+                <button class="btn btn-outline-secondary" (click)="closeEditModal()">
+                    <i class="bi bi-x-lg me-1"></i>Cancel
+                </button>
+                <button class="btn btn-primary" (click)="saveEditedComment()" [disabled]="!selectedComment?.content?.trim()">
+                    <i class="bi bi-save-fill me-1"></i>Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 

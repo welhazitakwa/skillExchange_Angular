@@ -167,7 +167,12 @@ import { AllbadgesComponent } from './Back/GestionUser/Badge/allbadges/allbadges
 
 import { CertificateComponent } from './Front/GestionQuizz/quiz/certificate/certificate.component';
 import { MatDialogModule } from '@angular/material/dialog';
+
 import { UserProductSpaceComponent } from './Front/GestionProduit/user-product-space/user-product-space.component';
+import { AllReclamationsComponent } from './Back/GestionReclamation/Reclamation/all-reclamations/all-reclamations.component';
+import { HelpComponent } from './Front/GestionReclamation/help/help.component';
+import { AllReclamationReplyComponent } from './Back/GestionReclamation/ReclamationReply/all-reclamation-reply/all-reclamation-reply.component';
+
 
 
 
@@ -284,7 +289,13 @@ import { UserProductSpaceComponent } from './Front/GestionProduit/user-product-s
     EditContentComponent,
     ListContentStudentComponent,
     CertificateComponent,
+
     UserProductSpaceComponent,
+
+    AllReclamationsComponent,
+    HelpComponent,
+    AllReclamationReplyComponent
+
   ],
   imports: [
     BrowserModule,

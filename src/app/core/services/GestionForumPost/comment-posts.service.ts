@@ -33,5 +33,8 @@ export class CommentPostsService {
   
   
   
+  updateComment(comment: CommentPosts): Observable<CommentPosts>   {
+    return this.http.patch<CommentPosts>(`${this.url}/${comment.idComment}`, comment);
+  }
   
 }

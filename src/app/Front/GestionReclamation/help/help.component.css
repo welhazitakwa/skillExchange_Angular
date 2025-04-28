@@ -1,0 +1,30 @@
+.ai-suggestions {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+}
+
+.suggestion-item {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.suggestion-item:hover {
+    background-color: #e9ecef;
+}
+
+
+.hidden-whatsapp-frame {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+}
+
+iframe[name='_hiddenFrame'] {
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+    opacity: 0 !important;
+}
