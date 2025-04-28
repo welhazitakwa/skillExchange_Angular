@@ -7,5 +7,5 @@ export class ParticipationFormation {
   participant!: number;
   date_participation!: Date;
   course!: Formation;
- // quiz!: Quiz;
+  quiz?: Quiz;
 }

@@ -135,7 +135,11 @@
     <button *ngSwitchCase="'pay'" (click)="payer(f.id, f.price, f.title, f.author)" class="btn btn-warning"> 💰 Pay</button>
     <button *ngSwitchCase="'participate'" (click)="addParticipation(f.id)" class="btn btn-success">Participate</button>
     <div *ngSwitchCase="'exam'"> 
-    <button  (click)="passerExam()" class="btn btn-info"> 📝 Exam</button>
+      <div *ngSwitchCase="'exam'"> 
+        <button *ngSwitchCase="'exam'" (click)="passerExam(getParticipationId(f.id))" class="btn btn-info">
+          📝 Exam
+        </button>
+      </div>
     </div>
   </ng-container>
 

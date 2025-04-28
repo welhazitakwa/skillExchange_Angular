@@ -22,16 +22,9 @@
   <!-- Left Sidebar - style you can find in sidebar.scss  -->
   <!-- ============================================================== -->
   <app-side-bar></app-side-bar>
-  <!-- ============================================================== -->
-  <!-- End Left Sidebar - style you can find in sidebar.scss  -->
-  <!-- ============================================================== -->
-  <!-- ============================================================== -->
-  <!-- Page wrapper  -->
-  <!-- ============================================================== -->
+
+  <!-- Main content area -->
   <div class="page-wrapper" style="display: block">
-    <!-- ============================================================== -->
-    <!-- Bread crumb and right sidebar toggle -->
-    <!-- ============================================================== -->
     <div class="page-breadcrumb">
       <div class="row">
         <div class="col-8 align-self-center">
@@ -81,6 +74,31 @@
           <div class="form-group">
             <label for="question">Question:</label>
             <input id="question" [(ngModel)]="newQuestion.question" class="form-control" />
+            <button 
+              (click)="generateOptions()" 
+              [disabled]="generating || !newQuestion.question.trim() || !newQuestion.reponse.trim()" 
+              class="btn btn-info mt-2"
+            >
+              <span *ngIf="!generating">
+                <i class="fas fa-magic"></i> Generate Options
+              </span>
+              <span *ngIf="generating">
+                <i class="fas fa-spinner fa-spin"></i> Generating...
+              </span>
+            </button>
+          </div>
+
+          <!-- Loading spinner for options generation -->
+          <div *ngIf="generating" class="text-center mb-3">
+            <div class="spinner-border text-info" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+            <p class="text-muted mt-2">Generating options...</p>
+          </div>
+
+          <div class="form-group">
+            <label>Correct Answer:</label>
+            <input [(ngModel)]="newQuestion.reponse" class="form-control" />
           </div>
 
           <div class="form-group">
@@ -103,14 +121,19 @@
             <input [(ngModel)]="newQuestion.option4" class="form-control" />
           </div>
 
-          <div class="form-group">
-            <label>Correct Answer:</label>
-            <input [(ngModel)]="newQuestion.reponse" class="form-control" />
-          </div>
-
           <!-- Add/Update Button -->
-          <button *ngIf="!newQuestion.id" (click)="addQuestion()" [disabled]="loading" class="btn btn-primary mt-2">Add Question</button>
-          <button *ngIf="newQuestion.id" (click)="updateQuestion()" [disabled]="loading" class="btn btn-success mt-2">Update Question</button>
+          <button *ngIf="!newQuestion.id" 
+                  (click)="addQuestion()" 
+                  [disabled]="loading" 
+                  class="btn btn-primary mt-2">
+            Add Question
+          </button>
+          <button *ngIf="newQuestion.id" 
+                  (click)="updateQuestion()" 
+                  [disabled]="loading" 
+                  class="btn btn-success mt-2">
+            Update Question
+          </button>
         </div>
 
         <!-- Questions List -->

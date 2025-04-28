@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 export class ImageProductService{
 
  listImagess: ImageProduct[] = [];
-  url = 'http://localhost:8084/skillExchange/imageProduct';
+  url = 'http://localhost:8084/skillExchange/imageProd';
    constructor(private http: HttpClient) { }
    getImages() : Observable<ImageProduct[]> 
    {
@@ -29,4 +29,5 @@ export class ImageProductService{
  updateImageProduct(imgProd:ImageProduct){
   return this.http.patch(this.url+'/'+imgProd.idImage,imgProd);
  }
+ 
 }

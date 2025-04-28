@@ -35,17 +35,26 @@ import { QuizComponent } from './Back/GestionQUIZZ/quiz/quiz.component';
 import { QuestionComponent } from './Back/GestionQUIZZ/question/question.component';
 import { RouterModule, Routes } from '@angular/router';
 import { AllEventsComponent } from './Back/GestionEvents/Events/all-events/all-events.component';
+import { ShowEventsComponent } from './Front/GestionEvents/Events/show-events/show-events.component';
+import { EventDetailsComponent } from './Front/GestionEvents/event-details/event-details.component';
 import { ShowproductComponent } from './Front/GestionProduit/Product/showproduct/showproduct.component';
 import { ProductDetailsComponent } from './Front/GestionProduit/Product/product-details/product-details.component';
 import { AllCartProductsComponent } from './Back/GestionProduit/CartProduct/all-cart-products/all-cart-products.component';
+import { FrontQuizComponent } from './Front/GestionQuizz/quiz/quiz.component';
 import { AllCommentsComponent } from './Back/GestionForumPost/CommentPost/all-comments/all-comments.component';
 import { ShowPostsComponent } from './Front/GestionForumPost/Posts/show-posts/show-posts.component';
 import { PostDetailsComponent } from './Front/GestionForumPost/Posts/post-details/post-details.component';
+import { AnalyticsDashboardComponent } from './Back/GestionForumPost/analytics-dashboard/analytics-dashboard.component';
+
+import { SuccessComponent } from './Front/GestionProduit/success/success.component';
+
 import { ParticipantsListComponent } from './Back/GestionFormation/Formation/participants-list/participants-list.component';
 import { ApprooveCourseComponent } from './Back/GestionFormation/Formation/approove-course/approove-course.component';
 import { ContentListComponent } from './Front/GestionFormations/CourseContent/content-list/content-list.component';
 import { AddContentComponent } from './Front/GestionFormations/CourseContent/add-content/add-content.component';
 import { ListContentStudentComponent } from './Front/GestionFormations/Formation/list-content-student/list-content-student.component';
+
+import { CertificateComponent } from './Front/GestionQuizz/quiz/certificate/certificate.component'; 
 
 
 const routes: Routes = [
@@ -55,8 +64,12 @@ const routes: Routes = [
 
   { path: 'backpost', component: ListpostComponent },
 
-  { path: 'backCommentpost', component: AllCommentsComponent },
 
+  { path:"backpost", component: ListpostComponent},
+  
+  { path:"backCommentpost", component: AllCommentsComponent},
+  {path: "analytics-dashboard", component: AnalyticsDashboardComponent},
+  
   { path: 'back', component: MainBackComponent /*,canActivate: [AdminGuard]*/ },
 
   //**************Back Gestion Users********************************
@@ -102,11 +115,17 @@ const routes: Routes = [
   /***************************************************************/
 
   // Front Office
-  { path: '', component: MainFrontComponent /*, canActivate: [UserGuard] */ },
-  {
-    path: 'bloglist',
-    component: BlogListComponent /*, canActivate: [UserGuard] */,
-  },
+
+  { 
+    path: 'quiz/:quizId', 
+    component: FrontQuizComponent },
+       {path: 'certificate', component: CertificateComponent },
+    
+  
+  // Add this if you need a direct participation link
+  { path: 'quiz/:quizId/:participationId', component: FrontQuizComponent },
+  { path: '', component: MainFrontComponent/*, canActivate: [UserGuard] */},
+  { path: 'bloglist', component: BlogListComponent/*, canActivate: [UserGuard] */},
   {
     path: 'blogdetails',
     component: BlogDetailsComponent /*,
@@ -118,24 +137,20 @@ const routes: Routes = [
     component: ShowproductComponent /*, canActivate: [UserGuard]*/,
   },
 
-  {
-    path: 'productD/:idProduct',
-    component: ProductDetailsComponent /*, canActivate: [UserGuard]*/,
-  },
-  { path: 'about', component: AboutComponent /*, canActivate: [UserGuard] */ },
-  {
-    path: 'courses',
-    component: CoursesComponent /*, canActivate: [UserGuard] */,
-  },
-  {
-    path: 'teachers',
-    component: TeachersComponent /*, canActivate: [UserGuard]*/,
-  },
-  {
-    path: 'contact',
-    component: ContactComponent /*, canActivate: [UserGuard]*/,
-  },
 
+
+   { path: 'productD/:idProduct', component: ProductDetailsComponent/*, canActivate: [UserGuard]*/ },
+   { path: 'success', component: SuccessComponent },
+   ///////////////////////////////////////////////////////////////
+  { path: 'about', component: AboutComponent/*, canActivate: [UserGuard] */},
+  { path: 'courses', component: CoursesComponent/*, canActivate: [UserGuard] */},
+  { path: 'teachers', component: TeachersComponent/*, canActivate: [UserGuard]*/ },
+  { path: 'contact', component: ContactComponent/*, canActivate: [UserGuard]*/ },
+
+  // Gestion des événements Front
+  { path: 'events', component: ShowEventsComponent, canActivate: [UserGuard] },
+  { path: 'events/:id', component: EventDetailsComponent, canActivate: [UserGuard] }, 
+  
   // Auth
   { path: 'register', component: AuthRegisterComponent },
   { path: 'login', component: AuthLoginComponent },

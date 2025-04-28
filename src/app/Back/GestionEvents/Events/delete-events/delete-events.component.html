@@ -1,1 +1,12 @@
-<p>delete-events works!</p>
+<div class="modal-header">
+    <h5 class="modal-title">Delete Event</h5>
+    <button type="button" class="btn-close" (click)="cancel()"></button>
+  </div>
+  <div class="modal-body">
+    <p>Are you sure you want to delete the event "{{ eventToDelete?.eventName }}"?</p>
+    <div class="d-flex justify-content-end gap-2">
+      <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
+      <button type="button" class="btn btn-danger" (click)="delete()">Delete Event</button>
+    </div>
+  </div>
+  

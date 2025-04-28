@@ -47,4 +47,10 @@ export class ParticipationFormationService {
       this.url+`/check?participantId=${participantId}&courseId=${courseId}`
     );
   }
+assignQuizToParticipation(participationId: number, quizId: number): Observable<void> {
+  return this.http.post<void>(
+    `${this.url}/${participationId}/assign-quiz/${quizId}`, // Corrected with backticks
+    null
+  );
+}
 }

@@ -1,4 +1,5 @@
 import { User } from "../GestionUser/User";
+import { Quiz } from 'src/app/core/models/QuestionQuizz/quiz';
 import { Category } from "./category";
 
 export class Formation {
@@ -15,4 +16,5 @@ export class Formation {
   date_ajout!: Date;
   category!: Category;
   author!: User;
+  quiz!: Quiz;
 }

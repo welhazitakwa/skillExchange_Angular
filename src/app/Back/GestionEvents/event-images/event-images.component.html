@@ -1,0 +1,31 @@
+<div class="image-gallery">
+    <div class="image-item" *ngFor="let image of images">
+      <img [src]="'http://localhost:8084/skillExchange/' + image.images" alt="Event image">
+      <button class="btn btn-sm btn-danger" (click)="deleteImage(image.idImage)">
+        <i class="fas fa-trash"></i>
+      </button>
+    </div>
+  </div>
+  
+  <style>
+  .image-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 20px;
+  }
+  .image-item {
+    position: relative;
+  }
+  .image-item img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 5px;
+  }
+  .image-item button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+  }
+  </style>
