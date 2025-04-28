@@ -32,6 +32,8 @@ export class PostDetailsComponent {
   comments: CommentPosts[] = [];
   newComment: CommentPosts = new CommentPosts();
   showCommentModalOpen: boolean = false;
+  showEditCommentModalOpen: boolean = false;
+
   showPostModalOpen: boolean = false;
   newPost: Posts = new Posts();
   currentUser: User | null = null;
@@ -143,20 +145,24 @@ export class PostDetailsComponent {
     (comments) => {
       console.log("RAW comments:", comments); // Affiche les commentaires avant transformation
 
-      // Sécuriser la transformation des dates
       this.comments = comments.map(comment => {
         if (comment.createdAt && comment.updatedAt) {
+          const createdAt = new Date(comment.createdAt);
+          const updatedAt = new Date(comment.updatedAt);
+
+          // Vérifie si les dates sont valides
           return {
             ...comment,
-            createdAt: new Date(comment.createdAt),
-            updatedAt: new Date(comment.updatedAt),
+            createdAt: !isNaN(createdAt.getTime()) ? createdAt : null,
+            updatedAt: !isNaN(updatedAt.getTime()) ? updatedAt : null,
           };
         } else {
-          return { ...comment, createdAt: null, updatedAt: null }; // Assurer que createdAt et updatedAt sont null si non valides
+          return { ...comment, createdAt: null, updatedAt: null };
         }
       });
 
       console.log("Transformed comments:", this.comments); // Vérifie après transformation
+
       this.loadUserDetails();
       this.loadEmojiCountsForComments();
     },
@@ -165,6 +171,7 @@ export class PostDetailsComponent {
     }
   );
 }
+
 
 isValidDate(date: any): boolean {
   return date instanceof Date && !isNaN(date.getTime());
@@ -796,8 +803,40 @@ getUserImage(email: string): string {
   return '/assets/assetsFront/img/user.jpg'; // fallback
 }
 
+selectedComment: CommentPosts | null = null;
+editingComment: CommentPosts | null = null;
+toggleReviewOptions(comment: CommentPosts): void {
+  if (this.selectedComment === comment) {
+    this.selectedComment = null;
+    this.editingComment = null;
+  } else {
+    this.selectedComment = comment;
+    this.editingComment = comment;
+  }
+}
+// post-detail.component.ts
+saveEditedComment(): void {
+  if (this.selectedComment && this.selectedComment.idComment) {
+    this.selectedComment.updatedAt = new Date(); // Assure-toi que la date de mise à jour est définie
+    this.commentService.updateComment(this.selectedComment).subscribe(
+      (updatedComment) => {
+        this.getComments();  // Rafraîchir les commentaires après la mise à jour
+        this.selectedComment = null;  // Réinitialiser le commentaire en cours d'édition
+        this.showEditCommentModalOpen = false;  // Fermer le modal
+      },
+      (error) => {
+        console.error('Error updating comment', error);
+      }
+    );
+  }}
 
 
- 
 
+startEditComment(comment: CommentPosts): void {
+  this.editingComment = { ...comment }; 
+  this.showEditCommentModalOpen = true;       
+}
+closeEditModal() {
+  this.showEditCommentModalOpen =false;
+}
 }

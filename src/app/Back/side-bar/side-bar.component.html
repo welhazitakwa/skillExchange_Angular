@@ -70,11 +70,61 @@
             <span class="hide-menu">Users</span>
           </a>
         </li>
+
+        <li
+          class="sidebar-item"
+          routerLinkActive="selected"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <a class="sidebar-link" routerLink="/backpost" aria-expanded="false">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="feather-icon"
+            >
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span class="hide-menu">Posts</span>
+          </a>
+        </li>
+        <li
+          class="sidebar-item"
+          routerLinkActive="selected"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <a
+            class="sidebar-link"
+            routerLink="/backbadges"
+            aria-expanded="false"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="feather-icon"
+            >
+</svg>
+          </a></li>
         <li class="sidebar-item" routerLinkActive="selected" [routerLinkActiveOptions]="{ exact: true }">
           <a class="sidebar-link" routerLink="/backbadges" aria-expanded="false">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
               class="feather-icon">
+
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
               <circle cx="12" cy="9" r="3"></circle>
               <path d="M12 12l-1 3"></path>
