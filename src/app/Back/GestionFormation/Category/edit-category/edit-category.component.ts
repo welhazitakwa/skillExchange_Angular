@@ -31,8 +31,8 @@ export class EditCategoryComponent {
       Validators.minLength(20),
       Validators.maxLength(50),
     ]),
-    image: new FormControl(''),
-    imageType: new FormControl(''), // Ajouté
+    image: new FormControl('', Validators.required),
+    imageType: new FormControl(''), 
     status: new FormControl<number | null>(null),
   });
   ngOnInit() {
@@ -85,7 +85,11 @@ export class EditCategoryComponent {
       },
 
       error: (err: any) => {
-        Swal.fire('Error!', 'An error occurred while Editing the Category', 'error');
+        Swal.fire(
+          'Error!',
+          'An error occurred while Editing the Category',
+          'error'
+        );
       },
 
       complete: () => {

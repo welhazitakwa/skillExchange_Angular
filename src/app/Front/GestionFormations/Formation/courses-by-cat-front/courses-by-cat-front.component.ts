@@ -48,7 +48,8 @@ export class CoursesByCatFrontComponent {
   listFormations: Formation[] = [];
   currentUser: User | null = null;
   listParticipation: ParticipationFormation[] = [];
-  totalProgress: number = 0;
+  totalParticipantsMap: { [courseId: number]: number } = {};
+
   constructor(
     private catServ: CategoryService,
     private dialog: MatDialog,
@@ -186,16 +187,19 @@ export class CoursesByCatFrontComponent {
           this.participationServ.getParticipationsByIdCourse(f.id).subscribe(
             (data) => {
               this.listParticipation = data;
-              this.totalProgress = this.listParticipation.reduce(
-                (sum, participation) => sum + (participation.progress || 0),
-                0
-              );
+              // Store the number of participation rows (students)
+              this.totalParticipantsMap[f.id] = this.listParticipation.length;
             },
-            (erreur) => console.log('erreur'),
+            (erreur) => {
+              console.error(
+                `Error fetching participations for course ${f.id}:`,
+                erreur
+              );
+              this.totalParticipantsMap[f.id] = 0; // Fallback value
+            },
             () => console.log(this.listParticipation)
           );
 
-          // Fetch payment and participation status
           this.payServ
             .checkPaiement(this.currentUser!.id, f.id)
             .subscribe((hasPaid) => {
@@ -232,31 +236,10 @@ export class CoursesByCatFrontComponent {
     );
   }
 
-  // checkParticipation(userId: number, formationId: number): { verif: boolean}{
-  //   console.log('🔥 Début de la méthode checkParticipation');
-  //   this.participationService.checkParticipation(userId, formationId).subscribe(
-  //     (data) => {
-  //       this.verifParticipation = data;
-  //       return { verif: this.verifParticipation };
-  //       console.log('*******************************************');
-  //       console.log('etat participation : ' + this.verifParticipation);
-  //       console.log('*******************************************');
-  //     },
-  //     (error) => {
-  //       console.log(
-  //         '****************errreeeuuuurrraaaa***************************'
-  //       );
-
-  //       console.error(error);
-  //     }
-  //   );
-  // }
-  // ------------********************boutonet************************------------------------
-  // Dans ton service de participation
 
   payer(courseId: number, prix: number, title: string, author: User) {
     const paiement = new PaiementFormation();
-    //participation.idp = 0;
+    paiement.paid = prix;
     paiement.participant = this.currentUser?.id ?? 0;
     const course = new Formation();
     course.id = courseId;
@@ -687,4 +670,10 @@ export class CoursesByCatFrontComponent {
     return this.userService.addTransaction(recipient.id, transaction);
   }
   // ----------------------rating ---------------------------------------------
+
+  TakeCourses(idFormation: number, title: string) {
+    this.router.navigate(['/sudentsContent'], {
+      state: { formationId: idFormation , title: title },
+    });
+  }
 }

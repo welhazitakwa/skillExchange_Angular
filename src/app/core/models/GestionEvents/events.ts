@@ -20,6 +20,9 @@ export class Events {
     rateEvents!: RateEvent[];
     eventComments!: EventComment[];
     images?: { idImage?: number; images: string }[];
+
+    latitude?: number; // Nouvelle propriété pour la latitude
+    longitude?: number; // Nouvelle propriété pour la longitude
     
 
 }

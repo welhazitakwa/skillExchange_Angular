@@ -2,12 +2,14 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
+
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 
 import { AngularToastifyModule, ToastService } from 'angular-toastify';
 //import { MatPaginatorModule } from '@angular/material/paginator'; // 👈 Ajouté pour le paginator
+
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -23,10 +25,6 @@ import { HeaderFrontComponent } from './Front/header-front/header-front.componen
 import { AboutComponent } from './Front/about/about.component';
 import { BlogListComponent } from './Front/blog-list/blog-list.component';
 import { BlogDetailsComponent } from './Front/blog-details/blog-details.component';
-
-
-import { TeachersComponent } from './Front/teachers/teachers.component';
-
 
 
 import { CoursesComponent } from './Front/GestionFormations/Formation/courses/courses.component';
@@ -64,18 +62,13 @@ import { BalanceComponent } from './Front/GestionUser/balance/balance.component'
 import { SettingsComponent } from './Front/GestionUser/settings/settings.component';
 import { AllUsersComponent } from './Back/GestionUser/User/all-users/all-users.component';
 
-import { AllbadgesComponent } from './Back/GestionUser/Badge/allbadges/allbadges.component';
 
 
-import { CertificatComponent } from './Back/GestionQUIZZ/certificat/certificat.component';
-import { QuizComponent } from './Back/GestionQUIZZ/quiz/quiz.component';
-import { QuestionComponent } from './Back/GestionQUIZZ/question/question.component';
 
 
 
 import { ImageCropperComponent } from 'ngx-image-cropper';
 import { UserBackDetailsComponent } from './Back/GestionUser/User/user-back-details/user-back-details.component';
-import { AuthBanComponent } from './Auth/auth-ban/auth-ban.component';
 import { SignaturePadComponent } from './components/signature-pad/signature-pad.component';
 
 import { CategoriesComponent } from './Back/GestionFormation/Category/categories/categories.component';
@@ -128,29 +121,23 @@ import { ShowEventsComponent } from './Front/GestionEvents/Events/show-events/sh
 import { AddEventModalComponent } from './Back/GestionEvents/Events/add-event-modal/add-event-modal.component';
 
 import { EventImagesComponent } from './Back/GestionEvents/event-images/event-images.component';
+
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+
 import { EventDetailsComponent } from './Front/GestionEvents/event-details/event-details.component';
 import { FullCalendarModule } from '@fullcalendar/angular';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
 
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
-import { UpdateEventCommentComponent } from './Back/GestionEvents/EventComment/update-event-comment/update-event-comment.component';
-import { DeleteEventCommentComponent } from './Back/GestionEvents/EventComment/delete-event-comment/delete-event-comment.component';
-import { AllEventImageComponent } from './Back/GestionEvents/EventImage/all-event-image/all-event-image.component';
 import { TeachersComponent } from './Front/teachers/teachers.component';
-import { UpdateEventImageComponent } from './Back/GestionEvents/EventImage/update-event-image/update-event-image.component';
-import { CartProductsComponent } from './Front/GestionProduit/cart-products/cart-products.component';
 import { FrontQuizComponent } from './Front/GestionQuizz/quiz/quiz.component';
 
-import { AllCommentsComponent } from './Back/GestionForumPost/CommentPost/all-comments/all-comments.component';
-import { ShowPostsComponent } from './Front/GestionForumPost/Posts/show-posts/show-posts.component';
 import { PostDetailsComponent } from './Front/GestionForumPost/Posts/post-details/post-details.component';
 import { AnalyticsDashboardComponent } from './Back/GestionForumPost/analytics-dashboard/analytics-dashboard.component';
 
@@ -166,11 +153,20 @@ import { DetailsFormationBackComponent } from './Back/GestionFormation/Formation
 import { ParticipantsListComponent } from './Back/GestionFormation/Formation/participants-list/participants-list.component';
 import { ApprooveCourseComponent } from './Back/GestionFormation/Formation/approove-course/approove-course.component';
 import { NgChartsModule } from 'ng2-charts';
+import { ContentListComponent } from './Front/GestionFormations/CourseContent/content-list/content-list.component';
+import { AddContentComponent } from './Front/GestionFormations/CourseContent/add-content/add-content.component';
+import { EditContentComponent } from './Front/GestionFormations/CourseContent/edit-content/edit-content.component';
+import { ListContentStudentComponent } from './Front/GestionFormations/Formation/list-content-student/list-content-student.component';
 
-import { AllCartProductsComponent } from './Back/GestionProduit/CartProduct/all-cart-products/all-cart-products.component';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './core/interceptors/auth.interceptor'; // <-- adapte le chemin si nécessaire
+
+
+
 import { AllbadgesComponent } from './Back/GestionUser/Badge/allbadges/allbadges.component';
 
 import { CertificateComponent } from './Front/GestionQuizz/quiz/certificate/certificate.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 
 
@@ -195,26 +191,26 @@ import { CertificateComponent } from './Front/GestionQuizz/quiz/certificate/cert
     AuthLoginComponent,
 
     AuthBanComponent,
-   
-  
+
+
     AllCommentsComponent,
     ShowPostsComponent,
-   
+
 
     FrontQuizComponent,
     ListpostComponent,
     ListaddComponent,
-  
- 
-  
+
+
+
 
     AddcartComponent,
     ShowcartComponent,
     UpdatecartComponent,
     CartDetailsComponent,
-   
+
     ProductDetailsComponent,
-  
+
     ShowproductComponent,
     AllProductsComponent,
     AllCartsComponent,
@@ -264,7 +260,7 @@ import { CertificateComponent } from './Front/GestionQuizz/quiz/certificate/cert
     DeleteParticipationEventsComponent,
 
     ShowPostsComponent,
-    AnalyticsDashboardComponent, 
+    AnalyticsDashboardComponent,
        //ImageCropperComponent,
 
     ShowEventsComponent,
@@ -273,16 +269,20 @@ import { CertificateComponent } from './Front/GestionQuizz/quiz/certificate/cert
     EventDetailsComponent,
     AllCartProductsComponent,
     CartProductsComponent,
-   
-   
+
+
     PostDetailsComponent,
 
     SuccessComponent,
     DetailsFormationBackComponent,
     ParticipantsListComponent,
-    ApprooveCourseComponent,
-    CertificateComponent,
 
+    ApprooveCourseComponent,
+    ContentListComponent,
+    AddContentComponent,
+    EditContentComponent,
+    ListContentStudentComponent,
+    CertificateComponent,
   ],
   imports: [
     BrowserModule,
@@ -291,7 +291,7 @@ import { CertificateComponent } from './Front/GestionQuizz/quiz/certificate/cert
     RouterModule,
     FormsModule,
     ReactiveFormsModule,
-    
+
     CommonModule,
     HttpClientModule,
     AngularToastifyModule,
@@ -309,16 +309,27 @@ import { CertificateComponent } from './Front/GestionQuizz/quiz/certificate/cert
     MatNativeDateModule,
     MatSnackBarModule,
 
-    BrowserAnimationsModule,
-    MatDialogModule,
 
-   
-  
+
+
+
 
     NgChartsModule, // Add NgChartsModule
 
+
+
   ],
-  providers: [ToastService],
+
+
+  providers: [
+    ToastService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
+
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
