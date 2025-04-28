@@ -55,13 +55,8 @@ export class ProductService {
     return this.http.delete(`${this.url}/reject/${id}`, { responseType: 'text' });
   }
   
-  // updateProduct(id: number, data: FormData) {
-  //   return this.http.patch<Product>(`${this.url}/update/${id}`, data);
-  // }
+  getProductsByUser(userId: number): Observable<Product[]> {
+    return this.http.get<Product[]>(`${this.url}/user/${userId}/products`);
+  }
   
-
-  /*addProductReview(productId: number, review: ReviewProduct): Observable<ReviewProduct> {
-    return this.http.post<ReviewProduct>(`${this.url}/${productId}/reviews`, review);
-  }*/
-
 }

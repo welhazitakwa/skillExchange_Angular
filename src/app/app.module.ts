@@ -167,6 +167,7 @@ import { AllbadgesComponent } from './Back/GestionUser/Badge/allbadges/allbadges
 
 import { CertificateComponent } from './Front/GestionQuizz/quiz/certificate/certificate.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { UserProductSpaceComponent } from './Front/GestionProduit/user-product-space/user-product-space.component';
 
 
 
@@ -283,6 +284,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     EditContentComponent,
     ListContentStudentComponent,
     CertificateComponent,
+    UserProductSpaceComponent,
   ],
   imports: [
     BrowserModule,
