@@ -38,11 +38,12 @@
     </div>
 
     <div class="mb-3">
-      <label class="form-label">Place</label>
-      <input type="text" class="form-control" formControlName="place" />
+      <label class="form-label">Location</label>
+      <input #searchInput type="text" class="form-control" formControlName="place" placeholder="Search for a place or address" />
       <div *ngIf="eventForm.get('place')?.invalid && eventForm.get('place')?.touched" class="text-danger">
         Place is required (min 3 characters).
       </div>
+      <div #map style="height: 300px; width: 100%; margin-top: 10px;"></div>
     </div>
 
     <div class="mb-3">
@@ -57,8 +58,16 @@
       <label class="form-label">Event Images</label>
       <input type="file" class="form-control" multiple accept="image/*" (change)="onFileChange($event)" />
       <div *ngIf="imageError" class="text-danger">{{ imageError }}</div>
-      
-      <!-- Display existing images -->
+
+      <!-- Bouton de génération d'image -->
+      <div class="mt-3">
+        <button type="button" class="btn btn-outline-primary" (click)="generateImage()" [disabled]="isGeneratingImage || !eventForm.get('description')?.value">
+          <span *ngIf="isGeneratingImage" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          {{ isGeneratingImage ? ' Generating...' : 'Generate Image with AI' }}
+        </button>
+      </div>
+
+      <!-- Affichage des images existantes -->
       <div *ngIf="existingImages.length" class="mt-2">
         <h6>Existing Images</h6>
         <div class="d-flex flex-wrap gap-2">
@@ -68,8 +77,8 @@
           </div>
         </div>
       </div>
-      
-      <!-- Display new image previews -->
+
+      <!-- Affichage des nouvelles images -->
       <div *ngIf="imagePreviews.length" class="mt-2">
         <h6>New Images</h6>
         <div class="d-flex flex-wrap gap-2">
@@ -80,7 +89,7 @@
         </div>
       </div>
 
-      <!-- No images message -->
+      <!-- Message si aucune image -->
       <div *ngIf="!existingImages.length && !imagePreviews.length" class="mt-2 text-muted">
         No images selected.
       </div>
