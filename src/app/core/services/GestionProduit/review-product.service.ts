@@ -8,17 +8,20 @@ import { catchError, Observable, throwError } from 'rxjs';
 })
 export class ReviewProductService {
 
+
+  url = 'http://localhost:8084/skillExchange/reviewProduct';
+  reviews: ReviewProduct[] = [];
+  constructor(private http: HttpClient) { }
+   
    getReviewByProductID(productId: number): Observable<ReviewProduct[]> {
     return this.http.get<ReviewProduct[]>(`${this.url}/retrieve-reviews-by-product/${productId}`);
   }
 
- reviews: ReviewProduct[] = [];
-  url = 'http://localhost:8084/skillExchange/reviewProduct';
-   constructor(private http: HttpClient) { }
+ 
    getReview() : Observable<ReviewProduct[]> 
    {
     
-    return this.http.get<ReviewProduct[]>(this.url);
+    return this.http.get<ReviewProduct[]>("http://localhost:8084/skillExchange/reviewProduct/all-Reviews");
  }
  /*addReview(prod: ReviewProduct): Observable<ReviewProduct> {
   return this.http.post<ReviewProduct>(this.url+"/add-ReviewProduct", prod);

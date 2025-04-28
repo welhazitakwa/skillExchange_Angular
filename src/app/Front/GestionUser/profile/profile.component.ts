@@ -5,9 +5,11 @@ import { Badge } from 'src/app/core/models/GestionUser/Badge';
 import { Role } from 'src/app/core/models/GestionUser/Role';
 import { User } from 'src/app/core/models/GestionUser/User';
 import { UserStatus } from 'src/app/core/models/GestionUser/UserStatus';
+import { Events } from 'src/app/core/models/GestionEvents/events';
 import { AuthService } from 'src/app/core/services/Auth/auth.service';
 import { BadgeService } from 'src/app/core/services/GestionUser/badge.service';
 import { UserService } from 'src/app/core/services/GestionUser/user.service';
+import { ParticipationEventsService } from 'src/app/core/services/GestionEvents/participation-events.service';
 
 @Component({
   selector: 'app-profile',
@@ -18,6 +20,7 @@ export class ProfileComponent {
   currentUser: User | null = null;
   Role = Role;
   isLoadingBadges: boolean = true;
+  isLoadingEvents: boolean = false;
   badges = [
     {
       name: '',
@@ -26,6 +29,7 @@ export class ProfileComponent {
       earned: true,
     },
   ];
+  events: Events[] = [];
   currentPage: number = 1;
   itemsPerPage: number = 4;
   UserStatus = UserStatus;
@@ -63,11 +67,11 @@ export class ProfileComponent {
     private authService: AuthService,
     private userService: UserService,
     private badgeService: BadgeService,
+    private participationEventService: ParticipationEventsService,
     private router: Router
   ) {}
 
   private userRefreshSubscription!: Subscription;
-  
 
   ngOnInit(): void {
     this.LoadCurrentUser();
@@ -116,6 +120,7 @@ export class ProfileComponent {
         console.log(user);
         this.currentUser = user;
         this.LoadBadges();
+        this.loadUserEvents(); // Ajout pour charger les événements au démarrage
       },
       (error) => {
         console.error(error);
@@ -125,9 +130,31 @@ export class ProfileComponent {
 
   switchTab(tabId: string): void {
     this.activeTab = tabId;
+    if (tabId === 'events' && this.currentUser?.email) {
+      this.loadUserEvents();
+    }
   }
 
-  logout(): void {
+  private loadUserEvents(): void {
+    if (!this.currentUser?.email) {
+      console.warn('No user email available');
+      return;
+    }
+    this.isLoadingEvents = true;
+    this.participationEventService.getUserEventsByStatus(this.currentUser.email, 'GOING').subscribe(
+      (events: Events[]) => {
+        this.events = events;
+        this.isLoadingEvents = false;
+        console.log('Loaded events:', events);
+      },
+      (error: any) => {
+        console.error('Error loading events:', error);
+        this.isLoadingEvents = false;
+      }
+    );
+  }
+
+   logout(): void {
     this.authService.logout();
   }
 }
