@@ -55,6 +55,8 @@ export class AuthLoginComponent {
 
     let signIn: SignIn = { ...this.loginForm.value };
 
+    this.authService.logout();
+    
     this.authService.signin(signIn).subscribe(
       (response: any) => {
         console.log(response.token);
