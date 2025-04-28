@@ -174,7 +174,7 @@
         Description must be at least 20 characters long.
       </div>
       <div *ngIf="updateForm.get('description')?.errors?.['maxlength']">
-        Description cannot exceed 50 characters.
+        Description cannot exceed 300 characters.
       </div>
     </div>
   </div>
@@ -193,7 +193,7 @@
         Required skills must be at least 20 characters long.
       </div>
       <div *ngIf="updateForm.get('requiredSkills')?.errors?.['maxlength']">
-        Required skills cannot exceed 50 characters.
+        Required skills cannot exceed 300 characters.
       </div>
     </div>
   </div>

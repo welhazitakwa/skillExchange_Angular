@@ -26,12 +26,12 @@ export class EditCourseComponent {
     description: new FormControl('', [
       Validators.required,
       Validators.minLength(20),
-      Validators.maxLength(50),
+      Validators.maxLength(300),
     ]),
     requiredSkills: new FormControl('', [
       Validators.required,
       Validators.minLength(20),
-      Validators.maxLength(50),
+      Validators.maxLength(300),
     ]),
     image: new FormControl('', Validators.required),
     imageType: new FormControl(''),
