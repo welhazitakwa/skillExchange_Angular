@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 
@@ -23,10 +22,6 @@ import { HeaderFrontComponent } from './Front/header-front/header-front.componen
 import { AboutComponent } from './Front/about/about.component';
 import { BlogListComponent } from './Front/blog-list/blog-list.component';
 import { BlogDetailsComponent } from './Front/blog-details/blog-details.component';
-
-
-import { TeachersComponent } from './Front/teachers/teachers.component';
-
 
 
 import { CoursesComponent } from './Front/GestionFormations/Formation/courses/courses.component';
@@ -64,18 +59,13 @@ import { BalanceComponent } from './Front/GestionUser/balance/balance.component'
 import { SettingsComponent } from './Front/GestionUser/settings/settings.component';
 import { AllUsersComponent } from './Back/GestionUser/User/all-users/all-users.component';
 
-import { AllbadgesComponent } from './Back/GestionUser/Badge/allbadges/allbadges.component';
 
 
-import { CertificatComponent } from './Back/GestionQUIZZ/certificat/certificat.component';
-import { QuizComponent } from './Back/GestionQUIZZ/quiz/quiz.component';
-import { QuestionComponent } from './Back/GestionQUIZZ/question/question.component';
 
 
 
 import { ImageCropperComponent } from 'ngx-image-cropper';
 import { UserBackDetailsComponent } from './Back/GestionUser/User/user-back-details/user-back-details.component';
-import { AuthBanComponent } from './Auth/auth-ban/auth-ban.component';
 import { SignaturePadComponent } from './components/signature-pad/signature-pad.component';
 
 import { CategoriesComponent } from './Back/GestionFormation/Category/categories/categories.component';
@@ -131,7 +121,6 @@ import { EventImagesComponent } from './Back/GestionEvents/event-images/event-im
 import { CommonModule } from '@angular/common';
 import { EventDetailsComponent } from './Front/GestionEvents/event-details/event-details.component';
 import { FullCalendarModule } from '@fullcalendar/angular';
-import { ToastService, AngularToastifyModule } from 'angular-toastify';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 
@@ -141,16 +130,9 @@ import { MatInputModule } from '@angular/material/input';
 
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
-import { UpdateEventCommentComponent } from './Back/GestionEvents/EventComment/update-event-comment/update-event-comment.component';
-import { DeleteEventCommentComponent } from './Back/GestionEvents/EventComment/delete-event-comment/delete-event-comment.component';
-import { AllEventImageComponent } from './Back/GestionEvents/EventImage/all-event-image/all-event-image.component';
 import { TeachersComponent } from './Front/teachers/teachers.component';
-import { UpdateEventImageComponent } from './Back/GestionEvents/EventImage/update-event-image/update-event-image.component';
-import { CartProductsComponent } from './Front/GestionProduit/cart-products/cart-products.component';
 import { FrontQuizComponent } from './Front/GestionQuizz/quiz/quiz.component';
 
-import { AllCommentsComponent } from './Back/GestionForumPost/CommentPost/all-comments/all-comments.component';
-import { ShowPostsComponent } from './Front/GestionForumPost/Posts/show-posts/show-posts.component';
 import { PostDetailsComponent } from './Front/GestionForumPost/Posts/post-details/post-details.component';
 import { AnalyticsDashboardComponent } from './Back/GestionForumPost/analytics-dashboard/analytics-dashboard.component';
 
@@ -171,10 +153,10 @@ import { AuthInterceptor } from './core/interceptors/auth.interceptor'; // <-- a
 
 
 
-import { AllCartProductsComponent } from './Back/GestionProduit/CartProduct/all-cart-products/all-cart-products.component';
 import { AllbadgesComponent } from './Back/GestionUser/Badge/allbadges/allbadges.component';
 
 import { CertificateComponent } from './Front/GestionQuizz/quiz/certificate/certificate.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 
 
@@ -315,7 +297,6 @@ import { CertificateComponent } from './Front/GestionQuizz/quiz/certificate/cert
     MatSnackBarModule,
 
 
-    MatDialogModule,
 
 
 
