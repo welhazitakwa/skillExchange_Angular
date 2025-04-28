@@ -38,16 +38,22 @@
               {{ formation?.state === 0 ? 'private' : 'public' }}
             </span>
             </b>         
-          <div class="reviews">
-            <ul class="stars">
-              <li><i class="fa fa-star"></i></li>
-              <li><i class="fa fa-star"></i></li>
-              <li><i class="fa fa-star"></i></li>
-              <li><i class="fa fa-star"></i></li>
-              <li><i class="fa fa-star-o"></i></li>
-            </ul>
-            <span>(64 reviews)</span>
-          </div>
+         <div class="reviews">
+          <ul class="stars">
+            <ng-container *ngFor="let i of [1, 2, 3, 4, 5]">
+              <li>
+                <i
+                  class="fa"
+                  [ngClass]="{
+                    'fa-star': averageRating >= i,
+                    'fa-star-o': averageRating < i
+                  }"
+                ></i>
+              </li>
+            </ng-container>
+          </ul>
+          <span>{{ formatAverageRating(averageRating) }} {{ getEmoji(averageRating) }} ({{ ratingCount }} reviews)</span>
+        </div>
         </div>
       </div>
       <div class="card__footer">

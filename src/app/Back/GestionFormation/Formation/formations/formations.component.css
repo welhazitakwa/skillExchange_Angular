@@ -1,0 +1,63 @@
+/* Constrain chart size */
+canvas {
+  max-width: 90%; /* Slightly reduced to prevent overflow */
+  max-height: 360px; /* Doubled from 180px for all charts */
+  width: 100% !important; /* Ensure canvas fits container */
+  margin: 0 auto; /* Center all charts */
+}
+
+/* Specific styling for Pie and Doughnut charts */
+canvas.chart-pie,
+canvas.chart-doughnut {
+  max-height: 300px !important; /* Doubled from 140px for circular charts */
+  max-width: 300px !important; /* Constrain width to match height for circular shape */
+}
+
+/* Style for the select input */
+.input-group select.form-select {
+  border-radius: 0 4px 4px 0;
+  border: 1px solid #ced4da;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  height: 38px;
+}
+
+
+
+.input-group {
+  align-items: center;
+}
+
+/* Hover effect for select */
+.form-select:hover {
+  border-color: #3085d6;
+}
+
+/* Card styling */
+.card {
+  border-radius: 8px;
+  transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .input-group {
+    width: 100% !important;
+  }
+  
+  canvas {
+    max-height: 240px; /* Doubled from 120px for mobile */
+  }
+  canvas.chart-pie,
+  canvas.chart-doughnut {
+    max-height: 200px !important; /* Doubled from 100px for circular charts on mobile */
+    max-width: 200px !important; /* Constrain width on mobile */
+  }
+}

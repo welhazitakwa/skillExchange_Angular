@@ -148,6 +148,11 @@ import { DetailsFormationBackComponent } from './Back/GestionFormation/Formation
 import { ParticipantsListComponent } from './Back/GestionFormation/Formation/participants-list/participants-list.component';
 import { ApprooveCourseComponent } from './Back/GestionFormation/Formation/approove-course/approove-course.component';
 import { NgChartsModule } from 'ng2-charts';
+import { ContentListComponent } from './Front/GestionFormations/CourseContent/content-list/content-list.component';
+import { AddContentComponent } from './Front/GestionFormations/CourseContent/add-content/add-content.component';
+import { EditContentComponent } from './Front/GestionFormations/CourseContent/edit-content/edit-content.component';
+import { ListContentStudentComponent } from './Front/GestionFormations/Formation/list-content-student/list-content-student.component';
+
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor'; // <-- adapte le chemin si nécessaire
 
@@ -268,8 +273,11 @@ import { MatDialogModule } from '@angular/material/dialog';
     ParticipantsListComponent,
 
     ApprooveCourseComponent,
+    ContentListComponent,
+    AddContentComponent,
+    EditContentComponent,
+    ListContentStudentComponent,
     CertificateComponent,
-
   ],
   imports: [
     BrowserModule,
