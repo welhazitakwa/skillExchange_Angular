@@ -1,0 +1,147 @@
+/* Custom styles for the cards */
+.badge-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .badge-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+  }
+  
+  .image-preview {
+    width: 100%;
+    height: 120px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  
+  .no-image-placeholder {
+    width: 100%;
+    height: 120px;
+    background-color: #f8f9fa;
+  }
+  
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  /* Status badge colors */
+  .bg-warning {
+    background-color: #ffc107 !important;
+  }
+  .bg-success {
+    background-color: #28a745 !important;
+  }
+  .bg-danger {
+    background-color: #dc3545 !important;
+  }
+
+  .search-box {
+    transition: all 0.3s ease;
+  }
+  
+  .search-box .input-group-text {
+    background-color: #fff;
+    border-left: none;
+  }
+  
+  .search-box .form-control {
+    border-right: none;
+  }
+  
+  .search-box .form-control:focus {
+    box-shadow: none;
+    border-color: #ced4da;
+  }
+  
+  .search-box .form-control:focus + .input-group-text {
+    border-color: #ced4da;
+  }
+
+  .pagination {
+    .page-item {
+      margin: 0 2px;
+      
+      &.active .page-link {
+        background-color: #3b7ddd;
+        border-color: #3b7ddd;
+        color: white;
+      }
+  
+      .page-link {
+        border-radius: 4px;
+        min-width: 38px;
+        text-align: center;
+        color: #3b7ddd;
+        border: 1px solid #dee2e6;
+        transition: all 0.2s ease;
+  
+        &:hover {
+          background-color: #f8f9fa;
+        }
+      }
+    }
+  
+    .page-item.disabled .page-link {
+      color: #6c757d;
+      pointer-events: none;
+    }
+  }
+  
+  .items-per-page {
+    font-size: 0.9rem;
+    color: #6c757d;
+    
+    .form-select {
+      padding: 0.25rem 1.75rem 0.25rem 0.5rem;
+      font-size: 0.9rem;
+      border-color: #dee2e6;
+    }
+  }
+
+.ai-prediction-card {
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border-left: 4px solid #4b6cb7;
+  transition: transform 0.3s ease;
+}
+
+.ai-prediction-card:hover {
+  transform: translateY(-2px);
+}
+
+.bg-primary-striped {
+  background-color: #4b6cb7;
+  background-image: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
+  );
+  background-size: 1rem 1rem;
+  animation: progress-stripes 1s linear infinite;
+}
+
+@keyframes progress-stripes {
+  0% { background-position-x: 1rem; }
+}
+
+.prediction-item {
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.prediction-item:hover {
+  background-color: rgba(75, 108, 183, 0.05);
+}
