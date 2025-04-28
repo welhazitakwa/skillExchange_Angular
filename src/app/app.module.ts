@@ -2,11 +2,14 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
+
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 
 import { AngularToastifyModule, ToastService } from 'angular-toastify';
 //import { MatPaginatorModule } from '@angular/material/paginator'; // 👈 Ajouté pour le paginator
+
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -118,7 +121,9 @@ import { ShowEventsComponent } from './Front/GestionEvents/Events/show-events/sh
 import { AddEventModalComponent } from './Back/GestionEvents/Events/add-event-modal/add-event-modal.component';
 
 import { EventImagesComponent } from './Back/GestionEvents/event-images/event-images.component';
+
 import { CommonModule } from '@angular/common';
+
 import { EventDetailsComponent } from './Front/GestionEvents/event-details/event-details.component';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { MatDatepickerModule } from '@angular/material/datepicker';
