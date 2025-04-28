@@ -8,6 +8,7 @@ import { UserService } from 'src/app/core/services/GestionUser/user.service';
 import { AuthService } from 'src/app/core/services/Auth/auth.service';
 import { Router } from '@angular/router';
 import { EmojiTypeMapping } from 'src/app/core/models/GestionForumPost/EmojiType';
+import { MixPanelService } from 'src/app/core/services/GestionForumPost/mix-panel.service';
 
 @Component({
   selector: 'app-show-posts',
@@ -32,7 +33,7 @@ export class ShowPostsComponent implements OnInit {
   imagesPreviews: any[] = [];  // ✅ Typé correctement comme tableau
 
   constructor(private postService: PostService,  private router: Router, private authService: AuthService,
-    private userService: UserService) {}
+    private userService: UserService, private mixPanelService: MixPanelService ) {}
 
   ngOnInit(): void {
     this.loadPosts();
@@ -106,6 +107,11 @@ export class ShowPostsComponent implements OnInit {
         this.newPost.user = this.currentUser;
   
         this.postService.addPost(this.newPost).subscribe(() => {
+          this.mixPanelService.trackEvent('Ajout de Post', {
+            title: this.newPost.title,
+            userEmail: this.currentUser?.email,
+            date: new Date().toISOString()
+          });
           alert('✅ Votre post a été soumis et sera visible après validation par un administrateur.');
           this.showPostModalOpen = false;
           this.newPost = new Posts();

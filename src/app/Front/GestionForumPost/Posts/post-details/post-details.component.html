@@ -293,15 +293,36 @@
                     </div>
                 </div>
 
-                <!-- Zone de texte pour le commentaire -->
-                <div class="form-floating mb-3">
-                    <textarea [(ngModel)]="newComment.content" class="form-control" 
-                              placeholder="Write your comment here..." 
-                              id="commentTextarea" rows="5"
-                              (input)="onInputChange($event)"
-                              style="min-height: 120px; resize: vertical;"></textarea>
-                    <label for="commentTextarea">Your comment</label>
-                </div>
+     <!-- Zone de texte pour le commentaire -->
+<div class="form-floating mb-3">
+  <textarea [(ngModel)]="newComment.content" 
+            class="form-control" 
+            placeholder="Write your comment here..." 
+            id="commentTextarea" 
+            rows="5" 
+            (input)="onInputChange($event)" 
+            style="min-height: 120px; resize: vertical;" 
+            [readonly]="generatedComment && !newComment.content"></textarea>
+  <label for="commentTextarea">Your comment</label>
+</div>
+
+<!-- Afficher la suggestion si aucun texte n'est écrit et si le commentaire est généré -->
+<div *ngIf="generatedComment && !newComment.content" class="alert alert-info mt-3">
+  <strong>Suggested comment:</strong> {{ generatedComment }}
+</div>
+
+<!-- Option pour insérer automatiquement la suggestion dans le champ -->
+<button *ngIf="generatedComment && !newComment.content" 
+        class="btn btn-info mt-2" 
+        (click)="insertGeneratedComment()">
+  Insert suggested comment
+</button>
+
+
+
+
+
+
 
                 <!-- Liste des utilisateurs filtrés -->
                 <div *ngIf="filteredUsers.length > 0" class="mention-dropdown">

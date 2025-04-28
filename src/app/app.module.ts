@@ -85,6 +85,7 @@ import { DeleteParticipationEventsComponent } from './Back/GestionEvents/Partici
 import { ImageCropperComponent } from 'ngx-image-cropper';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { PostDetailsComponent } from './Front/GestionForumPost/Posts/post-details/post-details.component';
+import { AnalyticsDashboardComponent } from './Back/GestionForumPost/analytics-dashboard/analytics-dashboard.component';
 
 
 
@@ -155,7 +156,8 @@ import { PostDetailsComponent } from './Front/GestionForumPost/Posts/post-detail
     AllParticipationEventsComponent,
     UpdateParticipationEventsComponent,
     DeleteParticipationEventsComponent,
-    ShowPostsComponent, 
+    ShowPostsComponent,
+    AnalyticsDashboardComponent, 
        //ImageCropperComponent,
   ],
   imports: [

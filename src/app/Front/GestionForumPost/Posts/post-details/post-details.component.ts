@@ -15,6 +15,10 @@ import { PostService } from 'src/app/core/services/GestionForumPost/post.service
 import { UserService } from 'src/app/core/services/GestionUser/user.service';
 import { MailService } from 'src/app/core/services/Mailing/mail.service';
 import Swal from 'sweetalert2';
+import { MixPanelService } from 'src/app/core/services/GestionForumPost/mix-panel.service'; 
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+
 
 
 @Component({
@@ -39,6 +43,10 @@ export class PostDetailsComponent {
 
   showMenu: boolean = false;
   editImagesPreviews: any[] = [];
+  postContent: string = ''; // Le contenu du post
+  generatedComment: string = ''; // Le commentaire généré
+  newCommentText: string = '';
+  
 
 
 
@@ -52,7 +60,9 @@ export class PostDetailsComponent {
     private router: Router,
     private emojiCommentsService:EmojiCommentsService,
     private mailService: MailService,
-    private imagePostService: ImagePostService
+    private imagePostService: ImagePostService,
+    private mixPanelService: MixPanelService,
+    private http: HttpClient
 
   ) { }
 
@@ -64,6 +74,7 @@ export class PostDetailsComponent {
     this.loadEmojiCounts();
     this.loadEmojiCountsForComments();
     this.getAllUsers();
+    this.mixPanelService.trackPageView('Post Details');
     
     if (!this.post?.imagePost) {
       console.log('Le post ou imagePost est undefined');
@@ -77,22 +88,10 @@ export class PostDetailsComponent {
     }
 
     console.log('post et imagePost initialisés');
-    console.log("llliiissssssssstttttttttt : "+ this.currentImageIndexes)
+
     
 
   }
-
-  // currentImageIndex(post: Posts): number {
-  //   return post.idPost !== undefined ? this.currentImageIndexes[post.idPost] || 0 : 0;
-    
-  // }
-
-    
-  
-  // emojiCount(emoji: string): number {
-  //   if (!this.post?.emojiPosts) return 0;
-  //   return this.post.emojiPosts.filter(e => e.emoji === emoji).length;
-  // }
 
   getPostDetails(): void {
     this.postService.getPostByID(this.postId).subscribe(
@@ -107,17 +106,6 @@ export class PostDetailsComponent {
     );
   }
   
-  
-  //   getImageSrc(post?: Posts): string | null {
-  //     if (!post?.imagePost || post.imagePost.length === 0) {
-  //       return null;
-  //     }
-    
-  //     const index = this.currentImageIndex(post); // Ici post est garanti non undefined
-  //     const imageObj = post.imagePost[index];
-  //     return imageObj?.image ? 'data:image/jpeg;base64,' + imageObj.image : null;
-  //   }
-    
   private loadCurrentUser() {
     const currentUserEmail = this.authService.getCurrentUserEmail();
     if (!currentUserEmail) {
@@ -149,8 +137,6 @@ export class PostDetailsComponent {
     }
     return this.currentImageIndexes[post.idPost] || 0;
   }
-
-  
  // Fonction pour parser une chaîne de date
  getComments(): void {
   this.commentService.getCommentsByPost(this.postId).subscribe(
@@ -180,23 +166,9 @@ export class PostDetailsComponent {
   );
 }
 
-
-
-
-
 isValidDate(date: any): boolean {
   return date instanceof Date && !isNaN(date.getTime());
 }
-
-
-
-
-  
-  
-  
-  
-  
-
   loadUserDetails(): void {
     this.comments.forEach(comment => {
       if (comment.email && !this.usersMap[comment.email]) {
@@ -211,10 +183,6 @@ isValidDate(date: any): boolean {
       }
     });
   }
-
-
-  
-  
   notifyMentionedUsers(mentionedNames: string[]): void {
     mentionedNames.forEach(name => {
       this.userService.getUserByName(name).subscribe(user => {
@@ -245,13 +213,35 @@ isValidDate(date: any): boolean {
   // Fonction appelée lors de chaque saisie dans la zone de texte
  
   
+ 
+  
+   // Fonction appelée lorsque l'utilisateur sélectionne un utilisateur à mentionner
+   mentionUser(user: any): void {
+    const inputText = this.newComment.content || '';
+    const mentionMatch = inputText.match(/@(\w*)/);
+    if (mentionMatch) {
+      this.newComment.content = inputText.replace(mentionMatch[0], `@${user.name} `);
+    }
+
+    // Ajouter la classe selected pour marquer l'utilisateur sélectionné
+    this.filteredUsers.forEach(u => u.selected = false);  // Réinitialiser la sélection précédente
+    user.selected = true;  // Sélectionner l'utilisateur actuel
+
+    this.filteredUsers = []; // Vider la liste filtrée après la sélection
+}
+  // Méthode pour vérifier si un commentaire doit être généré
   onInputChange(event: any): void {
     const inputText = event.target.value;
-    console.log('Texte du commentaire:', inputText);  // Vérifier ce que l'utilisateur tape
+    console.log('Texte du commentaire:', inputText);
   
-    // Trouver la mention
+    // Vérifier si `newComment` et `newComment.content` existent avant de les utiliser
+    if ((this.newComment.content?.trim() ?? "") === "" && !this.generatedComment) {
+      this.generateComment();  // Générer un commentaire si le champ est vide et aucune suggestion n'a encore été faite
+    }
+  
+    // Trouver la mention @ dans le texte
     const mentionMatch = inputText.match(/@(\w*)/);
-    
+  
     if (mentionMatch && mentionMatch[1]) {
       const searchTerm = mentionMatch[1].toLowerCase();  // Prendre la première lettre
   
@@ -274,49 +264,84 @@ isValidDate(date: any): boolean {
     }
   }
   
-
-  
-  
-   // Fonction appelée lorsque l'utilisateur sélectionne un utilisateur à mentionner
-   mentionUser(user: any): void {
-    const inputText = this.newComment.content || '';
-    const mentionMatch = inputText.match(/@(\w*)/);
-    if (mentionMatch) {
-      this.newComment.content = inputText.replace(mentionMatch[0], `@${user.name} `);
+  // Méthode pour appeler l'API et générer un commentaire
+  generateComment(): void {
+    // Réinitialiser avant de commencer la génération du commentaire
+    this.generatedComment = '';  // Réinitialise pour effacer tout commentaire généré précédent
+    
+    if (!this.post?.content?.trim()) {
+      console.error('Le contenu du post est vide ou le post est non défini');
+      return;
     }
-
-    // Ajouter la classe selected pour marquer l'utilisateur sélectionné
-    this.filteredUsers.forEach(u => u.selected = false);  // Réinitialiser la sélection précédente
-    user.selected = true;  // Sélectionner l'utilisateur actuel
-
-    this.filteredUsers = []; // Vider la liste filtrée après la sélection
-}
-
   
+    if (this.post.idPost === undefined) {
+      console.error('L\'ID du post est manquant');
+      return;
+    }
+  
+    // Vérifier le contenu du post et l'ID
+    const payload = {
+      postContent: this.post.content,  // Assurez-vous que le contenu du post est bien disponible
+      postId: this.post.idPost         // L'ID du post à passer dans l'URL
+    };
+  
+    console.log('Payload envoyé:', payload);
+  
+    // Requête HTTP avec ajout du postId dans l'URL
+    const url = `http://localhost:8084/skillExchange/commentPosts/generateComment?postId=${this.post.idPost}`;
+  
+    this.http.post<any>(url, payload).subscribe(
+      (response) => {
+        if (response.generatedComment) {
+          this.generatedComment = response.generatedComment;
+          console.log('Commentaire généré:', this.generatedComment);
+        } else if (response.error) {
+          console.error('Erreur de génération de commentaire:', response.error);
+        } else {
+          console.error('Réponse inattendue:', response);
+        }
+      },
+      (error) => {
+        console.error('Erreur lors de la génération du commentaire:', error);
+        console.log('Détails de l\'erreur:', error.error);
+      }
+    );
+  }
+  
+  // Méthode pour insérer le commentaire généré dans le champ de texte si le champ est vide
+  insertGeneratedComment(): void {
+    if (this.generatedComment) {
+      this.newComment.content = this.generatedComment; // Insère le commentaire généré dans le champ de texte
+      this.generatedComment = ''; // Réinitialiser après insertion
+    }
+  }
+  
+  // Méthode pour soumettre le commentaire
+  submitComment(): void {
+    console.log('Commentaire soumis:', this.newComment.content);
+  }
+  
+  
+  // Méthode pour ajouter un commentaire
   addComment(): void {
     if (this.currentUser && this.post) {
-      const content = this.newComment.content;
+      const content = this.newComment.content || this.generatedComment;  // Utiliser soit le contenu tapé, soit le contenu généré
       const mentionedNames = this.extractMentions(content ?? ''); // Gérer les mentions
   
-      // Créer un objet CommentPosts
       const commentToSend = new CommentPosts();
       commentToSend.content = content;
       commentToSend.email = this.currentUser.email;
-      commentToSend.post_id_post = this.post; // Assurer que le post est bien lié
+      commentToSend.post_id_post = this.post;  // Assurer que le post est bien lié
       commentToSend.email = this.currentUser.email; // Ajout de l'ID de l'utilisateur
   
-      // Appel à l'API pour ajouter le commentaire
       this.commentService.addComment(commentToSend, this.post.idPost!).subscribe(
         (response) => {
           console.log('Comment added successfully:', response);
-  
           // Réinitialiser le champ de texte du commentaire et fermer la fenêtre modale
           this.newComment.content = '';
           this.showCommentModalOpen = false;
-  
-          // Rafraîchir la liste des commentaires pour afficher le nouveau
+          // Rafraîchir la liste des commentaires
           this.getComments();
-  
           // Notifier les utilisateurs mentionnés
           this.notifyMentionedUsers(mentionedNames);
         },
@@ -329,6 +354,9 @@ isValidDate(date: any): boolean {
       alert('You must be logged in to comment.');
     }
   }
+  
+  
+  
   //
   extractMentions(content: string): string[] {
     const mentionRegex = /@(\w+)/g;
@@ -360,9 +388,6 @@ isValidDate(date: any): boolean {
       );
     }
   }
-
-  
-
   addPost(): void {
     if (this.currentUser) {
       const postToSend: Posts = new Posts();
@@ -447,7 +472,6 @@ async submitEditPost() {
     post: this.editingPost! // ← ici, le "!" règle l'erreur
   }));
   
-
   const postToUpdate = {
     ...this.editingPost,
     imagePost: [
@@ -472,10 +496,6 @@ this.editImagesPreviews = updatedPost.imagePost; // Très important !!
       }
     });
 }
-
-
-
-
 private resetEditForm(): void {
   this.editImagesPreviews = [];
   this.selectedFiles = [];
@@ -510,12 +530,6 @@ deletePost(id: number| undefined): void {
     });
   }
 }
-
-
-
-
-
-
 ////////////////Emojis/////////////////////////
 EmojiTypeMapping = EmojiTypeMapping;
   
@@ -554,9 +568,6 @@ emojis: EmojiType[] = [
     }
   }
   
-
-
-
 ////emoji+User///
 
 reactToPost(selectedEmoji: string): void {
@@ -584,6 +595,12 @@ reactToPost(selectedEmoji: string): void {
             console.log('Réaction supprimée');
             this.getPostDetails();
             this.loadEmojiCounts();
+            this.mixPanelService.trackEvent('Suppression Reaction Post', {
+              postId: postId,
+              userEmail: email,
+              emoji: mappedEmoji,
+              date: new Date().toISOString()
+            });
           },
           (error) => {
             console.error('Erreur suppression réaction :', error);
@@ -602,6 +619,12 @@ reactToPost(selectedEmoji: string): void {
             console.log('Réaction ajoutée');
             this.getPostDetails();
             this.loadEmojiCounts();
+            this.mixPanelService.trackEvent('Ajout Reaction Post', {
+              postId: postId,
+              userEmail: email,
+              emoji: mappedEmoji,
+              date: new Date().toISOString()
+            });
           },
           (error) => {
             console.error('Erreur ajout réaction :', error);
@@ -674,6 +697,12 @@ reactToComment(selectedEmoji: string, comment: CommentPosts): void {
             this.getComments();  // Recharger les commentaires
            
             this.loadEmojiCountsForComments();  // Mettre à jour les comptages d'emoji
+            this.mixPanelService.trackEvent('Suppression Reaction Comment', {
+              commentId: commentId,
+              userEmail: email,
+              emoji: mappedEmoji,
+              date: new Date().toISOString()
+            });
           },
           (error) => {
             console.error('Erreur suppression réaction :', error);
@@ -693,6 +722,12 @@ reactToComment(selectedEmoji: string, comment: CommentPosts): void {
             this.getComments();  // Recharger les commentaires
      
             this.loadEmojiCountsForComments();  // Mettre à jour les comptages d'emoji
+            this.mixPanelService.trackEvent('Ajout Reaction Comment', {
+              commentId: commentId,
+              userEmail: email,
+              emoji: mappedEmoji,
+              date: new Date().toISOString()
+            });
           },
           (error) => {
             console.error('Erreur ajout réaction :', error);
