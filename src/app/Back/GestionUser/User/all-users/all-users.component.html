@@ -222,8 +222,8 @@
                             [src]="
                               user.image
                                 ? 'data:image/*;base64,' + user.image
-                                : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
-                            "
+                                : 'https://api.dicebear.com/9.x/big-smile/svg?seed=' + user.name
+                                "
                             class="rounded-circle me-3"
                             width="40"
                             height="40"

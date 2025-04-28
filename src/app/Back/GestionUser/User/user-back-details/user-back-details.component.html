@@ -120,18 +120,20 @@
                   [src]="
                     user.image
                       ? 'data:image/*;base64,' + user.image
-                      : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
+                      : 'https://api.dicebear.com/9.x/big-smile/svg?seed=' +
+                        user?.name
                   "
                   class="rounded-circle mb-3"
                   width="150"
                   height="150"
                   alt="User avatar"
                 />
-                <div class="online-status"
-                     [class.online]="user.status === UserStatus.ONLINE"
-                     [class.away]="user.status === UserStatus.AWAY"
-                     [class.offline]="user.status === UserStatus.OFFLINE">
-                </div>
+                <div
+                  class="online-status"
+                  [class.online]="user.status === UserStatus.ONLINE"
+                  [class.away]="user.status === UserStatus.AWAY"
+                  [class.offline]="user.status === UserStatus.OFFLINE"
+                ></div>
               </div>
               <h4 class="fw-bold mb-1">
                 {{ user.name }}

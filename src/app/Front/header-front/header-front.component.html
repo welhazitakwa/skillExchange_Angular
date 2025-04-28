@@ -41,7 +41,9 @@
         <div class="collapse navbar-collapse" id="navbarCollapse">
           <div class="col-lg-2 d-none d-lg-block">
             <div class="text-decoration-none">
-              <h1 class="m-0"><span class="text-primary">Skill</span>Exchange</h1>
+              <h1 class="m-0">
+                <span class="text-primary">Skill</span>Exchange
+              </h1>
             </div>
           </div>
           <div class="navbar-nav py-0 col-lg-7">
@@ -71,7 +73,6 @@
               class="nav-item nav-link"
               >Events</a
             >
-            
 
             <a
               routerLink="/teachers"
@@ -80,11 +81,11 @@
               >Teachers</a
             >
             <a
-            routerLink="/products"
-            routerLinkActive="active"
-            class="nav-item nav-link"
-            >Products</a
-          >
+              routerLink="/products"
+              routerLinkActive="active"
+              class="nav-item nav-link"
+              >Products</a
+            >
             <div class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" data-toggle="dropdown"
                 >Posts</a
@@ -96,7 +97,6 @@
                   class="dropdown-item"
                   >Posts List</a
                 >
-               
               </div>
             </div>
             <a
@@ -105,8 +105,6 @@
               class="nav-item nav-link"
               >Contact</a
             >
-          
-            
           </div>
           <div *ngIf="currentUser" class="col-lg-3 user-menu-wrapper">
             <a
@@ -121,7 +119,8 @@
                   [src]="
                     currentUser.image
                       ? 'data:image/*;base64,' + currentUser.image
-                      : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
+                      : 'https://api.dicebear.com/9.x/big-smile/svg?seed=' +
+                        currentUser?.name
                   "
                   alt="user profile"
                   class="rounded-circle border border-white shadow-sm"
@@ -168,27 +167,26 @@
                 class="dropdown-item d-flex align-items-center py-2 px-3 hover-bg-neutral"
                 routerLink="/balance"
               >
-
-             
-              <a class="dropdown-item" routerLink="/back" *ngIf="this.isAdmin"
-                ><i data-feather="mail" class="svg-icon me-2 ms-1"></i>
-                Dashboard</a>
+                <a class="dropdown-item" routerLink="/back" *ngIf="this.isAdmin"
+                  ><i data-feather="mail" class="svg-icon me-2 ms-1"></i>
+                  Dashboard</a
+                >
 
                 <i class="fas fa-wallet me-3 text-success"></i>
                 <span>My Balance</span>
               </a>
 
-               <a  class="dropdown-item d-flex align-items-center py-2 px-3 hover-bg-neutral"
-               style="cursor: pointer;"   
-              (click)="getUserId(currentUser.id)"
-                ><i  class="fas fa-lightbulb me-3 text-warning"></i> 
-                My Space</a>
+              <a
+                class="dropdown-item d-flex align-items-center py-2 px-3 hover-bg-neutral"
+                style="cursor: pointer"
+                (click)="getUserId(currentUser.id)"
+                ><i class="fas fa-lightbulb me-3 text-warning"></i> My Space</a
+              >
               <div class="dropdown-divider mx-3 my-2"></div>
 
               <a
                 class="dropdown-item d-flex align-items-center py-2 px-3 hover-bg-neutral"
                 routerLink="/settings"
-
               >
                 <i class="fas fa-cog me-3 text-secondary"></i>
                 <span>Account Settings</span>
