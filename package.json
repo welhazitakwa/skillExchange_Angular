@@ -41,10 +41,7 @@
     "preact": "^10.23.2",
     "rxjs": "~7.8.0",
     "signature_pad": "^5.0.7",
-
     "skill-xchange": "file:",
-
-
     "sweetalert2": "^11.19.1",
     "tslib": "^2.3.0",
     "tsparticles": "^3.8.1",
