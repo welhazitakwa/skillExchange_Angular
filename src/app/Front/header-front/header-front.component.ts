@@ -49,4 +49,7 @@ export class HeaderFrontComponent implements OnInit {
   getUserId(id: number) {
     this.router.navigate(['/userCourseSpace'], { state: { userId: id } });
   }
+  goToMyProducts() {
+    this.router.navigate(['/my-products']);
+  }
 }
