@@ -40,9 +40,13 @@ export class ProductService {
     return this.http.get<Product>(`${this.url}/retrieve-products/${id}`);
   }
   updateProduct(prod: Product) {
-    return this.http.patch(this.url + "/modify-product/${id}" , prod);
-
+   // return this.http.patch(this.url + "/modify-product/${id}" , prod);
+  
+    return this.http.patch(`${this.url}/modify-product/${prod.idProduct}`, prod);
   }
+  
+
+  
   approveProduct(id: number): Observable<any> {
     return this.http.put(`${this.url}/approve/${id}`, null, { responseType: 'text' }); 
   }

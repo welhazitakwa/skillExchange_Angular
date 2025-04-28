@@ -369,6 +369,34 @@ private extractUniqueSellers(): void {
         }
       );
     }
+    //////////////////////////////////Product Details///////////////////////////////////////////////////
+    selectedProduct: Product | null = null;
+    isProductDetailModalOpen: boolean = false;
+
+    openProductDetail(product: Product): void {
+      this.selectedProduct = product;
+      this.isProductDetailModalOpen = true;
+    }
     
+    closeProductDetail(): void {
+      this.isProductDetailModalOpen = false;
+    }
+   currentImageIndex: number = 0;
+
+prevImage(): void {
+  if (this.selectedProduct && this.selectedProduct.imageProducts.length > 0) {
+    this.currentImageIndex =
+      (this.currentImageIndex - 1 + this.selectedProduct.imageProducts.length) %
+      this.selectedProduct.imageProducts.length;
+  }
+}
+
+nextImage(): void {
+  if (this.selectedProduct && this.selectedProduct.imageProducts.length > 0) {
+    this.currentImageIndex =
+      (this.currentImageIndex + 1) % this.selectedProduct.imageProducts.length;
+  }
+}
+ 
     
 }

@@ -32,10 +32,13 @@ listCartProducts: CartProducts[] = [];
       return this.http.post<CartProducts>(`${this.url}/add-to-user-cart?userId=${userId}&productId=${productId}&quantity=${quantity}`, null);
     }
   
+    // validateCart(cartId: number): Observable<any> {
+    //   return this.http.post(`${this.url}/validate-cart`, { cartId });
+    // }
     validateCart(cartId: number): Observable<any> {
-      return this.http.post(`${this.url}/validate-cart`, { cartId });
+      return this.http.post(`${this.url}/validate-cart?cartId=${cartId}`, null, { responseType: 'text' });
     }
- 
+    
    // Récupérer un produit spécifique du panier par ID
   getCartProductById(cartPId: number): Observable<CartProducts> {
     return this.http.get<CartProducts>(`${this.url}/${cartPId}`);

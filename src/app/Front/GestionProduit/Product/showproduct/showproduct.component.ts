@@ -12,9 +12,10 @@ import { AuthService } from 'src/app/core/services/Auth/auth.service';
 import { UserService } from 'src/app/core/services/GestionUser/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ImageProduct } from 'src/app/core/models/GestionProduit/image-product';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { ImageProductService } from 'src/app/core/services/GestionProduit/image-product.service';
+import { AiProductService } from 'src/app/core/services/GestionProduit/ProductIA/ai-product.service';
 @Component({
   selector: 'app-showproduct',
   templateUrl: './showproduct.component.html',
@@ -40,10 +41,24 @@ selectedType: string = '';
   currentImageIndex: any;
   editImagesPreviews: any;
  
+  addProductForm: FormGroup;
  
   constructor(private router: Router, private authService: AuthService,
     private userService: UserService,
-    private route: ActivatedRoute, private productService: ProductService, private cartProductService: CartProductService, private cartService: CartService,private imageProductService:ImageProductService) { }
+    private route: ActivatedRoute, private productService: ProductService, 
+    private cartProductService: CartProductService, private cartService: CartService,
+    private imageProductService:ImageProductService,
+    private aiProductService: AiProductService, private fb: FormBuilder
+  ) { 
+    this.addProductForm = this.fb.group({
+      productName: ['', [Validators.required, Validators.maxLength(50)]],
+      type: ['', Validators.required],
+      price: [null, [Validators.required, Validators.min(0)]],
+      currencyType: ['TND', Validators.required],
+      stock: [null, [Validators.required, Validators.min(0)]],
+      images: [null]  // on ne mettra pas Validators ici pour images
+    });
+  }
     
    
   ngOnInit() {
@@ -66,6 +81,9 @@ selectedType: string = '';
     } else {
       this.filteredProducts = this.products.filter(p => p.type === this.selectedType);
     }
+    this.currentPage = 1;
+this.updatePagination();
+
   }
 
   private loadProducts(){
@@ -384,31 +402,84 @@ imagesToDelete: number[] = []; // celles à supprimer
 
   
 showModalProductAdd = false;
-  async submitNewProduct() {
+  // async submitNewProduct() {
+  
     
-    if (!this.currentUser) {
-      alert('Vous devez être connecté');
+  //   if (!this.currentUser) {
+  //     alert('Vous devez être connecté');
+  //     return;
+  //   }
+  
+  //   try {
+  //     // Conversion des images
+  //     const imageProducts = await Promise.all(
+  //       this.selectedFiles.map(async file => ({
+  //         image: await this.getBase64WithoutPrefix(file),
+  //         // Ne pas inclure la référence au produit ici
+  //       }))
+  //     );
+     
+  //     // Construction de l'objet produit
+  //     const productToSend = {
+  //       ...this.newProduct,
+  //       postedBy: { id: this.currentUser.id }, 
+  //       imageProducts:imageProducts,
+  //       currencyType: this.newProduct.currencyType || 'TND'
+  //     };
+  
+  
+  //     this.productService.addProduct(productToSend as Product).subscribe({
+  //       next: () => {
+  //         Swal.fire({
+  //           icon: 'success',
+  //           title: 'Product added!',
+  //           showConfirmButton: false,
+  //           timer: 1500
+  //         });
+          
+  //         this.showModalProductAdd = false;
+  //       },
+  //       error: (err) => {
+  //         console.error('Erreur complète:', err);
+  //         alert(`Erreur: ${err.error?.message || 'Voir la console'}`);
+  //       }
+  //     });
+  
+  //   } catch (error) {
+  //     console.error('Erreur de conversion:', error);
+  //     alert('Erreur de traitement des images');
+  //   }
+  // }
+  async submitNewProduct() {
+    if (this.addProductForm.invalid) {
+      this.addProductForm.markAllAsTouched();
       return;
     }
-  
+
+    if (!this.currentUser) {
+      alert('You must be connected');
+      return;
+    }
+
     try {
-      // Conversion des images
+      const formValues = this.addProductForm.value;
+
       const imageProducts = await Promise.all(
         this.selectedFiles.map(async file => ({
           image: await this.getBase64WithoutPrefix(file),
-          // Ne pas inclure la référence au produit ici
         }))
       );
-     
-      // Construction de l'objet produit
+
       const productToSend = {
-        ...this.newProduct,
-        postedBy: { id: this.currentUser.id }, 
-        imageProducts:imageProducts,
-        currencyType: this.newProduct.currencyType || 'TND'
+        productName: formValues.productName,
+        type: formValues.type,
+        price: formValues.price,
+        currencyType: formValues.currencyType,
+        stock: formValues.stock,
+        postedBy: { id: this.currentUser.id },
+        imageProducts: imageProducts
       };
-  
-  
+
       this.productService.addProduct(productToSend as Product).subscribe({
         next: () => {
           Swal.fire({
@@ -417,20 +488,20 @@ showModalProductAdd = false;
             showConfirmButton: false,
             timer: 1500
           });
-          
           this.showModalProductAdd = false;
         },
         error: (err) => {
           console.error('Erreur complète:', err);
-          alert(`Erreur: ${err.error?.message || 'Voir la console'}`);
+          alert(`Erreur: ${err.error?.message || 'See console'}`);
         }
       });
-  
+
     } catch (error) {
-      console.error('Erreur de conversion:', error);
+      console.error('Erreur de traitement des images:', error);
       alert('Erreur de traitement des images');
     }
   }
+
   private async getBase64WithoutPrefix(file: File): Promise<string> {
     return new Promise((resolve) => {
       const reader = new FileReader();
@@ -539,6 +610,20 @@ showModalProductAdd = false;
 //fonctionnel
 submitEditProduct() {
   if (!this.editingProduct) return;
+  if (
+    !this.editingProduct.productName?.trim() ||
+    !this.editingProduct.type?.trim() ||
+    !this.editingProduct.currencyType?.trim() ||
+    this.editingProduct.price == null || this.editingProduct.price <= 0 ||
+    this.editingProduct.stock == null || this.editingProduct.stock < 0
+  ) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Incomplete Form',
+      text: 'Please fill all the fields correctly before saving!'
+    });
+    return;
+  }
 
   const newImages = this.selectedImages.map(base64 => ({
     image: base64
@@ -551,6 +636,7 @@ submitEditProduct() {
     this.imagesToDelete.forEach(id => {
       this.imageProductService.deleteImageProduct(id).subscribe({
         next: () => console.log(`🗑️ Image ${id} supprimée côté serveur.`),
+        
         error: err => console.error('❌ Échec suppression image:', err)
       });
     });
@@ -569,13 +655,18 @@ submitEditProduct() {
     },
     error: (error) => {
       console.error('❌ Erreur lors de la mise à jour du produit', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Update Failed',
+        text: 'Something went wrong while updating.'
+      });
     }
   });
 }
 
  
   private afterProductUpdate() {
-    this.loadProducts(); // ou refresh
+    this.loadProducts(); 
     this.resetEditForm();
     this.showModalProduct = false;
     this.imagesToDelete = [];
@@ -607,29 +698,148 @@ submitEditProduct() {
       );
     }
   }
-  // Méthode pour réinitialiser le formulaire
+
   resetForm(): void {
     this.newProduct = new Product();
     this.selectedFiles = [];
     this.imagesPreviews = [];
-    // Réinitialiser aussi l'input file
+    
     const fileInput = document.querySelector('#fileInput') as HTMLInputElement;
     if (fileInput) fileInput.value = '';
   }
-  // Ajoutez cette propriété
+  
 isSubmitting: boolean = false;
 
-
 newImages: { url: string, file: File | null }[] = [];
-
-
-
-
 
 private resetEditForm(): void {
   this.editImagesPreviews = [];
   this.selectedFiles = [];
   this.imagesToDelete = [];
+}
+/////////////////////////////////////////////IA////////////////////////////////////////////////////////
+isAnalyzing: boolean = false;
+suggestedLabels: string[] = [];
+
+async analyzeImages() {
+  if (this.selectedFiles.length === 0) {
+    alert('Please select at least one image.');
+    return;
+  }
+
+  this.isAnalyzing = true;
+
+  try {
+    const response: any = await this.aiProductService.analyzeProduct(this.selectedFiles).toPromise();
+
+    this.suggestedLabels = response.productLabels || [];
+
+    this.newProduct.productName = response.productName;
+    this.newProduct.type = response.type;
+    this.newProduct.price = response.price;
+    this.newProduct.currencyType = response.currencyType;
+    this.newProduct.stock = response.stock;
+    
+
+    console.log('✅ Analyse IA réussie');
+  } catch (error) {
+    console.error('❌ Erreur analyse IA:', error);
+  } finally {
+    this.isAnalyzing = false;
+  }
+}
+
+onLabelChange(event: any) {
+  const selectedLabel = event.target.value;
+  
+ 
+  this.newProduct.productName = selectedLabel;
+  this.addProductForm.get('productName')?.setValue(selectedLabel);
+
+  const labelLower = selectedLabel.toLowerCase();
+
+  if (labelLower.includes('phone') || labelLower.includes('laptop') || labelLower.includes('tablet') || labelLower.includes('tv') || labelLower.includes('camera')) {
+   
+    this.newProduct.type = "PHYSICAL";
+    this.newProduct.price = 1000;
+    this.newProduct.currencyType = "TND";
+    this.addProductForm.get('type')?.setValue('PHYSICAL');
+    this.addProductForm.get('price')?.setValue(1000);
+    this.addProductForm.get('currencyType')?.setValue('TND');
+  } else if (labelLower.includes('software') || labelLower.includes('application') || labelLower.includes('program') || labelLower.includes('app') || labelLower.includes('ebook') || labelLower.includes('music') || labelLower.includes('game')) {
+    // Produit digital
+    this.newProduct.type = "DIGITAL";
+    this.newProduct.price = 50;
+    this.newProduct.currencyType = "TOKENS";  // 🟰 Vendre en TOKENS
+
+
+    this.addProductForm.get('type')?.setValue('DIGITAL');
+    this.addProductForm.get('price')?.setValue(50);
+    this.addProductForm.get('currencyType')?.setValue('TOKENS');
+  } else {
+    // Produit générique ➔ physique par défaut
+    this.newProduct.type = "PHYSICAL";
+    this.newProduct.price = 100;
+    this.newProduct.currencyType = "TND";
+    this.addProductForm.get('type')?.setValue('PHYSICAL');
+    this.addProductForm.get('price')?.setValue(100);
+    this.addProductForm.get('currencyType')?.setValue('TND');
+  }
+}
+
+//////////////////////////////Pagination/////////////////////////////////////////////////
+currentPage: number = 1;
+pageSize: number = 6;
+totalPages: number = 1;
+updatePagination(): void {
+  this.totalPages = Math.ceil(this.filteredProducts.length / this.pageSize);
+  this.currentPage = Math.min(this.currentPage, this.totalPages) || 1;
+}
+
+get paginatedProducts(): any[] {
+  const start = (this.currentPage - 1) * this.pageSize;
+  const end = start + this.pageSize;
+  return this.filteredProducts.slice(start, end);
+}
+
+prevPage(): void {
+  if (this.currentPage > 1) {
+    this.currentPage--;
+  }
+}
+
+nextPage(): void {
+  if (this.currentPage < this.totalPages) {
+    this.currentPage++;
+  }
+}
+
+goToPage(page: number): void {
+  if (page >= 1 && page <= this.totalPages) {
+    this.currentPage = page;
+  }
+}
+
+get pageNumbers(): number[] {
+  const pages: number[] = [];
+  for (let i = 1; i <= this.totalPages; i++) {
+    pages.push(i);
+  }
+  return pages;
+}
+resetAddProductModal() {
+  // 🔥 Reset du FormGroup
+  this.addProductForm.reset();
+
+  // 🔥 Remettre l'objet newProduct à vide
+ // this.newProduct = {};
+
+  // 🔥 Vider les suggestions IA
+  this.suggestedLabels = [];
+
+  // 🔥 Vider les images uploadées
+  this.selectedFiles = [];
+  this.imagesPreviews = [];
 }
 
 
