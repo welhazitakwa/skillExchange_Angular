@@ -55,6 +55,9 @@ import { AddContentComponent } from './Front/GestionFormations/CourseContent/add
 import { ListContentStudentComponent } from './Front/GestionFormations/Formation/list-content-student/list-content-student.component';
 
 import { CertificateComponent } from './Front/GestionQuizz/quiz/certificate/certificate.component'; 
+import { AllReclamationsComponent } from './Back/GestionReclamation/Reclamation/all-reclamations/all-reclamations.component';
+import { HelpComponent } from './Front/GestionReclamation/help/help.component';
+import { AllReclamationReplyComponent } from './Back/GestionReclamation/ReclamationReply/all-reclamation-reply/all-reclamation-reply.component';
 
 
 const routes: Routes = [
@@ -171,6 +174,10 @@ const routes: Routes = [
     path: 'posts/:id',
     component: PostDetailsComponent /*, canActivate: [UserGuard]*/,
   },
+  //Reclamation
+  { path: 'reclamationback', component: AllReclamationsComponent },
+  { path: 'help', component: HelpComponent },
+  { path: 'reclamationreplyback/:id', component: AllReclamationReplyComponent },
   { path: '**', redirectTo: '' },
 ];
 
