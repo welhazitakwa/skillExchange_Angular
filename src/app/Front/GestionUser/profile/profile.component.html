@@ -25,7 +25,6 @@
               class="profile-avatar"
               alt="Avatar"
             />
-
             <div
               class="online-status"
               [class.online]="currentUser?.status == UserStatus.ONLINE"
@@ -101,8 +100,6 @@
 <!-- Header End -->
 
 <!-- Profile Content -->
-
-<!-- Main Content -->
 <main class="profile-container">
   <!-- Left Column -->
   <div class="sidebar">
@@ -113,7 +110,6 @@
           <h4 class="text-primary">Balance</h4>
           <div class="display-4">🪙{{ currentUser!.balance }}</div>
         </div>
-
         <div class="user-info">
           <h5 class="mb-3">
             <i class="fas fa-envelope me-2"></i>{{ currentUser!.email }}
@@ -131,14 +127,12 @@
         </div>
       </div>
     </div>
-
     <div class="profile-card">
       <div class="d-flex flex-column">
         <div class="balance-display mb-4">
           <h4 class="text-primary">About Me</h4>
         </div>
       </div>
-
       <p class="bio" *ngIf="currentUser?.bio">{{ currentUser?.bio }}</p>
       <p class="bio" *ngIf="!currentUser?.bio">No bio available</p>
       <div class="user-stats">
@@ -148,7 +142,7 @@
         </div>
         <div class="stat-item">
           <i class="fas fa-calendar-check text-primary"></i>
-          <span>0 Events</span>
+          <span>{{ events.length }} Events</span> <!-- Modification ici -->
         </div>
         <div class="stat-item">
           <i class="fas fa-graduation-cap text-primary"></i>
@@ -163,7 +157,6 @@
     <!-- Achievements -->
     <div class="profile-card">
       <h4 class="section-title text-primary">Achievements</h4>
-
       <div *ngIf="isLoadingBadges" class="text-center py-4">
         <div class="spinner-border text-primary" role="status">
           <span class="visually-hidden">Loading...</span>
@@ -215,11 +208,9 @@
           >
             Previous
           </button>
-
           <span class="text-muted">
             Page {{ currentPage }} of {{ totalPages }}
           </span>
-
           <button
             class="btn btn-outline-primary"
             (click)="nextPage()"
@@ -236,7 +227,7 @@
       <button
         *ngFor="let tab of tabs"
         [class.active]="activeTab === tab.id"
-        (click)="activeTab = tab.id"
+        (click)="switchTab(tab.id)"
       >
         {{ tab.label }}
       </button>
@@ -262,14 +253,23 @@
 
       <!-- Events -->
       <div *ngIf="activeTab === 'events'" class="posts-grid">
-        <div class="post-card">
+        <div *ngIf="isLoadingEvents" class="text-center py-4">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <p class="text-muted mt-2">Loading events...</p>
+        </div>
+        <div *ngIf="!isLoadingEvents && events.length === 0" class="text-center py-4">
+          <p class="text-muted">You are not participating in any events yet.</p>
+        </div>
+        <div *ngFor="let event of events" class="post-card event-card">
           <div class="event-date">
-            <div class="event-day">date</div>
+            <div class="event-day">{{ event.startDate | date: 'dd MMM yyyy' }}</div>
           </div>
           <div class="event-info">
-            <h5>title</h5>
-            <p><i class="fas fa-map-marker-alt"></i> location</p>
-            <div class="event-status" [class.ongoing]="true">going</div>
+            <h5>{{ event.eventName }}</h5>
+            <p><i class="fas fa-map-marker-alt me-2"></i>{{ event.place || 'No location' }}</p>
+            <div class="event-status ongoing">Going</div>
           </div>
         </div>
       </div>

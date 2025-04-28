@@ -8,6 +8,9 @@ import { MatDialog } from '@angular/material/dialog';
 import Swal from 'sweetalert2';
 import { EditCourseComponent } from '../edit-course/edit-course.component';
 import { DetailsFormationComponent } from '../details-formation/details-formation.component';
+import { ParticipationFormation } from 'src/app/core/models/GestionFormation/participation-formation';
+import { ParticipationFormationService } from 'src/app/core/services/GestionFormation/participation-formation.service';
+import { RatingCourseService } from 'src/app/core/services/GestionFormation/rating-course.service';
 
 @Component({
   selector: 'app-user-course-space',
@@ -19,11 +22,19 @@ export class UserCourseSpaceComponent {
   // formationCardBodyRef!: ElementRef<HTMLInputElement>;
   searchText: string = '';
   filteredFormations: Formation[] = [];
+  totalProgress: number = 0; // total inscriptions
+  listParticipation: ParticipationFormation[] = [];
+  totalParticipantsMap: { [courseId: number]: number } = {};
+  ratingMap: { [courseId: number]: number } = {}; // Store ratings for each course
+  averageRatingMap: { [courseId: number]: number } = {}; // Store average ratings
+  ratingCountMap: { [courseId: number]: number } = {}; // Store rating counts
+
   constructor(
-    private catServ: CategoryService,
     private formServ: FormationService,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private participationServ: ParticipationFormationService,
+    private ratingService: RatingCourseService // Add this
   ) {}
   userId!: number;
   listFormations: Formation[] = [];
@@ -42,6 +53,51 @@ export class UserCourseSpaceComponent {
       (data) => {
         this.listFormations = data;
         this.filteredFormations = data;
+
+        this.filteredFormations.forEach((f) => {
+          this.ratingService.getAverageRatingForCourse(f.id).subscribe(
+            (avg) => {
+              this.averageRatingMap[f.id] = Number(avg.toFixed(1)); // Round to 1 decimal place
+            },
+            (error) => {
+              console.error(
+                `Error fetching average rating for course ${f.id}:`,
+                error
+              );
+              this.averageRatingMap[f.id] = 0;
+            }
+          );
+
+          // Fetch rating count
+          this.ratingService.getRatingCountForCourse(f.id).subscribe(
+            (count) => {
+              this.ratingCountMap[f.id] = count;
+            },
+            (error) => {
+              console.error(
+                `Error fetching rating count for course ${f.id}:`,
+                error
+              );
+              this.ratingCountMap[f.id] = 0;
+            }
+          );
+
+          this.participationServ.getParticipationsByIdCourse(f.id).subscribe(
+            (data) => {
+              this.listParticipation = data;
+              // Store the number of participation rows (students)
+              this.totalParticipantsMap[f.id] = this.listParticipation.length;
+            },
+            (erreur) => {
+              console.error(
+                `Error fetching participations for course ${f.id}:`,
+                erreur
+              );
+              this.totalParticipantsMap[f.id] = 0; // Fallback value
+            },
+            () => console.log(this.listParticipation)
+          );
+        });
       },
       (erreur) => console.log('erreur'),
       () => console.log(this.listFormations)
@@ -105,7 +161,7 @@ export class UserCourseSpaceComponent {
   openDetailsCourse(formId: number) {
     const dialogRef = this.dialog.open(DetailsFormationComponent, {
       data: { id: formId },
-      //width: '1000px', 
+      //width: '1000px',
     });
     dialogRef.afterClosed().subscribe({
       next: (val) => {
@@ -121,33 +177,32 @@ export class UserCourseSpaceComponent {
     const minutes = duration % 60; // Nombre de minutes restantes
     return `${hours}h ${minutes}min`;
   }
-  // filterTable(searchText: string) {
-  //   searchText = searchText.toLowerCase().trim();
-  //   const tableBody = this.formationCardBodyRef.nativeElement;
-
-  //   if (tableBody) {
-  //     const rows = tableBody.getElementsByTagName('tr');
-
-  //     for (let i = 0; i < rows.length; i++) {
-  //       const cells = rows[i].getElementsByTagName('td');
-  //       let showRow = false;
-
-  //       for (let j = 0; j < cells.length; j++) {
-  //         const cellContent = cells[j].textContent || cells[j].innerText;
-  //         if (cellContent.toLowerCase().indexOf(searchText) > -1) {
-  //           showRow = true;
-  //           break;
-  //         }
-  //       }
-
-  //       rows[i].style.display = showRow ? '' : 'none';
-  //     }
-  //   }
-  // }
   filterTable(search: string) {
     this.searchText = search.toLowerCase().trim();
     this.filteredFormations = this.listFormations.filter((f) =>
       (f.title + f.price + f.duration).toLowerCase().includes(this.searchText)
     );
+  }
+  AssignCourseToFormation(idFormation: number) {
+    this.router.navigate(['/ContentList'], {
+      state: { formationId: idFormation },
+    });
+  }
+
+  // Rating
+  getEmoji(value: number): string {
+    const emojis = ['😡', '😕', '😐', '🙂', '🤩'];
+    return emojis[value - 1] || '';
+  }
+  formatAverageRating(rating: number | undefined): string {
+    if (rating === undefined || rating === 0) {
+      return '0.00';
+    }
+    // Check if the rating is a whole number
+    if (Math.floor(rating) === rating) {
+      return rating.toString(); // No decimal for whole numbers (e.g., 3.0 -> '3')
+    }
+    // Show one decimal place for non-whole numbers (e.g., 2.5 -> '2.5')
+    return rating.toFixed(2);
   }
 }

@@ -27,4 +27,11 @@ export class CommentPostsService {
   deleteComment(commentId: number): Observable<void> {
     return this.http.delete<void>(`${this.url}/deleteComPosts/${commentId}`);
   }
+  generateComment(payload: { postContent: string; postId: number }): Observable<any> {
+    return this.http.post<any>('http://localhost:8084/skillExchange/commentPosts/generateComment', payload);
+  }
+  
+  
+  
+  
 }

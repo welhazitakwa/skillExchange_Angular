@@ -72,10 +72,17 @@ export class QuestionService {
     return this.http.get<Question[]>(`/api/ai/suggest-question${encodeURIComponent(title)}`);
   }
   getQuestionHint(questionId: number): Observable<{hint: string}> {
- 
-    return this.http.get<{hint: string}>(
-      `${this.apiUrl}/hint/${questionId}`  
-    );
-  }
-  
+  return this.http.get<{hint: string}>(`${this.apiUrl}/hint/${questionId}`);
+}
+generateOptions(questionText: string, correctAnswer: string): Observable<any> {
+  return this.http.post<any>(`${this.apiUrl}/generate-options`, {
+    question: questionText,
+    correctAnswer: correctAnswer
+  }).pipe(
+    catchError((error) => {
+      console.error('Error generating options:', error);
+      return throwError(() => new Error('Failed to generate options'));
+    })
+  );
+}
 }

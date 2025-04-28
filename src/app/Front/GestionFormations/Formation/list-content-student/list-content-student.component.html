@@ -1,0 +1,134 @@
+<app-header-front></app-header-front>
+<br><br>
+<div *ngIf="isLoading" style="text-align: center; padding: 50px;">
+  <h2>Loading content...</h2>
+</div>
+<div class="course-generator">
+<!-- Show loading state while data is being fetched -->
+<div *ngIf="isLoading" style="text-align: center; padding: 50px;">
+  <h2>Loading content...</h2>
+</div>
+<button
+  mat-raised-button
+  class="btn btn-primary"
+  style="margin-left: 1200px; height: 50px; width: 220px;"
+  (click)="generateCourse()" [disabled]="loading"
+>
+  Generate Course with AI
+</button>
+<div *ngIf="loading">
+    <p>Chargement...</p>
+  </div>
+
+  <div *ngIf="generatedContent" class="generated-content" style="margin: 30px;">
+    <h3>Contenu généré :</h3>
+    <div [innerHTML]="formatContent(generatedContent)"></div>
+  </div>
+</div>
+
+<!-- Render content only when not loading -->
+<div class="container" *ngIf="!isLoading && listcourseContents.length > 0">
+  <!-- Main Video -->
+  <div class="main-video-container">
+    <iframe
+      *ngIf="sanitizedUrl"
+      class="list-video"
+      type="text/html"
+      width="750"
+      height="405"
+      [src]="sanitizedUrl"
+      frameborder="0"
+      allowfullscreen
+    ></iframe>
+    <p *ngIf="!sanitizedUrl">Invalid or missing YouTube URL</p>
+    <h3 class="main-vid-title">{{ firstElement!.title || 'No title' }}</h3>
+    <span>{{ firstElement!.description || 'No description' }}</span>
+    <!-- ********************************************** -->
+     <button (click)="getVideoRecommendations(firstElement)" class="btn btn-danger" style="margin-left: 70%; height: 50px; width: 200px;" >Find other Videos</button>
+    <p *ngIf="loadingVideos[firstElement.id]" class="loading">Loading videos...</p>
+    <p *ngIf="videoRecommendations[firstElement.id]?.length === 0 && !loadingVideos[firstElement.id]" class="no-results">No videos found for this topic.</p>
+    <div class="video-recommendations" *ngIf="videoRecommendations[firstElement.id]?.length">
+      <div class="video" *ngFor="let video of videoRecommendations[firstElement.id]">
+        <img [src]="video.thumbnailUrl || 'https://via.placeholder.com/120x90'" alt="{{ video.title }}" class="video-thumbnail">
+        <p><a [href]="video.videoUrl" target="_blank">{{ video.title }}</a> by {{ video.channel }}</p>
+      </div>
+    </div>
+    <!-- ********************************************** -->
+  </div>
+
+  <!-- Video List -->
+  <div class="video-list-container">
+    <!-- First Element -->
+    <div
+      class="list"
+      [ngClass]="{ active: activeIndex === 0 }"
+      (click)="playVideo(0)"
+    >
+      <input
+        type="checkbox"
+        [checked]="isChecked(firstElement.id)"
+        (change)="onCheckboxChange($event, firstElement.id)"
+      />
+      <iframe
+        *ngIf="sanitizedUrl"
+        class="list-video"
+        type="text/html"
+        width="320"
+        height="50"
+        [src]="sanitizedUrl"
+        frameborder="0"
+        allowfullscreen
+      ></iframe>
+      <h3 class="list-title">{{ firstElement!.title || 'No title' }}</h3>
+     
+      
+    </div>
+
+    <!-- Second List -->
+    <div
+      class="list"
+      *ngFor="let c of secondList; let i = index"
+      [ngClass]="{ active: activeIndex === i + 1 }"
+      (click)="playVideo(i + 1)"
+    >
+      <input
+        type="checkbox"
+        [checked]="isChecked(c.id)"
+        (change)="onCheckboxChange($event, c.id)"
+      />
+      <iframe
+        *ngIf="c.sanitizedLnk"
+        class="list-video"
+        type="text/html"
+        width="320"
+        height="50"
+        [src]="c.sanitizedLnk"
+        frameborder="0"
+        allowfullscreen
+      ></iframe>
+      <h3 class="list-title">{{ c.title || 'No title' }}</h3>
+      
+      
+    </div>
+  </div>
+</div>
+
+<!-- Empty State -->
+<div
+  *ngIf="!isLoading && listcourseContents.length === 0"
+  style="
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 100vh;
+  "
+>
+  <h1>No Content For This Course</h1>
+  <img
+    src="https://i.pinimg.com/originals/5d/35/e3/5d35e39988e3a183bdc3a9d2570d20a9.gif"
+    height="400px"
+  />
+</div>
+<app-footer-front></app-footer-front>

@@ -17,6 +17,11 @@ export class UserService {
 
   constructor(private http: HttpClient) {}
 
+
+  getEveryoneUsers(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.url}/everyone`);
+  }
+
   getAllUsers(): Observable<any> {
     return this.http.get<User[]>(this.url, { headers: this.headers });
   }
@@ -33,6 +38,9 @@ export class UserService {
     return this.http.get<User>(`${this.url}/email/${email}`, {
       headers: this.headers,
     });
+  }
+  getUserByName(name: string): Observable<User> {
+    return this.http.get<User>(`${this.url}/name/${name}`);
   }
 
   getBannedUserByEmail(email: string): Observable<any> {

@@ -79,14 +79,14 @@
                       </td>
                       <td>
                         <span class="fw-semibold text-primary">
-                          {{c.created_at | date : 'short'}}
+                          {{c.createdAt | date : 'short'}}
                         </span>
                       </td>
                       <td class="fw-medium text-success">
-                         {{ c.updated_at | date : 'short'}}
+                         {{ c.updatedAt | date : 'short'}}
                       </td>
                       <td class="fw-medium text-success">
-                        {{ c.post_id_post.title }}
+                        {{ c.post_id_post?.title }}
                       </td>
                     </tr> 
                     <tr *ngIf="listComment.length === 0">

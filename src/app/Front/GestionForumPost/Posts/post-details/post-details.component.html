@@ -4,7 +4,7 @@
 <div class="container-fluid page-header" style="margin-bottom: 90px;">
     <div class="container">
         <div class="d-flex flex-column justify-content-center" style="min-height: 300px">
-            <h3 class="display-4 text-white text-uppercase">Post </h3>
+            <h3 class="display-4 text-white text-uppercase">Post</h3>
             <div class="d-inline-flex text-white">
                 <p class="m-0 text-uppercase"><a class="text-white" href="">Home</a></p>
                 <i class="fa fa-angle-double-right pt-1 px-3"></i>
@@ -15,22 +15,126 @@
 </div>
 <!-- Header End -->
 
+
 <!-- Detail Start -->
 <div class="container-fluid py-5">
     <div class="container py-5">
         <div class="row">
             <div class="col-lg-8">
                 <div class="mb-5">
+             
+                  
                     <!-- Affichage de la date du post -->
-                    <h6 class="text-primary mb-3">{{ post?.createdAt | date: 'MMM dd, yyyy' }}</h6>
+                    <h6 class="text-primary mb-3">{{ post?.createdAt | date: 'MMM dd, yyyy' }}
+                      <ng-container *ngIf="currentUser?.email === post?.user?.email; else notOwner">
+                        <div class="post-menu-container" style="margin-left: 700px; display: inline-block;">                          <button class="menu-icon-btn" (click)="toggleMenu()" aria-label="Afficher les options">
+                            ⋮
+                          </button>
+                      
+                          <div class="custom-menu" *ngIf="showMenu">
+                            <!--<button (click)="openEditPostModal()">✏️ Modifier</button>-->
+                            <button (click)="onEditPostClicked($event)">✏️ Modifier</button>
+
+                            <button (click)="deletePost(post?.idPost)" *ngIf="post?.idPost">🗑️ Supprimer</button>
+                          </div>
+                        </div>
+                      </ng-container>
+                      
+                      
+                      
+                      <ng-template #notOwner>
+                        <p>Non propriétaire du post</p> <!-- pour debug -->
+                      </ng-template>
+                    </h6>
+                             
+                   
                     <!-- Affichage du titre du post -->
                     <h1 class="mb-5">{{ post?.title }}</h1>
                     <!-- Affichage de l'image du post -->
-                    <img class="img-fluid rounded w-100 mb-4" src="assets/assetsFront/img/carousel-1.jpg" alt="Image">
-                    <!-- Affichage du contenu du post -->
-                    <p>{{ post?.content }}</p>
-                </div>
+                    
+                    
+                    
+                    
+                    
+                    
+                    <!-- <div *ngIf="post?.imagePost; else noImage">
+                        <img  [src]="getImageSrc(post)" class="img-fluid rounded w-100 mb-4" alt="Post image">
+                      </div> -->
+                     
+                     
+                     
+                     
+                     
+                     
+                     
 
+                   
+                      
+                      <div *ngIf="post?.imagePost && post?.imagePost!.length > 0; else noImage">
+                        <div class="row">
+                          <div class="col-md-4 mb-3" *ngFor="let image of post?.imagePost; let i = index">
+                            <!-- Afficher toutes les images -->
+                            <img [src]="'data:image/jpeg;base64,' + image.image"
+                                 class="img-fluid rounded w-100"
+                                 alt="Post image">
+                          </div>
+                        </div>
+                      </div>
+          
+                     
+                      <ng-template #noImage>
+                        <p class="text-muted">Aucune image disponible pour ce post.</p>
+                      </ng-template>
+                     
+
+                      
+                                          <!-- Affichage du contenu du post -->
+                    <p>{{ post?.content }}</p>
+           
+                    
+                </div>
+<!-- Emoji Reactions Section -->
+<div class="emoji-reactions-container">
+    <h5 class="reaction-title">Réagis à ce post :</h5>
+    <div class="emoji-list">
+        <div *ngFor="let emoji of emojis" class="emoji-container">
+            <button (mouseover)="onEmojiHover(emoji)" (mouseleave)="onEmojiLeave()"
+                (click)="reactToPost(emoji)"
+                class="emoji-button"
+                [ngStyle]="{ 
+                    'background-color': getEmojiColor(emoji)
+                }">
+                <span class="emoji-icon">{{ emoji }}</span>
+                <span class="emoji-count">
+                    {{ emojiCounts[EmojiTypeMapping[emoji]] || 0 }}
+                </span>
+            </button>
+
+            <!-- Tooltip des utilisateurs -->
+            <div *ngIf="hoveredEmoji === emoji && usersByEmoji[emoji]?.length" 
+                 class="user-tooltip">
+                <div class="tooltip-header">
+                    <h6>Utilisateurs ayant réagi :</h6>
+                    <span class="total-count">{{ usersByEmoji[emoji].length }} réactions</span>
+                </div>
+                <ul class="user-list">
+                    <li *ngFor="let user of usersByEmoji[emoji]" class="user-item">
+                        <div class="user-info">
+                            <span class="user-name">{{ user.name }}</span>
+                            <span class="user-email">{{ user.email }}</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+  
+  
+  
+  
+  
+  
                 <!-- Post Comments Section -->
                 <div class="mb-5">
                     <h2 class="text-uppercase mb-4 fw-bold" style="letter-spacing: 3px;">Comments</h2>
@@ -38,55 +142,114 @@
                     <!-- Display Post Comments -->
                     <div *ngFor="let comment of comments" class="comment-card mb-4 p-3 bg-light rounded">
                         <div class="d-flex align-items-start">
-                            <!-- User Avatar -->
-                            <div class="me-3">
-                                <img [src]="usersMap[comment.email]?.image || 'assets/assetsFront/img/user.jpg'"
-                                     class="rounded-circle" width="60" height="60" alt="User avatar">
-                            </div>
+                             <!-- User Avatar -->
+<div class="me-3" *ngIf="usersMap[comment.email] as user">
+  <img [src]="user.image ? 'data:image/jpeg;base64,' + user.image : '/assets/assetsFront/img/team-3.jpg'"
+       class="rounded-circle" width="60" height="60" alt="User avatar">
+</div>
 
-                            <!-- Comment Content -->
-                            <div class="flex-grow-1">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <h5 class="mb-0 fw-bold">{{ usersMap[comment.email]?.name || 'Anonymous' }}</h5>
-                                    <small class="text-muted">
-                                        <i>Posted At: {{ comment.created_at | date: 'dd/MM/yyyy à HH:mm'}}</i>
-                                     
-                                    </small>
-                                </div>
- 
-                                <p class="mb-2">{{ comment.content }}</p>
 
-                                <!-- Delete Button if the comment was posted by the current user -->
-                                <button *ngIf="currentUser?.email === comment.email"
-                                        class="btn btn-sm btn-danger"
-                                        (click)="deleteComment(comment.id_comment)">
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                           <!-- Comment Content -->
+<div class="flex-grow-1">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h5 class="mb-0 fw-bold">{{ usersMap[comment!.email]?.name || 'Anonymous' }}</h5>
+      <small class="text-muted">
+        <i *ngIf="isValidDate(comment.createdAt)">
+          Posted At: {{ comment.createdAt | date: 'dd/MM/yyyy à HH:mm' }}
+        </i>
+        <i *ngIf="!isValidDate(comment.createdAt)">
+          Posted At: Date invalide - {{ comment.createdAt }}
+        </i>
+        <br />
+        <i>Posted By: {{ comment.email }}</i>
+      </small>
+    </div>
+  
+    <p class="mb-2">{{ comment.content }}</p>
+  
+  <!-- Emoji Reactions -->
+<div class="d-flex align-items-center gap-2 flex-wrap mb-2">
+    <ng-container *ngFor="let emoji of emojis">
+      <span
+        class="emoji-btn"
+       (click)="reactToComment(emoji,comment)"
+        (mouseenter)="onEmojiHoverComment(emoji, comment.idComment)"
+        (mouseleave)="onEmojiLeave()"
+        [ngStyle]="{
+          'cursor': 'pointer',
+          'font-size': '20px',
+          'margin-right': '8px',
+          'color': getEmojiColor(emoji)
+        }"
+        [title]="emoji"
+      >
+        {{ emoji }}
+        <small class="ms-1 text-muted">
+          {{
+            emojiCountsForComment[comment.idComment]?.[EmojiTypeMapping[emoji]] || 0
+           
+          }}
+        </small>
+      </span> 
+  
+      <!-- Liste des utilisateurs ayant réagi à ce commentaire avec cet emoji -->
+     <div
+        *ngIf="hoveredEmojiComment === emoji && usersByEmoji[emoji]"
+        class="emoji-users-popup p-2 rounded shadow bg-light"
+        style="position: absolute; z-index: 1000;"
+      >
+        <strong>Réagi par :</strong>
+        <ul class="mb-0 ps-3">
+          <li *ngFor="let user of usersByEmojiForComment[emoji]">
+            {{ user.name }}
+          </li>
+        </ul>
+      </div>
+    </ng-container>
+  </div>
 
-                    <!-- If no comments -->
-                    <div *ngIf="comments.length === 0" class="alert alert-info mt-3">
-                        No comments for this post yet.
-                    </div>
+  
+    <!-- Delete Button if the comment was posted by the current user -->
+    <button
+      *ngIf="currentUser?.email === comment.email"
+      class="btn btn-sm btn-danger"
+      (click)="deleteComment(comment.idComment)"
+    >
+      Delete
+    </button>
+  </div>
+  
 
-                    <!-- Button to open the modal for adding a new comment -->
-                    <button type="button" class="btn btn-primary" (click)="showCommentModalOpen = true">
-                        Leave a Comment
-                    </button>
+                    
                 </div>
             </div>
             <!-- Comment List End -->
+               <!-- If no comments -->
+               <div *ngIf="comments.length === 0" class="alert alert-info mt-3">
+                No comments for this post yet.
+            </div>
 
-            <div class="col-lg-4 mt-5 mt-lg-0">
-                <!-- Author Bio -->
-                <div class="d-flex flex-column text-center bg-dark rounded mb-5 py-5 px-4">
-                    <img src="assets/assetsFront/img/user.jpg" class="img-fluid rounded-circle mx-auto mb-3" style="width: 100px;">
-                    <h3 class="text-primary mb-3">{{ post?.user?.name }}</h3>
-                    <h3 class="text-uppercase mb-4" style="letter-spacing: 5px;">Tag Cloud</h3>
-                    <p class="text-white m-0">{{ post?.user?.bio }}</p>
-                </div>
+            <!-- Button to open the modal for adding a new comment -->
+            <button type="button" class="btn btn-primary" (click)="showCommentModalOpen = true">
+                Leave a Comment
+            </button>
+        </div>
+    </div>
+
+    <div class="col-lg-4 mt-5 mt-lg-0">
+        <!-- Author Bio -->
+        <div class="author-bio bg-dark text-center rounded mb-5 py-5 px-4">
+          <div class="author-image-container">
+            <img [src]="'data:image/jpeg;base64,' + post?.user?.image" 
+                 class="img-fluid rounded-circle mx-auto mb-3" 
+                 alt="User Image">
+          </div>
+          <h3 class="text-primary mb-3">{{ post?.user?.name }}</h3>
+          <h3 class="tag-cloud text-uppercase mb-4">Tag Cloud</h3>
+          <p class="text-white">{{ post?.user?.bio }}</p>
+        </div>
+      </div>
+      
 
                 <!-- Sidebar Start -->
                 <div class="col-lg-4 mt-5 mt-lg-0">
@@ -103,65 +266,145 @@
                         </form>
                     </div>
 
-                    <!-- Category List -->
-                    <div class="mb-5">
-                        <h3 class="text-uppercase mb-4" style="letter-spacing: 5px;">Categories</h3>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                <a href="" class="text-decoration-none h6 m-0">Web Design</a>
-                                <span class="badge badge-primary badge-pill">150</span>
-                            </li>
-                            <!-- More categories can be added here -->
-                        </ul>
-                    </div>
-
-                    <!-- Recent Post -->
-                    <div class="mb-5">
-                        <h3 class="text-uppercase mb-4" style="letter-spacing: 5px;">Recent Post</h3>
-                        <a class="d-flex align-items-center text-decoration-none mb-3" href="">
-                            <img class="img-fluid rounded" src="assets/assetsFront/img/blog-80x80.jpg" alt="">
-                            <div class="pl-3">
-                                <h6 class="m-1">Diam lorem dolore justo eirmod lorem dolore</h6>
-                                <small>Jan 01, 2050</small>
-                            </div>
-                        </a>
-                    </div>
-
-                    <!-- Tag Cloud -->
-                    <div class="mb-5">
-                        <h3 class="text-uppercase mb-4" style="letter-spacing: 5px;">Tag Cloud</h3>
-                        <div class="d-flex flex-wrap m-n1">
-                            <a href="" class="btn btn-outline-primary m-1">Design</a>
-                            <a href="" class="btn btn-outline-primary m-1">Development</a>
-                            <a href="" class="btn btn-outline-primary m-1">Marketing</a>
-                        </div>
-                    </div>
-                </div>
-                <!-- Sidebar End -->
+                  
             </div>
         </div>
     </div>
 </div>
 <!-- Detail End -->
 
-<!-- Modal Ajouter Commentaire -->
+
 <div *ngIf="showCommentModalOpen" class="modal fade show d-block" tabindex="-1" role="dialog"
      style="background-color: rgba(0,0,0,0.5);">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Leave a Comment</h5>
-                <button type="button" class="btn-close" (click)="showCommentModalOpen = false"></button>
+            <div class="modal-header bg-light">
+                <h5 class="modal-title text-primary">
+                    <i class="bi bi-chat-left-text me-2"></i>Leave a Comment
+                </h5>
+                <button type="button" class="btn-close" (click)="showCommentModalOpen = false" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <textarea [(ngModel)]="newComment.content" class="form-control" placeholder="Write your comment here..." rows="4"></textarea>
+                <!-- Avertissement pour @everyone -->
+                <div *ngIf="newComment?.content?.includes('@everyone')" class="alert alert-warning d-flex align-items-center">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <div>
+                        <strong>Attention :</strong> Mentionner everyone enverra une notification à tous les utilisateurs !
+                    </div>
+                </div>
+
+     <!-- Zone de texte pour le commentaire -->
+<div class="form-floating mb-3">
+  <textarea [(ngModel)]="newComment.content" 
+            class="form-control" 
+            placeholder="Write your comment here..." 
+            id="commentTextarea" 
+            rows="5" 
+            (input)="onInputChange($event)" 
+            style="min-height: 120px; resize: vertical;" 
+            [readonly]="generatedComment && !newComment.content"></textarea>
+  <label for="commentTextarea">Your comment</label>
+</div>
+
+<!-- Afficher la suggestion si aucun texte n'est écrit et si le commentaire est généré -->
+<div *ngIf="generatedComment && !newComment.content" class="alert alert-info mt-3">
+  <strong>Suggested comment:</strong> {{ generatedComment }}
+</div>
+
+<!-- Option pour insérer automatiquement la suggestion dans le champ -->
+<button *ngIf="generatedComment && !newComment.content" 
+        class="btn btn-info mt-2" 
+        (click)="insertGeneratedComment()">
+  Insert suggested comment
+</button>
+
+
+
+
+
+
+
+                <!-- Liste des utilisateurs filtrés -->
+                <div *ngIf="filteredUsers.length > 0" class="mention-dropdown">
+                    <div class="dropdown-header text-muted small px-3 py-1">
+                        <i class="bi bi-at"></i> Mention a user:
+                    </div>
+                    <ul class="filtered-users-list">
+                        <li *ngFor="let user of filteredUsers" 
+                            (click)="mentionUser(user)" 
+                            [ngClass]="{'selected': user.selected}" 
+                            class="user-item d-flex align-items-center px-3 py-2">
+                            <img [src]="user.image ? 'data:image/jpeg;base64,' + user.image : 'assets/images/default-avatar.png'" 
+     class="rounded-circle me-2" 
+     width="24" height="24" 
+     alt="User avatar">
+
+                            <span> &#64;{{user.name}}</span>
+                        </li>
+                    </ul>
+                </div>
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" (click)="showCommentModalOpen = false">Close</button>
-                <button class="btn btn-primary" (click)="addComment()">Submit Comment</button>
+            <div class="modal-footer border-top-0">
+                <button class="btn btn-outline-secondary" (click)="showCommentModalOpen = false">
+                    <i class="bi bi-x-lg me-1"></i>Cancel
+                </button>
+                <button class="btn btn-primary" (click)="addComment()" [disabled]="!newComment.content?.trim()">
+                    <i class="bi bi-send-fill me-1"></i>Post Comment
+                </button>
             </div>
         </div>
     </div>
 </div>
+<!-- Modal Modifier Post -->
+<div *ngIf="showPostModalOpen" class="modal fade show d-block" tabindex="-1" role="dialog"
+  style="background-color: rgba(0,0,0,0.5);">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Modifier un Post</h5>
+        <button type="button" class="btn-close" (click)="showPostModalOpen = false"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label class="form-label">Titre</label>
+            <input type="text" class="form-control" [(ngModel)]="editingPost!.title" name="title">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Contenu</label>
+            <textarea class="form-control" rows="4" [(ngModel)]="editingPost!.content" name="content"></textarea>
+          </div>
+         <!-- Affichage des images dans le modal -->
+<div *ngIf="editImagesPreviews.length > 0" class="thumbnail-container">
+  <div *ngFor="let img of editImagesPreviews; let i = index">
+    <img [src]="'data:image/jpeg;base64,' + img.image"
+         class="img-thumbnail thumbnail-image"
+         alt="Image {{i + 1}}">
+  </div>
+</div>
+<div *ngIf="editImagesPreviews?.length === 0" class="no-images-message">
+  Aucune image prévisualisée.
+</div>
+ <!-- Upload nouvelles images -->
+ <div class="form-group">
+  <label>Post Images</label>
+  <input type="file" class="form-control-file" (change)="onFilesSelected($event)" accept="image/*" multiple>
+  <small class="form-text text-muted">JPEG, PNG - Max 5MB each</small>
+</div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="showPostModalOpen = false">Fermer</button>
+        <button class="btn btn-primary" (click)="submitEditPost()">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
 
 <app-footer-front></app-footer-front>
