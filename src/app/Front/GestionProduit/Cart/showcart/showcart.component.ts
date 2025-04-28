@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component,Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { CartProducts } from 'src/app/core/models/GestionProduit/cart-products';
 import { User } from 'src/app/core/models/GestionUser/User';
@@ -13,7 +13,7 @@ import { UserService } from 'src/app/core/services/GestionUser/user.service';
   styleUrls: ['./showcart.component.css']
 })
 
-export class ShowcartComponent {
+export class ShowcartComponent  implements OnChanges  {
   @Input() cartProducts: CartProducts[] = [];
   isActive: boolean = true;
   totalTND: number = 0;
@@ -26,6 +26,12 @@ export class ShowcartComponent {
     private cartProductService: CartProductService,
     private cartService: CartService
   ) {}
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['cartProducts']) {
+      console.log("Cart Products updated:", changes['cartProducts'].currentValue);
+      this.calculateTotalPrice();
+    }
+  }
 
   currentUser: User | null = null;
   localStorage = localStorage;
