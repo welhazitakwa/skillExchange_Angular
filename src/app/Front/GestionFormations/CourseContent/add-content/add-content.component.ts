@@ -18,8 +18,8 @@ export class AddContentComponent {
     title: new FormControl('', Validators.required),
     description: new FormControl(''),
     // contentType: new FormControl(''), // image en base64
-    order_affichage: new FormControl(''), // Champ 'image' (aucune validation)
-    lnk_vid: new FormControl(''),
+    order_affichage: new FormControl('', Validators.required), // Champ 'image' (aucune validation)
+    lnk_vid: new FormControl('', Validators.required),
     course: new FormGroup({
       id: new FormControl(0),
     }),

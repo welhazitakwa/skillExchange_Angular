@@ -1,4 +1,4 @@
-<h1 mat-dialog-title>Add Content</h1>
+<!-- <h1 mat-dialog-title>Add Content</h1>
 <form style="margin: 40px;" [formGroup]="addForm" (ngSubmit)="SaveContent(addForm)">
  <div class="row">
     <div class="col">
@@ -22,4 +22,62 @@
   </div>
 
   <button type="submit" class="btn btn-primary">Submit</button>
+</form> -->
+
+<h1 mat-dialog-title>Add Content</h1>
+<form style="margin: 40px;" [formGroup]="addForm" (ngSubmit)="SaveContent(addForm)">
+ <div class="row">
+    <div class="col">
+      <input
+        type="text"
+        formControlName="title"
+        class="form-control"
+        [ngClass]="{'is-invalid': addForm.get('title')?.invalid && addForm.get('title')?.touched}"
+        placeholder="title"
+      >
+      <div *ngIf="addForm.get('title')?.invalid && addForm.get('title')?.touched" class="invalid-feedback">
+        <div *ngIf="addForm.get('title')?.errors?.['required']">Title is required.</div>
+      </div>
+    </div>
+    <div class="col">
+      <input
+        type="number"
+        formControlName="order_affichage"
+        class="form-control"
+        [ngClass]="{'is-invalid': addForm.get('order_affichage')?.invalid && addForm.get('order_affichage')?.touched}"
+        placeholder="Order on playlist"
+      >
+      <div *ngIf="addForm.get('order_affichage')?.invalid && addForm.get('order_affichage')?.touched" class="invalid-feedback">
+        <div *ngIf="addForm.get('order_affichage')?.errors?.['required']">Order on playlist is required.</div>
+      </div>
+    </div>
+  </div>
+  
+  <br>
+ 
+  <div class="form-group">
+    <label for="lnk_vid"></label>
+    <textarea
+      class="form-control"
+      placeholder="Paste your URL here !"
+      rows="5"
+      formControlName="lnk_vid"
+      [ngClass]="{'is-invalid': addForm.get('lnk_vid')?.invalid && addForm.get('lnk_vid')?.touched}"
+    ></textarea>
+    <div *ngIf="addForm.get('lnk_vid')?.invalid && addForm.get('lnk_vid')?.touched" class="invalid-feedback">
+      <div *ngIf="addForm.get('lnk_vid')?.errors?.['required']">Video URL is required.</div>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="description"></label>
+    <textarea
+      class="form-control"
+      placeholder="Video Description"
+      id="description"
+      rows="5"
+      formControlName="description"
+    ></textarea>
+  </div>
+
+  <button type="submit" class="btn btn-primary" [disabled]="addForm.invalid">Submit</button>
 </form>
