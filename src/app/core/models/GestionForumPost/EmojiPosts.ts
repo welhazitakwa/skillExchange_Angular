@@ -7,5 +7,6 @@ export class EmojiPosts {
     id!:number;
     emoji!:EmojiType;
     post!:Posts;
+    email!: string;
     }
     

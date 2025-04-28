@@ -1,0 +1,18 @@
+.btn-generate {
+    background-color: #17a2b8;
+    color: white;
+    transition: all 0.3s;
+  }
+  
+  .btn-generate:hover {
+    background-color: #138496;
+  }
+  
+  .btn-generate:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+  }
+  
+  .form-group {
+    margin-bottom: 1.5rem;
+  }

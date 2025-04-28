@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Product } from 'src/app/core/models/GestionProduit/product';
 import { User } from 'src/app/core/models/GestionUser/User';
@@ -11,7 +11,7 @@ import { UserService } from 'src/app/core/services/GestionUser/user.service';
   templateUrl: './all-products.component.html',
   styleUrls: ['./all-products.component.css']
 })
-export class AllProductsComponent {
+export class AllProductsComponent implements OnInit {
   newProduct: Product = new Product();
 products: Product[] = [];
 filteredproduct: Product[] = [];
@@ -33,17 +33,14 @@ filteredproduct: Product[] = [];
 
   ngOnInit(){
     this.productService.getProduct().subscribe(
-      /*data => this.products=data,
-      erreur =>console.log("erreur"),
-      ()=>console.log("le chargement des produits  est terminés ")
       
-     );*/
      (response: Product[]) => {
                     this.products = response;
                     this.filteredproduct = [...this.products];
                     this.extractUniqueSellers();  // Extraire les vendeurs uniques
                     this.applyFilters(); 
                     console.log(response);
+                    
                   },
                   (error) => {
                     console.log(error);
@@ -76,7 +73,7 @@ private extractUniqueSellers(): void {
   ));}
   applyFilters(): void {
     this.filteredproduct = this.products.filter((p) => {
-      const isApproved = p.isApproved === 1;
+      const isApproved = p.isApproved === 0;
       // Search text filter (name or email)
       const matchesSearch =
         !this.searchText ||
@@ -317,7 +314,8 @@ private extractUniqueSellers(): void {
       cartProducts: [],
       reviewProducts: [],
       imageProducts: [],
-      currencyType: 'TND' // si tu veux aussi définir une valeur par défaut pour currency
+      currencyType: 'TND', // si tu veux aussi définir une valeur par défaut pour currency
+    isApproved:0
     };
     showModalProduct = false;
     startEditProduct(product: Product) {
@@ -371,6 +369,34 @@ private extractUniqueSellers(): void {
         }
       );
     }
+    //////////////////////////////////Product Details///////////////////////////////////////////////////
+    selectedProduct: Product | null = null;
+    isProductDetailModalOpen: boolean = false;
+
+    openProductDetail(product: Product): void {
+      this.selectedProduct = product;
+      this.isProductDetailModalOpen = true;
+    }
     
+    closeProductDetail(): void {
+      this.isProductDetailModalOpen = false;
+    }
+   currentImageIndex: number = 0;
+
+prevImage(): void {
+  if (this.selectedProduct && this.selectedProduct.imageProducts.length > 0) {
+    this.currentImageIndex =
+      (this.currentImageIndex - 1 + this.selectedProduct.imageProducts.length) %
+      this.selectedProduct.imageProducts.length;
+  }
+}
+
+nextImage(): void {
+  if (this.selectedProduct && this.selectedProduct.imageProducts.length > 0) {
+    this.currentImageIndex =
+      (this.currentImageIndex + 1) % this.selectedProduct.imageProducts.length;
+  }
+}
+ 
     
 }

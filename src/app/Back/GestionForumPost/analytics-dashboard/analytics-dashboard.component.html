@@ -1,0 +1,29 @@
+<div class="analytics-dashboard">
+    <h1>📊 Analytics des Posts</h1>
+  
+    <div *ngIf="eventData.length > 0; else noData">
+      <table>
+        <thead>
+          <tr>
+            <th>Événement</th>
+            <th>Utilisateur</th>
+            <th>Date</th>
+            <th>Autres Détails</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let event of eventData">
+            <td>{{ event.name }}</td>
+            <td>{{ event.properties.userEmail || 'Inconnu' }}</td>
+            <td>{{ event.time | date:'short' }}</td>
+            <td>{{ event.properties | json }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  
+    <ng-template #noData>
+      <p>Aucun événement trouvé pour cette période 📭.</p>
+    </ng-template>
+  </div>
+  

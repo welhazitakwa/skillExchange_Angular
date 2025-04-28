@@ -40,15 +40,17 @@ import { EventDetailsComponent } from './Front/GestionEvents/event-details/event
 import { ShowproductComponent } from './Front/GestionProduit/Product/showproduct/showproduct.component';
 import { ProductDetailsComponent } from './Front/GestionProduit/Product/product-details/product-details.component';
 import { AllCartProductsComponent } from './Back/GestionProduit/CartProduct/all-cart-products/all-cart-products.component';
+import { FrontQuizComponent } from './Front/GestionQuizz/quiz/quiz.component';
 import { AllCommentsComponent } from './Back/GestionForumPost/CommentPost/all-comments/all-comments.component';
 import { ShowPostsComponent } from './Front/GestionForumPost/Posts/show-posts/show-posts.component';
 import { PostDetailsComponent } from './Front/GestionForumPost/Posts/post-details/post-details.component';
+import { AnalyticsDashboardComponent } from './Back/GestionForumPost/analytics-dashboard/analytics-dashboard.component';
 
 import { SuccessComponent } from './Front/GestionProduit/success/success.component';
 
 import { ParticipantsListComponent } from './Back/GestionFormation/Formation/participants-list/participants-list.component';
 import { ApprooveCourseComponent } from './Back/GestionFormation/Formation/approove-course/approove-course.component';
-
+import { CertificateComponent } from './Front/GestionQuizz/quiz/certificate/certificate.component'; 
 
 
 const routes: Routes = [
@@ -60,6 +62,7 @@ const routes: Routes = [
   { path:"backpost", component: ListpostComponent},
   
   { path:"backCommentpost", component: AllCommentsComponent},
+  {path: "analytics-dashboard", component: AnalyticsDashboardComponent},
   
 
   { path: 'back', component: MainBackComponent /*,canActivate: [AdminGuard]*/ },
@@ -109,6 +112,14 @@ const routes: Routes = [
 
 
   // Front Office
+  { 
+    path: 'quiz/:quizId', 
+    component: FrontQuizComponent },
+       {path: 'certificate', component: CertificateComponent },
+    
+  
+  // Add this if you need a direct participation link
+  { path: 'quiz/:quizId/:participationId', component: FrontQuizComponent },
   { path: '', component: MainFrontComponent/*, canActivate: [UserGuard] */},
   { path: 'bloglist', component: BlogListComponent/*, canActivate: [UserGuard] */},
   {

@@ -1,8 +1,19 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { RouterModule } from '@angular/router';
+
+import { AngularToastifyModule, ToastService } from 'angular-toastify';
+//import { MatPaginatorModule } from '@angular/material/paginator'; // 👈 Ajouté pour le paginator
+
+
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+
+// Components
 import { SideBarComponent } from './Back/side-bar/side-bar.component';
 import { NavComponent } from './Back/nav/nav.component';
 import { MainBackComponent } from './Back/main-back/main-back.component';
@@ -12,49 +23,73 @@ import { HeaderFrontComponent } from './Front/header-front/header-front.componen
 import { AboutComponent } from './Front/about/about.component';
 import { BlogListComponent } from './Front/blog-list/blog-list.component';
 import { BlogDetailsComponent } from './Front/blog-details/blog-details.component';
+
+
+import { TeachersComponent } from './Front/teachers/teachers.component';
+
+
+
 import { CoursesComponent } from './Front/GestionFormations/Formation/courses/courses.component';
 import { ContactComponent } from './Front/contact/contact.component';
 import { ErrorComponent } from './error/error.component';
-import { HttpClientModule } from '@angular/common/http';
+
+
 import { AuthRegisterComponent } from './Auth/auth-register/auth-register.component';
 import { AuthLoginComponent } from './Auth/auth-login/auth-login.component';
+import { AuthBanComponent } from './Auth/auth-ban/auth-ban.component';
 
 import { ListpostComponent } from './Back/GestionForumPost/Post/listpost/listpost.component';
 import { ListaddComponent } from './Back/GestionForumPost/Post/listadd/listadd.component';
-
+import { AllCommentsComponent } from './Back/GestionForumPost/CommentPost/all-comments/all-comments.component';
+import { ShowPostsComponent } from './Front/GestionForumPost/Posts/show-posts/show-posts.component';
 
 import { AddcartComponent } from './Front/GestionProduit/Cart/addcart/addcart.component';
 import { ShowcartComponent } from './Front/GestionProduit/Cart/showcart/showcart.component';
 import { UpdatecartComponent } from './Front/GestionProduit/Cart/updatecart/updatecart.component';
 import { CartDetailsComponent } from './Front/GestionProduit/Cart/cart-details/cart-details.component';
-import { AddproductComponent } from './Front/GestionProduit/Product/addproduct/addproduct.component';
+
 import { ProductDetailsComponent } from './Front/GestionProduit/Product/product-details/product-details.component';
-import { UpdateproductComponent } from './Front/GestionProduit/Product/updateproduct/updateproduct.component';
 import { ShowproductComponent } from './Front/GestionProduit/Product/showproduct/showproduct.component';
 import { AllProductsComponent } from './Back/GestionProduit/Product/all-products/all-products.component';
 import { AllCartsComponent } from './Back/GestionProduit/Cart/all-carts/all-carts.component';
 import { AllReviewsComponent } from './Back/GestionProduit/ReviewP/all-reviews/all-reviews.component';
 import { AllImagesComponent } from './Back/GestionProduit/ImageP/all-images/all-images.component';
+
+import { AllCartProductsComponent } from './Back/GestionProduit/CartProduct/all-cart-products/all-cart-products.component';
+import { CartProductsComponent } from './Front/GestionProduit/cart-products/cart-products.component';
+
+
 import { ProfileComponent } from './Front/GestionUser/profile/profile.component';
 import { BalanceComponent } from './Front/GestionUser/balance/balance.component';
 import { SettingsComponent } from './Front/GestionUser/settings/settings.component';
 import { AllUsersComponent } from './Back/GestionUser/User/all-users/all-users.component';
 
+import { AllbadgesComponent } from './Back/GestionUser/Badge/allbadges/allbadges.component';
+
+
+import { CertificatComponent } from './Back/GestionQUIZZ/certificat/certificat.component';
+import { QuizComponent } from './Back/GestionQUIZZ/quiz/quiz.component';
+import { QuestionComponent } from './Back/GestionQUIZZ/question/question.component';
+
+
+
 import { ImageCropperComponent } from 'ngx-image-cropper';
 import { UserBackDetailsComponent } from './Back/GestionUser/User/user-back-details/user-back-details.component';
 import { AuthBanComponent } from './Auth/auth-ban/auth-ban.component';
-import { AllbadgesComponent } from './Back/GestionUser/Badge/allbadges/allbadges.component';
 import { SignaturePadComponent } from './components/signature-pad/signature-pad.component';
 
 import { CategoriesComponent } from './Back/GestionFormation/Category/categories/categories.component';
 import { AddEditCategoryComponent } from './Back/GestionFormation/Category/add-edit-category/add-edit-category.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 //
-import { MatDialogModule } from '@angular/material/dialog';
+
 import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
+
+
+
+
+
+
 import { EditCategoryComponent } from './Back/GestionFormation/Category/edit-category/edit-category.component';
 import { FormationsComponent } from './Back/GestionFormation/Formation/formations/formations.component';
 import { AddFormationComponent } from './Back/GestionFormation/Formation/add-formation/add-formation.component';
@@ -75,16 +110,23 @@ import { AllEventsComponent } from './Back/GestionEvents/Events/all-events/all-e
 import { UpdateEventsComponent } from './Back/GestionEvents/Events/update-events/update-events.component';
 import { DeleteEventsComponent } from './Back/GestionEvents/Events/delete-events/delete-events.component';
 import { AllEventCommentComponent } from './Back/GestionEvents/EventComment/all-event-comment/all-event-comment.component';
+import { UpdateEventCommentComponent } from './Back/GestionEvents/EventComment/update-event-comment/update-event-comment.component';
+import { DeleteEventCommentComponent } from './Back/GestionEvents/EventComment/delete-event-comment/delete-event-comment.component';
+import { AllEventImageComponent } from './Back/GestionEvents/EventImage/all-event-image/all-event-image.component';
+import { UpdateEventImageComponent } from './Back/GestionEvents/EventImage/update-event-image/update-event-image.component';
 
-//import { DeleteEventImageComponent } from './Back/GestionEvents/EventImage/delete-event-image/delete-event-image.component';
 import { AllRateEventComponent } from './Back/GestionEvents/RateEvent/all-rate-event/all-rate-event.component';
 import { UpdateRateEventComponent } from './Back/GestionEvents/RateEvent/update-rate-event/update-rate-event.component';
 import { DeleteRateEventComponent } from './Back/GestionEvents/RateEvent/delete-rate-event/delete-rate-event.component';
+
 import { AllParticipationEventsComponent } from './Back/GestionEvents/ParticipationEvents/all-participation-events/all-participation-events.component';
 import { UpdateParticipationEventsComponent } from './Back/GestionEvents/ParticipationEvents/update-participation-events/update-participation-events.component';
 import { DeleteParticipationEventsComponent } from './Back/GestionEvents/ParticipationEvents/delete-participation-events/delete-participation-events.component';
+
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { ShowEventsComponent } from './Front/GestionEvents/Events/show-events/show-events.component';
 import { AddEventModalComponent } from './Back/GestionEvents/Events/add-event-modal/add-event-modal.component';
+
 import { EventImagesComponent } from './Back/GestionEvents/event-images/event-images.component';
 import { CommonModule } from '@angular/common';
 import { EventDetailsComponent } from './Front/GestionEvents/event-details/event-details.component';
@@ -92,18 +134,31 @@ import { FullCalendarModule } from '@fullcalendar/angular';
 import { ToastService, AngularToastifyModule } from 'angular-toastify';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { RouterModule } from '@angular/router';
+
 import { UpdateEventCommentComponent } from './Back/GestionEvents/EventComment/update-event-comment/update-event-comment.component';
 import { DeleteEventCommentComponent } from './Back/GestionEvents/EventComment/delete-event-comment/delete-event-comment.component';
 import { AllEventImageComponent } from './Back/GestionEvents/EventImage/all-event-image/all-event-image.component';
 import { TeachersComponent } from './Front/teachers/teachers.component';
 import { UpdateEventImageComponent } from './Back/GestionEvents/EventImage/update-event-image/update-event-image.component';
-import { AllCartProductsComponent } from './Back/GestionProduit/CartProduct/all-cart-products/all-cart-products.component';
 import { CartProductsComponent } from './Front/GestionProduit/cart-products/cart-products.component';
+import { FrontQuizComponent } from './Front/GestionQuizz/quiz/quiz.component';
+
 import { AllCommentsComponent } from './Back/GestionForumPost/CommentPost/all-comments/all-comments.component';
 import { ShowPostsComponent } from './Front/GestionForumPost/Posts/show-posts/show-posts.component';
 import { PostDetailsComponent } from './Front/GestionForumPost/Posts/post-details/post-details.component';
+import { AnalyticsDashboardComponent } from './Back/GestionForumPost/analytics-dashboard/analytics-dashboard.component';
+
+
+
+//import { ImageCropperModule } from 'ngx-image-cropper';
+
+
 
 import { SuccessComponent } from './Front/GestionProduit/success/success.component';
 
@@ -116,6 +171,12 @@ import { AuthInterceptor } from './core/interceptors/auth.interceptor'; // <-- a
 
 
 
+import { AllCartProductsComponent } from './Back/GestionProduit/CartProduct/all-cart-products/all-cart-products.component';
+import { AllbadgesComponent } from './Back/GestionUser/Badge/allbadges/allbadges.component';
+
+import { CertificateComponent } from './Front/GestionQuizz/quiz/certificate/certificate.component';
+
+
 
 
 @NgModule({
@@ -124,7 +185,6 @@ import { AuthInterceptor } from './core/interceptors/auth.interceptor'; // <-- a
     SideBarComponent,
     NavComponent,
     MainBackComponent,
-    ErrorComponent,
     MainFrontComponent,
     FooterFrontComponent,
     HeaderFrontComponent,
@@ -134,28 +194,43 @@ import { AuthInterceptor } from './core/interceptors/auth.interceptor'; // <-- a
     CoursesComponent,
     TeachersComponent,
     ContactComponent,
+    ErrorComponent,
     AuthRegisterComponent,
     AuthLoginComponent,
+
+    AuthBanComponent,
+
+
+    AllCommentsComponent,
+    ShowPostsComponent,
+
+
+    FrontQuizComponent,
     ListpostComponent,
     ListaddComponent,
-    ProfileComponent,
-    BalanceComponent,
-    SettingsComponent,
-    AllUsersComponent,
+
+
+
+
     AddcartComponent,
     ShowcartComponent,
     UpdatecartComponent,
     CartDetailsComponent,
-    AddproductComponent,
+
     ProductDetailsComponent,
-    UpdateproductComponent,
+
     ShowproductComponent,
     AllProductsComponent,
     AllCartsComponent,
     AllReviewsComponent,
     AllImagesComponent,
+    AllCartProductsComponent,
+    CartProductsComponent,
+    ProfileComponent,
+    BalanceComponent,
+    SettingsComponent,
+    AllUsersComponent,
     UserBackDetailsComponent,
-    AuthBanComponent,
     AllbadgesComponent,
     SignaturePadComponent,
     CategoriesComponent,
@@ -182,41 +257,54 @@ import { AuthInterceptor } from './core/interceptors/auth.interceptor'; // <-- a
     DeleteEventCommentComponent,
     AllEventImageComponent,
     UpdateEventImageComponent,
+
     // DeleteEventImageComponent,
+
     AllRateEventComponent,
     UpdateRateEventComponent,
     DeleteRateEventComponent,
     AllParticipationEventsComponent,
     UpdateParticipationEventsComponent,
     DeleteParticipationEventsComponent,
+
+    ShowPostsComponent,
+    AnalyticsDashboardComponent,
+       //ImageCropperComponent,
+
     ShowEventsComponent,
     AddEventModalComponent,
     EventImagesComponent,
     EventDetailsComponent,
     AllCartProductsComponent,
     CartProductsComponent,
-    AllCommentsComponent,
-    ShowPostsComponent,
+
+
     PostDetailsComponent,
 
     SuccessComponent,
     DetailsFormationBackComponent,
     ParticipantsListComponent,
-    ApprooveCourseComponent
-    
+
+    ApprooveCourseComponent,
+    CertificateComponent,
+
   ],
   imports: [
-    RouterModule,
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
+    RouterModule,
     FormsModule,
     ReactiveFormsModule,
-    RouterModule,
+
     CommonModule,
     HttpClientModule,
-    ImageCropperComponent,
     AngularToastifyModule,
+
+    MatPaginatorModule,
+    ImageCropperComponent,
+    //ImageCropperModule,
+
     MatDialogModule,
     FullCalendarModule,
     MatSelectModule,
@@ -225,13 +313,20 @@ import { AuthInterceptor } from './core/interceptors/auth.interceptor'; // <-- a
     MatDatepickerModule,
     MatNativeDateModule,
     MatSnackBarModule,
+
+
     MatDialogModule,
+
+
+
+
     NgChartsModule, // Add NgChartsModule
-    
+
+
 
   ],
 
-  
+
   providers: [
     ToastService,
     {
@@ -239,6 +334,7 @@ import { AuthInterceptor } from './core/interceptors/auth.interceptor'; // <-- a
       useClass: AuthInterceptor,
       multi: true
     }
+
   ],
   bootstrap: [AppComponent],
 })

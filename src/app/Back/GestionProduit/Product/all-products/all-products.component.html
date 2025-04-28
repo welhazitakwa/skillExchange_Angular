@@ -220,9 +220,9 @@
                       *ngFor="let product of filteredproduct"
                       
                       style="cursor: pointer"
-                      [routerLink]="['/backproductdetail', product.idProduct]"
+                      (click)="openProductDetail(product)"
                     >
-                    {{ product.isApproved }}
+                 
                       <td>
                         <!-- Affichage de l'image du produit avec le nom et type -->
                         <div class="d-flex align-items-center">
@@ -270,42 +270,51 @@
                         </span>
                       </td>
                       
-                          <!-- ✅ Nouvelle cellule "Actions" -->
-                          <td class="text-center">
-                            <!-- Bouton de modification : affiché uniquement pour les TOKENS -->
-                            <button
-                              *ngIf="product.type === 'TOKENS'"
-                              class="btn btn-sm btn-outline-primary me-2"
-                              (click)="startEditProduct(product)"
-                            >
-                              <i class="fas fa-edit"></i>
-                            </button>
                           
-                            <!-- Bouton de suppression : toujours affiché -->
-                            <button
-                              class="btn btn-sm btn-outline-danger"
-                              (click)="deleteProduct(product.idProduct)"
-                            >
-                              <i class="fas fa-trash"></i>
-                            </button>
-                            <button
-                            *ngIf="!product.isApproved"
-                            class="btn btn-sm btn-success"
-                            (click)="approveProduct(product.idProduct); $event.stopPropagation()"
-                            title="Approve"
-                          >
-                            <i class="fas fa-check"></i>
-                          </button>
-                      
-                          <!-- ❌ Rejeter -->
-                          <button
-                            class="btn btn-sm btn-secondary"
-                            (click)="rejectProduct(product.idProduct); $event.stopPropagation()"
-                            title="Reject"
-                          >
-                            <i class="fas fa-times"></i>
-                          </button>
-                          </td>
+<!-- ✅ Nouvelle cellule "Actions" -->
+<td class="text-center">
+  <!-- Bouton Edit : uniquement pour TOKENS -->
+  <button
+    *ngIf="product.type === 'TOKENS'"
+    class="btn btn-sm btn-outline-primary me-2"
+    (click)="startEditProduct(product)"
+    title="Edit"
+  >
+    <i class="fas fa-edit"></i>
+  </button>
+
+  <!-- Bouton Delete : uniquement pour TOKENS -->
+  <button
+    *ngIf="product.type === 'TOKENS'"
+    class="btn btn-sm btn-outline-danger me-2"
+    (click)="deleteProduct(product.idProduct)"
+    title="Delete"
+  >
+    <i class="fas fa-trash"></i>
+  </button>
+
+  <!-- Bouton Approve : seulement pour PHYSICAL/DIGITAL -->
+  <button
+    *ngIf="product.type !== 'TOKENS' && !product.isApproved"
+    class="btn btn-sm btn-success me-2"
+    (click)="approveProduct(product.idProduct); $event.stopPropagation()"
+    title="Approve"
+  >
+    <i class="fas fa-check"></i>
+  </button>
+
+  <!-- Bouton Reject : seulement pour PHYSICAL/DIGITAL -->
+  <button
+    *ngIf="product.type !== 'TOKENS'"
+    class="btn btn-sm btn-secondary"
+    (click)="rejectProduct(product.idProduct); $event.stopPropagation()"
+    title="Reject"
+  >
+    <i class="fas fa-times"></i>
+  </button>
+</td>
+
+
  
 
                     </tr>
@@ -408,3 +417,53 @@
       </div>
   </div>
 </div>
+<!-- Product Detail Modal -->
+<div *ngIf="isProductDetailModalOpen" class="custom-modal-overlay">
+  <div class="custom-modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title">{{ selectedProduct?.productName }}</h5>
+      <button type="button" class="close" (click)="closeProductDetail()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div *ngIf="selectedProduct">
+        <!-- Images -->
+        <div class="row">
+          <div *ngFor="let img of selectedProduct.imageProducts" class="col-md-4 mb-3">
+            <img
+              [src]="'data:image/*;base64,' + img.image"
+              class="img-fluid rounded shadow"
+              alt="Product Image"
+            />
+          </div>
+        </div>
+
+        <!-- Informations générales -->
+        <p><strong>Type:</strong> {{ selectedProduct.type }}</p>
+
+        <p><strong>Price:</strong> 
+          <ng-container *ngIf="selectedProduct.type === 'TOKENS'">
+            {{ selectedProduct.price }} tokens
+          </ng-container>
+          <ng-container *ngIf="selectedProduct.type !== 'TOKENS'">
+            {{ selectedProduct.price }} {{ selectedProduct.currencyType }}
+          </ng-container>
+        </p>
+
+        <p><strong>Stock:</strong> {{ selectedProduct.stock }}</p>
+
+        <p><strong>Status:</strong> 
+          <span *ngIf="selectedProduct.isApproved == 1" class="badge bg-success">
+            Approved
+          </span>
+          <span *ngIf="selectedProduct.isApproved == 0" class="badge bg-warning text-dark">
+            Pending
+          </span>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
