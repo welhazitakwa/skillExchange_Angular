@@ -1,3 +1,6 @@
+import { Events } from '../GestionEvents/events';
+import { Posts } from '../GestionForumPost/Posts';
+import { Reclamation } from '../GestionReclamation/Reclamation';
 import { Badge } from './Badge';
 import { Banned } from './Banned';
 import { HistoricTransactions } from './HistoricTransactions';
@@ -21,4 +24,8 @@ export class User {
   badges!: Badge[];
   historicTransactions!: HistoricTransactions[];
   status!: UserStatus;
+  posts!: Posts[];
+  reclamations!: Reclamation[];
+  interests!: Events[];
+  
 }

@@ -56,9 +56,10 @@
                 </button>
               </div>
 
+
               <!-- Table of Approved Posts -->
-              <h5 class="text-primary fw-semibold">Approved Posts</h5>
-              <div class="table-responsive rounded-3">
+              <h5 *ngIf="approvedPosts.length > 0" class="text-primary fw-semibold">Approved Posts</h5>
+              <div *ngIf="approvedPosts.length > 0" class="table-responsive rounded-3">
                 <table class="table table-hover align-middle mb-0">
                   <thead class="table-light">
                     <tr>

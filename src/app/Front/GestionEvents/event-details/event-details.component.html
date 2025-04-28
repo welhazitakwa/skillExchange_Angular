@@ -1,12 +1,17 @@
 <app-header-front></app-header-front>
 
 <!-- Header Start -->
-<div class="container-fluid page-header" style="margin-bottom: 90px;">
+<div class="container-fluid page-header" style="margin-bottom: 90px">
   <div class="container">
-    <div class="d-flex flex-column justify-content-center" style="min-height: 300px">
+    <div
+      class="d-flex flex-column justify-content-center"
+      style="min-height: 300px"
+    >
       <h3 class="display-4 text-white text-uppercase">Event Details</h3>
       <div class="d-inline-flex text-white">
-        <p class="m-0 text-uppercase"><a class="text-white" routerLink="/events">Events</a></p>
+        <p class="m-0 text-uppercase">
+          <a class="text-white" routerLink="/events">Events</a>
+        </p>
         <i class="fa fa-angle-double-right pt-1 px-3"></i>
         <p class="m-0 text-uppercase">Details</p>
       </div>
@@ -23,28 +28,47 @@
       <div class="col-lg-6 mb-4">
         <div class="carousel-container position-relative">
           <div class="carousel">
-            <ng-container *ngIf="event.images && event.images.length > 0; else noImage">
-              <img class="img-fluid"
-                   [src]="event.images[carouselIndex].images.startsWith('data:image') ?
-                           event.images[carouselIndex].images :
-                           'data:image/jpeg;base64,' + event.images[carouselIndex].images"
-                   alt="Event Image">
+            <ng-container
+              *ngIf="event.images && event.images.length > 0; else noImage"
+            >
+              <img
+                class="img-fluid"
+                [src]="
+                  event.images[carouselIndex].images.startsWith('data:image')
+                    ? event.images[carouselIndex].images
+                    : 'data:image/jpeg;base64,' +
+                      event.images[carouselIndex].images
+                "
+                alt="Event Image"
+              />
             </ng-container>
             <ng-template #noImage>
-              <img class="img-fluid" src="assets/assetsFront/img/course-1.jpg" alt="Default Event Image">
+              <img
+                class="img-fluid"
+                src="assets/assetsFront/img/course-1.jpg"
+                alt="Default Event Image"
+              />
             </ng-template>
           </div>
           <!-- Carousel Arrows -->
-          <button class="carousel-arrow left-arrow"
-                  *ngIf="event.images && event.images.length > 1 && carouselIndex > 0"
-                  (click)="prevImage()"
-                  aria-label="Previous Image">
+          <button
+            class="carousel-arrow left-arrow"
+            *ngIf="event.images && event.images.length > 1 && carouselIndex > 0"
+            (click)="prevImage()"
+            aria-label="Previous Image"
+          >
             <i class="fa fa-chevron-left"></i>
           </button>
-          <button class="carousel-arrow right-arrow"
-                  *ngIf="event.images && event.images.length > 1 && carouselIndex < event.images.length - 1"
-                  (click)="nextImage()"
-                  aria-label="Next Image">
+          <button
+            class="carousel-arrow right-arrow"
+            *ngIf="
+              event.images &&
+              event.images.length > 1 &&
+              carouselIndex < event.images.length - 1
+            "
+            (click)="nextImage()"
+            aria-label="Next Image"
+          >
             <i class="fa fa-chevron-right"></i>
           </button>
         </div>
@@ -57,7 +81,8 @@
         </p>
         <p class="text-muted mb-2">
           <i class="fa fa-calendar mr-2"></i>
-          {{ event.startDate | date: 'dd/MM/yyyy' }} - {{ event.endDate | date: 'dd/MM/yyyy' }}
+          {{ event.startDate | date : "dd/MM/yyyy" }} -
+          {{ event.endDate | date : "dd/MM/yyyy" }}
         </p>
         <p class="text-muted mb-2">
           <i class="fa fa-users mr-2"></i>Max Participants: {{ event.nbr_max }}
@@ -75,26 +100,50 @@
         </div>
         <p class="mb-4">{{ event.description }}</p>
         <!-- Status -->
-        <p class="mb-4"
-           [ngClass]="{
-             'text-success': event.status === Status.GOING,
-             'text-info': event.status === Status.INTERESTED,
-             'text-muted': event.status === Status.NOT_ATTENDING || !event.status
-           }">
+        <p
+          class="mb-4"
+          [ngClass]="{
+            'text-success': event.status === Status.GOING,
+            'text-info': event.status === Status.INTERESTED,
+            'text-muted': event.status === Status.NOT_ATTENDING || !event.status
+          }"
+        >
           <i class="fa fa-info-circle mr-2"></i>
-          {{ event.status === Status.GOING ? 'Going' : event.status === Status.INTERESTED ? 'Interested' : 'Not Attending' }}
+          {{
+            event.status === Status.GOING
+              ? "Going"
+              : event.status === Status.INTERESTED
+              ? "Interested"
+              : "Not Attending"
+          }}
         </p>
         <!-- Action Buttons -->
         <div class="d-flex mb-4">
-          <button class="btn btn-sm mr-2"
-                  (click)="toggleEvent(Status.GOING)"
-                  [ngClass]="{'btn-primary': event.status !== Status.GOING, 'btn-success': event.status === Status.GOING}">
-            <i class="fa fa-check mr-2"></i> {{ event.status === Status.GOING ? 'Cancel Going' : 'Going' }}
+          <button
+            class="btn btn-sm mr-2"
+            (click)="toggleEvent(Status.GOING)"
+            [ngClass]="{
+              'btn-primary': event.status !== Status.GOING,
+              'btn-success': event.status === Status.GOING
+            }"
+          >
+            <i class="fa fa-check mr-2"></i>
+            {{ event.status === Status.GOING ? "Cancel Going" : "Going" }}
           </button>
-          <button class="btn btn-sm"
-                  (click)="toggleEvent(Status.INTERESTED)"
-                  [ngClass]="{'btn-info': event.status !== Status.INTERESTED, 'btn-warning': event.status === Status.INTERESTED}">
-            <i class="fa fa-star mr-2"></i> {{ event.status === Status.INTERESTED ? 'Cancel Interested' : 'Interested' }}
+          <button
+            class="btn btn-sm"
+            (click)="toggleEvent(Status.INTERESTED)"
+            [ngClass]="{
+              'btn-info': event.status !== Status.INTERESTED,
+              'btn-warning': event.status === Status.INTERESTED
+            }"
+          >
+            <i class="fa fa-star mr-2"></i>
+            {{
+              event.status === Status.INTERESTED
+                ? "Cancel Interested"
+                : "Interested"
+            }}
           </button>
         </div>
       </div>
@@ -104,10 +153,12 @@
       <div class="col-12">
         <h3>Rate This Event</h3>
         <div class="p-4 bg-light rounded">
-          <button class="btn btn-primary"
-                  (click)="openRatingModal(!!userRate, userRate)"
-                  [disabled]="!userId">
-            {{ userRate ? 'Edit Your Rating' : 'Add Rating' }}
+          <button
+            class="btn btn-primary"
+            (click)="openRatingModal(!!userRate, userRate)"
+            [disabled]="!userId"
+          >
+            {{ userRate ? "Edit Your Rating" : "Add Rating" }}
           </button>
         </div>
       </div>
@@ -118,31 +169,57 @@
         <h3>Reviews</h3>
         <div class="p-4 bg-light rounded">
           <ng-container *ngIf="rateEvents.length > 0; else noReviews">
-            <div *ngFor="let rate of rateEvents" class="review mb-3 p-3 border rounded">
+            <div
+              *ngFor="let rate of rateEvents"
+              class="review mb-3 p-3 border rounded"
+            >
+              <img
+                [src]="
+                  rate.user?.image
+                    ? 'data:image/*;base64,' + rate.user?.image
+                    : 'https://api.dicebear.com/9.x/big-smile/svg?seed=' +
+                      rate.user?.name
+                "
+                class="rounded-circle"
+                width="60"
+                height="60"
+                alt="User avatar"
+              />
               <div class="d-flex justify-content-between align-items-center">
-                <strong>{{ rate.user?.name || (rate.user?.id ? 'User ID: ' + rate.user.id : 'Anonymous') }}</strong>
-                <small>{{ rate.createdAt | date: 'dd/MM/yyyy HH:mm' }}</small>
+                <strong>{{
+                  rate.user?.name ||
+                    (rate.user?.id ? "User ID: " + rate.user.id : "Anonymous")
+                }}</strong>
+                <small>{{ rate.createdAt | date : "dd/MM/yyyy HH:mm" }}</small>
               </div>
               <div class="star-rating my-2">
-                <span *ngFor="let star of [1,2,3,4,5]"
-                      class="fa fa-star"
-                      [ngClass]="{'checked': star <= rate.rating}"></span>
+                <span
+                  *ngFor="let star of [1, 2, 3, 4, 5]"
+                  class="fa fa-star"
+                  [ngClass]="{ checked: star <= rate.rating }"
+                ></span>
               </div>
-              <p>{{ rate.content || 'No comment provided.' }}</p>
+              <p>{{ rate.content || "No comment provided." }}</p>
               <div class="d-flex" *ngIf="canEditOrDelete(rate)">
-                <button class="btn btn-sm btn-warning mr-2"
-                        (click)="openRatingModal(true, rate)">
+                <button
+                  class="btn btn-sm btn-warning mr-2"
+                  (click)="openRatingModal(true, rate)"
+                >
                   Edit
                 </button>
-                <button class="btn btn-sm btn-danger"
-                        (click)="deleteRate(rate.idRate!)">
+                <button
+                  class="btn btn-sm btn-danger"
+                  (click)="deleteRate(rate.idRate!)"
+                >
                   Delete
                 </button>
               </div>
             </div>
           </ng-container>
           <ng-template #noReviews>
-            <p class="text-muted">No reviews yet. Be the first to rate this event!</p>
+            <p class="text-muted">
+              No reviews yet. Be the first to rate this event!
+            </p>
           </ng-template>
         </div>
       </div>
@@ -154,7 +231,7 @@
 <div class="modal" *ngIf="showModal" (click)="closeModal()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h4>{{ isEditing ? 'Edit Rating' : 'Add Rating' }}</h4>
+      <h4>{{ isEditing ? "Edit Rating" : "Add Rating" }}</h4>
       <button class="close-btn" (click)="closeModal()">×</button>
     </div>
     <form [formGroup]="ratingForm" (ngSubmit)="submitRating()">
@@ -162,35 +239,55 @@
         <div class="form-group">
           <label for="rating">Rating (1-5 stars)</label>
           <div class="star-rating">
-            <span *ngFor="let star of [1,2,3,4,5]"
-                  class="fa fa-star"
-                  [ngClass]="{'checked': star <= ratingForm.get('rating')?.value}"
-                  (click)="ratingForm.get('rating')?.setValue(star)"
-                  style="cursor: pointer; font-size: 1.5rem; margin-right: 5px;"></span>
+            <span
+              *ngFor="let star of [1, 2, 3, 4, 5]"
+              class="fa fa-star"
+              [ngClass]="{ checked: star <= ratingForm.get('rating')?.value }"
+              (click)="ratingForm.get('rating')?.setValue(star)"
+              style="cursor: pointer; font-size: 1.5rem; margin-right: 5px"
+            ></span>
           </div>
-          <input type="hidden" formControlName="rating">
-          <div *ngIf="ratingForm.get('rating')?.invalid && ratingForm.get('rating')?.touched"
-               class="text-danger">
+          <input type="hidden" formControlName="rating" />
+          <div
+            *ngIf="
+              ratingForm.get('rating')?.invalid &&
+              ratingForm.get('rating')?.touched
+            "
+            class="text-danger"
+          >
             Please select a rating between 1 and 5.
           </div>
         </div>
         <div class="form-group">
           <label for="content">Review</label>
-          <textarea id="content"
-                    formControlName="content"
-                    class="form-control"
-                    rows="4"
-                    placeholder="Write your review..."></textarea>
-          <div *ngIf="ratingForm.get('content')?.invalid && ratingForm.get('content')?.touched"
-               class="text-danger">
+          <textarea
+            id="content"
+            formControlName="content"
+            class="form-control"
+            rows="4"
+            placeholder="Write your review..."
+          ></textarea>
+          <div
+            *ngIf="
+              ratingForm.get('content')?.invalid &&
+              ratingForm.get('content')?.touched
+            "
+            class="text-danger"
+          >
             Review is required and must be at least 3 characters long.
           </div>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
-        <button type="submit" class="btn btn-primary" [disabled]="ratingForm.invalid">
-          {{ isEditing ? 'Update' : 'Submit' }}
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="ratingForm.invalid"
+        >
+          {{ isEditing ? "Update" : "Submit" }}
         </button>
       </div>
     </form>

@@ -59,7 +59,7 @@ export class ProfileComponent {
   tabs = [
     { id: 'posts', label: 'Posts' },
     { id: 'events', label: 'Events' },
-    { id: 'courses', label: 'Courses' },
+    { id: 'courses', label: 'Reclamations' },
   ];
   activeTab: string = 'posts';
 
@@ -68,7 +68,7 @@ export class ProfileComponent {
     private userService: UserService,
     private badgeService: BadgeService,
     private participationEventService: ParticipationEventsService,
-    private router: Router
+    private router: Router,
   ) {}
 
   private userRefreshSubscription!: Subscription;
@@ -77,8 +77,26 @@ export class ProfileComponent {
     this.LoadCurrentUser();
 
     this.userRefreshSubscription = timer(0, 3000).subscribe(() => {
-      this.LoadCurrentUser();
+      this.LoadCurrentUserStatus();
     });
+  }
+
+  private LoadCurrentUserStatus(): void{
+
+      const currentUserEmail = this.authService.getCurrentUserEmail();
+      if (!currentUserEmail) {
+        this.router.navigate(['/login']);
+        return;
+      }
+      this.userService.getUserByEmail(currentUserEmail).subscribe(
+        (user) => {
+          this.currentUser = user;
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+  
   }
 
   ngOnDestroy(): void {

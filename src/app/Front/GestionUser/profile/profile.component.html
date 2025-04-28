@@ -20,7 +20,7 @@
               [src]="
                 currentUser?.image
                   ? 'data:image/*;base64,' + currentUser?.image
-                  : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
+                  : 'https://api.dicebear.com/9.x/big-smile/svg?seed=' + currentUser?.name
               "
               class="profile-avatar"
               alt="Avatar"
@@ -137,16 +137,9 @@
       <p class="bio" *ngIf="!currentUser?.bio">No bio available</p>
       <div class="user-stats">
         <div class="stat-item">
-          <i class="fas fa-pencil-alt text-primary"></i>
-          <span>0 Posts</span>
-        </div>
-        <div class="stat-item">
           <i class="fas fa-calendar-check text-primary"></i>
-          <span>{{ events.length }} Events</span> <!-- Modification ici -->
-        </div>
-        <div class="stat-item">
-          <i class="fas fa-graduation-cap text-primary"></i>
-          <span>0 Courses</span>
+          <span>{{ events.length }} Events</span>
+          <!-- Modification ici -->
         </div>
       </div>
     </div>
@@ -222,77 +215,6 @@
       </div>
     </div>
 
-    <!-- Content Tabs -->
-    <nav class="content-tabs">
-      <button
-        *ngFor="let tab of tabs"
-        [class.active]="activeTab === tab.id"
-        (click)="switchTab(tab.id)"
-      >
-        {{ tab.label }}
-      </button>
-    </nav>
-
-    <!-- Tab Content -->
-    <div class="tab-content">
-      <!-- Posts -->
-      <div *ngIf="activeTab === 'posts'" class="posts-grid">
-        <div class="post-card">
-          <div class="post-meta">
-            <span class="post-category">category</span>
-            <span class="post-date">date</span>
-          </div>
-          <h4 class="post-title">title</h4>
-          <p class="post-excerpt">angular</p>
-          <div class="post-stats">
-            <span><i class="fas fa-comment"></i> comments</span>
-            <span><i class="fas fa-heart"></i> likes</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Events -->
-      <div *ngIf="activeTab === 'events'" class="posts-grid">
-        <div *ngIf="isLoadingEvents" class="text-center py-4">
-          <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-          <p class="text-muted mt-2">Loading events...</p>
-        </div>
-        <div *ngIf="!isLoadingEvents && events.length === 0" class="text-center py-4">
-          <p class="text-muted">You are not participating in any events yet.</p>
-        </div>
-        <div *ngFor="let event of events" class="post-card event-card">
-          <div class="event-date">
-            <div class="event-day">{{ event.startDate | date: 'dd MMM yyyy' }}</div>
-          </div>
-          <div class="event-info">
-            <h5>{{ event.eventName }}</h5>
-            <p><i class="fas fa-map-marker-alt me-2"></i>{{ event.place || 'No location' }}</p>
-            <div class="event-status ongoing">Going</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Courses -->
-      <div *ngIf="activeTab === 'courses'" class="posts-grid">
-        <div class="post-card">
-          <div
-            class="course-thumbnail"
-            [style.background-image]="
-              'url(https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Feibm96k9y07irdwu0wlj.png)'
-            "
-          ></div>
-          <div class="course-info">
-            <h5>title</h5>
-            <div class="course-progress">
-              <div class="progress" [style.width.%]="20"></div>
-              <span>20% Complete</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </main>
 <app-footer-front></app-footer-front>
