@@ -1,6 +1,13 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { AngularToastifyModule, ToastService } from 'angular-toastify';
+import { MatDialogModule } from '@angular/material/dialog';
+
+import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -89,8 +96,7 @@ import { ShowEventsComponent } from './Front/GestionEvents/Events/show-events/sh
 import { AddEventModalComponent } from './Back/GestionEvents/Events/add-event-modal/add-event-modal.component';
 
 import { EventImagesComponent } from './Back/GestionEvents/event-images/event-images.component';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+
 import { EventDetailsComponent } from './Front/GestionEvents/event-details/event-details.component';
 import { FullCalendarModule } from '@fullcalendar/angular';
 
