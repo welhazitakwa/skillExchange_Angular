@@ -421,13 +421,13 @@
 
             <!-- Message si aucun diagramme n'est sélectionné -->
             <div *ngIf="!activeChartType" class="text-center text-muted">
-              Sélectionnez un type de diagramme ci-dessus pour afficher les statistiques.
+              Select a chart type above to view statistics.
             </div>
 
             <!-- Diagrammes conditionnels -->
             <div *ngIf="activeChartType === 'doughnut'" class="card shadow-sm border-0">
               <div class="card-header bg-light">
-                <h6 class="mb-0">Répartition des événements par lieu</h6>
+                <h6 class="mb-0">Distribution of events by location</h6>
               </div>
               <div class="card-body chart-container">
                 <canvas
@@ -441,7 +441,7 @@
 
             <div *ngIf="activeChartType === 'bar'" class="card shadow-sm border-0">
               <div class="card-header bg-light">
-                <h6 class="mb-0">Nombre maximum de participants</h6>
+                <h6 class="mb-0">Maximum number of participants</h6>
               </div>
               <div class="card-body chart-container">
                 <canvas
@@ -455,7 +455,7 @@
 
             <div *ngIf="activeChartType === 'line'" class="card shadow-sm border-0">
               <div class="card-header bg-light">
-                <h6 class="mb-0">Évolution des événements par mois</h6>
+                <h6 class="mb-0">Evolution of events by month</h6>
               </div>
               <div class="card-body chart-container">
                 <canvas

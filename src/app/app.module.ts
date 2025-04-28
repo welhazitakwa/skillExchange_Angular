@@ -116,6 +116,8 @@ import { AuthInterceptor } from './core/interceptors/auth.interceptor'; // <-- a
 
 
 
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -225,6 +227,8 @@ import { AuthInterceptor } from './core/interceptors/auth.interceptor'; // <-- a
     MatSnackBarModule,
     MatDialogModule,
     NgChartsModule, // Add NgChartsModule
+    
+
   ],
 
   

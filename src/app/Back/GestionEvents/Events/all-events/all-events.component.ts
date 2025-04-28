@@ -48,7 +48,7 @@ export class AllEventsComponent implements OnInit {
   public doughnutChartOptions: ChartConfiguration['options'] = {
     plugins: {
       legend: { position: 'top' },
-      title: { display: true, text: 'Répartition des événements par lieu' }
+      title: { display: true, text: 'Distribution of events by location' }
     }
   };
 
@@ -68,7 +68,7 @@ export class AllEventsComponent implements OnInit {
     },
     plugins: {
       legend: { display: true },
-      title: { display: true, text: 'Nombre maximum de participants par événement' }
+      title: { display: true, text: 'Maximum number of participants per event' }
     }
   };
 
@@ -77,7 +77,7 @@ export class AllEventsComponent implements OnInit {
     labels: [],
     datasets: [{
       data: [],
-      label: 'Événements par mois',
+      label: 'Events by month',
       borderColor: '#007bff',
       fill: false
     }]
@@ -86,7 +86,7 @@ export class AllEventsComponent implements OnInit {
   public lineChartOptions: ChartConfiguration['options'] = {
     plugins: {
       legend: { display: true },
-      title: { display: true, text: 'Évolution des événements par mois' }
+      title: { display: true, text: 'Evolution of events by month' }
     }
   };
 
@@ -381,7 +381,7 @@ export class AllEventsComponent implements OnInit {
       labels: Object.keys(eventsByMonth),
       datasets: [{
         data: Object.values(eventsByMonth),
-        label: 'Événements par mois',
+        label: 'Events by month',
         borderColor: '#007bff',
         fill: false
       }]
@@ -504,10 +504,10 @@ export class AllEventsComponent implements OnInit {
       console.warn('No events to export');
       return;
     }
-
+  
     const doc = new jsPDF();
     const exportDate = new Date().toLocaleDateString('fr-FR');
-
+  
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(253, 126, 20);
@@ -520,11 +520,11 @@ export class AllEventsComponent implements OnInit {
     doc.setFontSize(12);
     doc.setTextColor(100);
     doc.text(`Generated on: ${exportDate}`, 10, 40);
-
+  
     // Capturer les diagrammes
     const captureCharts = async () => {
       let currentY = 50;
-
+  
       // Diagramme en donut
       const doughnutCanvas = document.querySelector('canvas[baseChart][type="doughnut"]') as HTMLCanvasElement;
       if (doughnutCanvas) {
@@ -533,7 +533,7 @@ export class AllEventsComponent implements OnInit {
         doc.addImage(imgData, 'PNG', 10, currentY, 190, 100);
         currentY += 110;
       }
-
+  
       // Histogramme
       const barCanvas = document.querySelector('canvas[baseChart][type="bar"]') as HTMLCanvasElement;
       if (barCanvas) {
@@ -542,7 +542,7 @@ export class AllEventsComponent implements OnInit {
         doc.addImage(imgData, 'PNG', 10, currentY, 190, 100);
         currentY += 110;
       }
-
+  
       // Diagramme en ligne
       const lineCanvas = document.querySelector('canvas[baseChart][type="line"]') as HTMLCanvasElement;
       if (lineCanvas) {
@@ -551,22 +551,20 @@ export class AllEventsComponent implements OnInit {
         doc.addImage(imgData, 'PNG', 10, currentY, 190, 100);
         currentY += 110;
       }
-
-      // Ajouter le tableau
+  
+      // Ajouter le tableau (sans Latitude et Longitude)
       const tableData = this.filteredEvents.map(event => [
         event.eventName || '',
         event.startDate ? new Date(event.startDate).toLocaleDateString('fr-FR') : '',
         event.endDate ? new Date(event.endDate).toLocaleDateString('fr-FR') : '',
         event.place || '',
-        event.latitude?.toString() || '',
-        event.longitude?.toString() || '',
         event.nbr_max?.toString() || '',
         event.description || ''
       ]);
-
+  
       autoTable(doc, {
         startY: currentY,
-        head: [['Event Name', 'Start Date', 'End Date', 'Place', 'Latitude', 'Longitude', 'Max Participants', 'Description']],
+        head: [['Event Name', 'Start Date', 'End Date', 'Place', 'Max Participants', 'Description']],
         body: tableData,
         theme: 'striped',
         headStyles: { fillColor: [253, 126, 20], textColor: 255 },
@@ -574,10 +572,10 @@ export class AllEventsComponent implements OnInit {
         styles: { fontSize: 10, cellPadding: 2 },
         columnStyles: {
           0: { cellWidth: 30 },
-          7: { cellWidth: 50 }
+          5: { cellWidth: 50 } // Ajuster l'index pour la colonne Description
         }
       });
-
+  
       const pageCount = doc.getNumberOfPages();
       for (let i = 1; i <= pageCount; i++) {
         doc.setPage(i);
@@ -585,11 +583,11 @@ export class AllEventsComponent implements OnInit {
         doc.setTextColor(100);
         doc.text(`Page ${i} of ${pageCount}`, doc.internal.pageSize.width - 30, doc.internal.pageSize.height - 10);
       }
-
+  
       doc.save(`events_${new Date().toISOString().split('T')[0]}.pdf`);
       console.log('PDF exported:', this.filteredEvents.length, 'events');
     };
-
+  
     // Ouvre temporairement le modal pour s'assurer que tous les diagrammes sont rendus
     this.isStatsModalOpen = true;
     this.activeChartType = 'doughnut';
@@ -618,25 +616,23 @@ export class AllEventsComponent implements OnInit {
       'Start Date': event.startDate ? new Date(event.startDate).toLocaleDateString('fr-FR') : '',
       'End Date': event.endDate ? new Date(event.endDate).toLocaleDateString('fr-FR') : '',
       'Place': event.place || '',
-      'Latitude': event.latitude?.toString() || '',
-      'Longitude': event.longitude?.toString() || '',
       'Max Participants': event.nbr_max?.toString() || '',
-      'Description': event.description || '',
-      'Images': event.images ? event.images.length : 0
+      'Description': event.description || ''
     }));
 
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
-    
+
     const headerStyle = {
       font: { bold: true, color: { rgb: 'FFFFFF' } },
-      fill: { fgColor: { rgb: '28A745' } },
+      fill: { type: 'pattern', pattern: 'solid', fgColor: { rgb: 'FD7E14' } },
       alignment: { horizontal: 'center' }
     };
-    
-    const range = XLSX.utils.decode_range(ws['!ref'] || 'A1:I1');
+
+    const range = XLSX.utils.decode_range(ws['!ref'] || 'A1:F1');
     for (let C = range.s.c; C <= range.e.c; ++C) {
-      const cell = ws[XLSX.utils.encode_cell({ r: 0, c: C })];
-      if (cell) cell.s = headerStyle;
+      const cellAddress = XLSX.utils.encode_cell({ r: 0, c: C });
+      if (!ws[cellAddress]) ws[cellAddress] = { t: 's', v: '' };
+      ws[cellAddress].s = headerStyle;
     }
 
     const colWidths = [
@@ -645,10 +641,7 @@ export class AllEventsComponent implements OnInit {
       { wpx: 100 },
       { wpx: 120 },
       { wpx: 100 },
-      { wpx: 100 },
-      { wpx: 100 },
-      { wpx: 200 },
-      { wpx: 80 }
+      { wpx: 200 }
     ];
     ws['!cols'] = colWidths;
 
@@ -659,7 +652,9 @@ export class AllEventsComponent implements OnInit {
     console.log('Excel exported:', this.filteredEvents.length, 'events');
   }
 
-  clearFilters(): void {
+
+
+    clearFilters(): void {
     this.filterForm.reset({
       place: '',
       minParticipants: null,
