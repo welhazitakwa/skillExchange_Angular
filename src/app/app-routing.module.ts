@@ -55,9 +55,12 @@ import { AddContentComponent } from './Front/GestionFormations/CourseContent/add
 import { ListContentStudentComponent } from './Front/GestionFormations/Formation/list-content-student/list-content-student.component';
 
 import { CertificateComponent } from './Front/GestionQuizz/quiz/certificate/certificate.component'; 
+import { UserProductSpaceComponent } from './Front/GestionProduit/user-product-space/user-product-space.component';
+
 import { AllReclamationsComponent } from './Back/GestionReclamation/Reclamation/all-reclamations/all-reclamations.component';
 import { HelpComponent } from './Front/GestionReclamation/help/help.component';
 import { AllReclamationReplyComponent } from './Back/GestionReclamation/ReclamationReply/all-reclamation-reply/all-reclamation-reply.component';
+
 
 
 const routes: Routes = [
@@ -139,7 +142,7 @@ const routes: Routes = [
     path: 'products',
     component: ShowproductComponent /*, canActivate: [UserGuard]*/,
   },
-
+  { path: 'my-products', component: UserProductSpaceComponent },
 
 
    { path: 'productD/:idProduct', component: ProductDetailsComponent/*, canActivate: [UserGuard]*/ },
