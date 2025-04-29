@@ -188,7 +188,7 @@
 
                     <dt class="col-sm-4">Balance</dt>
                     <dd class="col-sm-8">
-                      🪙 {{ user.balance | number : "1.2-2" }}
+                      💰 {{ user.balance | number : "1.2-2" }}
                     </dd>
                   </dl>
                 </div>
@@ -301,7 +301,7 @@
                     class="transaction-amount"
                     [class.income]="transaction.amount > 0"
                   >
-                    {{ transaction.amount > 0 ? "+" : "" }}🪙{{
+                    {{ transaction.amount > 0 ? "+" : "" }}💰{{
                       transaction.amount
                     }}
                   </div>
@@ -706,7 +706,7 @@
             </div>
             <div class="modal-body">
               <div class="input-group">
-                <span class="input-group-text">🪙</span>
+                <span class="input-group-text">💰</span>
                 <input
                   type="number"
                   class="form-control"

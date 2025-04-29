@@ -8,7 +8,7 @@
       <div class="balance-card">
         <div class="balance-content">
           <h3>Available Balance</h3>
-          <h2>🪙{{ currentUser?.balance | number : "1.2-2" }}</h2>
+          <h2>💰{{ currentUser?.balance | number : "1.2-2" }}</h2>
           <div class="balance-actions">
             <button
               class="btn-action transfer"
@@ -47,7 +47,7 @@
             <div class="form-group">
               <label>Amount</label>
               <div class="input-group">
-                <span class="input-group-text">🪙</span>
+                <span class="input-group-text">💰</span>
                 <input
                   type="number"
                   class="form-control"
@@ -141,7 +141,7 @@
                 class="transaction-amount"
                 [class.income]="transaction.amount > 0"
               >
-                {{ transaction.amount > 0 ? "+" : "" }}🪙{{
+                {{ transaction.amount > 0 ? "+" : "" }}💰{{
                   transaction.amount
                 }}
               </div>
