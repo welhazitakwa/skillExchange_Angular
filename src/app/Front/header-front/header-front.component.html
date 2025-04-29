@@ -131,7 +131,7 @@
                   *ngIf="currentUser?.balance !== undefined"
                   class="position-absolute bottom-0 end-0 badge bg-primary rounded-pill balance-badge"
                 >
-                  🪙 {{ currentUser.balance | number : "1.2-2" }}
+                  💰 {{ currentUser.balance | number : "1.2-2" }}
                 </span>
               </div>
               <span class="ms-2 d-none d-lg-inline-block"
@@ -149,7 +149,7 @@
                   {{ currentUser.email }}
                 </div>
                 <div class="text-muted small">
-                  Balance: 🪙 {{ currentUser.balance | number : "1.2-2" }}
+                  Balance: 💰 {{ currentUser.balance | number : "1.2-2" }}
                 </div>
               </div>
 
@@ -177,18 +177,18 @@
               </a>
 
                <a  class="dropdown-item d-flex align-items-center py-2 px-3 hover-bg-neutral"
-               style="cursor: pointer;"   
+               style="cursor: pointer;"
               (click)="getUserId(currentUser.id)"
-                ><i  class="fas fa-lightbulb me-3 text-warning"></i> 
+                ><i  class="fas fa-lightbulb me-3 text-warning"></i>
                 My Space</a>
 
                 <a class="dropdown-item d-flex align-items-center py-2 px-3 hover-bg-neutral"
-                style="cursor: pointer;"   
+                style="cursor: pointer;"
                 (click)="goToMyProducts()">
-               <i class="fas fa-box-open me-3 text-success"></i> 
+               <i class="fas fa-box-open me-3 text-success"></i>
                My Products
              </a>
-             
+
               <div class="dropdown-divider mx-3 my-2"></div>
 
               <a
