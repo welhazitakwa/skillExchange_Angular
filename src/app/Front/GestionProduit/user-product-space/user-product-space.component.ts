@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Product } from 'src/app/core/models/GestionProduit/product';
 import { User } from 'src/app/core/models/GestionUser/User';
 import { AuthService } from 'src/app/core/services/Auth/auth.service';
+import { ImageProductService } from 'src/app/core/services/GestionProduit/image-product.service';
 import { ProductService } from 'src/app/core/services/GestionProduit/product.service';
 import { AiProductService } from 'src/app/core/services/GestionProduit/ProductIA/ai-product.service';
 import { UserService } from 'src/app/core/services/GestionUser/user.service';
@@ -18,7 +19,7 @@ export class UserProductSpaceComponent implements OnInit{
   productsByUser: Product[] = [];
   
 currentUser: User | null = null;
-  constructor(private aiProductService: AiProductService,
+  constructor(private aiProductService: AiProductService,private imageProductService: ImageProductService,
     private authService: AuthService,
     private userService: UserService,
     private router: Router, private productService:ProductService, private fb: FormBuilder
@@ -29,7 +30,7 @@ currentUser: User | null = null;
           price: [null, [Validators.required, Validators.min(0)]],
           currencyType: ['TND', Validators.required],
           stock: [null, [Validators.required, Validators.min(0)]],
-          images: [null]  // on ne mettra pas Validators ici pour images
+          images: [null]  
         });
   }
   ngOnInit(): void {
@@ -68,8 +69,7 @@ private loadCurrentUser() {
       (user: User) => {
         this.currentUser = user;
         console.log('✅ Current user loaded:', this.currentUser);
-        // Maintenant, on récupère les produits associés à l'utilisateur
-        this.getMyProducts();  // Appel de la méthode pour récupérer les produits
+        this.getMyProducts();  
       },
       (error) => {
         console.error(error);
@@ -105,7 +105,7 @@ onFilesSelected(event: any) {
           file: resizedFile
         });
 
-        this.selectedImages.push(base64Data); // ✅ essentiel
+        this.selectedImages.push(base64Data); 
       };
 
       reader.readAsDataURL(resizedFile);
@@ -127,7 +127,7 @@ onFilesSelected(event: any) {
           let width = img.width;
           let height = img.height;
   
-          // Calculer les nouvelles dimensions
+         
           if (width > maxWidth) {
             height = Math.round((height * maxWidth) / width);
             width = maxWidth;
@@ -138,14 +138,12 @@ onFilesSelected(event: any) {
             height = maxHeight;
           }
   
-          // Créer un canvas pour redimensionner l'image
           const canvas = document.createElement('canvas');
           const ctx = canvas.getContext('2d')!;
           canvas.width = width;
           canvas.height = height;
           ctx.drawImage(img, 0, 0, width, height);
   
-          // Convertir l'image redimensionnée en base64
           canvas.toBlob((blob) => {
             if (blob) {
               resolve(new File([blob], file.name, { type: file.type }));
@@ -159,18 +157,20 @@ onFilesSelected(event: any) {
       reader.readAsDataURL(file);
     });
   }
-  currentImages: string[] = []; // les images actuelles du produit
+  currentImages: string[] = []; 
 
 
   //////////////EDIT/////////////////////////////////
+  isSubmitting: boolean = false;
   editingProduct?: Product;
   imagesToDelete: number[] = []; 
   selectedFiles: File[]=[]
   imagesPreviews: { url: string, file: File | null }[] = [];
+  editImagesPreviews: any;
     
   showModalProduct = false;
   startEditProduct(product: Product) {
-    this.editingProduct = JSON.parse(JSON.stringify(product)); // Deep clone
+    this.editingProduct = JSON.parse(JSON.stringify(product)); 
     this.imagesToDelete = [];
     this.selectedFiles = [];
     this.updateImagePreviews();
@@ -180,7 +180,7 @@ onFilesSelected(event: any) {
     this.imagesPreviews = [];
   
     const existingImages = (this.editingProduct?.imageProducts || [])
-      .filter(img => !this.imagesToDelete.includes(img.idImage || -1)) // exclure les supprimées
+      .filter(img => !this.imagesToDelete.includes(img.idImage || -1)) 
       .map(img => ({
         url: 'data:image/jpeg;base64,' + img.image,
         file: null
@@ -193,28 +193,129 @@ onFilesSelected(event: any) {
   
     this.imagesPreviews = [...existingImages, ...newImagePreviews];
   }
+  submitEditProduct() {
+    if (!this.editingProduct) return;
+    if (
+      !this.editingProduct.productName?.trim() ||
+      !this.editingProduct.type?.trim() ||
+      !this.editingProduct.currencyType?.trim() ||
+      this.editingProduct.price == null || this.editingProduct.price <= 0 ||
+      this.editingProduct.stock == null || this.editingProduct.stock < 0
+    ) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Incomplete Form',
+        text: 'Please fill all the fields correctly before saving!'
+      });
+      return;
+    }
+  
+    const newImages = this.selectedImages.map(base64 => ({
+      image: base64
+    }));
+  
+   
+    this.editingProduct.imageProducts = this.editingProduct.imageProducts || [];
+  
+    if (this.imagesToDelete.length > 0) {
+      this.imagesToDelete.forEach(id => {
+        this.imageProductService.deleteImageProduct(id).subscribe({
+          next: () => console.log(`🗑️ Image ${id} supprimée côté serveur.`),
+          
+          error: err => console.error('❌ Échec suppression image:', err)
+        });
+      });
+    }
+    
+    this.editingProduct.imageProducts = [
+      ...this.editingProduct.imageProducts,
+      ...newImages
+    ];
+  
+    this.productService.updateProduct(this.editingProduct).subscribe({
+      next: () => {
+        console.log('✅ Produit mis à jour');
+        this.afterProductUpdate();
+      },
+      error: (error) => {
+        console.error('❌ Erreur lors de la mise à jour du produit', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Update Failed',
+          text: 'Something went wrong while updating.'
+        });
+      }
+    });
+  }
+  private loadProducts(){
+    this.productService.getApprovedProducts().subscribe(
+      (products) => {
+    
+      
+        this.products = products.filter(p => p.postedBy?.id !== this.currentUser?.id);
+        
+        this.filterProducts();
+       
+        console.log(this.products); 
+      },
+      (error) => {
+        console.error('Erreur lors de la récupération des produits', error);
+      }
+    );
+  }
+   private afterProductUpdate() {
+      this.loadProducts(); 
+      this.resetEditForm();
+      this.showModalProduct = false;
+      this.getMyProducts();
+      this.imagesToDelete = [];
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Product updated!',
+        showConfirmButton: false,
+        timer: 1500
+      });
+    }
+    private resetEditForm(): void {
+      this.editImagesPreviews = [];
+      this.selectedFiles = [];
+      this.imagesToDelete = [];
+    }
+  cancelEditProduct() {
+    this.showModalProduct = false;
+  }
   /////////////////////DELETE ///////////////////
   products: Product[] = [];
+
   deleteProduct(id: number) {
-    if (confirm('Are you sure you want to delete this product?')) {
-      this.productService.deleteProduct(id).subscribe(
-        () => {
-          console.log('Product deleted');
-          this.productService.getApprovedProducts().subscribe(
-            (products) => {
-              this.products = products;
-              
-              console.log(this.products); // Vérifier si les produits sont bien récupérés
-            },
-            (error) => {
-              console.error('Erreur lors de la récupération des produits', error);
-            }
-          );
-        },
-        (error) => console.error('Error deleting product', error)
-      );
-    }
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "This action cannot be undone.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.productService.deleteProduct(id).subscribe(
+          () => {
+            console.log('✅ Product deleted');
+            this.getMyProducts(); 
+            Swal.fire('Deleted!', 'Your product has been deleted.', 'success');
+          },
+          (error) => {
+            console.error('❌ Error deleting product', error);
+            Swal.fire('Error!', 'Something went wrong.', 'error');
+          }
+        );
+      }
+    });
   }
+  
+  
   /////////////////////////
   filteredProducts: Product[] = [];
   selectedType: string = '';
@@ -309,6 +410,7 @@ showModalProductAdd = false;
               timer: 1500
             });
             this.showModalProductAdd = false;
+            this.getMyProducts();
           },
           error: (err) => {
             console.error('Erreur complète:', err);
@@ -332,7 +434,7 @@ showModalProductAdd = false;
   
     switchMainImage(product: Product, index: number) {
       if (product.imageProducts && product.imageProducts.length > index) {
-        // Échange la première image avec celle cliquée
+        
         [product.imageProducts[0], product.imageProducts[index]] = 
         [product.imageProducts[index], product.imageProducts[0]];
       }
@@ -347,17 +449,17 @@ showModalProductAdd = false;
     removeImage(index: number): void {
       const img = this.editingProduct?.imageProducts[index];
     
-      // Si l'image est déjà en BDD (a un id), on marque pour suppression
+     
       if (img?.idImage && !this.imagesToDelete.includes(img.idImage)) {
         this.imagesToDelete.push(img.idImage);
       }
     
-      // Supprimer du tableau visuel aussi
+      
       if (this.editingProduct?.imageProducts) {
         this.editingProduct.imageProducts.splice(index, 1);
       }
     
-      // Rafraîchir les aperçus
+      
       this.updateImagePreviews();
     }
     
@@ -366,23 +468,23 @@ showModalProductAdd = false;
     onFileChange(event: any): void {
     const files = event.target.files;
     this.imageError = null;
-    this.imagesPreviews = [];  // Réinitialisation des aperçus
-    this.selectedImages = [];  // Réinitialisation des images sélectionnées
+    this.imagesPreviews = []; 
+    this.selectedImages = []; 
   
     if (files.length > 0) {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         if (!file.type.startsWith('image/')) {
           this.imageError = 'Only image files are allowed.';
-          return;  // Arrêter l'exécution si le type de fichier n'est pas une image
+          return; 
         }
   
         const reader = new FileReader();
         reader.onload = (e: any) => {
           const base64String = e.target.result;
-          this.imagesPreviews.push(base64String);  // Ajout de la prévisualisation
+          this.imagesPreviews.push(base64String);  
           const base64Data = base64String.split(',')[1];
-          this.selectedImages.push(base64Data);  // Ajout du base64 à la liste des images sélectionnées
+          this.selectedImages.push(base64Data);  
         };
         reader.readAsDataURL(file);
       }
@@ -438,17 +540,17 @@ onLabelChange(event: any) {
     this.addProductForm.get('price')?.setValue(1000);
     this.addProductForm.get('currencyType')?.setValue('TND');
   } else if (labelLower.includes('software') || labelLower.includes('application') || labelLower.includes('program') || labelLower.includes('app') || labelLower.includes('ebook') || labelLower.includes('music') || labelLower.includes('game')) {
-    // Produit digital
+
     this.newProduct.type = "DIGITAL";
     this.newProduct.price = 50;
-    this.newProduct.currencyType = "TOKENS";  // 🟰 Vendre en TOKENS
+    this.newProduct.currencyType = "TOKENS";  
 
 
     this.addProductForm.get('type')?.setValue('DIGITAL');
     this.addProductForm.get('price')?.setValue(50);
     this.addProductForm.get('currencyType')?.setValue('TOKENS');
   } else {
-    // Produit générique ➔ physique par défaut
+    
     this.newProduct.type = "PHYSICAL";
     this.newProduct.price = 100;
     this.newProduct.currencyType = "TND";
