@@ -54,61 +54,93 @@ import { ContentListComponent } from './Front/GestionFormations/CourseContent/co
 import { AddContentComponent } from './Front/GestionFormations/CourseContent/add-content/add-content.component';
 import { ListContentStudentComponent } from './Front/GestionFormations/Formation/list-content-student/list-content-student.component';
 
-import { CertificateComponent } from './Front/GestionQuizz/quiz/certificate/certificate.component'; 
+import { CertificateComponent } from './Front/GestionQuizz/quiz/certificate/certificate.component';
 import { UserProductSpaceComponent } from './Front/GestionProduit/user-product-space/user-product-space.component';
 
 import { AllReclamationsComponent } from './Back/GestionReclamation/Reclamation/all-reclamations/all-reclamations.component';
 import { HelpComponent } from './Front/GestionReclamation/help/help.component';
 import { AllReclamationReplyComponent } from './Back/GestionReclamation/ReclamationReply/all-reclamation-reply/all-reclamation-reply.component';
 
-
-
 const routes: Routes = [
   //canActivate: [AdminGuard] to lock for admin
   //canActivate: [UserGuard] to lock for user
   // Back Office
 
-  { path: 'backpost', component: ListpostComponent },
+  { path: 'backpost', component: ListpostComponent, canActivate: [AdminGuard] },
 
+  { path: 'backpost', component: ListpostComponent, canActivate: [AdminGuard] },
 
-  { path:"backpost", component: ListpostComponent},
-  
-  { path:"backCommentpost", component: AllCommentsComponent},
-  {path: "analytics-dashboard", component: AnalyticsDashboardComponent},
-  
-  { path: 'back', component: MainBackComponent /*,canActivate: [AdminGuard]*/ },
+  {
+    path: 'backCommentpost',
+    component: AllCommentsComponent,
+    canActivate: [AdminGuard],
+  },
+  { path: 'analytics-dashboard', component: AnalyticsDashboardComponent },
+
+  { path: 'back', component: MainBackComponent, canActivate: [AdminGuard] },
 
   //**************Back Gestion Users********************************
   {
     path: 'backusers',
     component: AllUsersComponent,
+    canActivate: [AdminGuard],
   },
   {
     path: 'backuserdetail/:id',
     component: UserBackDetailsComponent,
+    canActivate: [AdminGuard],
   },
   {
     path: 'backbadges',
     component: AllbadgesComponent,
+    canActivate: [AdminGuard],
   },
   /***************************************************************/
 
   //**************Back Gestion Events********************************
 
-  { path: 'backEvents', component: AllEventsComponent },
+  {
+    path: 'backEvents',
+    component: AllEventsComponent,
+    canActivate: [AdminGuard],
+  },
 
   /***************************************************************/
 
   //**************Back Gestion Produit********************************
-  { path: 'backproducts', component: AllProductsComponent },
-  { path: 'backcarts', component: AllCartsComponent },
-  { path: 'backreviews', component: AllReviewsComponent },
-  { path: 'backimagesP', component: AllImagesComponent },
+  {
+    path: 'backproducts',
+    component: AllProductsComponent,
+    canActivate: [AdminGuard],
+  },
+  {
+    path: 'backcarts',
+    component: AllCartsComponent,
+    canActivate: [AdminGuard],
+  },
+  {
+    path: 'backreviews',
+    component: AllReviewsComponent,
+    canActivate: [AdminGuard],
+  },
+  {
+    path: 'backimagesP',
+    component: AllImagesComponent,
+    canActivate: [AdminGuard],
+  },
 
   /********************Back Gestion Formations****************************************/
   { path: 'categories', component: CategoriesComponent },
-  { path: 'backcourses', component: FormationsComponent },
-  { path: 'backcoursescat', component: CousesByCategoryComponent },
+  {
+    path: 'backcourses',
+    component: FormationsComponent,
+    canActivate: [AdminGuard],
+  },
+  {
+    path: 'backcoursescat',
+    component: CousesByCategoryComponent,
+    canActivate: [AdminGuard],
+  },
   { path: 'coursescat', component: CoursesByCatFrontComponent },
   { path: 'userCourseSpace', component: UserCourseSpaceComponent },
   { path: 'participantsList', component: ParticipantsListComponent },
@@ -117,21 +149,28 @@ const routes: Routes = [
   { path: 'courses/:id/contents/add', component: AddContentComponent },
   { path: 'sudentsContent', component: ListContentStudentComponent },
 
-  { path: 'backcartProducts', component: AllCartProductsComponent },
+  {
+    path: 'backcartProducts',
+    component: AllCartProductsComponent,
+    canActivate: [AdminGuard],
+  },
   /***************************************************************/
 
   // Front Office
 
-  { 
-    path: 'quiz/:quizId', 
-    component: FrontQuizComponent },
-       {path: 'certificate', component: CertificateComponent },
-    
-  
+  {
+    path: 'quiz/:quizId',
+    component: FrontQuizComponent,
+  },
+  { path: 'certificate', component: CertificateComponent },
+
   // Add this if you need a direct participation link
   { path: 'quiz/:quizId/:participationId', component: FrontQuizComponent },
-  { path: '', component: MainFrontComponent/*, canActivate: [UserGuard] */},
-  { path: 'bloglist', component: BlogListComponent/*, canActivate: [UserGuard] */},
+  { path: '', component: MainFrontComponent /*, canActivate: [UserGuard] */ },
+  {
+    path: 'bloglist',
+    component: BlogListComponent /*, canActivate: [UserGuard] */,
+  },
   {
     path: 'blogdetails',
     component: BlogDetailsComponent /*,
@@ -144,19 +183,34 @@ const routes: Routes = [
   },
   { path: 'my-products', component: UserProductSpaceComponent },
 
-
-   { path: 'productD/:idProduct', component: ProductDetailsComponent/*, canActivate: [UserGuard]*/ },
-   { path: 'success', component: SuccessComponent },
-   ///////////////////////////////////////////////////////////////
-  { path: 'about', component: AboutComponent/*, canActivate: [UserGuard] */},
-  { path: 'courses', component: CoursesComponent/*, canActivate: [UserGuard] */},
-  { path: 'teachers', component: TeachersComponent/*, canActivate: [UserGuard]*/ },
-  { path: 'contact', component: ContactComponent/*, canActivate: [UserGuard]*/ },
+  {
+    path: 'productD/:idProduct',
+    component: ProductDetailsComponent /*, canActivate: [UserGuard]*/,
+  },
+  { path: 'success', component: SuccessComponent },
+  ///////////////////////////////////////////////////////////////
+  { path: 'about', component: AboutComponent /*, canActivate: [UserGuard] */ },
+  {
+    path: 'courses',
+    component: CoursesComponent /*, canActivate: [UserGuard] */,
+  },
+  {
+    path: 'teachers',
+    component: TeachersComponent /*, canActivate: [UserGuard]*/,
+  },
+  {
+    path: 'contact',
+    component: ContactComponent /*, canActivate: [UserGuard]*/,
+  },
 
   // Gestion des événements Front
   { path: 'events', component: ShowEventsComponent, canActivate: [UserGuard] },
-  { path: 'events/:id', component: EventDetailsComponent, canActivate: [UserGuard] }, 
-  
+  {
+    path: 'events/:id',
+    component: EventDetailsComponent,
+    canActivate: [UserGuard],
+  },
+
   // Auth
   { path: 'register', component: AuthRegisterComponent },
   { path: 'login', component: AuthLoginComponent },
@@ -181,6 +235,7 @@ const routes: Routes = [
   { path: 'reclamationback', component: AllReclamationsComponent },
   { path: 'help', component: HelpComponent },
   { path: 'reclamationreplyback/:id', component: AllReclamationReplyComponent },
+  { path: 'accessdenied', component: ContactComponent },
   { path: '**', redirectTo: '' },
 ];
 
